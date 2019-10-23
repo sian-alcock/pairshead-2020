@@ -16,9 +16,8 @@ It has been solely developed by Sian Alcock.
 ### Installation
 * Clone or download the repo
 * yarn and pipenv install to install dependencies
-* ?? do we need to create a database???
 * yarn serve:backend to run backend
-* yarn serve:frontednd to run front-end
+* yarn serve:frontend to run front-end
 
 ## Brief
 
