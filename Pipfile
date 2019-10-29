@@ -13,6 +13,7 @@ django-heroku = "*"
 python-dotenv = "*"
 requests = "*"
 gunicorn = "*"
+pyjwt = "*"
 
 [requires]
 python_version = "3.7"
