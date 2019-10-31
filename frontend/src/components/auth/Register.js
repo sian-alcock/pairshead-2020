@@ -33,7 +33,6 @@ class Register extends React.Component {
   }
 
   render() {
-    console.log(this.state.formData)
     return (
       <section className="section">
         <div className="container">
@@ -88,7 +87,7 @@ class Register extends React.Component {
                 </div>
                 {this.state.errors.password_confirmation && <small className="help">{this.state.errors.password_confirmation}</small>}
               </div>
-              <button className="button">Submit</button>
+              <button className="button is-primary">Submit</button>
             </form>
 
           </div> 

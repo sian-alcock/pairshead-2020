@@ -7,6 +7,8 @@ import { HashRouter, Route, Switch } from 'react-router-dom'
 
 import Home from './components/pages/Home'
 import Info from './components/pages/Info'
+import Register from './components/auth/Register'
+import Login from './components/auth/Login'
 import CrewIndex from './components/crews/CrewIndex'
 import CrewTimeEdit from './components/crews/CrewTimeEdit'
 import RaceTimeIndex from './components/crews/RaceTimeIndex'
@@ -45,6 +47,8 @@ class App extends React.Component {
             <Route path="/export" component={ExportData} />
             <Route path="/crew-draw-report" component={CrewDrawReport} />
             <Route path="/info" component={Info} />
+            <Route path="/register" component={Register} />
+            <Route path="/login" component={Login} />
             <Route path="/" component={Home} />
           </Switch>
           <Footer />
