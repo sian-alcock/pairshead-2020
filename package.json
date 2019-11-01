@@ -43,5 +43,9 @@
     "eslint": "^6.3.0",
     "eslint-plugin-react": "^7.14.3",
     "webpack-dev-server": "^3.8.0"
+  },
+  "engines": {
+    "node": "12.11.1",
+    "python": "3.7.4"
   }
 }
