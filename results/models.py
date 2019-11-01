@@ -20,7 +20,7 @@ class Band(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=30)
     event = models.ForeignKey(Event, related_name='bands',
-    on_delete=models.CASCADE, blank=True, null=True, )
+    on_delete=models.CASCADE)
 
 class Crew(models.Model):
     name = models.CharField(max_length=50)
