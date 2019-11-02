@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 
-from ..serializers import  BandSerializer
+from ..serializers import  BandSerializer, PopulatedBandSerializer
 
 from ..models import Band
 
@@ -12,7 +12,7 @@ class BandListView(APIView): # used to populate the pulldown on the CrewTimeEdit
 
     def get(self, _request):
         bands = Band.objects.all() # get all the bands
-        serializer = BandSerializer(bands, many=True)
+        serializer = PopulatedBandSerializer(bands, many=True)
 
         return Response(serializer.data) # send the JSON to the client
 

@@ -9,6 +9,12 @@ class EventSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'override_name', 'info', 'type', 'gender',)
 
 class BandSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Band
+        fields = ('id', 'name', 'event',)
+
+class PopulatedBandSerializer(serializers.ModelSerializer):
     event = EventSerializer()
     class Meta:
         model = Band
@@ -41,7 +47,7 @@ class PopulatedCrewSerializer(serializers.ModelSerializer):
 
     club = ClubSerializer()
     event = EventSerializer()
-    band = BandSerializer()
+    band = PopulatedBandSerializer()
     competitors = CompetitorSerializer(many=True)
     times = RaceTimesSerializer(many=True)
 
