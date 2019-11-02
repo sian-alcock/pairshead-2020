@@ -15,6 +15,7 @@ python-dotenv = "*"
 requests = "*"
 gunicorn = "*"
 pyjwt = "*"
+django-cors-headers = "*"
 
 [requires]
 python_version = "3.7"
