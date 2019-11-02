@@ -17,19 +17,31 @@ class TimeLoader extends Component {
   }
 
   async getData() {
-
+    this.cancelTokenSource = axios.CancelToken.source()
     this.setState({ loading: true })
 
     try {
 
-      const times = await axios.get('/api/crew-race-times')
+      const times = await axios.get('/api/crew-race-times', {
+        cancelToken: this.cancelTokenSource.token
+      })
       console.log(times.data)
 
       this.setState({ raceTimesDataUpdated: Date.now(), loading: false })
 
-    } catch (e) {
-      console.error(e)
+    } catch (err) {
+      if (axios.isCancel(err)) {
+        // ignore
+      } else {
+        // propegate
+        throw err
+      }
+    } finally {
+      this.cancelTokenSource = null
     }
+  }
+  componentWillUnmount() {
+    this.cancelTokenSource && this.cancelTokenSource.cancel()
   }
 
   render() {

@@ -18,7 +18,7 @@ class ClubEventLoader extends Component {
   }
 
   async getData() {
-
+    this.cancelTokenSource = axios.CancelToken.source()
     this.setState({ loading: true })
 
     try {
@@ -30,13 +30,25 @@ class ClubEventLoader extends Component {
 
       // wait for first two calls before running the crew import
       const bands = await axios.get('/api/band-data-import/')
-      console.log(bands.data)
+      console.log(bands.data, {
+        cancelToken: this.cancelTokenSource.token
+      })
 
       this.setState({ crewDataUpdated: Date.now(), loading: false })
 
-    } catch (e) {
-      console.error(e)
+    } catch (err) {
+      if (axios.isCancel(err)) {
+        // ignore
+      } else {
+        // propegate
+        throw err
+      }
+    } finally {
+      this.cancelTokenSource = null
     }
+  }
+  componentWillUnmount() {
+    this.cancelTokenSource && this.cancelTokenSource.cancel()
   }
 
   render() {

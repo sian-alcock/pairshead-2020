@@ -16,19 +16,31 @@ class CrewLoader extends Component {
   }
 
   async getData() {
-
+    this.cancelTokenSource = axios.CancelToken.source()
     this.setState({ loading: true })
 
     try {
 
-      const crews = await axios.get('/api/crew-data-import/')
+      const crews = await axios.get('/api/crew-data-import', {
+        cancelToken: this.cancelTokenSource.token
+      })
       console.log(crews.data)
 
       this.setState({ crewDataUpdated: Date.now(), loading: false })
 
-    } catch (e) {
-      console.error(e)
+    } catch (err) {
+      if (axios.isCancel(err)) {
+        // ignore
+      } else {
+        // propegate
+        throw err
+      }
+    } finally {
+      this.cancelTokenSource = null
     }
+  }
+  componentWillUnmount() {
+    this.cancelTokenSource && this.cancelTokenSource.cancel()
   }
 
   render() {

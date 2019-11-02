@@ -16,19 +16,31 @@ class CompetitorLoader extends Component {
   }
 
   async getData() {
-
+    this.cancelTokenSource = axios.CancelToken.source()
     this.setState({ loading: true })
 
     try {
 
-      const competitors = await axios.get('/api/competitor-data-import/')
+      const competitors = await axios.get('/api/competitor-data-import', {
+        cancelToken: this.cancelTokenSource.token
+      })
       console.log(competitors.data)
 
       this.setState({ competitorDataUpdated: Date.now(), loading: false })
 
-    } catch (e) {
-      console.error(e)
+    } catch (err) {
+      if (axios.isCancel(err)) {
+        // ignore
+      } else {
+        // propegate
+        throw err
+      }
+    } finally {
+      this.cancelTokenSource = null
     }
+  }
+  componentWillUnmount() {
+    this.cancelTokenSource && this.cancelTokenSource.cancel()
   }
 
   render() {
