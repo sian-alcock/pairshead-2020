@@ -48,7 +48,7 @@ class Crew(models.Model):
     did_not_start = models.BooleanField(default=False)
     did_not_finish = models.BooleanField(default=False)
 
-    event_band = models.CharField(max_length=20, null=True)
+    event_band = models.CharField(max_length=40, null=True)
     # published_time = models.IntegerField(default=0)
     # category_position_time = models.IntegerField(default=0)
 
