@@ -2,7 +2,7 @@
 
 ## Overview
 
-Launch on [Heroku]().
+Launch on [Heroku](https://pairshead-2020.herokuapp.com/).
 
 ![Screenshot](/readme-assets/results-index.png)
 
@@ -15,6 +15,7 @@ It has been solely developed by Sian Alcock.
 ### Installation
 * Clone or download the repo
 * yarn and pipenv install to install dependencies
+* start virtual environment using pipenv shell
 * yarn serve:backend to run backend
 * yarn serve:frontend to run front-end
 
@@ -29,7 +30,6 @@ The original project brief:
 * **Implement thoughtful user stories/wireframes** that are significant enough to help you know which features are core MVP and which you can cut
 * **Have a visually impressive design** to kick your portfolio up a notch and have something to wow future clients & employers. **ALLOW** time for this.
 * **Be deployed online** so it's publicly accessible.
-* **Have automated tests** for _at least_ one RESTful resource on the back-end. Improve your employability by demonstrating a good understanding of testing principals.
 
 ## Technologies Used
 
@@ -41,9 +41,9 @@ The original project brief:
 * Python
 * Django
 * Django REST Framework
-* PostgreSQL
+* SQLite, PostgreSQL
 * HashRouter, Route, Switch, Link  from React Router DOM
-* React Select
+* React Select, React Image
 * JSON Web Token
 * Axios
 * Python Dotenv
@@ -83,30 +83,42 @@ The landing page/Home page includes the following features:
 
 ![Screenshot](./readme-assets/Screenshot-landing.png)
 
-The data from British rowing API comes from three end points.  Each crew has an associated rowing club and competing in a specific event (eg senior scullers, junior pairs etc).  I use async / await to ensure that the club and event data was completed before calling the crew data.  The import takes around 8 seconds so I presented a spinner icon in the body of the button to help manage the user experience.  I'm really proud of this code which took me around a day to research and implement.  The code is run from a component called 'ImportCrewData'.  The async/await function is set out below:
+The data from British rowing API comes from three end points.  Each crew has an associated rowing club and competes in a specific event (eg senior scullers, junior pairs etc).  I use async / await to ensure that the club and event data GET request is completed before initiating the crew data GET request.  The import takes around 8 seconds so a spinner icon is presented in the body of the button to help manage the user experience.
+
+I have also implemented cancelToken to ensure the asynchronous GET requests are cancelled before the component unmounts.
+
+The code is run from a component called 'ImportCrewData'.
+
+The async/await and the componentWillUnmount functions are set out below:
 
 ```JavaScript
 async getData() {
+    this.cancelTokenSource = axios.CancelToken.source()
+    this.setState({ loading: true })
 
-  this.setState({ loading: true })
+    try {
 
-  try {
+      const crews = await axios.get('/api/crew-data-import', {
+        cancelToken: this.cancelTokenSource.token
+      })
+      console.log(crews.data)
 
-    const clubsPromise = axios.get('/api/club-data-import/')
-    const eventsPromise = axios.get('/api/event-data-import/')
-    const [clubs, events] = await Promise.all([clubsPromise, eventsPromise])
-    console.log(clubs.data, events.data)
+      this.setState({ crewDataUpdated: Date.now(), loading: false })
 
-    // wait for first two calls before running the crew import
-    const crews = await axios.get('/api/crew-data-import/')
-    console.log(crews.data)
-
-    this.setState({ crewDataUpdated: Date.now(), loading: false })
-
-  } catch (e) {
-    console.error(e)
+    } catch (err) {
+      if (axios.isCancel(err)) {
+        // ignore
+      } else {
+        // propegate
+        throw err
+      }
+    } finally {
+      this.cancelTokenSource = null
+    }
   }
-}
+  componentWillUnmount() {
+    this.cancelTokenSource && this.cancelTokenSource.cancel()
+  }
 ```
 
 I used a similar approach for the button to import the race time data from the .csv file.
