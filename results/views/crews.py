@@ -7,7 +7,7 @@ import requests
 from django.http import Http404, HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.pagination import PageNumberPagination
 
 
 from ..serializers import CrewSerializer, PopulatedCrewSerializer, WriteCrewSerializer, CrewExportSerializer
@@ -19,7 +19,7 @@ class CrewListView(APIView): # extend the APIView
 
     def get(self, request):
         crews = Crew.objects.filter(status__in=('Scratched', 'Accepted')) # get all the crews
-        paginator = LimitOffsetPagination()
+        paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(crews, request)
         serializer = PopulatedCrewSerializer(result_page, many=True, context={'request':request})
         return Response(serializer.data) # send the JSON to the client

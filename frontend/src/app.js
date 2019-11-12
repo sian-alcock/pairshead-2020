@@ -42,14 +42,14 @@ class App extends React.Component {
             <Route path="/crews" component={CrewIndex} />
             <Route path="/race-times/:id" component={RaceTimeEdit} />
             <Route path="/race-times" component={RaceTimeIndex} />
-            <Route path="/results" component={ResultIndex} />
+            <Route path="/summary" component={Home} />
             <Route path="/import" component={ImportData} />
             <Route path="/export" component={ExportData} />
             <Route path="/crew-draw-report" component={CrewDrawReport} />
             <Route path="/info" component={Info} />
             <Route path="/register" component={Register} />
             <Route path="/login" component={Login} />
-            <Route path="/" component={Home} />
+            <Route path="/" component={ResultIndex} />
           </Switch>
           <Footer />
         </HashRouter>

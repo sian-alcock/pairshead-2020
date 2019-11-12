@@ -9,7 +9,7 @@ class CrewTests(APITestCase):
     def setUp(self):
         club = Club.objects.create(name='My best rowing club', id=999999,)
         event = Event.objects.create(name='Event99', override_name='Event99', id=999999, info='info', type='type', gender='gender',)
-        band = Band.objects.create(name='Band99', id=999999,)
+        band = Band.objects.create(name='Band99', id=999999, event=999999)
         crew = Crew.objects.create(
             name='Alcock-Powell',
             composite_code='ALP',

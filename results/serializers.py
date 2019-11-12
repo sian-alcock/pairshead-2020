@@ -47,7 +47,7 @@ class PopulatedCrewSerializer(serializers.ModelSerializer):
 
     club = ClubSerializer()
     event = EventSerializer()
-    band = PopulatedBandSerializer()
+    band = BandSerializer()
     competitors = CompetitorSerializer(many=True)
     times = RaceTimesSerializer(many=True)
 
