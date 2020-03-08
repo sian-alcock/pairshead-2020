@@ -22,7 +22,7 @@ class CrewListView(APIView): # extend the APIView
         paginator = PageNumberPagination()
         result_page = paginator.paginate_queryset(crews, request)
         serializer = PopulatedCrewSerializer(result_page, many=True, context={'request':request})
-        return Response(serializer.data) # send the JSON to the client
+        return paginator.get_paginated_response(serializer.data) # send the JSON to the client
 
     def post(self, request):
         serializer = PopulatedCrewSerializer(data=request.data)

@@ -11,7 +11,7 @@ class ResultIndex extends React.Component {
     super()
     this.state= {
       crews: [],
-      pageSize: 20,
+      pageSize: 25,
       pageIndex: 0,
       searchTerm: sessionStorage.getItem('resultIndexSearch') || '',
       crewsInCategory: [],
@@ -33,8 +33,8 @@ class ResultIndex extends React.Component {
   }
 
   componentDidMount() {
-    axios.get('/api/crews/')
-      .then(res => this.setState({ crews: res.data, filteredByValidRaceTime: res.data.filter(crew => crew.status === 'Accepted' && crew.published_time > 0) },
+    axios.get('/api/crews')
+      .then(res => this.setState({ totalCrews: res.data['count'], crews: res.data['results'], filteredByValidRaceTime: res.data['results'].filter(crew => crew.status === 'Accepted' && crew.published_time > 0) },
         () => this.combineFiltersAndSort(this.state.crews))
       )
   }
@@ -44,7 +44,12 @@ class ResultIndex extends React.Component {
       pageIndex > totalPages ||
     pageIndex < 0
     ) return null
-    this.setState({ pageIndex })
+    // this.setState({ pageIndex })
+    console.log(pageIndex)
+    axios.get(`/api/crews?page=${pageIndex + 1}`)
+      .then(res => this.setState({ pageIndex, totalCrews: res.data['count'], crews: res.data['results'], filteredByValidRaceTime: res.data['results'].filter(crew => crew.status === 'Accepted' && crew.published_time > 0) },
+        () => this.combineFiltersAndSort(this.state.crews))
+      )
   }
 
   getOverallRank(crew, crews) {
@@ -169,13 +174,14 @@ class ResultIndex extends React.Component {
     }
 
 
-    return this.setState({ crewsToDisplay: sortedCrews, pageIndex: 0 })
+    return this.setState({ crewsToDisplay: sortedCrews })
 
   }
 
   render() {
-    const totalPages = Math.floor((this.state.crewsToDisplay.length - 1) / this.state.pageSize)
-    const pagedCrews = this.state.crewsToDisplay.slice(this.state.pageIndex * this.state.pageSize, (this.state.pageIndex + 1) * this.state.pageSize)
+    console.log(this.state.crews)
+    const totalPages = Math.floor((this.state.totalCrews - 1) / 25)
+    // const pagedCrews = this.state.crewsToDisplay.slice(this.state.pageIndex * 100, (this.state.pageIndex + 1) * 100)
     const pagingOptions = [{label: '20 crews', value: '20'}, {label: '50 crews', value: '50'}, {label: '100 crews', value: '100'}, {label: 'All crews', value: '500'}]
     const genderOptions = [{label: 'All', value: 'all'}, {label: 'Open', value: 'Open'}, {label: 'Female', value: 'Female'}, {label: 'Mixed', value: 'Mixed'}]
 
@@ -263,7 +269,7 @@ class ResultIndex extends React.Component {
               changePage={this.changePage}
             />
           </div>
-          <div className="list-totals no-print"><small>{this.state.crewsToDisplay.length} of {this.state.filteredByValidRaceTime.length} results</small></div>
+          <div className="list-totals no-print"><small>{this.state.crewsToDisplay.length} of {this.state.totalCrews} results</small></div>
           <table className="table">
             <thead>
               <tr>
@@ -296,7 +302,7 @@ class ResultIndex extends React.Component {
               </tr>
             </tfoot>
             <tbody>
-              {pagedCrews.map((crew) =>
+              {this.state.crewsToDisplay.map((crew) =>
                 <tr key={crew.id}>
                   <td>{!this.state.gender || this.state.gender === 'all' ? this.getOverallRank(crew, this.state.filteredByValidRaceTime) : this.getOverallRank(crew, this.state.positionFilteredByGender)}</td>
                   <td>{crew.bib_number}</td>

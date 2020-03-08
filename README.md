@@ -2,7 +2,10 @@
 
 ## Overview
 
-Launch on [Heroku](https://pairshead-2020.herokuapp.com/).
+Launch on [Heroku](https://pairshead-2020.herokuapp.com/).  Log on using the following credentials:
+
+Email: pairshead@lawena.org
+Password: rowing-demon
 
 ![Screenshot](/readme-assets/results-index.png)
 
@@ -70,18 +73,20 @@ Getting the WebScorer data was more difficult.  WebScorer does have an API but i
 
 The above two tasks were very challenging and took me 3 days which was longer than I had hoped.  I took the decision that I would not build the automated tests set out in the brief but instead to start building the front end.
 
-There are many features still to build in order for the application to meet all the requirements needed to make it usable for the actual race results.  As a result, I have cloned the repository and am continuing building the application in a separate repository on GitHub called 'Pairshead-results' (https://github.com/sian-alcock/pairshead-results)
+There are many features still to build in order for the application to meet all the requirements needed to make it usable for the actual race results.  I have cloned the original repository twice now.  The latest repo is called pairshead-2020 (https://github.com/sian-alcock/pairshead-2020)
 
 ## Functionality
 
-### Landing page
-The landing page/Home page includes the following features:
+### Summary page
+The Summary page includes the following features:
 * Summary metrics eg number of crews without times
-* Button to refresh Crew data from British rowing
-* Button to refresh timing data from WebScorer .csv file
+* Button to access the Import data page where admin users can refresh crew data from British Rowing website and import timing data from the WebScorer application
 * Buttons to access the start and finish sequences
 
 ![Screenshot](./readme-assets/Screenshot-landing.png)
+
+
+### Import data page
 
 The data from British rowing API comes from three end points.  Each crew has an associated rowing club and competes in a specific event (eg senior scullers, junior pairs etc).  I use async / await to ensure that the club and event data GET request is completed before initiating the crew data GET request.  The import takes around 8 seconds so a spinner icon is presented in the body of the button to help manage the user experience.
 
