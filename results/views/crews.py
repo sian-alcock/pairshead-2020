@@ -20,6 +20,7 @@ class CrewListView(APIView): # extend the APIView
     def get(self, request):
         crews = Crew.objects.filter(status__in=('Scratched', 'Accepted')) # get all the crews
         paginator = PageNumberPagination()
+        paginator.page_size_query_param = 'page_size' or 10
         result_page = paginator.paginate_queryset(crews, request)
         serializer = PopulatedCrewSerializer(result_page, many=True, context={'request':request})
         return paginator.get_paginated_response(serializer.data) # send the JSON to the client

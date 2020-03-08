@@ -29,11 +29,16 @@ class ResultIndex extends React.Component {
     this.handleSearchKeyUp = this.handleSearchKeyUp.bind(this)
     this.handleFirstAndSecondCrews = this.handleFirstAndSecondCrews.bind(this)
     this.handleCloseCrews = this.handleCloseCrews.bind(this)
+    this.refreshData = this.refreshData.bind(this)
 
   }
 
   componentDidMount() {
-    axios.get('/api/crews')
+    axios.get('/api/crews', {
+      params: {
+        page_size: 25
+      }
+    })
       .then(res => this.setState({ totalCrews: res.data['count'], crews: res.data['results'], filteredByValidRaceTime: res.data['results'].filter(crew => crew.status === 'Accepted' && crew.published_time > 0) },
         () => this.combineFiltersAndSort(this.state.crews))
       )
@@ -44,10 +49,26 @@ class ResultIndex extends React.Component {
       pageIndex > totalPages ||
     pageIndex < 0
     ) return null
-    // this.setState({ pageIndex })
-    console.log(pageIndex)
-    axios.get(`/api/crews?page=${pageIndex + 1}`)
-      .then(res => this.setState({ pageIndex, totalCrews: res.data['count'], crews: res.data['results'], filteredByValidRaceTime: res.data['results'].filter(crew => crew.status === 'Accepted' && crew.published_time > 0) },
+    this.setState({ pageIndex })
+    this.refreshData()
+    // console.log(pageIndex)
+    // axios.get(`/api/crews?page=${pageIndex + 1}`, {
+    //   params: {
+    //     page_size: this.state.pageSize
+    //   }
+    // })
+    //   .then(res => this.setState({ pageIndex, totalCrews: res.data['count'], crews: res.data['results'], filteredByValidRaceTime: res.data['results'].filter(crew => crew.status === 'Accepted' && crew.published_time > 0) },
+    //     () => this.combineFiltersAndSort(this.state.crews))
+    //   )
+  }
+
+  refreshData() {
+    axios.get(`/api/crews?page=${this.state.pageIndex + 1}`, {
+      params: {
+        page_size: this.state.pageSize
+      }
+    })
+      .then(res => this.setState({totalCrews: res.data['count'], crews: res.data['results'], filteredByValidRaceTime: res.data['results'].filter(crew => crew.status === 'Accepted' && crew.published_time > 0) },
         () => this.combineFiltersAndSort(this.state.crews))
       )
   }
@@ -106,8 +127,8 @@ class ResultIndex extends React.Component {
 
   handlePagingChange(selectedOption){
     this.setState({
-      pageSize: selectedOption.value
-    }, () => this.combineFiltersAndSort(this.state.crews))
+      pageSize: selectedOption.value}, () => this.refreshData())
+    
   }
 
   handleGenderChange(selectedOption){
@@ -180,7 +201,7 @@ class ResultIndex extends React.Component {
 
   render() {
     console.log(this.state.crews)
-    const totalPages = Math.floor((this.state.totalCrews - 1) / 25)
+    const totalPages = Math.floor((this.state.totalCrews - 1) / this.state.pageSize)
     // const pagedCrews = this.state.crewsToDisplay.slice(this.state.pageIndex * 100, (this.state.pageIndex + 1) * 100)
     const pagingOptions = [{label: '20 crews', value: '20'}, {label: '50 crews', value: '50'}, {label: '100 crews', value: '100'}, {label: 'All crews', value: '500'}]
     const genderOptions = [{label: 'All', value: 'all'}, {label: 'Open', value: 'Open'}, {label: 'Female', value: 'Female'}, {label: 'Mixed', value: 'Mixed'}]
