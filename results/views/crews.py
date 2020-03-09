@@ -17,6 +17,16 @@ from ..models import Crew, RaceTime
 
 class CrewListView(APIView): # extend the APIView
 
+    # def get_queryset(self):
+    #     """
+    #     Filter by gender
+    #     """
+    #     queryset = Crew.objects.all()
+    #     gender = self.request.query_params.get('gender', None)
+    #     if gender is not None:
+    #         queryset = queryset.filter(gender=gender)
+    #     return queryset
+    
     def get(self, request):
         crews = Crew.objects.filter(status__in=('Scratched', 'Accepted')) # get all the crews
         paginator = PageNumberPagination()

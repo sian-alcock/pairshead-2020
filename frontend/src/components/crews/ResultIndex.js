@@ -36,7 +36,8 @@ class ResultIndex extends React.Component {
   componentDidMount() {
     axios.get('/api/crews', {
       params: {
-        page_size: 25
+        page_size: 25,
+        gender: 'open'
       }
     })
       .then(res => this.setState({ totalCrews: res.data['count'], crews: res.data['results'], filteredByValidRaceTime: res.data['results'].filter(crew => crew.status === 'Accepted' && crew.published_time > 0) },
