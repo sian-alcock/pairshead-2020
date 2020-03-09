@@ -40,7 +40,7 @@ class ResultIndex extends React.Component {
         gender: 'open'
       }
     })
-      .then(res => this.setState({ totalCrews: res.data['count'], crews: res.data['results'], filteredByValidRaceTime: res.data['results'].filter(crew => crew.status === 'Accepted' && crew.published_time > 0) },
+      .then(res => this.setState({ totalCrews: res.data['count'], crews: res.data['results'], categories: this.getCategories(res.data['results']), filteredByValidRaceTime: res.data['results'].filter(crew => crew.status === 'Accepted' && crew.published_time > 0) },
         () => this.combineFiltersAndSort(this.state.crews))
       )
   }
@@ -51,20 +51,11 @@ class ResultIndex extends React.Component {
     pageIndex < 0
     ) return null
     this.setState({ pageIndex })
-    this.refreshData()
-    // console.log(pageIndex)
-    // axios.get(`/api/crews?page=${pageIndex + 1}`, {
-    //   params: {
-    //     page_size: this.state.pageSize
-    //   }
-    // })
-    //   .then(res => this.setState({ pageIndex, totalCrews: res.data['count'], crews: res.data['results'], filteredByValidRaceTime: res.data['results'].filter(crew => crew.status === 'Accepted' && crew.published_time > 0) },
-    //     () => this.combineFiltersAndSort(this.state.crews))
-    //   )
+    this.refreshData(`page=${this.state.pageIndex + 1}`)
   }
 
-  refreshData() {
-    axios.get(`/api/crews?page=${this.state.pageIndex + 1}`, {
+  refreshData(queryString=null) {
+    axios.get(`/api/crews?${queryString}`, {
       params: {
         page_size: this.state.pageSize
       }
@@ -103,9 +94,9 @@ class ResultIndex extends React.Component {
     return flagForReview
   }
 
-  getCategories(){
+  getCategories(data){
     // Populate the category (event_band) pull down with all event_bands
-    let eventBands = this.state.crews.map(crew => crew.event_band)
+    let eventBands = data.map(crew => crew.event_band)
     eventBands = Array.from(new Set(eventBands)).sort()
     const options = eventBands.map(option => {
       return {label: option, value: option}
@@ -117,13 +108,14 @@ class ResultIndex extends React.Component {
     sessionStorage.setItem('resultIndexSearch', e.target.value)
     this.setState({
       searchTerm: e.target.value
-    }, () => this.combineFiltersAndSort(this.state.crews))
+    }, () => this.refreshData(`search=${this.state.searchTerm}`)
+    )
   }
 
   handleCategoryChange(selectedOption){
     this.setState({
       category: selectedOption.value
-    }, () => this.combineFiltersAndSort(this.state.crews))
+    }, () => this.refreshData(`event_band=${this.state.category}`))
   }
 
   handlePagingChange(selectedOption){
@@ -230,7 +222,7 @@ class ResultIndex extends React.Component {
                   <Select
                     id="category"
                     onChange={this.handleCategoryChange}
-                    options={this.getCategories()}
+                    options={this.state.categories}
                     placeholder='Category'
                   />
                 </div>

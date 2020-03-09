@@ -8,40 +8,55 @@ from django.http import Http404, HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import filters, generics
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 from ..serializers import CrewSerializer, PopulatedCrewSerializer, WriteCrewSerializer, CrewExportSerializer
 
 from ..models import Crew, RaceTime
 
+class CrewListView(generics.ListCreateAPIView):
+    queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted'))
+    serializer_class = PopulatedCrewSerializer
+    pagination_class = PageNumberPagination
+    PageNumberPagination.page_size_query_param = 'page_size' or 10
+    # filter_backends = (filters.SearchFilter,)
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ['name', 'id',]
+    filterset_fields = ['status', 'event_band',]
 
-class CrewListView(APIView): # extend the APIView
 
-    # def get_queryset(self):
-    #     """
-    #     Filter by gender
-    #     """
-    #     queryset = Crew.objects.all()
-    #     gender = self.request.query_params.get('gender', None)
-    #     if gender is not None:
-    #         queryset = queryset.filter(gender=gender)
-    #     return queryset
+# class CrewListView(APIView): # extend the APIView
+#     filter_backends = (filters.SearchFilter,)
+#     search_fields = ['name', 'id',]
     
-    def get(self, request):
-        crews = Crew.objects.filter(status__in=('Scratched', 'Accepted')) # get all the crews
-        paginator = PageNumberPagination()
-        paginator.page_size_query_param = 'page_size' or 10
-        result_page = paginator.paginate_queryset(crews, request)
-        serializer = PopulatedCrewSerializer(result_page, many=True, context={'request':request})
-        return paginator.get_paginated_response(serializer.data) # send the JSON to the client
+#     # def get_queryset(self):
+#     #     """
+#     #     Filter by gender
+#     #     """
+#     #     queryset = Crew.objects.all()
+#     #     gender = self.request.query_params.get('gender', None)
+#     #     if gender is not None:
+#     #         queryset = queryset.filter(gender=gender)
+#     #     return queryset
+    
+#     def get(self, request):
+#         crews = Crew.objects.filter(status__in=('Scratched', 'Accepted')) # get all the crews
 
-    def post(self, request):
-        serializer = PopulatedCrewSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
+#         paginator = PageNumberPagination()
+#         paginator.page_size_query_param = 'page_size' or 10
+#         result_page = paginator.paginate_queryset(crews, request)
+#         serializer = PopulatedCrewSerializer(result_page, many=True, context={'request':request})
+#         return paginator.get_paginated_response(serializer.data) # send the JSON to the client
 
-        return Response(serializer.errors, status=422)
+#     def post(self, request):
+#         serializer = PopulatedCrewSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=201)
+
+#         return Response(serializer.errors, status=422)
 
 
 class CrewDetailView(APIView): # extend the APIView
