@@ -8,7 +8,7 @@ from rest_framework.pagination import LimitOffsetPagination
 
 from ..serializers import WriteRaceTimesSerializer, RaceTimesSerializer, PopulatedRaceTimesSerializer
 
-from ..models import RaceTime
+from ..models import RaceTime, Crew
 
 class RaceTimeListView(APIView): # extend the APIView
 
@@ -90,4 +90,10 @@ class CrewRaceTimesImport(APIView):
             race_times = RaceTime.objects.all()
 
             serializer = RaceTimesSerializer(race_times, many=True)
+
+            for crew in Crew.objects.all():
+                crew.save()
+
             return Response(serializer.data)
+
+        

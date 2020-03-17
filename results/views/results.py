@@ -16,9 +16,7 @@ from ..serializers import CrewSerializer, PopulatedCrewSerializer, WriteCrewSeri
 
 from ..models import Crew, RaceTime
 
-class ResultsListView(generics.ListCreateAPIView):
-    # queryset = Crew.objects.filter(status__in=('Accepted'))
-    
+class ResultsListView(generics.ListCreateAPIView):    
     serializer_class = PopulatedCrewSerializer
     pagination_class = PageNumberPagination
     PageNumberPagination.page_size_query_param = 'page_size' or 10
@@ -31,7 +29,9 @@ class ResultsListView(generics.ListCreateAPIView):
         Filter by gender
         """
 
-        queryset = Crew.objects.filter(status__exact=('Accepted'),)
+        queryset = Crew.objects.filter(status__exact='Accepted',)
+        # queryset = Crew.objects.filter(status__exact='Accepted', published_time__gt=0,)
+
         gender = self.request.query_params.get('gender', None)
         if gender is not None:
             queryset = queryset.filter(event__gender=gender)
