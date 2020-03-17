@@ -21,25 +21,25 @@ class CrewListView(generics.ListCreateAPIView):
     serializer_class = PopulatedCrewSerializer
     pagination_class = PageNumberPagination
     PageNumberPagination.page_size_query_param = 'page_size' or 10
-    # filter_backends = (filters.SearchFilter,)
     filter_backends = [filters.SearchFilter, DjangoFilterBackend]
-    search_fields = ['name', 'id',]
+    search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number',]
     filterset_fields = ['status', 'event_band',]
 
+    def get_queryset(self):
+        """
+        Filter by gender
+        """
+        queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted'))
+        gender = self.request.query_params.get('gender', None)
+        if gender is not None:
+            queryset = queryset.filter(event__gender=gender)
+        return queryset
 
 # class CrewListView(APIView): # extend the APIView
 #     filter_backends = (filters.SearchFilter,)
 #     search_fields = ['name', 'id',]
-    
-#     # def get_queryset(self):
-#     #     """
-#     #     Filter by gender
-#     #     """
-#     #     queryset = Crew.objects.all()
-#     #     gender = self.request.query_params.get('gender', None)
-#     #     if gender is not None:
-#     #         queryset = queryset.filter(gender=gender)
-#     #     return queryset
+  
+
     
 #     def get(self, request):
 #         crews = Crew.objects.filter(status__in=('Scratched', 'Accepted')) # get all the crews

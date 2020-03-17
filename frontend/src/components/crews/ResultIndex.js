@@ -11,7 +11,7 @@ class ResultIndex extends React.Component {
     super()
     this.state= {
       crews: [],
-      pageSize: 25,
+      pageSize: 20,
       pageIndex: 0,
       searchTerm: sessionStorage.getItem('resultIndexSearch') || '',
       crewsInCategory: [],
@@ -34,10 +34,9 @@ class ResultIndex extends React.Component {
   }
 
   componentDidMount() {
-    axios.get('/api/crews', {
+    axios.get('/api/results', {
       params: {
-        page_size: 25,
-        gender: 'open'
+        page_size: 20
       }
     })
       .then(res => this.setState({ totalCrews: res.data['count'], crews: res.data['results'], categories: this.getCategories(res.data['results']), filteredByValidRaceTime: res.data['results'].filter(crew => crew.status === 'Accepted' && crew.published_time > 0) },
@@ -55,12 +54,12 @@ class ResultIndex extends React.Component {
   }
 
   refreshData(queryString=null) {
-    axios.get(`/api/crews?${queryString}`, {
+    axios.get(`/api/results?${queryString}`, {
       params: {
         page_size: this.state.pageSize
       }
     })
-      .then(res => this.setState({totalCrews: res.data['count'], crews: res.data['results'], filteredByValidRaceTime: res.data['results'].filter(crew => crew.status === 'Accepted' && crew.published_time > 0) },
+      .then(res => this.setState({ totalCrews: res.data['count'], crews: res.data['results'], filteredByValidRaceTime: res.data['results'].filter(crew => crew.status === 'Accepted' && crew.published_time > 0) },
         () => this.combineFiltersAndSort(this.state.crews))
       )
   }
@@ -101,7 +100,7 @@ class ResultIndex extends React.Component {
     const options = eventBands.map(option => {
       return {label: option, value: option}
     })
-    return [{label: '', value: ''}, ...options]
+    return [{label: 'All cats', value: ''}, ...options]
   }
 
   handleSearchKeyUp(e){
@@ -113,9 +112,15 @@ class ResultIndex extends React.Component {
   }
 
   handleCategoryChange(selectedOption){
-    this.setState({
-      category: selectedOption.value
-    }, () => this.refreshData(`event_band=${this.state.category}`))
+    if(!selectedOption.value) {
+      this.setState({
+        category: selectedOption.value
+      }, () => this.refreshData())
+    } else {
+      this.setState({
+        category: selectedOption.value
+      }, () => this.refreshData(`event_band=${this.state.category}`))
+    }
   }
 
   handlePagingChange(selectedOption){
@@ -125,9 +130,17 @@ class ResultIndex extends React.Component {
   }
 
   handleGenderChange(selectedOption){
-    this.setState({
-      gender: selectedOption.value
-    }, () => this.combineFiltersAndSort(this.state.crews))
+
+    if(!selectedOption.value) {
+
+      this.setState({
+        gender: selectedOption.value
+      }, () => this.refreshData())
+    } else {
+      this.setState({
+        gender: selectedOption.value
+      }, () => this.refreshData(`gender=${this.state.gender}`))
+    }
   }
 
   handleFirstAndSecondCrews(e){
@@ -143,33 +156,11 @@ class ResultIndex extends React.Component {
   }
 
   combineFiltersAndSort(filteredCrews) {
-    let filteredBySearchText
-    let filteredByCategory
+    // let filteredBySearchText
+    // let filteredByCategory
     let filteredByCloseFirstAndSecondCrews
-    let filteredByGender
+    // let filteredByGender
     let sortedCrews
-
-    // Create filter based on Regular expression of the search term
-    const re= new RegExp(this.state.searchTerm, 'i')
-
-    if(!this.state.searchTerm) {
-      filteredBySearchText = this.state.crews
-    } else {
-      filteredBySearchText = this.state.crews.filter(crew => re.test(crew.name) || re.test(crew.club) || re.test(crew.id) || re.test(crew.bib_number) || re.test(crew.competitor_names) || re.test(!crew.event_band ? '' : crew.event_band))
-    }
-
-    if(this.state.category) {
-      filteredByCategory = this.state.crews.filter(crew => crew.event_band === this.state.category)
-    } else {
-      filteredByCategory = this.state.crews
-    }
-
-    if(this.state.gender === 'all' || !this.state.gender) {
-      filteredByGender = this.state.crews
-    } else {
-      filteredByGender = this.state.crews.filter(crew => crew.event.gender === this.state.gender)
-    }
-    this.setState({positionFilteredByGender: _.intersection(this.state.filteredByValidRaceTime, filteredByGender)})
 
     if(this.state.firstAndSecondCrewsBoolean) {
       filteredByCloseFirstAndSecondCrews = this.state.crews.filter(crew => this.getCategoryRank(crew, this.getCrewsInCategory(crew.event_band, this.state.crewsToDisplay)) === 1 || this.getCategoryRank(crew, this.getCrewsInCategory(crew.event_band, this.state.crewsToDisplay)) === 2)
@@ -178,7 +169,7 @@ class ResultIndex extends React.Component {
     }
 
     _.indexOf = _.findIndex
-    filteredCrews = _.intersection(this.state.filteredByValidRaceTime,  filteredBySearchText, filteredByCategory, filteredByCloseFirstAndSecondCrews, filteredByGender)
+    filteredCrews = _.intersection(this.state.filteredByValidRaceTime, filteredByCloseFirstAndSecondCrews)
 
     // As a rule, sort by shortest race_time but when showing 1st and second crews, sort by event
     if(this.state.firstAndSecondCrewsBoolean) {
@@ -197,7 +188,7 @@ class ResultIndex extends React.Component {
     const totalPages = Math.floor((this.state.totalCrews - 1) / this.state.pageSize)
     // const pagedCrews = this.state.crewsToDisplay.slice(this.state.pageIndex * 100, (this.state.pageIndex + 1) * 100)
     const pagingOptions = [{label: '20 crews', value: '20'}, {label: '50 crews', value: '50'}, {label: '100 crews', value: '100'}, {label: 'All crews', value: '500'}]
-    const genderOptions = [{label: 'All', value: 'all'}, {label: 'Open', value: 'Open'}, {label: 'Female', value: 'Female'}, {label: 'Mixed', value: 'Mixed'}]
+    const genderOptions = [{label: 'All', value: ''}, {label: 'Open', value: 'Open'}, {label: 'Female', value: 'Female'}, {label: 'Mixed', value: 'Mixed'}]
 
     return (
 

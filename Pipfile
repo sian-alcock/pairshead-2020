@@ -16,6 +16,7 @@ requests = "*"
 gunicorn = "*"
 pyjwt = "*"
 django-cors-headers = "*"
+django-computed-property = "*"
 
 [requires]
 python_version = "3.7"

@@ -1,0 +1,38 @@
+from __future__ import absolute_import
+import csv
+import os
+import requests
+# if this is where you store your django-rest-framework settings
+# from django.conf import settings
+from django.http import Http404, HttpResponse
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
+from rest_framework import filters, generics
+from django_filters.rest_framework import DjangoFilterBackend
+
+
+from ..serializers import CrewSerializer, PopulatedCrewSerializer, WriteCrewSerializer, CrewExportSerializer
+
+from ..models import Crew, RaceTime
+
+class ResultsListView(generics.ListCreateAPIView):
+    # queryset = Crew.objects.filter(status__in=('Accepted'))
+    
+    serializer_class = PopulatedCrewSerializer
+    pagination_class = PageNumberPagination
+    PageNumberPagination.page_size_query_param = 'page_size' or 10
+    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
+    search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number',]
+    filterset_fields = ['status', 'event_band', 'raw_time',]
+
+    def get_queryset(self):
+        """
+        Filter by gender
+        """
+
+        queryset = Crew.objects.filter(status__exact=('Accepted'),)
+        gender = self.request.query_params.get('gender', None)
+        if gender is not None:
+            queryset = queryset.filter(event__gender=gender)
+        return queryset

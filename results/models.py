@@ -1,4 +1,5 @@
 from django.db import models
+import computed_property
 
 class Club(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -49,11 +50,38 @@ class Crew(models.Model):
     did_not_finish = models.BooleanField(default=False)
 
     event_band = models.CharField(max_length=40, null=True)
-    # published_time = models.IntegerField(default=0)
-    # category_position_time = models.IntegerField(default=0)
+    raw_time = computed_property.ComputedIntegerField(compute_from='calc_raw_time', blank=True, null=True)
+    race_time = computed_property.ComputedIntegerField(compute_from='calc_race_time', blank=True, null=True)
+    published_time = computed_property.ComputedIntegerField(compute_from='calc_published_time', blank=True, null=True)
+
 
     def __str__(self):
         return self.name
+
+    @property
+    def calc_raw_time(self):
+        if len(self.times.filter(tap='Start')) > 1 or len(self.times.filter(tap='Finish')) > 1:
+            return 0
+
+        if self.did_not_start or self.did_not_finish:
+            return 0
+
+        start = self.times.get(tap='Start').time_tap
+        end = self.times.get(tap='Finish').time_tap
+
+        return end - start
+
+    @property
+    def calc_race_time(self):
+        # The race time can include the penalty as by default it is 0
+        return self.raw_time + self.penalty*1000
+
+    @property
+    def calc_published_time(self):
+        # If overall time has been overriden - use the override time + penalty otherwise use race_time
+        if self.manual_override_time > 0:
+            return self.manual_override_time + self.penalty*1000
+        return self.race_time
 
     def save(self, *args, **kwargs):
         self.event_band = str(self.event.override_name) + ' ' + str(self.band.name) if self.band else self.event.override_name
@@ -85,29 +113,29 @@ class Crew(models.Model):
     #
     #     return str(self.event.override_name) + ' ' + str(self.band.name)
 
-    @property
-    def raw_time(self):
-        if len(self.times.filter(tap='Start')) > 1 or len(self.times.filter(tap='Finish')) > 1:
-            return 0
+    # @property
+    # def raw_time(self):
+    #     if len(self.times.filter(tap='Start')) > 1 or len(self.times.filter(tap='Finish')) > 1:
+    #         return 0
 
-        if self.did_not_start or self.did_not_finish:
-            return 0
+    #     if self.did_not_start or self.did_not_finish:
+    #         return 0
 
-        start = self.times.get(tap='Start').time_tap
-        end = self.times.get(tap='Finish').time_tap
-        return end - start
+    #     start = self.times.get(tap='Start').time_tap
+    #     end = self.times.get(tap='Finish').time_tap
+    #     return end - start
 
-    @property
-    def race_time(self):
-        # The race time can include the penalty as by default it is 0
-        return self.raw_time + self.penalty*1000
+    # @property
+    # def race_time(self):
+    #     # The race time can include the penalty as by default it is 0
+    #     return self.raw_time + self.penalty*1000
 
-    @property
-    def published_time(self):
-        # If overall time has been overriden - use the override time + penalty otherwise use race_time
-        if self.manual_override_time > 0:
-            return self.manual_override_time + self.penalty*1000
-        return self.race_time
+    # @property
+    # def published_time(self):
+    #     # If overall time has been overriden - use the override time + penalty otherwise use race_time
+    #     if self.manual_override_time > 0:
+    #         return self.manual_override_time + self.penalty*1000
+    #     return self.race_time
 
     @property
     def category_position_time(self):
