@@ -1,29 +1,29 @@
 import React from 'react'
 
-const Paginator = ({ pageIndex, totalPages, changePage }) => {
+const Paginator = ({ pageNumber, totalPages, changePage }) => {
   return (
     <div>
       <nav className="pagination is-centered is-small" role="navigation" aria-label="pagination">
         <a
           className="pagination-previous"
-          onClick={() => changePage(pageIndex-1, totalPages)}
+          onClick={() => changePage(pageNumber-1, totalPages)}
         >Previous</a>
         <a
           className="pagination-next"
-          onClick={() => changePage(pageIndex+1, totalPages)}
+          onClick={() => changePage(pageNumber+1, totalPages)}
         >Next</a>
         <ul className="pagination-list">
           <li><a
             className="pagination-link" aria-label="Goto page 1"
-            onClick={() => changePage(0, totalPages)}
+            onClick={() => changePage(1, totalPages)}
           >1</a></li>
           <li><span className="pagination-ellipsis">&hellip;</span></li>
-          <li><a className="pagination-link is-current" aria-label={`Goto page ${pageIndex+1}`} aria-current="page">{pageIndex+1}</a></li>
+          <li><a className="pagination-link is-current" aria-label={`Goto page ${pageNumber}`} aria-current="page">{pageNumber}</a></li>
           <li><span className="pagination-ellipsis">&hellip;</span></li>
           <li><a
-            className="pagination-link" aria-label={`Goto page ${totalPages+1}`}
+            className="pagination-link" aria-label={`Goto page ${totalPages}`}
             onClick={() => changePage(totalPages, totalPages)}
-          >{totalPages ? totalPages+1 : '  '}</a></li>
+          >{totalPages ? totalPages : '  '}</a></li>
         </ul>
       </nav>
       <hr />

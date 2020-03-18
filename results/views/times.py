@@ -92,6 +92,11 @@ class CrewRaceTimesImport(APIView):
             serializer = RaceTimesSerializer(race_times, many=True)
 
             for crew in Crew.objects.all():
+                print(crew.published_time)
+                print(crew.raw_time)
+                print(crew.race_time)
+                print(crew.overall_rank)
+                print(crew.gender_rank)
                 crew.save()
 
             return Response(serializer.data)

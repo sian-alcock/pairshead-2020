@@ -53,6 +53,9 @@ class Crew(models.Model):
     raw_time = computed_property.ComputedIntegerField(compute_from='calc_raw_time', blank=True, null=True)
     race_time = computed_property.ComputedIntegerField(compute_from='calc_race_time', blank=True, null=True)
     published_time = computed_property.ComputedIntegerField(compute_from='calc_published_time', blank=True, null=True)
+    overall_rank = computed_property.ComputedIntegerField(compute_from='calc_overall_rank', blank=True, null=True)
+    gender_rank = computed_property.ComputedIntegerField(compute_from='calc_gender_rank', blank=True, null=True)
+
 
     def __str__(self):
         return self.name
@@ -90,6 +93,14 @@ class Crew(models.Model):
             return self.manual_override_time + self.penalty*1000
         return self.race_time
 
+    def calc_overall_rank(self):
+        crews = Crew.objects.all().filter(status__exact='Accepted', published_time__gt=0, published_time__lt=self.published_time)
+        return len(crews) + 1
+
+    def calc_gender_rank(self):
+        crews = Crew.objects.all().filter(status__exact='Accepted', event__gender__exact=self.event.gender, published_time__gt=0, published_time__lt=self.published_time)
+        return len(crews) + 1
+
 
     @property
     def competitor_names(self):
@@ -99,13 +110,6 @@ class Crew(models.Model):
         competitor_list = list(map(lambda competitor: competitor.last_name, self.competitors.all()))
         value = ' / '.join(competitor_list)
         return value
-
-    # @property
-    # def overall_rank(self):
-    #     crews = Crew.objects.filter(status__exact='Accepted').filter(published_time__gt=0).filter(published_time__lt=self.published_time)
-    #     published_times = list(map(lambda crew: crew.published_time, crews)).sort()
-    #     rank = published_times.index(self.published_time) + 1
-    #     return rank
 
     @property
     def category_position_time(self):
