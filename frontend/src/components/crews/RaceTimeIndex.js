@@ -36,12 +36,15 @@ class RaceTimeIndex extends React.Component {
       params: {
         page_size: 20,
         page: 1,
-        tap: 'Start'
+        tap: 'Start',
+        noCrew: false
       }
     })
       .then(res => this.setState({
         totalTimes: res.data['count'],
-        raceTimes: res.data['results']
+        raceTimes: res.data['results'],
+        startTimesWithNoCrew: res.data['start_times_no_crew'],
+        finishTimesWithNoCrew: res.data['finish_times_no_crew']
       })
       )
   }
@@ -59,12 +62,15 @@ class RaceTimeIndex extends React.Component {
       params: {
         page_size: this.state.pageSize,
         page: this.state.pageNumber,
-        tap: this.state.startTab ? 'Start' : 'Finish'
+        tap: this.state.startTab ? 'Start' : 'Finish',
+        noCrew: this.state.timesWithoutCrewBoolean
       }
     })
       .then(res => this.setState({ 
         totalTimes: res.data['count'],
-        raceTimes: res.data['results']
+        raceTimes: res.data['results'],
+        startTimesWithNoCrew: res.data['start_times_no_crew'],
+        finishTimesWithNoCrew: res.data['finish_times_no_crew']
       })
       )
   }
@@ -96,27 +102,32 @@ class RaceTimeIndex extends React.Component {
   handleSearchKeyUp(e){
     sessionStorage.setItem('raceTimeIndexSearch', e.target.value)
     this.setState({
-      searchTerm: e.target.value
+      searchTerm: e.target.value,
+      pageNumber: 1
     }, () => this.refreshData())
   }
 
   handleTimesWithoutCrew(e){
     this.setState({
-      timesWithoutCrewBoolean: e.target.checked
+      timesWithoutCrewBoolean: e.target.checked,
+      pageNumber: 1
     }, () => this.refreshData())
   }
 
   handleCrewsWithTooManyTimes(e){
     this.setState({
-      crewsWithTooManyTimesBoolean: e.target.checked
+      crewsWithTooManyTimesBoolean: e.target.checked,
+      pageNumber: 1
     }, () => this.refreshData())
   }
 
 
   handlePagingChange(selectedOption){
     this.setState({
-      pageSize: selectedOption.value
+      pageSize: selectedOption.value,
+      pageNumber: 1
     }, () => this.refreshData())
+    
   }
 
 
@@ -165,7 +176,7 @@ class RaceTimeIndex extends React.Component {
               <div className="field no-print">
                 <label className="checkbox" >
                   <input type="checkbox"  className="checkbox" value="timesWithoutCrew" onClick={this.handleTimesWithoutCrew} />
-                  ⚠️ Times with no crew (??)
+                  ⚠️ Times with no crew ({this.state.startTab ? this.state.startTimesWithNoCrew : this.state.finishTimesWithNoCrew})
                 </label>
               </div>
             </div>

@@ -34,3 +34,16 @@ class CrewPaginationWithAggregates(PageNumberPagination):
 #         # paginated_response.data['num_accepted_crews'] = self.num_accepted_crews
 #         paginated_response.data['requires_ranking_update'] = self.requires_ranking_update
 #         return paginated_response
+
+
+class RaceTimePaginationWithAggregates(PageNumberPagination):
+    def paginate_queryset(self, queryset, request, view=None):
+        self.start_times_no_crew = len(queryset.filter(tap__exact='Start', crew__isnull=True))
+        self.finish_times_no_crew = len(queryset.filter(tap__exact='Finish', crew__isnull=True))
+        return super(RaceTimePaginationWithAggregates, self).paginate_queryset(queryset, request, view)
+
+    def get_paginated_response(self, data):
+        paginated_response = super(RaceTimePaginationWithAggregates, self).get_paginated_response(data)
+        paginated_response.data['start_times_no_crew'] = self.start_times_no_crew
+        paginated_response.data['finish_times_no_crew'] = self.finish_times_no_crew
+        return paginated_response

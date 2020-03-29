@@ -15,10 +15,12 @@ from ..serializers import WriteRaceTimesSerializer, RaceTimesSerializer, Populat
 
 from ..models import RaceTime, Crew
 
+from ..pagination import RaceTimePaginationWithAggregates
+
 
 class RaceTimeListView(generics.ListCreateAPIView):
     serializer_class = PopulatedRaceTimesSerializer
-    pagination_class = PageNumberPagination
+    pagination_class = RaceTimePaginationWithAggregates
     PageNumberPagination.page_size_query_param = 'page_size' or 10
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
     ordering_fields = ['sequence']
@@ -29,6 +31,12 @@ class RaceTimeListView(generics.ListCreateAPIView):
         times = RaceTime.objects.all()
         tap = self.request.query_params.get('tap')
         queryset = times.filter(tap__exact=tap).order_by('sequence')
+
+        times_without_crew = self.request.query_params.get('noCrew')
+        if times_without_crew == 'true':
+            queryset = times.filter(tap__exact=tap, crew__isnull=True).order_by('sequence')
+            return queryset
+
         return queryset
 
 
