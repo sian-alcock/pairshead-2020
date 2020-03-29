@@ -41,7 +41,6 @@ class ResultIndex extends React.Component {
         gender: 'all',
         page: 1,
         categoryRank: 'all'
-        // categoryRankClose: 'all'
       }
     })
       .then(res => this.setState({
@@ -80,10 +79,13 @@ class ResultIndex extends React.Component {
   }
 
   getTopCrews(event, crews) {
+    // returns true if the 1st and 2nd crew in a category have a time within 2 seconds
+    const timeDifference = 2000
     const crewsInCategory = crews.filter(crew => crew.event_band === event && !crew.time_only)
     const raceTimes = crewsInCategory.map(crew => crew.category_position_time)
     const sorted = raceTimes.slice().sort((a,b) => a - b)
-    const flagForReview = Math.abs(sorted[0]-sorted[1]) <= 2000 ? true : false
+    const flagForReview = Math.abs(sorted[0]-sorted[1]) <= timeDifference ? true : false
+    console.log(flagForReview)
     return flagForReview
   }
 
@@ -152,40 +154,13 @@ class ResultIndex extends React.Component {
   handleCloseCrews(e){
     this.setState({
       closeFirstAndSecondCrewsBoolean: e.target.checked
-    }, () => this.refreshData())
+    })
   }
-
-  // combineFiltersAndSort(filteredCrews) {
-  //   // let filteredBySearchText
-  //   // let filteredByCategory
-  //   let filteredByCloseFirstAndSecondCrews
-  //   // let filteredByGender
-  //   let sortedCrews
-
-  //   if(this.state.firstAndSecondCrewsBoolean) {
-  //     filteredByCloseFirstAndSecondCrews = this.state.crews.filter(crew => this.getCategoryRank(crew, this.getCrewsInCategory(crew.event_band, this.state.crewsToDisplay)) === 1 || this.getCategoryRank(crew, this.getCrewsInCategory(crew.event_band, this.state.crewsToDisplay)) === 2)
-  //   } else {
-  //     filteredByCloseFirstAndSecondCrews = this.state.crews
-  //   }
-
-  //   _.indexOf = _.findIndex
-  //   filteredCrews = _.intersection(filteredByCloseFirstAndSecondCrews)
-
-  //   // As a rule, sort by shortest race_time but when showing 1st and second crews, sort by event
-  //   if(this.state.firstAndSecondCrewsBoolean) {
-  //     sortedCrews = _.orderBy(filteredCrews, ['event_band', 'published_time'], ['asc', 'asc'])
-  //   } else {
-  //     sortedCrews = _.orderBy(filteredCrews, ['published_time'], ['asc'])
-  //   }
-
-
-  //   return this.setState({ crewsToDisplay: sortedCrews })
-
-  // }
 
   render() {
     console.log(this.state.crews)
     console.log(this.state.updateRequired)
+    console.log(this.state.closeFirstAndSecondCrewsBoolean)
     const totalPages = Math.ceil((this.state.totalCrews) / this.state.pageSize)
     const pagingOptions = [{label: '20 crews', value: '20'}, {label: '50 crews', value: '50'}, {label: '100 crews', value: '100'}, {label: 'All crews', value: '500'}]
     const genderOptions = [{label: 'All', value: 'all'}, {label: 'Open', value: 'Open'}, {label: 'Female', value: 'Female'}, {label: 'Mixed', value: 'Mixed'}]
@@ -269,7 +244,7 @@ class ResultIndex extends React.Component {
             <div className="column">
               <div className="field">
                 <label className="checkbox" >
-                  <input type="checkbox"  className="checkbox" value="highlightCloseCrews" />
+                  <input type="checkbox"  className="checkbox" value="highlightCloseCrews" onChange={this.handleCloseCrews}/>
                   <small>Highlight 1st/2nd crews within 2s ❓</small>
                 </label>
               </div>

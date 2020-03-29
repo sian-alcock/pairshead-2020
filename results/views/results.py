@@ -48,8 +48,3 @@ class ResultsListView(generics.ListCreateAPIView):
             return queryset
 
         return queryset.order_by('overall_rank')
-
-        # close_first_and_second_crews = self.request.query_params.get('categoryRankClose')
-        # if close_first_and_second_crews != 'all':
-        #     queryset = queryset.filter(category_rank__in=(1, 2), ).order_by('category_rank',)
-        #     return queryset
