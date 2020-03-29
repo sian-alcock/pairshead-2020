@@ -91,14 +91,25 @@ class CrewRaceTimesImport(APIView):
 
             serializer = RaceTimesSerializer(race_times, many=True)
 
-            for crew in Crew.objects.all():
-                print(crew.published_time)
-                print(crew.raw_time)
-                print(crew.race_time)
-                print(crew.overall_rank)
-                print(crew.gender_rank)
-                crew.save()
+            self.calculate_computed_properties()
 
             return Response(serializer.data)
+    
+    def calculate_computed_properties(self):
 
+        for crew in Crew.objects.all():
+            print(crew.start_time)
+            print(crew.finish_time)
+            print(crew.invalid_time)
+            print(crew.published_time)
+            print(crew.raw_time)
+            print(crew.race_time)
+            print(crew.overall_rank)
+            print(crew.gender_rank)
+            print(crew.category_position_time)
+            print(crew.category_rank)
+            print(crew.start_sequence)
+            print(crew.finish_sequence)
+            print(crew.competitor_names)
+            crew.save()
         

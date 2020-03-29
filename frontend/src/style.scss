@@ -5,6 +5,7 @@ $bblBlue: #341499;
 $phLogoBlue: #00B4FC;
 $phLogoRiver: #1E099C;
 $bblLogoBlu: #4169e1;
+$bblGrey: lightgrey;
 $primary: $bblBlue;
 $section-padding: 1.5rem 1.5rem;
 // $tabs-link-hover-color: $phLogoBlue;
@@ -99,6 +100,18 @@ div.list-totals {
 
 td, th, .control {
   font-size: 12px;
+}
+
+.icon-clickable {
+  color: $bblBlue;
+  margin-top: 5px;
+  cursor: pointer;
+}
+
+.icon-disabled {
+  color: $bblGrey;
+  margin-top: 5px;
+  cursor: pointer;
 }
 
 @import "~bulma"

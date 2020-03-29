@@ -1,6 +1,7 @@
 import React from 'react'
 import Select from 'react-select'
 import axios from 'axios'
+// import CrewTimeCalculatedFieldsUpdate from '../common/UpdateCrewTimeCalculatedFields'
 
 import { formatTimes } from '../../lib/helpers'
 
@@ -46,9 +47,10 @@ class CrewTimeEdit extends React.Component {
 
     const data = {
       ...this.state.formData,
-      band: !this.state.formData.band ? '' : this.state.formData.band.value
+      band: !this.state.formData.band ? '' : this.state.formData.band.value, requires_recalculation: true
     }
 
+    
     axios.put(`/api/crews/${this.props.match.params.id}`, data)
       .then(() => this.props.history.push('/crews'))
       .catch(err => this.setState({ errors: err.response.data }))
@@ -284,7 +286,7 @@ class CrewTimeEdit extends React.Component {
             </div>
 
             <br />
-            <button className="button is-primary">Submit</button>
+            <button className="button is-primary" onClick={this.handleSubmit}>Submit</button>
           </form>
 
           <div className="box">

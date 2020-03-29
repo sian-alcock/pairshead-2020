@@ -3,8 +3,10 @@ import Select from 'react-select'
 import axios from 'axios'
 import { formatTimes, getImage } from '../../lib/helpers'
 import Paginator from '../common/Paginator'
+import CrewTimeCalculatedFieldsUpdate from '../common/UpdateCrewTimeCalculatedFields'
 
-const _ = require('lodash').runInContext()
+
+// const _ = require('lodash').runInContext()
 
 class ResultIndex extends React.Component {
   constructor() {
@@ -15,18 +17,19 @@ class ResultIndex extends React.Component {
       pageNumber: 1,
       searchTerm: sessionStorage.getItem('resultIndexSearch') || '',
       crewsInCategory: [],
-      gender: 'all'
+      gender: 'all',
+      firstAndSecondCrewsBoolean: false,
+      closeFirstAndSecondCrewsBoolean: false
+
     }
 
     this.changePage = this.changePage.bind(this)
-    // this.getCrewsInCategory = this.getCrewsInCategory.bind(this)
-    // this.combineFiltersAndSort = this.combineFiltersAndSort.bind(this)
     this.handleCategoryChange = this.handleCategoryChange.bind(this)
     this.handlePagingChange = this.handlePagingChange.bind(this)
     this.handleGenderChange = this.handleGenderChange.bind(this)
     this.handleSearchKeyUp = this.handleSearchKeyUp.bind(this)
-    // this.handleFirstAndSecondCrews = this.handleFirstAndSecondCrews.bind(this)
-    // this.handleCloseCrews = this.handleCloseCrews.bind(this)
+    this.handleFirstAndSecondCrews = this.handleFirstAndSecondCrews.bind(this)
+    this.handleCloseCrews = this.handleCloseCrews.bind(this)
     this.refreshData = this.refreshData.bind(this)
 
   }
@@ -36,10 +39,17 @@ class ResultIndex extends React.Component {
       params: {
         page_size: 20,
         gender: 'all',
-        page: 1
+        page: 1,
+        categoryRank: 'all'
+        // categoryRankClose: 'all'
       }
     })
-      .then(res => this.setState({ totalCrews: res.data['count'], crews: res.data['results'], categories: this.getCategories(res.data['results']) })
+      .then(res => this.setState({
+        totalCrews: res.data['count'],
+        crews: res.data['results'],
+        categories: this.getCategories(res.data['results']),
+        updateRequired: res.data['requires_ranking_update']
+      })
       )
   }
 
@@ -56,33 +66,18 @@ class ResultIndex extends React.Component {
       params: {
         page_size: this.state.pageSize,
         gender: this.state.gender,
-        page: this.state.pageNumber
+        page: this.state.pageNumber,
+        categoryRank: this.state.firstAndSecondCrewsBoolean ? 'topTwo' : 'all'
+        // categoryRankClose: this.state.closeFirstAndSecondCrewsBoolean ? 'topTwoClose' : 'all'
       }
     })
-      .then(res => this.setState({ totalCrews: res.data['count'], crews: res.data['results'] })
+      .then(res => this.setState({ 
+        totalCrews: res.data['count'],
+        crews: res.data['results'],
+        updateRequired: res.data['requires_ranking_update'] 
+      })
       )
   }
-
-  // getOverallRank(crew, crews) {
-  //   const raceTimes = crews.map(crew => crew.published_time)
-  //   const sorted = raceTimes.slice().sort((a,b) => a - b)
-  //   const rank = sorted.indexOf(crew.published_time) + 1
-  //   return rank
-  // }
-
-  getCategoryRank(crew, crews) {
-    // category_position_time combines published time and masters adjusted time as the latter only counts in the position in category
-    const raceTimes = crews.map(crew => crew.category_position_time)
-    const sorted = raceTimes.slice().sort((a,b) => a - b)
-    const rank = sorted.indexOf(crew.category_position_time) + 1
-    return !rank ? '' : rank
-  }
-
-  // getCrewsInCategory(event, crews){
-  //   // For the position in category, filter by crews in each event_band (category) but exclude crews marked as 'time only'.
-  //   const crewsInCategory = crews.filter(crew => crew.event_band === event && !crew.time_only)
-  //   return crewsInCategory
-  // }
 
   getTopCrews(event, crews) {
     const crewsInCategory = crews.filter(crew => crew.event_band === event && !crew.time_only)
@@ -106,7 +101,9 @@ class ResultIndex extends React.Component {
     sessionStorage.setItem('resultIndexSearch', e.target.value)
     this.setState({
       searchTerm: e.target.value,
-      pageNumber: 1
+      pageNumber: 1,
+      gender: 'all',
+      category: ''
     }, () => this.refreshData(`search=${this.state.searchTerm}`)
     )
   }
@@ -115,11 +112,15 @@ class ResultIndex extends React.Component {
     if(!selectedOption.value) {
       this.setState({
         category: selectedOption.value,
+        gender: 'all',
+        searchTerm: '',
         pageNumber: 1
       }, () => this.refreshData())
     } else {
       this.setState({
         category: selectedOption.value,
+        gender: 'all',
+        searchTerm: '',
         pageNumber: 1
       }, () => this.refreshData(`event_band=${this.state.category}`))
     }
@@ -142,17 +143,17 @@ class ResultIndex extends React.Component {
   }
   
 
-  // handleFirstAndSecondCrews(e){
-  //   this.setState({
-  //     firstAndSecondCrewsBoolean: e.target.checked
-  //   }, () => this.combineFiltersAndSort(this.state.crews))
-  // }
+  handleFirstAndSecondCrews(e){
+    this.setState({
+      firstAndSecondCrewsBoolean: e.target.checked
+    }, () => this.refreshData())
+  }
 
-  // handleCloseCrews(e){
-  //   this.setState({
-  //     closeFirstAndSecondCrewsBoolean: e.target.checked
-  //   })
-  // }
+  handleCloseCrews(e){
+    this.setState({
+      closeFirstAndSecondCrewsBoolean: e.target.checked
+    }, () => this.refreshData())
+  }
 
   // combineFiltersAndSort(filteredCrews) {
   //   // let filteredBySearchText
@@ -184,6 +185,7 @@ class ResultIndex extends React.Component {
 
   render() {
     console.log(this.state.crews)
+    console.log(this.state.updateRequired)
     const totalPages = Math.ceil((this.state.totalCrews) / this.state.pageSize)
     const pagingOptions = [{label: '20 crews', value: '20'}, {label: '50 crews', value: '50'}, {label: '100 crews', value: '100'}, {label: 'All crews', value: '500'}]
     const genderOptions = [{label: 'All', value: 'all'}, {label: 'Open', value: 'Open'}, {label: 'Female', value: 'Female'}, {label: 'Mixed', value: 'Mixed'}]
@@ -192,6 +194,13 @@ class ResultIndex extends React.Component {
 
       <section className="section">
         <div className="container">
+
+          {(this.state.updateRequired && this.state.updateRequired > 0) ? <div className="box">
+            <CrewTimeCalculatedFieldsUpdate
+              refreshData={this.refreshData}
+              updateRequired={this.state.updateRequired}
+            />
+          </div> : ''}
 
           <div className="columns no-print">
 
@@ -213,6 +222,7 @@ class ResultIndex extends React.Component {
                     onChange={this.handleCategoryChange}
                     options={this.state.categories}
                     placeholder='Category'
+                    value={this.state.category}
                   />
                 </div>
               </div>
@@ -241,6 +251,7 @@ class ResultIndex extends React.Component {
                     onChange={this.handleGenderChange}
                     options={genderOptions}
                     placeholder='Gender'
+                    value={this.state.gender}
                   />
                 </div>
               </div>
@@ -249,7 +260,7 @@ class ResultIndex extends React.Component {
             <div className="column">
               <div className="field">
                 <label className="checkbox" >
-                  <input type="checkbox"  className="checkbox" value="crewsWithoutStartTime" />
+                  <input type="checkbox"  className="checkbox" value="" onChange={this.handleFirstAndSecondCrews} />
                   <small>Crews in 1st and 2nd place</small>
                 </label>
               </div>
@@ -316,7 +327,7 @@ class ResultIndex extends React.Component {
                   <td>{crew.competitor_names}</td>
                   <td>{crew.composite_code}</td>
                   <td>{crew.event_band}</td>
-                  <td>??</td>
+                  <td>{crew.category_rank}</td>
                   <td>{this.getTopCrews(crew.event_band, this.state.crews) && this.state.closeFirstAndSecondCrewsBoolean ? '❓' : ''}</td>
                   <td>{crew.penalty ? 'P' : ''}</td>
                   <td>{crew.time_only ? 'TO' : ''}</td>

@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom'
 
 import { formatTimes, getImage } from '../../lib/helpers'
 import Paginator from '../common/Paginator'
+// import { search } from '../../lib/utils'
 
-const _ = require('lodash').runInContext()
+// const _ = require('lodash').runInContext()
 
 
 class CrewIndex extends React.Component {
@@ -13,154 +14,132 @@ class CrewIndex extends React.Component {
     super()
     this.state = {
       crews: [],
-      crewsToDisplay: [],
       pageSize: 20,
-      pageIndex: 0,
-      sortTerm: 'bib_number|asc',
+      pageNumber: 1,
+      sortTerm: 'bib_number',
       searchTerm: sessionStorage.getItem('crewIndexSearch') || '',
-      scratchedCrewsBoolean: true
+      scratchedCrewsBoolean: sessionStorage.getItem('showScratchedCrews') || ''
     }
 
 
     this.changePage = this.changePage.bind(this)
-    this.getNumCrewsWithoutFinishTimes = this.getNumCrewsWithoutFinishTimes.bind(this)
-    this.getNumCrewsWithoutStartTimes = this.getNumCrewsWithoutStartTimes.bind(this)
-    this.getNumScratchedCrews = this.getNumScratchedCrews.bind(this)
-    this.getNumCrewsWithTooManyTimes = this.getNumCrewsWithTooManyTimes.bind(this)
     this.handleSearchKeyUp = this.handleSearchKeyUp.bind(this)
     this.handleSortChange = this.handleSortChange.bind(this)
     this.handleCrewsWithoutStartTime = this.handleCrewsWithoutStartTime.bind(this)
     this.handleCrewsWithoutFinishTime = this.handleCrewsWithoutFinishTime.bind(this)
     this.handleCrewsWithTooManyTimes = this.handleCrewsWithTooManyTimes.bind(this)
     this.handleScratchedCrews = this.handleScratchedCrews.bind(this)
-    this.combineFiltersAndSort = this.combineFiltersAndSort.bind(this)
   }
 
   componentDidMount() {
-    axios.get('/api/crews/')
-      .then(res => this.setState(
-        { crews: res.data, crewsToDisplay: res.data },
-        () => this.combineFiltersAndSort(this.state.crews))
+    axios.get('/api/crews', {
+      params: {
+        page_size: 20,
+        page: 1,
+        order: 'bib_number'
+      }
+    })
+      .then(res => this.setState({ 
+        totalCrews: res.data['count'],
+        crews: res.data['results'],
+        scratchedCrews: res.data['num_scratched_crews'],
+        acceptedCrewsNoStart: res.data['num_accepted_crews_no_start_time'],
+        acceptedCrewsNoFinish: res.data['num_accepted_crews_no_finish_time'],
+        crewsInvalidTimes: res.data['num_accepted_crews_invalid_time']
+      })
       )
   }
 
-  changePage(pageIndex, totalPages) {
+  changePage(pageNumber, totalPages) {
     if (
-      pageIndex > totalPages ||
-    pageIndex < 0
+      pageNumber > totalPages ||
+      pageNumber < 0
     ) return null
-    this.setState({ pageIndex })
+    this.setState({ pageNumber }, () => this.refreshData())
   }
 
-  getNumCrewsWithoutStartTimes(){
-    return this.state.crews.filter(crew => crew.status === 'Accepted' && !crew.start_time).length
-  }
+  refreshData(queryString=null) {
+    axios.get(`/api/crews?${queryString}`, {
+      params: {
+        page_size: this.state.pageSize,
+        page: this.state.pageNumber
+        // order: this.state.sortTerm,
+        // status: this.state.scratchedCrewsBoolean ? ['Accepted', 'Scratched'] : 'Accepted'
 
-  getNumCrewsWithoutFinishTimes(){
-    return this.state.crews.filter(crew => crew.status === 'Accepted' && !crew.finish_time).length
-  }
-
-  getNumCrewsWithTooManyTimes(){
-    return this.state.crews.filter(crew => crew.times && crew.times.length > 2).length
-  }
-
-  getNumScratchedCrews(){
-    return this.state.crews.filter(crew => crew.status === 'Scratched').length
+      }
+    })
+      .then(res => this.setState({ totalCrews: res.data['count'], crews: res.data['results'] })
+      )
   }
 
   handleSearchKeyUp(e){
-    sessionStorage.setItem('crewIndexSearch', e.target.value)
+    sessionStorage.setItem('resultIndexSearch', e.target.value)
     this.setState({
-      searchTerm: e.target.value
-    }, () => this.combineFiltersAndSort(this.state.crews))
+      searchTerm: e.target.value,
+      pageNumber: 1
+    }, () => this.refreshData(`search=${this.state.searchTerm}`)
+    )
   }
 
   handleSortChange(e){
-    this.setState({ sortTerm: e.target.value }, () => this.combineFiltersAndSort(this.state.crews))
+    this.setState({ sortTerm: e.target.value }, () => this.refreshData())
   }
 
   handleCrewsWithoutStartTime(e){
+    
     this.setState({
-      crewsWithoutStartTimeBoolean: e.target.checked
-    }, () => this.combineFiltersAndSort(this.state.crews))
+      crewsWithoutStartTimeBoolean: e.target.checked,
+      crewsWithoutFinishTimeBoolean: false,
+      crewsWithTooManyTimesBoolean: false,
+      searchTerm: ''
+    }, (e.target.checked) ? () => this.refreshData('status=Accepted&start_time=0') : this.refreshData())
   }
 
   handleCrewsWithoutFinishTime(e){
-
+    
     this.setState({
-      crewsWithoutFinishTimeBoolean: e.target.checked
-    }, () => this.combineFiltersAndSort(this.state.crews))
+      crewsWithoutFinishTimeBoolean: e.target.checked,
+      crewsWithoutStartTimeBoolean: false,
+      crewsWithTooManyTimesBoolean: false,
+      searchTerm: ''
+    }, (e.target.checked) ? () => this.refreshData('status=Accepted&finish_time=0') : this.refreshData())
+
   }
+
 
   handleCrewsWithTooManyTimes(e){
 
     this.setState({
-      crewsWithTooManyTimesBoolean: e.target.checked
-    }, () => this.combineFiltersAndSort(this.state.crews))
+      crewsWithTooManyTimesBoolean: e.target.checked,
+      crewsWithoutFinishTimeBoolean: false,
+      crewsWithoutStartTimeBoolean: false,
+      searchTerm: ''
+    }, (e.target.checked) ? () => this.refreshData('status=Accepted&invalid_time=1') : this.refreshData())
   }
+
+  // handleScratchedCrews(e){
+  //   sessionStorage.setItem('showScratchedCrews', e.target.checked)
+
+  //   this.setState({
+  //     scratchedCrewsBoolean: e.target.checked
+  //   }, (e.target.checked) ? () => this.refreshData('status=Accepted') : this.refreshData())
+  // }
 
   handleScratchedCrews(e){
+    sessionStorage.setItem('showScratchedCrews', e.target.checked)
+
     this.setState({
       scratchedCrewsBoolean: e.target.checked
-    }, () => this.combineFiltersAndSort(this.state.crews))
-  }
-
-  combineFiltersAndSort(filteredCrews) {
-    let filteredBySearchText
-    let filteredByCrewsWithoutStartTime
-    let filteredByCrewsWithoutFinishTime
-    let filteredByCrewsWithTooManyTimes
-    let filteredByScratchedCrews
-
-    // Create filter based on Regular expression of the search term
-    const re= new RegExp(this.state.searchTerm, 'i')
-
-    if(!this.state.searchTerm) {
-      filteredBySearchText = this.state.crews
-    } else {
-      filteredBySearchText = this.state.crews.filter(crew => re.test(crew.name) || re.test(crew.status) || re.test(crew.club) || re.test(crew.id) || re.test(crew.bib_number) || re.test(crew.competitor_names) || re.test(crew.event_band))
-    }
-
-    if(this.state.crewsWithoutStartTimeBoolean) {
-      filteredByCrewsWithoutStartTime = this.state.crews.filter(crew => !crew.start_time)
-    } else {
-      filteredByCrewsWithoutStartTime = this.state.crews
-    }
-
-    if(this.state.crewsWithoutFinishTimeBoolean) {
-      filteredByCrewsWithoutFinishTime = this.state.crews.filter(crew => !crew.finish_time)
-    } else {
-      filteredByCrewsWithoutFinishTime = this.state.crews
-    }
-
-    if(this.state.crewsWithTooManyTimesBoolean) {
-      filteredByCrewsWithTooManyTimes = this.state.crews.filter(crew => crew.times && crew.times.length > 2)
-    } else {
-      filteredByCrewsWithTooManyTimes = this.state.crews
-    }
-
-    if(this.state.scratchedCrewsBoolean) {
-      filteredByScratchedCrews = this.state.crews.filter(crew => crew.status !== 'Scratched')
-    } else {
-      filteredByScratchedCrews = this.state.crews
-    }
-
-    _.indexOf = _.findIndex
-    filteredCrews = _.intersection(this.state.crews,  filteredBySearchText, filteredByCrewsWithoutStartTime, filteredByCrewsWithoutFinishTime, filteredByCrewsWithTooManyTimes, filteredByScratchedCrews)
-
-    const [field, order] = this.state.sortTerm.split('|')
-    const sortedCrews = _.orderBy(filteredCrews, [field], [order])
-    return this.setState({ crewsToDisplay: sortedCrews, pageIndex: 0 })
-
+    }, this.refreshData())
   }
 
   render() {
 
-    !this.state.crewsToDisplay ? <h2>loading...</h2> : console.log(this.state.crewsToDisplay)
-    const totalPages = Math.floor((this.state.crewsToDisplay.length - 1) / this.state.pageSize)
-    const pagedCrews = this.state.crewsToDisplay.slice(this.state.pageIndex * this.state.pageSize, (this.state.pageIndex + 1) * this.state.pageSize)
+    !this.state.crews ? <h2>loading...</h2> : console.log(this.state.crews)
+    const totalPages = Math.floor((this.state.totalCrews) / this.state.pageSize)
 
     console.log(this.state.searchTerm)
+    console.log(this.state.scratchedCrews)
 
     return (
       <section className="section">
@@ -173,7 +152,7 @@ class CrewIndex extends React.Component {
                 <span className="icon is-left">
                   <i className="fas fa-search"></i>
                 </span>
-                <input className="input" placeholder="search" value={this.state.searchTerm} onChange={this.handleSearchKeyUp} />
+                <input className="input" placeholder="search" defaultValue={this.state.searchTerm} onKeyUp={this.handleSearchKeyUp} />
 
               </div>
             </div>
@@ -183,18 +162,18 @@ class CrewIndex extends React.Component {
                 <div className="select">
                   <select onChange={this.handleSortChange}>
                     <option value=""></option>
-                    <option value="competitor_names|asc">Crew A-Z</option>
-                    <option value="competitor_names|desc">Crew Z-A</option>
-                    <option value="start_sequence|asc">Start sequence, asc</option>
-                    <option value="start_sequence|desc">Start sequence, desc</option>
-                    <option value="finish_sequence|asc">Finish sequence, asc</option>
-                    <option value="finish_sequence|desc">Finish sequence, desc</option>
-                    <option value="club.index_code|asc">Club, asc</option>
-                    <option value="club.index_code|desc">Club, desc</option>
-                    <option value="event.name|asc">Event, asc</option>
-                    <option value="event.name|desc">Event, desc</option>
-                    <option value="bib_number|asc">Bib, asc</option>
-                    <option value="bib_number|desc">Bib, desc</option>
+                    <option value="competitor_names">Crew A-Z</option>
+                    <option value="-competitor_names">Crew Z-A</option>
+                    <option value="start_sequence">Start sequence, asc</option>
+                    <option value="-start_sequence">Start sequence, desc</option>
+                    <option value="finish_sequence">Finish sequence, asc</option>
+                    <option value="-finish_sequence">Finish sequence, desc</option>
+                    <option value="club.index_code">Club, asc</option>
+                    <option value="-club.index_code">Club, desc</option>
+                    <option value="event.name">Event, asc</option>
+                    <option value="-event.name">Event, desc</option>
+                    <option value="bib_number">Bib, asc</option>
+                    <option value="-bib_number">Bib, desc</option>
                   </select>
                 </div>
               </div>
@@ -203,23 +182,23 @@ class CrewIndex extends React.Component {
             <div className="column">
               <div className="field">
                 <label className="checkbox" htmlFor="crewsWithoutStartTime">
-                  <input type="checkbox"  className="checkbox" id="crewsWithoutStartTime" onChange={this.handleCrewsWithoutStartTime} />
-                  <small>{`⚠️ Accepted crews without start time (${this.getNumCrewsWithoutStartTimes()})`}</small>
+                  <input type="checkbox"  className="checkbox" id="crewsWithoutStartTime" onChange={this.handleCrewsWithoutStartTime} value={this.state.crewsWithoutStartTimeBoolean} checked={!!this.state.crewsWithoutStartTimeBoolean} />
+                  <small>⚠️ Accepted crews without start time ({this.state.acceptedCrewsNoStart})</small>
                 </label>
               </div>
 
               <div className="field">
                 <label className="checkbox" htmlFor="crewsWithoutFinishTime" >
-                  <input type="checkbox"  className="checkbox" id="crewsWithoutFinishTime"  onChange={this.handleCrewsWithoutFinishTime} />
-                  <small>{`⚠️ Accepted crews without finish time (${this.getNumCrewsWithoutFinishTimes()})`}</small>
+                  <input type="checkbox"  className="checkbox" id="crewsWithoutFinishTime"  onChange={this.handleCrewsWithoutFinishTime} value={this.state.crewsWithoutFinishTimeBoolean} checked={!!this.state.crewsWithoutFinishTimeBoolean} />
+                  <small>⚠️ Accepted crews without finish time ({this.state.acceptedCrewsNoFinish})</small>
                 </label>
               </div>
 
 
               <div className="field">
                 <label className="checkbox" htmlFor="crewsWithMultipleTimes">
-                  <input type="checkbox"  className="checkbox" id="crewsWithMultipleTimes"  onChange={this.handleCrewsWithTooManyTimes} />
-                  <small>{`❗️ Crews with multiple times (${this.getNumCrewsWithTooManyTimes()})`}</small>
+                  <input type="checkbox"  className="checkbox" id="crewsWithMultipleTimes"  onChange={this.handleCrewsWithTooManyTimes} value={this.state.crewsWithTooManyTimesBoolean} checked={!!this.state.crewsWithTooManyTimesBoolean} />
+                  <small>❗️ Crews with multiple times ({this.state.crewsInvalidTimes})</small>
                 </label>
               </div>
             </div>
@@ -228,19 +207,19 @@ class CrewIndex extends React.Component {
               <div className="field">
                 <label className="checkbox" htmlFor="showScratchedCrews" >
                   <input type="checkbox"  className="checkbox" id="showScratchedCrews" value={this.state.scratchedCrewsBoolean} checked={!!this.state.scratchedCrewsBoolean} onChange={this.handleScratchedCrews} />
-                  <small>{`Hide scratched crews (${this.getNumScratchedCrews()})`}</small>
+                  <small>Hide scratched crews ({this.state.scratchedCrews})</small>
                 </label>
               </div>
             </div>
           </div>
 
           <Paginator
-            pageIndex={this.state.pageIndex}
+            pageNumber={this.state.pageNumber}
             totalPages={totalPages}
             changePage={this.changePage}
           />
 
-          <div className="list-totals"><small>{this.state.crewsToDisplay.length} of {this.state.crews.length} crews</small></div>
+          <div className="list-totals"><small>{this.state.crews.length} of {this.state.totalCrews} crews</small></div>
 
           <table className="table">
             <thead>
@@ -288,7 +267,7 @@ class CrewIndex extends React.Component {
               </tr>
             </tfoot>
             <tbody>
-              {pagedCrews.map(crew =>
+              {this.state.crews.map(crew =>
                 <tr key={crew.id}>
                   <td><Link to={`/crews/${crew.id}`}>{crew.id}</Link></td>
                   <td>{!crew.competitor_names ? crew.name : crew.times.length && crew.times.length > 2 ? crew.competitor_names + '❗️' : crew.competitor_names}</td>
@@ -314,7 +293,7 @@ class CrewIndex extends React.Component {
           </table>
 
           <Paginator
-            pageIndex={this.state.pageIndex}
+            pageNumber={this.state.pageNumber}
             totalPages={totalPages}
             changePage={this.changePage}
           />

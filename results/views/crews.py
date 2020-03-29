@@ -16,48 +16,49 @@ from ..serializers import CrewSerializer, PopulatedCrewSerializer, WriteCrewSeri
 
 from ..models import Crew, RaceTime
 
+from .times import CrewRaceTimesImport
+
+from ..pagination import CrewPaginationWithAggregates
+
 class CrewListView(generics.ListCreateAPIView):
     queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted'))
     serializer_class = PopulatedCrewSerializer
-    pagination_class = PageNumberPagination
+    pagination_class = CrewPaginationWithAggregates
     PageNumberPagination.page_size_query_param = 'page_size' or 10
-    filter_backends = [filters.SearchFilter, DjangoFilterBackend]
-    search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number',]
-    filterset_fields = ['status', 'event_band',]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
+    ordering_fields = '__all__'
+    search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number', 'competitor_names', ]
+    filterset_fields = ['status', 'event_band', 'start_time', 'finish_time', 'invalid_time', ]
 
     def get_queryset(self):
-        """
-        Filter by gender
-        """
+
         queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted'))
-        gender = self.request.query_params.get('gender', None)
-        if gender is not None:
-            queryset = queryset.filter(event__gender=gender)
+        order = self.request.query_params.get('order', None)
+        if order is not None:
+            queryset = queryset.order_by(order)
         return queryset
 
-# class CrewListView(APIView): # extend the APIView
-#     filter_backends = (filters.SearchFilter,)
-#     search_fields = ['name', 'id',]
-  
+    def get_num_scratched_crews(self):
+        return len(self.queryset.filter(status__exact='Scratched'))
+
+class CrewUpdateRankings(APIView):
+    
+    def get(self, _request):
+        crews = Crew.objects.filter(status__in=('Accepted', 'Scratched',)) # get all the crews
+        serializer = CrewSerializer(crews, many=True)
+        self.update_rankings(crews)
+        return Response(serializer.data) # send the JSON to the client
+
+    def update_rankings(self, crews):
+        # Recalculate rankings for all crews
+        for crew in crews:
+            print(crew.overall_rank)
+            print(crew.gender_rank)
+            print(crew.category_rank)
+            crew.requires_recalculation = False
+            crew.save()
 
     
-#     def get(self, request):
-#         crews = Crew.objects.filter(status__in=('Scratched', 'Accepted')) # get all the crews
-
-#         paginator = PageNumberPagination()
-#         paginator.page_size_query_param = 'page_size' or 10
-#         result_page = paginator.paginate_queryset(crews, request)
-#         serializer = PopulatedCrewSerializer(result_page, many=True, context={'request':request})
-#         return paginator.get_paginated_response(serializer.data) # send the JSON to the client
-
-#     def post(self, request):
-#         serializer = PopulatedCrewSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=201)
-
-#         return Response(serializer.errors, status=422)
-
 
 class CrewDetailView(APIView): # extend the APIView
 
@@ -79,10 +80,13 @@ class CrewDetailView(APIView): # extend the APIView
         serializer = CrewSerializer(crew, data=request.data)
         if serializer.is_valid():
             serializer.save()
+
+            # self.update_rankings()
             return Response(serializer.data, status=201)
 
         return Response(serializer.errors, status=422)
 
+            
     def delete(self, _request, pk):
         crew = self.get_crew(pk)
         crew = Crew.objects.get(pk=pk)

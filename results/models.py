@@ -24,6 +24,8 @@ class Band(models.Model):
     on_delete=models.CASCADE)
 
 class Crew(models.Model):
+    created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated = models.DateTimeField(auto_now=True, blank=True, null=True)
     name = models.CharField(max_length=50)
     id = models.IntegerField(primary_key=True)
     composite_code = models.CharField(max_length=10, blank=True, null=True)
@@ -48,6 +50,7 @@ class Crew(models.Model):
     time_only = models.BooleanField(default=False)
     did_not_start = models.BooleanField(default=False)
     did_not_finish = models.BooleanField(default=False)
+    requires_recalculation = models.BooleanField(default=False)
 
     event_band = models.CharField(max_length=40, null=True)
     raw_time = computed_property.ComputedIntegerField(compute_from='calc_raw_time', blank=True, null=True)
@@ -55,11 +58,19 @@ class Crew(models.Model):
     published_time = computed_property.ComputedIntegerField(compute_from='calc_published_time', blank=True, null=True)
     overall_rank = computed_property.ComputedIntegerField(compute_from='calc_overall_rank', blank=True, null=True)
     gender_rank = computed_property.ComputedIntegerField(compute_from='calc_gender_rank', blank=True, null=True)
+    category_position_time = computed_property.ComputedIntegerField(compute_from='calc_category_position_time', blank=True, null=True)
+    category_rank = computed_property.ComputedIntegerField(compute_from='calc_category_rank', blank=True, null=True)
+    start_time = computed_property.ComputedIntegerField(compute_from='get_start_time', blank=True, null=True)
+    finish_time = computed_property.ComputedIntegerField(compute_from='get_finish_time', blank=True, null=True)
+    invalid_time = computed_property.ComputedIntegerField(compute_from='get_invalidated_times', blank=True, null=True)
+    start_sequence = computed_property.ComputedIntegerField(compute_from='get_start_sequence', blank=True, null=True)
+    finish_sequence = computed_property.ComputedIntegerField(compute_from='get_finish_sequence', blank=True, null=True)
+    competitor_names = computed_property.ComputedCharField(compute_from='get_competitor_names', blank=True, null=True, max_length=30)
 
 
     def __str__(self):
         return self.name
-    
+  
     def save(self, *args, **kwargs):
         self.event_band = self.get_event_band()
         super(Crew, self).save(*args, **kwargs)
@@ -102,8 +113,52 @@ class Crew(models.Model):
         return len(crews) + 1
 
 
-    @property
-    def competitor_names(self):
+    def calc_category_position_time(self):
+        # This property created purely for use when calculating position in category ranking.  It uses the published time or masters adjusted time if one exists.
+        if self.masters_adjusted_time > 0:
+            return self.masters_adjusted_time + self.penalty*1000
+        return self.published_time
+
+    def calc_category_rank(self):
+        crews = Crew.objects.all().filter(status__exact='Accepted', time_only__exact=False, event_band__exact=self.event_band, published_time__gt=0, category_position_time__lt=self.category_position_time)
+        if self.time_only:
+            return 0
+
+        return len(crews) + 1
+
+    def get_start_time(self):
+        try:
+            if len(self.times.filter(tap='Start')) > 1:
+                return 0
+
+            start = self.times.get(tap='Start').time_tap
+            return start
+
+        except RaceTime.DoesNotExist:
+            return 0
+
+    def get_finish_time(self):
+        try:
+            if len(self.times.filter(tap='Finish')) > 1:
+                return 0
+            finish = self.times.get(tap='Finish').time_tap
+            return finish
+
+        except RaceTime.DoesNotExist:
+            return 0
+    
+    def get_invalidated_times(self):
+        try:
+
+            if len(self.times.filter(tap='Start')) > 1:
+                return 1
+            if len(self.times.filter(tap='Finish')) > 1:
+                return 1
+
+        except RaceTime.DoesNotExist:
+            return 0
+
+    def get_competitor_names(self):
         if not self.competitors:
             return 0
 
@@ -111,41 +166,24 @@ class Crew(models.Model):
         value = ' / '.join(competitor_list)
         return value
 
-    @property
-    def category_position_time(self):
-        # This property created purely for use when calculating position in category ranking.  It uses the published time or masters adjusted time if one exists
-        if self.masters_adjusted_time > 0:
-            return self.masters_adjusted_time + self.penalty*1000
-        return self.published_time
-
-    @property
-    def start_time(self):
-        if len(self.times.filter(tap='Start')) > 1:
+    def get_start_sequence(self):
+        try:
+            if len(self.times.filter(tap='Start')) > 1:
+                return 0
+            sequence = self.times.get(tap='Start').sequence
+            return sequence
+        except RaceTime.DoesNotExist:
             return 0
 
-        start = self.times.get(tap='Start').time_tap
-        return start
+    def get_finish_sequence(self):
+        try:
+            if len(self.times.filter(tap='Finish')) > 1:
+                return 0
+            sequence = self.times.get(tap='Finish').sequence
+            return sequence
 
-    @property
-    def finish_time(self):
-        if len(self.times.filter(tap='Finish')) > 1:
+        except RaceTime.DoesNotExist:
             return 0
-        finish = self.times.get(tap='Finish').time_tap
-        return finish
-
-    @property
-    def start_sequence(self):
-        if len(self.times.filter(tap='Start')) > 1:
-            return 0
-        sequence = self.times.get(tap='Start').sequence
-        return sequence
-
-    @property
-    def finish_sequence(self):
-        if len(self.times.filter(tap='Finish')) > 1:
-            return 0
-        sequence = self.times.get(tap='Finish').sequence
-        return sequence
 
 # Turn the three manual override fields into miliseconds
     @property
