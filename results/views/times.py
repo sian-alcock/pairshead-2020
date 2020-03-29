@@ -3,31 +3,59 @@ import os
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.pagination import PageNumberPagination
+
+from django.conf import settings
+
+from rest_framework import filters, generics
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 from ..serializers import WriteRaceTimesSerializer, RaceTimesSerializer, PopulatedRaceTimesSerializer
 
 from ..models import RaceTime, Crew
 
-class RaceTimeListView(APIView): # extend the APIView
 
-    def get(self, request):
-        race_times = RaceTime.objects.all() # get all the crews
+class RaceTimeListView(generics.ListCreateAPIView):
+    serializer_class = PopulatedRaceTimesSerializer
+    pagination_class = PageNumberPagination
+    PageNumberPagination.page_size_query_param = 'page_size' or 10
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
+    ordering_fields = ['sequence']
+    search_fields = ['sequence', 'tap']
+    filterset_fields = ['tap',]
 
-        paginator = LimitOffsetPagination()
-        result_page = paginator.paginate_queryset(race_times, request)
-        serializer = PopulatedRaceTimesSerializer(result_page, many=True, context={'request':request})
+    def get_queryset(self):
 
-        return Response(serializer.data) # send the JSON to the client
+        queryset = RaceTime.objects.all().order_by('sequence',)
 
-    def post(self, request):
-        serializer = PopulatedRaceTimesSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
+        # gender = self.request.query_params.get('gender')
+        # print(gender)
+        # if gender != 'all':
+        #     queryset = queryset.filter(event__gender=gender).order_by('overall_rank')
+        #     return queryset
 
-        return Response(serializer.errors, status=422)
+        return queryset
+
+
+# class RaceTimeListView(APIView): # extend the APIView
+
+#     def get(self, request):
+#         race_times = RaceTime.objects.all() # get all the crews
+
+#         paginator = LimitOffsetPagination()
+#         result_page = paginator.paginate_queryset(race_times, request)
+#         serializer = PopulatedRaceTimesSerializer(result_page, many=True, context={'request':request})
+
+#         return Response(serializer.data) # send the JSON to the client
+
+#     def post(self, request):
+#         serializer = PopulatedRaceTimesSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data, status=201)
+
+#         return Response(serializer.errors, status=422)
 
 
 class RaceTimeDetailView(APIView):
