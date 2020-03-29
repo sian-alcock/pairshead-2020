@@ -26,15 +26,9 @@ class RaceTimeListView(generics.ListCreateAPIView):
     filterset_fields = ['tap',]
 
     def get_queryset(self):
-
-        queryset = RaceTime.objects.all().order_by('sequence',)
-
-        # gender = self.request.query_params.get('gender')
-        # print(gender)
-        # if gender != 'all':
-        #     queryset = queryset.filter(event__gender=gender).order_by('overall_rank')
-        #     return queryset
-
+        times = RaceTime.objects.all()
+        tap = self.request.query_params.get('tap')
+        queryset = times.filter(tap__exact=tap).order_by('sequence')
         return queryset
 
 

@@ -13,7 +13,7 @@ class RaceTimeIndex extends React.Component {
       raceTimes: [],
       raceTimesToDisplay: [],
       pageSize: 20,
-      page: 1,
+      pageNumber: 1,
       timesWithoutCrewBoolean: false,
       searchTerm: sessionStorage.getItem('raceTimeIndexSearch') || '',
       startTab: true,
@@ -35,7 +35,8 @@ class RaceTimeIndex extends React.Component {
     axios.get('/api/race-times/', {
       params: {
         page_size: 20,
-        page: 1
+        page: 1,
+        tap: 'Start'
       }
     })
       .then(res => this.setState({
@@ -57,7 +58,8 @@ class RaceTimeIndex extends React.Component {
     axios.get(`/api/race-times/?${queryString}`, {
       params: {
         page_size: this.state.pageSize,
-        page: this.state.pageNumber
+        page: this.state.pageNumber,
+        tap: this.state.startTab ? 'Start' : 'Finish'
       }
     })
       .then(res => this.setState({ 
@@ -68,11 +70,19 @@ class RaceTimeIndex extends React.Component {
   }
 
   displayStartTimes(){
-    this.setState({ startTab: true, finishTab: false }, () => this.refreshData())
+    this.setState({
+      startTab: true,
+      finishTab: false,
+      pageNumber: 1
+    }, () => this.refreshData())
   }
 
   displayFinishTimes(){
-    this.setState({ startTab: false, finishTab: true}, () => this.refreshData())
+    this.setState({
+      startTab: false,
+      finishTab: true,
+      pageNumber: 1
+    }, () => this.refreshData())
   }
 
   // getNumTimesWithNoCrew(){
@@ -174,7 +184,7 @@ class RaceTimeIndex extends React.Component {
 
           <div className="no-print">
             <Paginator
-              page={this.state.page}
+              pageNumber={this.state.pageNumber}
               totalPages={totalPages}
               changePage={this.changePage}
             />
@@ -222,7 +232,7 @@ class RaceTimeIndex extends React.Component {
 
           <div className="no-print">
             <Paginator
-              page={this.state.page}
+              pageNumber={this.state.pageNumber}
               totalPages={totalPages}
               changePage={this.changePage}
             />
