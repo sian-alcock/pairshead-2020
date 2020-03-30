@@ -57,8 +57,36 @@ class RaceTimeIndex extends React.Component {
     this.setState({ pageNumber }, () => this.refreshData())
   }
 
+  // refreshData(queryString=null) {
+  //   axios.get(`/api/race-times/?${queryString}`, {
+  //     params: {
+  //       page_size: this.state.pageSize,
+  //       page: this.state.pageNumber,
+  //       tap: this.state.startTab ? 'Start' : 'Finish',
+  //       noCrew: this.state.timesWithoutCrewBoolean
+  //     }
+  //   })
+  //     .then(res => this.setState({ 
+  //       totalTimes: res.data['count'],
+  //       raceTimes: res.data['results'],
+  //       startTimesWithNoCrew: res.data['start_times_no_crew'],
+  //       finishTimesWithNoCrew: res.data['finish_times_no_crew']
+  //     })
+  //     )
+  // }
+
   refreshData(queryString=null) {
-    axios.get(`/api/race-times/?${queryString}`, {
+    if (typeof this._source !== typeof undefined) {
+      this._source.cancel('Operation cancelled due to new request')
+    }
+
+    // save the new request for cancellation
+    this._source = axios.CancelToken.source()
+
+    axios.get(`/api/race-times?${queryString}`, {
+      // cancel token used by axios
+      cancelToken: this._source.token,
+
       params: {
         page_size: this.state.pageSize,
         page: this.state.pageNumber,
@@ -73,6 +101,14 @@ class RaceTimeIndex extends React.Component {
         finishTimesWithNoCrew: res.data['finish_times_no_crew']
       })
       )
+      .catch((error) => {
+        if (axios.isCancel(error) || error) {
+          this.setState({
+            loading: false,
+            message: 'Failed to get data'
+          })
+        }
+      })
   }
 
   displayStartTimes(){
@@ -104,7 +140,7 @@ class RaceTimeIndex extends React.Component {
     this.setState({
       searchTerm: e.target.value,
       pageNumber: 1
-    }, () => this.refreshData())
+    }, () => this.refreshData(`search=${this.state.searchTerm}`))
   }
 
   handleTimesWithoutCrew(e){

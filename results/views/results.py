@@ -28,7 +28,7 @@ class ResultsListView(generics.ListCreateAPIView):
     PageNumberPagination.page_size_query_param = 'page_size' or 10
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
     ordering_fields = ['overall_rank', 'gender_rank', 'category_rank', 'event_band',]
-    search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number',]
+    search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number', 'competitor_names',]
     filterset_fields = ['status', 'event_band', 'raw_time',]
 
     def get_queryset(self):

@@ -16,11 +16,11 @@ class CrewIndex extends React.Component {
       crews: [],
       pageSize: 20,
       pageNumber: 1,
+      loading: false,
       sortTerm: 'bib_number',
       searchTerm: sessionStorage.getItem('crewIndexSearch') || '',
       scratchedCrewsBoolean: sessionStorage.getItem('showScratchedCrews') || ''
     }
-
 
     this.changePage = this.changePage.bind(this)
     this.handleSearchKeyUp = this.handleSearchKeyUp.bind(this)
@@ -36,7 +36,9 @@ class CrewIndex extends React.Component {
       params: {
         page_size: 20,
         page: 1,
-        order: 'bib_number'
+        order: 'bib_number',
+        status: this.state.scratchedCrewsBoolean ? 'Accepted' : ['Accepted', 'Scratched']
+
       }
     })
       .then(res => this.setState({ 
@@ -59,22 +61,45 @@ class CrewIndex extends React.Component {
   }
 
   refreshData(queryString=null) {
+    if (typeof this._source !== typeof undefined) {
+      this._source.cancel('Operation cancelled due to new request')
+    }
+
+    // save the new request for cancellation
+    this._source = axios.CancelToken.source()
+
     axios.get(`/api/crews?${queryString}`, {
+      // cancel token used by axios
+      cancelToken: this._source.token,
+
       params: {
         page_size: this.state.pageSize,
-        page: this.state.pageNumber
-        // order: this.state.sortTerm,
-        // status: this.state.scratchedCrewsBoolean ? ['Accepted', 'Scratched'] : 'Accepted'
-
+        page: this.state.pageNumber,
+        order: this.state.sortTerm,
+        status: this.state.scratchedCrewsBoolean ? 'Accepted' : ['Accepted', 'Scratched']
       }
     })
-      .then(res => this.setState({ totalCrews: res.data['count'], crews: res.data['results'] })
+      .then(res => this.setState({
+        totalCrews: res.data['count'],
+        crews: res.data['results'],
+        scratchedCrews: res.data['num_scratched_crews'],
+        loading: false
+      })
       )
+      .catch((error) => {
+        if (axios.isCancel(error) || error) {
+          this.setState({
+            loading: false,
+            message: 'Failed to get data'
+          })
+        }
+      })
   }
 
   handleSearchKeyUp(e){
     sessionStorage.setItem('resultIndexSearch', e.target.value)
     this.setState({
+      loading: true,
       searchTerm: e.target.value,
       pageNumber: 1
     }, () => this.refreshData(`search=${this.state.searchTerm}`)
@@ -117,25 +142,18 @@ class CrewIndex extends React.Component {
     }, (e.target.checked) ? () => this.refreshData('status=Accepted&invalid_time=1') : this.refreshData())
   }
 
-  // handleScratchedCrews(e){
-  //   sessionStorage.setItem('showScratchedCrews', e.target.checked)
-
-  //   this.setState({
-  //     scratchedCrewsBoolean: e.target.checked
-  //   }, (e.target.checked) ? () => this.refreshData('status=Accepted') : this.refreshData())
-  // }
-
   handleScratchedCrews(e){
     sessionStorage.setItem('showScratchedCrews', e.target.checked)
 
     this.setState({
       scratchedCrewsBoolean: e.target.checked
-    }, this.refreshData())
+    }, () => this.refreshData())
   }
 
   render() {
 
     !this.state.crews ? <h2>loading...</h2> : console.log(this.state.crews)
+    console.log(this.state.sortTerm)
     const totalPages = Math.floor((this.state.totalCrews) / this.state.pageSize)
 
     console.log(this.state.searchTerm)
@@ -162,16 +180,16 @@ class CrewIndex extends React.Component {
                 <div className="select">
                   <select onChange={this.handleSortChange}>
                     <option value=""></option>
-                    <option value="competitor_names">Crew A-Z</option>
-                    <option value="-competitor_names">Crew Z-A</option>
+                    <option value="crew">Crew A-Z</option>
+                    <option value="-crew">Crew Z-A</option>
                     <option value="start_sequence">Start sequence, asc</option>
                     <option value="-start_sequence">Start sequence, desc</option>
                     <option value="finish_sequence">Finish sequence, asc</option>
                     <option value="-finish_sequence">Finish sequence, desc</option>
-                    <option value="club.index_code">Club, asc</option>
-                    <option value="-club.index_code">Club, desc</option>
-                    <option value="event.name">Event, asc</option>
-                    <option value="-event.name">Event, desc</option>
+                    <option value="club__name">Club, asc</option>
+                    <option value="-club__name">Club, desc</option>
+                    <option value="event_band">Event, asc</option>
+                    <option value="-event_band">Event, desc</option>
                     <option value="bib_number">Bib, asc</option>
                     <option value="-bib_number">Bib, desc</option>
                   </select>
@@ -207,7 +225,7 @@ class CrewIndex extends React.Component {
               <div className="field">
                 <label className="checkbox" htmlFor="showScratchedCrews" >
                   <input type="checkbox"  className="checkbox" id="showScratchedCrews" value={this.state.scratchedCrewsBoolean} checked={!!this.state.scratchedCrewsBoolean} onChange={this.handleScratchedCrews} />
-                  <small>Hide scratched crews ({this.state.scratchedCrews})</small>
+                  <small>Hide scratched crews {this.state.scratchedCrews ? `(${this.state.scratchedCrews})` : ''}</small>
                 </label>
               </div>
             </div>

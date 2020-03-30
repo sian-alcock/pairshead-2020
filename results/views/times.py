@@ -24,7 +24,7 @@ class RaceTimeListView(generics.ListCreateAPIView):
     PageNumberPagination.page_size_query_param = 'page_size' or 10
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
     ordering_fields = ['sequence']
-    search_fields = ['sequence', 'tap']
+    search_fields = ['sequence', 'bib_number', 'tap', 'crew__id', 'crew__name', 'crew__competitor_names',]
     filterset_fields = ['tap',]
 
     def get_queryset(self):

@@ -34,9 +34,13 @@ class CrewListView(generics.ListCreateAPIView):
 
         queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted'))
         order = self.request.query_params.get('order', None)
+        if order == 'crew':
+            return queryset.order_by('competitor_names', 'name',)
+        if order == '-crew':
+            return queryset.order_by('-competitor_names', '-name',)
         if order is not None:
-            queryset = queryset.order_by(order)
-        return queryset
+            return queryset.order_by(order)
+        return queryset.order_by('bib_number')
 
     def get_num_scratched_crews(self):
         return len(self.queryset.filter(status__exact='Scratched'))
