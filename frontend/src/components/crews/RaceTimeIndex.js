@@ -127,14 +127,6 @@ class RaceTimeIndex extends React.Component {
     }, () => this.refreshData())
   }
 
-  // getNumTimesWithNoCrew(){
-  //   return this.state.raceTimesToDisplay.filter(time => time.crew === null).length
-  // }
-
-  // getNumCrewsWithTooManyTimes(){
-  //   return this.state.raceTimesToDisplay.filter(time => time.crew && time.crew.times.length > 2).length
-  // }
-
   handleSearchKeyUp(e){
     sessionStorage.setItem('raceTimeIndexSearch', e.target.value)
     this.setState({

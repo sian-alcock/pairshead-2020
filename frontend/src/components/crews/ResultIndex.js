@@ -60,24 +60,6 @@ class ResultIndex extends React.Component {
     this.setState({ pageNumber }, () => this.refreshData())
   }
 
-  // refreshData(queryString=null) {
-  //   axios.get(`/api/results?${queryString}`, {
-  //     params: {
-  //       page_size: this.state.pageSize,
-  //       gender: this.state.gender,
-  //       page: this.state.pageNumber,
-  //       categoryRank: this.state.firstAndSecondCrewsBoolean ? 'topTwo' : 'all'
-  //       // categoryRankClose: this.state.closeFirstAndSecondCrewsBoolean ? 'topTwoClose' : 'all'
-  //     }
-  //   })
-  //     .then(res => this.setState({ 
-  //       totalCrews: res.data['count'],
-  //       crews: res.data['results'],
-  //       updateRequired: res.data['requires_ranking_update'] 
-  //     })
-  //     )
-  // }
-
   refreshData(queryString=null) {
     if (typeof this._source !== typeof undefined) {
       this._source.cancel('Operation cancelled due to new request')

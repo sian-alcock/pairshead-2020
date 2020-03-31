@@ -60,7 +60,7 @@ The original project brief:
 
 I started by designing the data models.
 
-![Screenshot](./readme-assets/Screenshot-data-model.png)
+![Screenshot](/readme-assets/Screenshot-data-model.png)
 
 I used a product called Miro to create the above datamodel, some wireframes and I used the Miro Kanban to keep track of tasks.  The advantage of using Miro was that everything was all in one place.
 Below is an example wireframe for the Crew index page.

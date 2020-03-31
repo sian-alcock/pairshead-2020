@@ -9,47 +9,41 @@ class Home extends React.Component {
       crews: []
     }
 
-    this.getCrewsWithTimes = this.getCrewsWithTimes.bind(this)
-    this.getCrewsWithoutTimes = this.getCrewsWithoutTimes.bind(this)
-    this.getTotalCrews = this.getTotalCrews.bind(this)
-    this.getScratchedCrewsWithTimes = this.getScratchedCrewsWithTimes.bind(this)
+    // this.getCrewsWithTimes = this.getCrewsWithTimes.bind(this)
+    // this.getCrewsWithoutTimes = this.getCrewsWithoutTimes.bind(this)
+    // this.getTotalCrews = this.getTotalCrews.bind(this)
+    // this.getScratchedCrewsWithTimes = this.getScratchedCrewsWithTimes.bind(this)
   }
+
+  // componentDidMount() {
+  //   axios.get('/api/crews')
+  //     .then(res => this.setState({ crews: res.data}))
+  // }
 
   componentDidMount() {
     axios.get('/api/crews')
-      .then(res => this.setState({ crews: res.data}))
+      .then(res => this.setState({ 
+        totalCrews: res.data['count'],
+        crews: res.data['results'],
+        acceptedCrews: res.data['num_accepted_crews'],
+        scratchedCrews: res.data['num_scratched_crews'],
+        scratchedCrewsWithTime: res.data['num_scratched_crews_with_time'],
+        acceptedCrewsNoStart: res.data['num_accepted_crews_no_start_time'],
+        acceptedCrewsNoFinish: res.data['num_accepted_crews_no_finish_time'],
+        crewsInvalidTimes: res.data['num_accepted_crews_invalid_time']
+      })
+      )
   }
 
-  getCrewsWithTimes(){
-    const crewsWithTimes = this.state.crews.filter(crew => crew.status !== 'Scratched' && crew.times.length === 2)
-    return crewsWithTimes.length
-  }
+  // getCrewsWithTimes(){
+  //   const crewsWithTimes = this.state.crews.filter(crew => crew.status !== 'Scratched' && crew.times.length === 2)
+  //   return crewsWithTimes.length
+  // }
 
-  getCrewsWithoutTimes(){
-    const crewsWithoutTimes = this.state.crews.filter(crew => crew.status !== 'Scratched' && crew.times.length !== 2)
-    return crewsWithoutTimes.length
-  }
-
-  getScratchedCrewsWithTimes(){
-    const scratchedCrewsWithTimes = this.state.crews.filter(crew => crew.status === 'Scratched' && crew.times.length === 2)
-    return scratchedCrewsWithTimes.length
-  }
-
-  getTotalCrews(){
-    return this.state.crews.length
-  }
-
-  getAcceptedCrews(){
-    const acceptedCrews = this.state.crews.filter(crew => crew.status === 'Accepted')
-    return acceptedCrews.length
-  }
-
-  getScratchedCrews(){
-    const acceptedCrews = this.state.crews.filter(crew => crew.status === 'Scratched')
-    return acceptedCrews.length
-  }
-
-
+  // getCrewsWithoutTimes(){
+  //   const crewsWithoutTimes = this.state.crews.filter(crew => crew.status !== 'Scratched' && crew.times.length !== 2)
+  //   return crewsWithoutTimes.length
+  // }
 
   render() {
 
@@ -68,13 +62,13 @@ class Home extends React.Component {
               <p>Total crews</p>
             </div>
             <div className="column">
-              <p>{this.getTotalCrews()}</p>
+              <p>{this.state.totalCrews}</p>
             </div>
             <div className="column">
-              <p>Crews with times</p>
+              <p>Accepted crews with no Start time</p>
             </div>
             <div className="column">
-              <p>{this.getCrewsWithTimes()}</p>
+              <p>{this.state.acceptedCrewsNoStart}</p>
             </div>
           </div>
 
@@ -83,13 +77,13 @@ class Home extends React.Component {
               <p>Accepted crews</p>
             </div>
             <div className="column">
-              <p>{this.getAcceptedCrews()}</p>
+              <p>{this.state.acceptedCrews}</p>
             </div>
             <div className="column">
-              <p>Crews without times</p>
+              <p>Accepted crews with no Finish time</p>
             </div>
             <div className="column">
-              <p>{this.getCrewsWithoutTimes()}</p>
+              <p>{this.state.acceptedCrewsNoFinish}</p>
             </div>
           </div>
 
@@ -98,13 +92,13 @@ class Home extends React.Component {
               <p>Scratched crews</p>
             </div>
             <div className="column">
-              <p>{this.getScratchedCrews()}</p>
+              <p>{this.state.scratchedCrews}</p>
             </div>
             <div className="column">
               <p>Scratched crews that have a time</p>
             </div>
             <div className="column">
-              <p>{this.getScratchedCrewsWithTimes()}</p>
+              <p>{this.state.scratchedCrewsWithTime}</p>
             </div>
           </div>
 
