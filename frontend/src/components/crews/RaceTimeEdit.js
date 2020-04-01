@@ -1,4 +1,8 @@
 import React from 'react'
+
+import AsyncPaginate from 'react-select-async-paginate'
+
+import loadOptions from './loadOptions'
 import axios from 'axios'
 import Select from 'react-select'
 import { formatTimes } from '../../lib/helpers'
@@ -12,7 +16,10 @@ class RaceTimeEdit extends React.Component {
       crews: [],
       crew: {},
       data: {},
-      formData: {}
+      formData: {},
+      defaultAdditional: {
+        page: 1
+      }
     }
     // this.getCrews = this.getCrews.bind(this)
 
@@ -27,13 +34,44 @@ class RaceTimeEdit extends React.Component {
       axios.get('/api/crews/')
     ]).then(([res1, res2]) => {
       console.log(res1.data, res2.data)
-      this.setState({ formData: res1.data, crews: res2.data.map(option => {
+      this.setState({ formData: res1.data, crews: res2.data['results'].map(option => {
         return {label: `${option.bib_number} | ${option.id} | ${option.competitor_names} | ${option.times.length} start/finish time(s)`, value: option.id}
       })
       })
     })
   }
 
+  async loadOptions(search, loadedOptions, { page }) {
+    const response = await fetch(`/api/crews/?search=${search}&page=${page}`)
+    const responseJSON = await response.json()
+  
+    return {
+      options: responseJSON.results.map(option => {
+        return {label: `${option.bib_number} | ${option.id} | ${option.competitor_names} | ${option.times.length} start/finish time(s)`, value: option.id}
+      }),
+      hasMore: responseJSON.next,
+      additional: {
+        page: page + 1
+      }
+    }
+  }
+  
+  // async loadPageOptions (q, prevOptions, { page }) {
+  //   const { options, hasMore } = await loadOptions(q, page);
+  
+  //   return {
+  //     options,
+  //     hasMore,
+  
+  //     additional: {
+  //       page: page + 1
+  //     }
+  //   }
+  // }
+
+  // handleTestChange() {
+  //   console.log('You changed summat...')
+  // }
 
   handleSubmit(e) {
     e.preventDefault()
@@ -94,6 +132,18 @@ class RaceTimeEdit extends React.Component {
                   onChange={this.handleSelectChange}
                   options={this.getCrewOptions()}
                   value={!this.state.formData.crew ? '' : this.state.crews.find(option => option.value === this.state.formData.crew.id)}
+                />
+              </div>
+            </div>
+
+            <div className="field">
+              <div className="control">
+                <label className="label" htmlFor="test">Test scrolling box</label>
+                <AsyncPaginate
+                  id="test"
+                  onChange={this.handleTestChange}
+                  loadOptions={this.loadOptions}
+                  additional={{page: 1}}
                 />
               </div>
             </div>

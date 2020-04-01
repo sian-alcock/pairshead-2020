@@ -32,6 +32,7 @@
     "react-image": "^2.2.0",
     "react-router-dom": "^5.0.1",
     "react-select": "^3.0.4",
+    "react-select-async-paginate": "^0.3.13",
     "react-toastify": "^5.4.0",
     "sass-loader": "^7.3.1",
     "style-loader": "^1.0.0",
