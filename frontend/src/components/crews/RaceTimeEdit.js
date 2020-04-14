@@ -46,24 +46,6 @@ class RaceTimeEdit extends React.Component {
     }
   }
 
-  
-
-  // handleSubmit(e) {
-  //   e.preventDefault()
-
-  //   const data = {
-  //     ...this.state.formData,
-  //     crew: this.state.formData.crew.value
-  //   }
-
-  //   axios.put(`/api/race-times/${this.props.match.params.id}`, data)
-  //     .then(() => this.props.history.push('/race-times'))
-  //     .catch(err => this.setState({ errors: err.response.data }))
-  // }
-
-
-
-
   async handleSubmit(e) {
     e.preventDefault()
 
