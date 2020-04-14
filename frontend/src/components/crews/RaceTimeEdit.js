@@ -20,15 +20,19 @@ class RaceTimeEdit extends React.Component {
 
     this.handleSelectChange = this.handleSelectChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
-    this.getCrewValue = this.getCrewValue.bind(this)
   }
 
-  async componentDidMount() {
-    await axios.get(`/api/race-times/${this.props.match.params.id}`)
-      .then((res1) => {
-        console.log(res1.data)
-        this.setState({ raceTimeFormData: res1.data, crewId: !res1.data.crew ? '' : res1.data.crew.id })
+  componentDidMount() {
+    Promise.all([
+      axios.get(`/api/race-times/${this.props.match.params.id}`), // i.e. axios.get(something)
+      axios.get('/api/crews/')
+    ]).then(([res1, res2]) => {
+      console.log(res1.data, res2.data)
+      this.setState({ raceTimeFormData: res1.data, crewId: !res1.data.crew ? '' : res1.data.crew.id, crews: res2.data['results'].map(option => {
+        return {label: `${option.bib_number} | ${option.id} | ${option.competitor_names} | ${option.times.filter(time => time.tap === 'Start').length} start time(s) | ${option.times.filter(time => time.tap === 'Finish').length} finish time(s)`, value: option.id}
       })
+      })
+    })
   }
 
   async loadOptions(search, loadedOptions, { page }) {
@@ -99,21 +103,8 @@ class RaceTimeEdit extends React.Component {
   }
 
   handleSelectChange(selectedOption) {
-    // const formData = { ...this.state.formData, crew: selectedOption }
-    this.setState({ crewId: selectedOption.value }, ()=> this.getCrewValue(selectedOption.value))
-  }
-
-  async getCrewValue (crewId) {
-    
-    if(crewId) {
-      await axios.get(`/api/crews/${crewId}`)
-        .then(res => {
-          const myObject = {label: `${res.data.bib_number} | ${res.data.id} | ${res.data.competitor_names ? res.data.competitor_names : res.data.name} | ${res.data.times ? res.data.times.filter(time => time.tap === 'Start').length : 0} start time(s) | ${res.data.times ? res.data.times.filter(time => time.tap === 'Finish').length : 0} finish time(s)`, value: `${res.data.id}`}
-          console.log(myObject)
-          return myObject
-        })
-    }
-    
+    const raceTimeFormData = { ...this.state.raceTimeFormData, crew: selectedOption }
+    this.setState({ raceTimeFormData, crewId: selectedOption.value })
   }
 
   render() {
@@ -151,7 +142,7 @@ class RaceTimeEdit extends React.Component {
                   onChange={this.handleSelectChange}
                   loadOptions={this.loadOptions}
                   additional={{page: 1}}
-                  value={() => this.getCrewValue(this.state.crewId)}
+                  value={!this.state.raceTimeFormData.crew ? '' : this.state.crews.find(option => option.value === this.state.raceTimeFormData.crew.id)}
                 />
               </div>
             </div>
