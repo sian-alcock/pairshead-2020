@@ -62,40 +62,43 @@ class CrewUpdateRankings(APIView):
             crew.requires_recalculation = False
             crew.save()
 
-    
 
-class CrewDetailView(APIView): # extend the APIView
+class CrewDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Crew.objects.all()
+    serializer_class = CrewSerializer
 
-    def get_crew(self, pk):
-        try:
-            crew = Crew.objects.get(pk=pk)
-        except Crew.DoesNotExist:
-            raise Http404
-        return crew
+# class CrewDetailView(APIView): # extend the APIView
 
-    def get(self, _request, pk):
-        crew = self.get_crew(pk)
-        serializer = PopulatedCrewSerializer(crew)
-        return Response(serializer.data)
+#     def get_crew(self, pk):
+#         try:
+#             crew = Crew.objects.get(pk=pk)
+#         except Crew.DoesNotExist:
+#             raise Http404
+#         return crew
 
-    def put(self, request, pk):
-        crew = self.get_crew(pk)
-        crew = Crew.objects.get(pk=pk)
-        serializer = CrewSerializer(crew, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
+#     def get(self, _request, pk):
+#         crew = self.get_crew(pk)
+#         serializer = PopulatedCrewSerializer(crew)
+#         return Response(serializer.data)
 
-            # self.update_rankings()
-            return Response(serializer.data, status=201)
+#     def put(self, request, pk):
+#         crew = self.get_crew(pk)
+#         crew = Crew.objects.get(pk=pk)
+#         serializer = CrewSerializer(crew, data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
 
-        return Response(serializer.errors, status=422)
+#             # self.update_rankings()
+#             return Response(serializer.data, status=201)
+
+#         return Response(serializer.errors, status=422)
 
             
-    def delete(self, _request, pk):
-        crew = self.get_crew(pk)
-        crew = Crew.objects.get(pk=pk)
-        crew.delete()
-        return Response(status=204)
+#     def delete(self, _request, pk):
+#         crew = self.get_crew(pk)
+#         crew = Crew.objects.get(pk=pk)
+#         crew.delete()
+#         return Response(status=204)
 
 class CrewDataImport(APIView):
 

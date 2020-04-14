@@ -47,6 +47,7 @@ class ClubEventLoader extends Component {
       this.cancelTokenSource = null
     }
   }
+  
   componentWillUnmount() {
     this.cancelTokenSource && this.cancelTokenSource.cancel()
   }

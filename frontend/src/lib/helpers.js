@@ -22,6 +22,3 @@ export const getImage = function getImage(crew) {
   return <Img src={[`${crew.club.blade_image}`, `${image}`]} width="40px" />
 }
 
-// export const getImage = function getImage() {
-//   return <Img src={image} width="40px" />
-// }

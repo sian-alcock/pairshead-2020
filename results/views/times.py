@@ -25,7 +25,7 @@ class RaceTimeListView(generics.ListCreateAPIView):
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
     ordering_fields = ['sequence']
     search_fields = ['sequence', 'bib_number', 'tap', 'crew__id', 'crew__name', 'crew__competitor_names',]
-    filterset_fields = ['tap',]
+    filterset_fields = ['tap', 'crew__id',]
 
     def get_queryset(self):
         times = RaceTime.objects.all()

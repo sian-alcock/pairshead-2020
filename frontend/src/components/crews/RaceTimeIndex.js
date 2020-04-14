@@ -16,8 +16,8 @@ class RaceTimeIndex extends React.Component {
       pageNumber: 1,
       timesWithoutCrewBoolean: false,
       searchTerm: sessionStorage.getItem('raceTimeIndexSearch') || '',
-      startTab: true,
-      finishTab: false
+      startTab: !sessionStorage.getItem('tapTimes') || sessionStorage.getItem('tapTimes') === 'Start' ? true : false,
+      finishTab: sessionStorage.getItem('tapTimes') === 'Finish' ? true : false
     }
 
     this.displayStartTimes = this.displayStartTimes.bind(this)
@@ -36,7 +36,7 @@ class RaceTimeIndex extends React.Component {
       params: {
         page_size: 20,
         page: 1,
-        tap: 'Start',
+        tap: !sessionStorage.getItem('tapTimes') ? 'Start' : sessionStorage.getItem('tapTimes'),
         noCrew: false
       }
     })
@@ -56,24 +56,6 @@ class RaceTimeIndex extends React.Component {
     ) return null
     this.setState({ pageNumber }, () => this.refreshData())
   }
-
-  // refreshData(queryString=null) {
-  //   axios.get(`/api/race-times/?${queryString}`, {
-  //     params: {
-  //       page_size: this.state.pageSize,
-  //       page: this.state.pageNumber,
-  //       tap: this.state.startTab ? 'Start' : 'Finish',
-  //       noCrew: this.state.timesWithoutCrewBoolean
-  //     }
-  //   })
-  //     .then(res => this.setState({ 
-  //       totalTimes: res.data['count'],
-  //       raceTimes: res.data['results'],
-  //       startTimesWithNoCrew: res.data['start_times_no_crew'],
-  //       finishTimesWithNoCrew: res.data['finish_times_no_crew']
-  //     })
-  //     )
-  // }
 
   refreshData(queryString=null) {
     if (typeof this._source !== typeof undefined) {
@@ -112,6 +94,7 @@ class RaceTimeIndex extends React.Component {
   }
 
   displayStartTimes(){
+    sessionStorage.setItem('tapTimes', 'Start')
     this.setState({
       startTab: true,
       finishTab: false,
@@ -120,6 +103,7 @@ class RaceTimeIndex extends React.Component {
   }
 
   displayFinishTimes(){
+    sessionStorage.setItem('tapTimes', 'Finish')
     this.setState({
       startTab: false,
       finishTab: true,
@@ -160,7 +144,7 @@ class RaceTimeIndex extends React.Component {
 
 
   render() {
-
+    console.log('start', this.state.startTab, 'finish',  this.state.finishTab)
     const totalPages = Math.ceil(this.state.totalTimes / this.state.pageSize)
     const pagingOptions = [{label: '20 times', value: '20'}, {label: '50 times', value: '50'}, {label: '100 times', value: '100'}, {label: 'All times', value: '500'}]
 
@@ -170,8 +154,8 @@ class RaceTimeIndex extends React.Component {
           <div className="tabContainer no-print">
             <div className="tabs is-toggle is-large is-centered">
               <ul>
-                <li onClick={this.displayStartTimes}><a className={`startTab ${this.state.startTab ? 'active' : ''}`}>Start times</a></li>
-                <li onClick={this.displayFinishTimes}><a className={`finishTab ${this.state.finishTab ? 'active' : ''}`}>Finish times</a></li>
+                <li onClick={this.displayStartTimes}><a className={`startTab ${!this.state.startTab ? '' : 'active'}`}>Start times</a></li>
+                <li onClick={this.displayFinishTimes}><a className={`finishTab ${!this.state.finishTab ? '' : 'active'}`}>Finish times</a></li>
               </ul>
             </div>
           </div>
