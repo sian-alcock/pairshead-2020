@@ -14,7 +14,8 @@ class RaceTimeIndex extends React.Component {
       raceTimesToDisplay: [],
       pageSize: 20,
       pageNumber: 1,
-      timesWithoutCrewBoolean: false,
+      crewsWithTooManyTimesBoolean: sessionStorage.getItem('timesInvalid') === 'true' ? true : false,
+      timesWithoutCrewBoolean: sessionStorage.getItem('timesWithNoCrew') === 'true' ? true : false,
       searchTerm: sessionStorage.getItem('raceTimeIndexSearch') || '',
       startTab: !sessionStorage.getItem('tapTimes') || sessionStorage.getItem('tapTimes') === 'Start' ? true : false,
       finishTab: sessionStorage.getItem('tapTimes') === 'Finish' ? true : false
@@ -37,14 +38,17 @@ class RaceTimeIndex extends React.Component {
         page_size: 20,
         page: 1,
         tap: !sessionStorage.getItem('tapTimes') ? 'Start' : sessionStorage.getItem('tapTimes'),
-        noCrew: false
+        noCrew: sessionStorage.getItem('timesWithNoCrew') === 'true' ? true : false,
+        crewInvalidTimes: sessionStorage.getItem('timesInvalid') === 'true' ? true : false
       }
     })
       .then(res => this.setState({
         totalTimes: res.data['count'],
         raceTimes: res.data['results'],
         startTimesWithNoCrew: res.data['start_times_no_crew'],
-        finishTimesWithNoCrew: res.data['finish_times_no_crew']
+        finishTimesWithNoCrew: res.data['finish_times_no_crew'],
+        startTimesInvalid: res.data['crews_invalid_times_start'],
+        finishTimesInvalid: res.data['crews_invalid_times_finish']
       })
       )
   }
@@ -73,14 +77,17 @@ class RaceTimeIndex extends React.Component {
         page_size: this.state.pageSize,
         page: this.state.pageNumber,
         tap: this.state.startTab ? 'Start' : 'Finish',
-        noCrew: this.state.timesWithoutCrewBoolean
+        noCrew: this.state.timesWithoutCrewBoolean,
+        crewInvalidTimes: this.state.crewsWithTooManyTimesBoolean
       }
     })
       .then(res => this.setState({ 
         totalTimes: res.data['count'],
         raceTimes: res.data['results'],
         startTimesWithNoCrew: res.data['start_times_no_crew'],
-        finishTimesWithNoCrew: res.data['finish_times_no_crew']
+        finishTimesWithNoCrew: res.data['finish_times_no_crew'],
+        startTimesInvalid: res.data['crews_invalid_times_start'],
+        finishTimesInvalid: res.data['crews_invalid_times_finish']
       })
       )
       .catch((error) => {
@@ -120,15 +127,21 @@ class RaceTimeIndex extends React.Component {
   }
 
   handleTimesWithoutCrew(e){
+    sessionStorage.setItem('timesWithNoCrew', e.target.checked)
+    sessionStorage.setItem('timesInvalid', false)
     this.setState({
       timesWithoutCrewBoolean: e.target.checked,
+      crewsWithTooManyTimesBoolean: false,
       pageNumber: 1
     }, () => this.refreshData())
   }
 
   handleCrewsWithTooManyTimes(e){
+    sessionStorage.setItem('timesInvalid', e.target.checked)
+    sessionStorage.setItem('timesWithNoCrew', false)
     this.setState({
       crewsWithTooManyTimesBoolean: e.target.checked,
+      timesWithoutCrewBoolean: false,
       pageNumber: 1
     }, () => this.refreshData())
   }
@@ -146,6 +159,8 @@ class RaceTimeIndex extends React.Component {
   render() {
     console.log('start', this.state.startTab, 'finish',  this.state.finishTab)
     const totalPages = Math.ceil(this.state.totalTimes / this.state.pageSize)
+    const itemEnd = (this.state.pageSize * this.state.pageNumber) >= this.state.totalTimes ? this.state.totalTimes : this.state.pageSize * this.state.pageNumber
+    const itemStart = itemEnd - this.state.pageSize + 1
     const pagingOptions = [{label: '20 times', value: '20'}, {label: '50 times', value: '50'}, {label: '100 times', value: '100'}, {label: 'All times', value: '500'}]
 
     return (
@@ -187,7 +202,7 @@ class RaceTimeIndex extends React.Component {
             <div className="column">
               <div className="field no-print">
                 <label className="checkbox" >
-                  <input type="checkbox"  className="checkbox" value="timesWithoutCrew" onClick={this.handleTimesWithoutCrew} />
+                  <input type="checkbox"  className="checkbox" onClick={this.handleTimesWithoutCrew} value={this.state.timesWithoutCrewBoolean} defaultChecked={!!this.state.timesWithoutCrewBoolean} />
                   ⚠️ Times with no crew ({this.state.startTab ? this.state.startTimesWithNoCrew : this.state.finishTimesWithNoCrew})
                 </label>
               </div>
@@ -196,8 +211,8 @@ class RaceTimeIndex extends React.Component {
             <div className="column">
               <div className="field no-print">
                 <label className="checkbox" >
-                  <input type="checkbox"  className="checkbox" value="timesWithoutCrew" onClick={this.handleCrewsWithTooManyTimes} />
-                  ❗️ Crews with too many times (??)
+                  <input type="checkbox"  className="checkbox" onClick={this.handleCrewsWithTooManyTimes} value={this.state.crewsWithTooManyTimesBoolean} defaultChecked={!!this.state.crewsWithTooManyTimesBoolean} />
+                  ❗️ Crews with too many times ({this.state.startTab ? this.state.startTimesInvalid : this.state.finishTimesInvalid})
                 </label>
               </div>
             </div>
@@ -212,7 +227,7 @@ class RaceTimeIndex extends React.Component {
               changePage={this.changePage}
             />
           </div>
-          <div className="list-totals"><small>{this.state.raceTimes.length} of {this.state.totalTimes} times</small></div>
+          <div className="list-totals"><small>{itemStart} to {itemEnd} of {this.state.totalTimes} times</small></div>
 
           <table className="table">
             <thead>

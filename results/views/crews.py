@@ -16,8 +16,6 @@ from ..serializers import CrewSerializer, PopulatedCrewSerializer, WriteCrewSeri
 
 from ..models import Crew, RaceTime
 
-from .times import CrewRaceTimesImport
-
 from ..pagination import CrewPaginationWithAggregates
 
 class CrewListView(generics.ListCreateAPIView):
@@ -66,39 +64,6 @@ class CrewUpdateRankings(APIView):
 class CrewDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Crew.objects.all()
     serializer_class = CrewSerializer
-
-# class CrewDetailView(APIView): # extend the APIView
-
-#     def get_crew(self, pk):
-#         try:
-#             crew = Crew.objects.get(pk=pk)
-#         except Crew.DoesNotExist:
-#             raise Http404
-#         return crew
-
-#     def get(self, _request, pk):
-#         crew = self.get_crew(pk)
-#         serializer = PopulatedCrewSerializer(crew)
-#         return Response(serializer.data)
-
-#     def put(self, request, pk):
-#         crew = self.get_crew(pk)
-#         crew = Crew.objects.get(pk=pk)
-#         serializer = CrewSerializer(crew, data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-
-#             # self.update_rankings()
-#             return Response(serializer.data, status=201)
-
-#         return Response(serializer.errors, status=422)
-
-            
-#     def delete(self, _request, pk):
-#         crew = self.get_crew(pk)
-#         crew = Crew.objects.get(pk=pk)
-#         crew.delete()
-#         return Response(status=204)
 
 class CrewDataImport(APIView):
 

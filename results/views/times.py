@@ -37,6 +37,11 @@ class RaceTimeListView(generics.ListCreateAPIView):
             queryset = times.filter(tap__exact=tap, crew__isnull=True).order_by('sequence')
             return queryset
 
+        times_with_crew_invalid = self.request.query_params.get('crewInvalidTimes')
+        if times_with_crew_invalid == 'true':
+            queryset = times.filter(tap__exact=tap, crew__invalid_time=True).order_by('sequence')
+            return queryset
+
         return queryset
 
 
