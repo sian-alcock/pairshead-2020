@@ -177,7 +177,7 @@ class ResultIndex extends React.Component {
 
   render() {
     console.log(this.state.crews)
-    console.log(this.state.updateRequired)
+    console.log('is an update required?  ' + this.state.updateRequired)
     console.log(this.state.closeFirstAndSecondCrewsBoolean)
     const totalPages = Math.ceil((this.state.totalCrews) / this.state.pageSize)
     const pagingOptions = [{label: '20 crews', value: '20'}, {label: '50 crews', value: '50'}, {label: '100 crews', value: '100'}, {label: 'All crews', value: '500'}]

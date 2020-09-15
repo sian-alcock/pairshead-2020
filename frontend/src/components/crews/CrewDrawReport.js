@@ -4,39 +4,39 @@ import { Link } from 'react-router-dom'
 import { getImage } from '../../lib/helpers'
 
 
-const _ = require('lodash').runInContext()
-
-
 class CrewDrawReport extends React.Component {
   constructor() {
     super()
     this.state = {
-      crews: [],
-      crewsToDisplay: []
+      crews: []
     }
 
-    this.combineFiltersAndSort = this.combineFiltersAndSort.bind(this)
   }
 
   componentDidMount() {
-    axios.get('/api/crews/')
-      .then(res => this.setState(
-        { crews: res.data, crewsToDisplay: res.data },
-        () => this.combineFiltersAndSort(this.state.crews))
+    axios.get('/api/crews', {
+      params: {
+        page_size: 20,
+        page: 1,
+        order: 'bib_number',
+        status: this.state.scratchedCrewsBoolean ? 'Accepted' : ['Accepted', 'Scratched']
+
+      }
+    })
+      .then(res => this.setState({ 
+        totalCrews: res.data['count'],
+        crews: res.data['results'],
+        scratchedCrews: res.data['num_scratched_crews'],
+        acceptedCrewsNoStart: res.data['num_accepted_crews_no_start_time'],
+        acceptedCrewsNoFinish: res.data['num_accepted_crews_no_finish_time'],
+        crewsInvalidTimes: res.data['num_accepted_crews_invalid_time']
+      })
       )
-  }
-
-
-  combineFiltersAndSort(filteredCrews) {
-    _.indexOf = _.findIndex
-    const sortedCrews = _.orderBy(filteredCrews, 'bib_number', 'asc')
-    return this.setState({ crewsToDisplay: sortedCrews })
-
   }
 
   render() {
 
-    !this.state.crewsToDisplay ? <h2>loading...</h2> : console.log(this.state.crewsToDisplay)
+    !this.state.crews ? <h2>loading...</h2> : console.log(this.state.crews)
 
     return (
       <section className="section">
@@ -66,7 +66,7 @@ class CrewDrawReport extends React.Component {
               </tr>
             </tfoot>
             <tbody>
-              {this.state.crewsToDisplay.map(crew =>
+              {this.state.crews.map(crew =>
                 <tr key={crew.id}>
                   <td><Link to={`/crews/${crew.id}`}>{crew.id}</Link></td>
                   <td>{!crew.competitor_names ? crew.name : crew.competitor_names}</td>
