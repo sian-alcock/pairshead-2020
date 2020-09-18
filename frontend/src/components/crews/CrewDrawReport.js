@@ -1,15 +1,23 @@
 import React from 'react'
+import Select from 'react-select'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { getImage } from '../../lib/helpers'
+import Paginator from '../common/Paginator'
 
 
 class CrewDrawReport extends React.Component {
   constructor() {
     super()
     this.state = {
-      crews: []
+      crews: [],
+      pageSize: 20,
+      pageNumber: 1
     }
+    this.changePage = this.changePage.bind(this)
+    this.refreshData = this.refreshData.bind(this)
+    this.handlePagingChange = this.handlePagingChange.bind(this)
+
 
   }
 
@@ -19,7 +27,7 @@ class CrewDrawReport extends React.Component {
         page_size: 20,
         page: 1,
         order: 'bib_number',
-        status: this.state.scratchedCrewsBoolean ? 'Accepted' : ['Accepted', 'Scratched']
+        status: 'Accepted'
 
       }
     })
@@ -34,13 +42,94 @@ class CrewDrawReport extends React.Component {
       )
   }
 
+  refreshData(queryString=null) {
+    if (typeof this._source !== typeof undefined) {
+      this._source.cancel('Operation cancelled due to new request')
+    }
+
+    // save the new request for cancellation
+    this._source = axios.CancelToken.source()
+
+    axios.get(`/api/crews?${queryString}`, {
+      // cancel token used by axios
+      cancelToken: this._source.token,
+
+      params: {
+        page_size: this.state.pageSize,
+        page: this.state.pageNumber,
+        status: this.state.scratchedCrewsBoolean ? 'Accepted' : ['Accepted', 'Scratched']
+      }
+    })
+      .then(res => this.setState({
+        totalCrews: res.data['count'],
+        crews: res.data['results'],
+        scratchedCrews: res.data['num_scratched_crews'],
+        loading: false
+      })
+      )
+      .catch((error) => {
+        if (axios.isCancel(error) || error) {
+          this.setState({
+            loading: false,
+            message: 'Failed to get data'
+          })
+        }
+      })
+  }
+
+  handlePagingChange(selectedOption){
+    this.setState({
+      pageSize: selectedOption.value,
+      pageNumber: 1
+    }, () => this.refreshData())
+    
+  }
+
+  changePage(pageNumber, totalPages) {
+    if (
+      pageNumber > totalPages ||
+      pageNumber < 0
+    ) return null
+    this.setState({ pageNumber }, () => this.refreshData())
+  }
+
   render() {
 
     !this.state.crews ? <h2>loading...</h2> : console.log(this.state.crews)
+    const totalPages = Math.floor((this.state.totalCrews) / this.state.pageSize)
+    const pagingOptions = [{label: '20 crews', value: '20'}, {label: '50 crews', value: '50'}, {label: '100 crews', value: '100'}, {label: 'All crews', value: '500'}]
+
+
 
     return (
       <section className="section">
         <div className="container">
+
+          <div className="columns no-print">
+
+            <div className="column is-one-quarter">
+
+              <div className="field">
+                <div className="control">
+                  <Select
+                    id="paging"
+                    onChange={this.handlePagingChange}
+                    options={pagingOptions}
+                    placeholder='Page size'
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="no-print">
+            <Paginator
+              pageNumber={this.state.pageNumber}
+              totalPages={totalPages}
+              changePage={this.changePage}
+            />
+          </div>
+
+          <div className="list-totals"><small>{this.state.crews.length} of {this.state.totalCrews} crews</small></div>
 
           <table className="table">
             <thead>
@@ -79,6 +168,14 @@ class CrewDrawReport extends React.Component {
               )}
             </tbody>
           </table>
+
+          <div className="no-print">
+            <Paginator
+              pageNumber={this.state.pageNumber}
+              totalPages={totalPages}
+              changePage={this.changePage}
+            />
+          </div>
 
         </div>
       </section>
