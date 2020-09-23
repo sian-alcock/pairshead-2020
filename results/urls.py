@@ -6,6 +6,7 @@ from .views import crews
 from .views import competitors
 from .views import times
 from .views import results
+from .views import masters_adjustments
 
 
 urlpatterns = [
@@ -27,4 +28,5 @@ path('competitor-data-import/', competitors.CompetitorDataImport.as_view()),
 path('race-times/', times.RaceTimeListView.as_view()),
 path('race-times/<int:pk>', times.RaceTimeDetailView.as_view()),
 path('crew-race-times/', times.CrewRaceTimesImport.as_view()),
+path('masters-adjustments-import/', masters_adjustments.MastersAdjustmentsImport.as_view()),
 ]

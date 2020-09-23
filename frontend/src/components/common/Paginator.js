@@ -1,6 +1,8 @@
 import React from 'react'
 
 const Paginator = ({ pageNumber, totalPages, changePage }) => {
+  const beforeNumberDisabled = pageNumber === 1 ? true : false
+  const afterNumberDisabled = pageNumber === totalPages ? true : false
   return (
     <div>
       <nav className="pagination is-centered is-small" role="navigation" aria-label="pagination">
@@ -18,7 +20,13 @@ const Paginator = ({ pageNumber, totalPages, changePage }) => {
             onClick={() => changePage(1, totalPages)}
           >1</a></li>
           <li><span className="pagination-ellipsis">&hellip;</span></li>
+          <li>
+            <a className="pagination-link" aria-label={`Goto page ${pageNumber-1}`} onClick={() => changePage(pageNumber-1, totalPages)} disabled={beforeNumberDisabled}>{pageNumber === 1 ? '  ' : pageNumber-1}</a>
+          </li>
           <li><a className="pagination-link is-current" aria-label={`Goto page ${pageNumber}`} aria-current="page">{pageNumber}</a></li>
+          <li>
+            <a className="pagination-link" aria-label={`Goto page ${pageNumber-1}`} onClick={() => changePage(pageNumber+1, totalPages)} disabled={afterNumberDisabled}>{pageNumber === totalPages ? '  ' : pageNumber+1}</a>
+          </li>
           <li><span className="pagination-ellipsis">&hellip;</span></li>
           <li><a
             className="pagination-link" aria-label={`Goto page ${totalPages}`}

@@ -4,6 +4,7 @@ import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { getImage } from '../../lib/helpers'
 import Paginator from '../common/Paginator'
+import PageTotals from '../common/PageTotals'
 
 
 class CrewDrawReport extends React.Component {
@@ -129,8 +130,13 @@ class CrewDrawReport extends React.Component {
             />
           </div>
 
-          <div className="list-totals"><small>{this.state.crews.length} of {this.state.totalCrews} crews</small></div>
-
+          <PageTotals
+            totalCount={this.state.totalCrews}
+            entities='crews'
+            pageSize={this.state.pageSize}
+            pageNumber={this.state.pageNumber}  
+          />
+          
           <table className="table">
             <thead>
               <tr>

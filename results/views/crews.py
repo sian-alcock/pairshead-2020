@@ -31,6 +31,13 @@ class CrewListView(generics.ListCreateAPIView):
     def get_queryset(self):
 
         queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted'))
+
+        masters = self.request.query_params.get('masters')
+        print(masters)
+        if masters == 'true':
+            queryset = queryset.filter(status__exact='Accepted', masters_adjustment__gt=0).order_by('event_band')
+            return queryset
+
         order = self.request.query_params.get('order', None)
         if order == 'crew':
             return queryset.order_by('competitor_names', 'name',)
@@ -92,10 +99,10 @@ class CrewDataImport(APIView):
                     'id': crew['id'],
                     'composite_code': crew['compositeCode'],
                     'club': crew['clubId'],
-                    'rowing_CRI': crew['rowingCRI'],
-                    'rowing_CRI_max': crew['rowingCRIMax'],
-                    'sculling_CRI': crew['scullingCRI'],
-                    'sculling_CRI_max': crew['scullingCRIMax'],
+                    # 'rowing_CRI': crew['rowingCRI'],
+                    # 'rowing_CRI_max': crew['rowingCRIMax'],
+                    # 'sculling_CRI': crew['scullingCRI'],
+                    # 'sculling_CRI_max': crew['scullingCRIMax'],
                     'event': crew['eventId'],
                     'status': crew['status'],
                     'bib_number': crew['customCrewNumber'],

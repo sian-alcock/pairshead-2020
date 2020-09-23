@@ -29,7 +29,7 @@ class ExportData extends React.Component {
         <div className="container">
 
           <div className="columns">
-            <div className="column has-text-centered">
+            <div className="column is-one-quarter has-text-centered">
               <button className="button is-primary" onClick={this.exportCompetitorData}>Export competitor data</button>
             </div>
             <div className="column left">
@@ -38,7 +38,7 @@ class ExportData extends React.Component {
           </div>
 
           <div className="columns">
-            <div className="column">
+            <div className="column is-one-quarter">
               <button className="button is-primary" onClick={this.exportCrewData}>Export crew data</button>
             </div>
             <div className="column left">

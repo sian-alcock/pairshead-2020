@@ -14,34 +14,34 @@ class ImportData extends React.Component {
         <div className="container">
 
           <div className="columns">
-            <div className="column">
+            <div className="column is-one-quarter">
               <ClubEventLoader/>
             </div>
             <div className="column left">
-              This button gets the clubs, events and bands from BROE.  Note:  Data is deleted before importing.
+              This button gets the clubs, events and bands from British Rowing.  Note:  Data is deleted before importing.
             </div>
           </div>
 
           <div className="columns">
-            <div className="column">
+            <div className="column is-one-quarter">
               <CrewLoader/>
             </div>
             <div className="column left">
-              This button gets the crew data from BROE.  Note:  Data is deleted before importing.
+              This button gets the crew data from British Rowing.  Note:  Data is deleted before importing.
             </div>
           </div>
 
           <div className="columns">
-            <div className="column">
+            <div className="column is-one-quarter">
               <CompetitorLoader/>
             </div>
             <div className="column left">
-              This button gets the competitor data from BROE.  Note:  Data is deleted before importing.
+              This button gets the competitor data from British Rowing.  Note:  Data is deleted before importing.
             </div>
           </div>
 
           <div className="columns">
-            <div className="column">
+            <div className="column is-one-quarter">
               <TimeLoader/>
             </div>
             <div className="column left">

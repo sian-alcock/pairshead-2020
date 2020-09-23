@@ -1,6 +1,6 @@
 import re
 from rest_framework import serializers
-from .models import Club, Event, Band, Crew, RaceTime, Competitor
+from .models import Club, Event, Band, Crew, RaceTime, Competitor, MastersAdjustment
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -40,7 +40,7 @@ class CrewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Crew
-        fields = ('id', 'name', 'composite_code', 'status', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds', 'penalty', 'masters_adjustment', 'masters_adjusted_time', 'masters_adjust_minutes', 'masters_adjust_seconds', 'bib_number', 'time_only', 'did_not_start', 'did_not_finish', 'band', 'overall_rank', 'gender_rank', 'requires_recalculation', )
+        fields = ('id', 'name', 'composite_code', 'status', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds', 'penalty', 'masters_adjustment', 'masters_adjusted_time', 'bib_number', 'time_only', 'did_not_start', 'did_not_finish', 'band', 'overall_rank', 'gender_rank', 'requires_recalculation', )
 
 
 class PopulatedCrewSerializer(serializers.ModelSerializer):
@@ -54,7 +54,7 @@ class PopulatedCrewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Crew
-        fields = ('id', 'name', 'composite_code', 'status', 'penalty', 'bib_number', 'times', 'raw_time', 'race_time', 'start_time', 'finish_time', 'start_sequence', 'finish_sequence', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds', 'masters_adjustment', 'masters_adjusted_time', 'masters_adjust_minutes', 'masters_adjust_seconds', 'event', 'club', 'band', 'competitors', 'competitor_names', 'event_band', 'time_only', 'published_time', 'category_position_time', 'did_not_start', 'did_not_finish', 'overall_rank', 'gender_rank', 'category_position_time', 'category_rank',)
+        fields = ('id', 'name', 'composite_code', 'status', 'penalty', 'bib_number', 'times', 'raw_time', 'race_time', 'start_time', 'finish_time', 'start_sequence', 'finish_sequence', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds', 'masters_adjustment', 'masters_adjusted_time', 'event', 'club', 'band', 'competitors', 'competitor_names', 'event_band', 'time_only', 'published_time', 'category_position_time', 'did_not_start', 'did_not_finish', 'overall_rank', 'gender_rank', 'category_position_time', 'category_rank',)
 
 
 class CrewExportSerializer(serializers.ModelSerializer):
@@ -134,3 +134,9 @@ class WriteClubSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({'id': 'Problem with ID'})
 
         return value
+
+class WriteMastersAdjustmentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = MastersAdjustment
+        fields = ('standard_time_label', 'standard_time_ms', 'master_category', 'master_time_adjustment_ms',)

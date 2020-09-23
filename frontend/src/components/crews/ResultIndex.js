@@ -4,9 +4,7 @@ import axios from 'axios'
 import { formatTimes, getImage } from '../../lib/helpers'
 import Paginator from '../common/Paginator'
 import CrewTimeCalculatedFieldsUpdate from '../common/UpdateCrewTimeCalculatedFields'
-
-
-// const _ = require('lodash').runInContext()
+import PageTotals from '../common/PageTotals'
 
 class ResultIndex extends React.Component {
   constructor() {
@@ -176,9 +174,7 @@ class ResultIndex extends React.Component {
   }
 
   render() {
-    console.log(this.state.crews)
-    console.log('is an update required?  ' + this.state.updateRequired)
-    console.log(this.state.closeFirstAndSecondCrewsBoolean)
+
     const totalPages = Math.ceil((this.state.totalCrews) / this.state.pageSize)
     const pagingOptions = [{label: '20 crews', value: '20'}, {label: '50 crews', value: '50'}, {label: '100 crews', value: '100'}, {label: 'All crews', value: '500'}]
     const genderOptions = [{label: 'All', value: 'all'}, {label: 'Open', value: 'Open'}, {label: 'Female', value: 'Female'}, {label: 'Mixed', value: 'Mixed'}]
@@ -195,10 +191,11 @@ class ResultIndex extends React.Component {
             />
           </div> : ''}
 
-          <div className="columns no-print">
+          <div className="columns no-print is-vtop">
 
             <div className="column">
-              <div className="field control has-icons-left">
+              <label className="label has-text-left" htmlFor="searchResultsControl">Search</label>
+              <div className="field control has-icons-left" id="searchResultsControl">
                 <span className="icon is-left">
                   <i className="fas fa-search"></i>
                 </span>
@@ -209,6 +206,7 @@ class ResultIndex extends React.Component {
             <div className="column">
 
               <div className="field">
+                <label className="label has-text-left" htmlFor="category">Select category</label>
                 <div className="control">
                   <Select
                     id="category"
@@ -224,6 +222,7 @@ class ResultIndex extends React.Component {
             <div className="column">
 
               <div className="field">
+                <label className="label has-text-left" htmlFor="paging">Page size</label>
                 <div className="control">
                   <Select
                     id="paging"
@@ -238,6 +237,7 @@ class ResultIndex extends React.Component {
             <div className="column">
 
               <div className="field">
+                <label className="label has-text-left" htmlFor="gender">Select gender</label>
                 <div className="control">
                   <Select
                     id="gender"
@@ -250,20 +250,18 @@ class ResultIndex extends React.Component {
               </div>
             </div>
 
-            <div className="column">
+            <div className="column has-text-left">
               <div className="field">
                 <label className="checkbox" >
                   <input type="checkbox"  className="checkbox" value="" onChange={this.handleFirstAndSecondCrews} />
                   <small>Crews in 1st and 2nd place</small>
                 </label>
               </div>
-            </div>
 
-            <div className="column">
               <div className="field">
                 <label className="checkbox" >
                   <input type="checkbox"  className="checkbox" value="highlightCloseCrews" onChange={this.handleCloseCrews}/>
-                  <small>Highlight 1st/2nd crews within 2s ❓</small>
+                  <small>Highlight 1st/2nd crews within 2s&nbsp;❓</small>
                 </label>
               </div>
             </div>
@@ -276,7 +274,12 @@ class ResultIndex extends React.Component {
               changePage={this.changePage}
             />
           </div>
-          <div className="list-totals no-print"><small>{this.state.crews.length} of {this.state.totalCrews} results</small></div>
+          <PageTotals
+            totalCount={this.state.totalCrews}
+            entities='crews'
+            pageSize={this.state.pageSize}
+            pageNumber={this.state.pageNumber}  
+          />
           <table className="table">
             <thead>
               <tr>

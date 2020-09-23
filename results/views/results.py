@@ -23,17 +23,16 @@ from ..pagination import CrewPaginationWithAggregates
 
 class ResultsListView(generics.ListCreateAPIView):
     serializer_class = PopulatedCrewSerializer
-    # pagination_class = PageNumberPagination
     pagination_class = CrewPaginationWithAggregates
     PageNumberPagination.page_size_query_param = 'page_size' or 10
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
-    ordering_fields = ['overall_rank', 'gender_rank', 'category_rank', 'event_band',]
+    ordering_fields = ['overall_rank', 'gender_rank', 'category_rank', 'event_band', 'name',]
     search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number', 'competitor_names',]
     filterset_fields = ['status', 'event_band', 'raw_time',]
 
     def get_queryset(self):
 
-        queryset = Crew.objects.filter(status__exact='Accepted', published_time__gt=0,).order_by('overall_rank',)
+        queryset = Crew.objects.filter(status__exact='Accepted', published_time__gt=0,).order_by('name',)
 
         gender = self.request.query_params.get('gender')
         print(gender)

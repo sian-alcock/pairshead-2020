@@ -191,45 +191,7 @@ class CrewTimeEdit extends React.Component {
                 </div>
               </div>
             </div>
-
-            <p>Masters adjust time</p>
-
-            <div className="columns">
-              <div className="column">
-                <div className="field">
-                  <label className="label" htmlFor="masters_adjust_minutes">Minutes</label>
-                  <input
-                    className="input"
-                    type="number"
-                    name="masters_adjust_minutes"
-                    id="masters_adjust_minutes"
-                    min="0"
-                    max="59"
-                    value={this.state.formData.masters_adjust_minutes || ''}
-                    onChange={this.handleChange}
-                  />
-                  {this.state.errors.masters_adjust_minutes && <small className="help is-danger">{this.state.errors.masters_adjust_minutes}</small>}
-                </div>
-              </div>
-
-              <div className="column">
-                <div className="field">
-                  <label className="label" htmlFor="masters_adjust_seconds">Seconds</label>
-                  <input
-                    className="input"
-                    type="number"
-                    name="masters_adjust_seconds"
-                    id="masters_adjust_seconds"
-                    min="0"
-                    max="59"
-                    value={this.state.formData.masters_adjust_seconds || ''}
-                    onChange={this.handleChange}
-                  />
-                  {this.state.errors.masters_adjust_seconds && <small className="help is-danger">{this.state.errors.masters_adjust_seconds}</small>}
-                </div>
-              </div>
-
-            </div>
+            
             <div className="columns">
               <div className="column">
                 <div className="field">

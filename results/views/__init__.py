@@ -5,3 +5,4 @@ from .crews import *
 from .events import *
 from .times import *
 from .results import *
+from .masters_adjustments import *

@@ -3,8 +3,8 @@ import Select from 'react-select'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { formatTimes } from '../../lib/helpers'
-// const _ = require('lodash').runInContext()
 import Paginator from '../common/Paginator'
+import PageTotals from '../common/PageTotals'
 
 class RaceTimeIndex extends React.Component {
   constructor() {
@@ -157,10 +157,7 @@ class RaceTimeIndex extends React.Component {
 
 
   render() {
-    console.log('start', this.state.startTab, 'finish',  this.state.finishTab)
     const totalPages = Math.ceil(this.state.totalTimes / this.state.pageSize)
-    const itemEnd = (this.state.pageSize * this.state.pageNumber) >= this.state.totalTimes ? this.state.totalTimes : this.state.pageSize * this.state.pageNumber
-    const itemStart = itemEnd - this.state.pageSize + 1
     const pagingOptions = [{label: '20 times', value: '20'}, {label: '50 times', value: '50'}, {label: '100 times', value: '100'}, {label: 'All times', value: '500'}]
 
     return (
@@ -175,19 +172,22 @@ class RaceTimeIndex extends React.Component {
             </div>
           </div>
 
-          <div className="columns">
+          <div className="columns is-vcentered">
 
             <div className="column">
-              <div className="search field control has-icons-left no-print">
+              <label className="label has-text-left" htmlFor="raceTimeSort">Search</label>
+
+              <div className="search field control control-full-width has-icons-left no-print">
                 <span className="icon is-left">
                   <i className="fas fa-search"></i>
                 </span>
-                <input className="input" placeholder="search" value={this.state.searchTerm} onChange={this.handleSearchKeyUp} />
+                <input id="raceTimeSort" className="input control-full-width" placeholder="search" value={this.state.searchTerm} onChange={this.handleSearchKeyUp} />
               </div>
             </div>
 
             <div className="column">
               <div className="field">
+                <label className="label has-text-left" htmlFor="paging">Select page size</label>
                 <div className="control">
                   <Select
                     id="paging"
@@ -199,16 +199,14 @@ class RaceTimeIndex extends React.Component {
               </div>
             </div>
 
-            <div className="column">
+            <div className="column has-text-left">
               <div className="field no-print">
                 <label className="checkbox" >
                   <input type="checkbox"  className="checkbox" onClick={this.handleTimesWithoutCrew} value={this.state.timesWithoutCrewBoolean} defaultChecked={!!this.state.timesWithoutCrewBoolean} />
                   ⚠️ Times with no crew ({this.state.startTab ? this.state.startTimesWithNoCrew : this.state.finishTimesWithNoCrew})
                 </label>
               </div>
-            </div>
 
-            <div className="column">
               <div className="field no-print">
                 <label className="checkbox" >
                   <input type="checkbox"  className="checkbox" onClick={this.handleCrewsWithTooManyTimes} value={this.state.crewsWithTooManyTimesBoolean} defaultChecked={!!this.state.crewsWithTooManyTimesBoolean} />
@@ -227,8 +225,12 @@ class RaceTimeIndex extends React.Component {
               changePage={this.changePage}
             />
           </div>
-          <div className="list-totals"><small>{itemStart} to {itemEnd} of {this.state.totalTimes} times</small></div>
-
+          <PageTotals
+            totalCount={this.state.totalTimes}
+            entities='times'
+            pageSize={this.state.pageSize}
+            pageNumber={this.state.pageNumber}  
+          />
           <table className="table">
             <thead>
               <tr>

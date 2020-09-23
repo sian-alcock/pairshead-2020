@@ -114,4 +114,12 @@ td, th, .control {
   cursor: pointer;
 }
 
+.accordion {
+  margin-bottom: 15px;
+}
+
+.control-full-width {
+  width: 100%;
+}
+
 @import "~bulma"
