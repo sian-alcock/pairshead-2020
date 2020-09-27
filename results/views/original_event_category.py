@@ -40,7 +40,8 @@ class OriginalEventCategoryImport(APIView):
     def calculate_computed_properties(self):
 
         for crew in Crew.objects.all():
-            print(crew.category_position_time)
-            print(crew.category_rank)
+            print('masters adjustment ' + str(crew.masters_adjustment))
+            print('crew category position ' + str(crew.category_position_time))
+            print('crew category rank ' + str(crew.category_rank))
             crew.save()
         

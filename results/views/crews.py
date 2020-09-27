@@ -139,8 +139,14 @@ class CrewDataExport(APIView):
             else:
                 rank = crew.overall_rank
 
-            if crew.raw_time > 0 and crew.time_only == True:
+            if crew.raw_time > 0 and crew.time_only:
                 status = 'Time Only'
+            elif crew.disqualified:
+                status = 'Disqualified'
+            elif crew.did_not_start:
+                status = 'Did not start'
+            elif crew.did_not_finish:
+                status = 'Did not finish'
             elif crew.raw_time == 0 or crew.raw_time is None:
                 status = 'Did not start'
             elif crew.raw_time > 0:

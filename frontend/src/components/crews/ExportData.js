@@ -47,11 +47,6 @@ class ExportData extends React.Component {
             </div>
           </div>
 
-
-
-
-
-
         </div>
       </section>
     )
