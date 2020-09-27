@@ -94,6 +94,10 @@ div.list-totals {
   opacity: 0.5;
 }
 
+.double-height-button {
+  height: 150px;
+}
+
 .spinner {
   margin: 0 5px;
 }
@@ -116,6 +120,12 @@ td, th, .control {
 
 .accordion {
   margin-bottom: 15px;
+}
+
+.accordion-item {
+  button {
+    font-size: 18px;
+  }
 }
 
 .control-full-width {

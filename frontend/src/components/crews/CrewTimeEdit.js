@@ -139,7 +139,7 @@ class CrewTimeEdit extends React.Component {
             </div>
             <p>Override race time</p>
 
-            <div className="columns">
+            <div className="columns is-one-third">
               <div className="column">
                 <div className="field">
                   <label className="label" htmlFor="manual_override_minutes">Minutes</label>
@@ -191,7 +191,7 @@ class CrewTimeEdit extends React.Component {
                 </div>
               </div>
             </div>
-            
+
             <div className="columns">
               <div className="column">
                 <div className="field">
@@ -208,9 +208,7 @@ class CrewTimeEdit extends React.Component {
                   {this.state.errors.time_only && <small className="help is-danger">{this.state.errors.time_only}</small>}
 
                 </div>
-              </div>
 
-              <div className="column">
                 <div className="field">
                   <label className="checkbox" htmlFor="did_not_start">
                     <input
@@ -225,9 +223,7 @@ class CrewTimeEdit extends React.Component {
                   {this.state.errors.did_not_start && <small className="help is-danger">{this.state.errors.did_not_start}</small>}
 
                 </div>
-              </div>
 
-              <div className="column">
                 <div className="field">
                   <label className="checkbox" htmlFor="did_not_finish">
                     <input
@@ -242,6 +238,22 @@ class CrewTimeEdit extends React.Component {
                   {this.state.errors.did_not_finish && <small className="help is-danger">{this.state.errors.did_not_finish}</small>}
 
                 </div>
+
+                <div className="field">
+                  <label className="checkbox" htmlFor="disqualified">
+                    <input
+                      className="checkbox"
+                      type="checkbox"
+                      name="disqualified"
+                      value={this.state.formData.disqualified}
+                      checked={!!this.state.formData.disqualified}
+                      onChange={this.handleCheckbox}
+                    /> Disqualified
+                  </label>
+                  {this.state.errors.disqualified && <small className="help is-danger">{this.state.errors.disqualified}</small>}
+
+                </div>
+
               </div>
 
 

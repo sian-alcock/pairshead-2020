@@ -1,6 +1,6 @@
 import re
 from rest_framework import serializers
-from .models import Club, Event, Band, Crew, RaceTime, Competitor, MastersAdjustment
+from .models import Club, Event, Band, Crew, RaceTime, Competitor, MastersAdjustment, OriginalEventCategory
 
 
 class EventSerializer(serializers.ModelSerializer):
@@ -40,7 +40,13 @@ class CrewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Crew
-        fields = ('id', 'name', 'composite_code', 'status', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds', 'penalty', 'masters_adjustment', 'masters_adjusted_time', 'bib_number', 'time_only', 'did_not_start', 'did_not_finish', 'band', 'overall_rank', 'gender_rank', 'requires_recalculation', )
+        fields = ('id', 'name', 'composite_code', 'status', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds', 'penalty', 'masters_adjustment', 'masters_adjusted_time', 'bib_number', 'time_only', 'did_not_start', 'did_not_finish', 'disqualified', 'band', 'overall_rank', 'gender_rank', 'requires_recalculation', )
+
+class ImportOriginalEventSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = OriginalEventCategory
+        fields = ('crew', 'event_original',)
 
 
 class PopulatedCrewSerializer(serializers.ModelSerializer):
@@ -50,20 +56,20 @@ class PopulatedCrewSerializer(serializers.ModelSerializer):
     band = BandSerializer()
     competitors = CompetitorSerializer(many=True)
     times = RaceTimesSerializer(many=True)
+    event_original = ImportOriginalEventSerializer(many=True)
 
 
     class Meta:
         model = Crew
-        fields = ('id', 'name', 'composite_code', 'status', 'penalty', 'bib_number', 'times', 'raw_time', 'race_time', 'start_time', 'finish_time', 'start_sequence', 'finish_sequence', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds', 'masters_adjustment', 'masters_adjusted_time', 'event', 'club', 'band', 'competitors', 'competitor_names', 'event_band', 'time_only', 'published_time', 'category_position_time', 'did_not_start', 'did_not_finish', 'overall_rank', 'gender_rank', 'category_position_time', 'category_rank',)
+        fields = ('id', 'name', 'composite_code', 'status', 'penalty', 'bib_number', 'times', 'raw_time', 'race_time', 'start_time', 'finish_time', 'start_sequence', 'finish_sequence', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds', 'masters_adjustment', 'masters_adjusted_time', 'event', 'club', 'band', 'competitors', 'competitor_names', 'event_band', 'time_only', 'published_time', 'category_position_time', 'did_not_start', 'did_not_finish', 'disqualified', 'overall_rank', 'gender_rank', 'category_position_time', 'category_rank', 'event_original',)
 
 
 class CrewExportSerializer(serializers.ModelSerializer):
-
     raw_time = serializers.CharField(max_length=15)
 
     class Meta:
         model = Crew
-        fields = ('id', 'bib_number', 'name', 'competitor_names', 'start_sequence', 'finish_sequence', 'raw_time',)
+        fields = ('id', 'bib_number', 'name', 'event', 'club', 'overall_rank', 'competitor_names', 'start_sequence', 'finish_sequence', 'raw_time',)
 
     def validate_raw_time(self, value):
 

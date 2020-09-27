@@ -2,6 +2,7 @@ from __future__ import absolute_import
 import csv
 import os
 import requests
+import time
 # if this is where you store your django-rest-framework settings
 # from django.conf import settings
 from django.http import Http404, HttpResponse
@@ -119,62 +120,68 @@ class CrewDataImport(APIView):
 
         return Response(status=400)
 
-# class CrewDataExport(APIView):
-#
-#     def get(self, _request):
-#
-#         crews = Crew.objects.all()
-#         response = HttpResponse(content_type='text/csv')
-#         response['Content-Disposition'] = 'attachment; filename="crewdata.csv"'
-#
-#         writer = csv.writer(response, delimiter=',')
-#         writer.writerow(['name', 'bib_number', 'id', 'status', 'composite_code', 'rowing_CRI', 'rowing_CRI_max', 'sculling_CRI', 'sculling_CRI_max', 'club', 'event', 'band', 'competitors', 'penalty', 'handicap', 'raw_time',])
-#
-#         # (, 'times', 'raw_time', 'race_time', 'start_time', 'finish_time', 'start_sequence', 'finish_sequence', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds',  'band', ,)
-#
-#         for crew in crews:
-#             writer.writerow(
-#             [crew.name,
-#             crew.bib_number,
-#             crew.id,
-#             crew.status,
-#             crew.composite_code,
-#             crew.rowing_CRI,
-#             crew.rowing_CRI_max,
-#             crew.sculling_CRI,
-#             crew.sculling_CRI_max,
-#             crew.club.name,
-#             crew.event.name,
-#             crew.band,
-#             crew.competitor_names,
-#             crew.penalty,
-#             crew.handicap,
-#             crew.times, ])
-#
-#         return response
-#
-#         # serializer = PopulatedCrewSerializer(crews, many=True)
-#         # return Response(serializer.data)
-
-
 class CrewDataExport(APIView):
 
     def get(self, _request):
+
+        crews = Crew.objects.filter(status__exact='Accepted')
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="crewdata.csv"'
 
-        crews = Crew.objects.filter(status__exact='Accepted')
+        writer = csv.writer(response, delimiter=',')
+        writer.writerow(['Crew ID', 'Event ID', 'Event', 'Band', 'Division', 'CrewNum', 'Crew Name', 'Crew Club', 'Position In Event', 'Raw Time', 'Time', 'Status',])
 
-        serializer = CrewExportSerializer(crews, many=True)
 
-        crews = serializer.data
+        for crew in crews:
 
-        header = CrewExportSerializer.Meta.fields
+            if crew.raw_time == 0:
+                rank = 0
+            else:
+                rank = crew.overall_rank
 
-        writer = csv.DictWriter(response, fieldnames=header)
-        writer.writeheader()
+            if crew.raw_time > 0 and crew.time_only == True:
+                status = 'Time Only'
+            elif crew.raw_time == 0 or crew.raw_time is None:
+                status = 'Did not start'
+            elif crew.raw_time > 0:
+                status = 'Finished'
 
-        for row in serializer.data:
-            writer.writerow(row)
+            if crew.band is None:
+                band = ''
+            else:
+                band = crew.band.name
+
+            if crew.raw_time > 0:
+                hundredths = int((crew.raw_time / 10)%60)
+                seconds = int((crew.raw_time / 1000)%60)
+                minutes = int((crew.raw_time / (1000*60))%60)
+
+                raw_time = str("%02d" % minutes)+':'+str("%02d" % seconds)+'.'+str("%02d" % hundredths)
+            else:
+                raw_time = 0
+
+            if crew.published_time > 0:
+                hundredths = int((crew.published_time / 10)%60)
+                seconds = int((crew.published_time / 1000)%60)
+                minutes = int((crew.published_time / (1000*60))%60)
+
+                published_time = str("%02d" % minutes)+':'+str("%02d" % seconds)+'.'+str("%02d" % hundredths)
+            else:
+                published_time = 0
+
+            writer.writerow(
+            [crew.id,
+            crew.event.id,
+            crew.event.name,
+            band,
+            '',
+            crew.bib_number,
+            crew.name,
+            crew.club.name,
+            rank,
+            raw_time,
+            published_time,
+            status
+            ])
 
         return response

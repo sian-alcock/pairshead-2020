@@ -3,6 +3,7 @@ import TimeLoader from '../common/ImportTimeData'
 import ClubEventLoader from '../common/ImportClubEventData'
 import CrewLoader from '../common/ImportCrewData'
 import CompetitorLoader from '../common/ImportCompetitorData'
+import DataLoader from '../common/DataLoader'
 
 class ImportData extends React.Component {
 
@@ -45,7 +46,20 @@ class ImportData extends React.Component {
               <TimeLoader/>
             </div>
             <div className="column left">
-              This button imports data from a CSV file that needs to be saved in the project folder ..results / csv.  Note:  Data is deleted before importing.
+              This button imports race time data from a CSV file generated from Web Scorer that needs to be saved in the project folder ..results / csv.  Note:  Data is deleted before importing.
+            </div>
+          </div>
+
+          <div className="columns">
+            <div className="column is-one-quarter">
+              <DataLoader
+                url='/api/original-event-import/'
+                buttonText='Get original event categories'
+                class='double-height-button'
+              />
+            </div>
+            <div className="column left">
+              This button imports data from a CSV file created manually after entries have closed and BEFORE the events are changed that needs to be saved in the project folder ..results / csv.  Note:  Data is deleted before importing.
             </div>
           </div>
 

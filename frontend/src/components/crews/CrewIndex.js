@@ -355,9 +355,9 @@ class CrewIndex extends React.Component {
                   <td>{crew.penalty}</td>
                   <td>{crew.start_time ? formatTimes(crew.start_time) : '⚠️'}</td>
                   <td>{crew.finish_time ? formatTimes(crew.finish_time) : '⚠️'}</td>
-                  <td>{crew.raw_time ? formatTimes(crew.raw_time) : '⚠️'}</td>
-                  <td>{crew.race_time ? formatTimes(crew.race_time) : '⚠️'}</td>
-                  <td>{crew.event.type === 'Master' ? crew.event.name : ''}</td>
+                  <td>{crew.disqualified ? '❌' : crew.did_not_start ? '❌' : crew.did_not_finish ? '❌' :crew.raw_time ? formatTimes(crew.raw_time) : '⚠️'}</td>
+                  <td>{crew.disqualified ? 'Disqualified' : crew.did_not_start ? 'Did not start' : crew.did_not_finish ? 'Did not finish' :crew.raw_time ? formatTimes(crew.race_time) : '⚠️'}</td>
+                  <td>{crew.event.type === 'Master' && crew.event_original ? crew.event_original[0].event_original : ''}</td>
                   <td>{crew.event.type !== 'Master' ? '' : formatTimes(crew.masters_adjustment)}</td>
                   <td>{crew.event.type !== 'Master' ? '' : formatTimes(crew.masters_adjusted_time)}</td>
                   <td>{crew.manual_override_time ? formatTimes(crew.manual_override_time) : ''}</td>
