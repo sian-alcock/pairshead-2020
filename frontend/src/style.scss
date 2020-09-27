@@ -94,8 +94,9 @@ div.list-totals {
   opacity: 0.5;
 }
 
-.double-height-button {
-  height: 150px;
+.double-height-button.button {
+  height: 60px;
+  white-space: normal;
 }
 
 .spinner {

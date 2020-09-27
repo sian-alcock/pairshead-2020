@@ -49,7 +49,7 @@ class DataLoader extends Component {
 
     return (
       <div>
-        <button className={`button is-primary ${this.props.class}`} onClick={this.getData} disabled={loading}>
+        <button className={`${this.props.class} button is-primary`} onClick={this.getData} disabled={loading}>
 
           {loading && <span className="spinner"><i
             className="fas fa-spinner fa-spin"
