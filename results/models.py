@@ -198,7 +198,8 @@ class Crew(models.Model):
 # Need to calculate the fastest time in race type
 
     def get_masters_adjustment(self):
-
+        # if OriginalEventCategory.DoesNotExist:
+        #         return 0
         try:
 
             if self.event_band is not None and '/' in str(self.event_band) and self.event.type == 'Master':

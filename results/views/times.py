@@ -146,5 +146,6 @@ class CrewRaceTimesImport(APIView):
             print(crew.start_sequence)
             print(crew.finish_sequence)
             print(crew.competitor_names)
+            print(crew.masters_adjustment)
             crew.save()
         
