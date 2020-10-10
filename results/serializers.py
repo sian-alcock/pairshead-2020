@@ -103,17 +103,28 @@ class WriteRaceTimesSerializer(serializers.ModelSerializer):
         fields = ('id', 'sequence', 'bib_number', 'tap', 'time_tap', 'crew',)
 
     def validate_time_tap(self, value):
-        # if time tap format is mm:ss.ms (eg 58:13.04), then add 0: at front
-        if re.match(r'^[0-9]{2}:[0-9]{2}.[0-9]{2}', value):
+
+        # if time tap format is m:ss.SS (eg 5:46.12), then add 0:0 at front
+        if re.match(r'^[0-9]{1}:[0-9]{2}.\d*', value):
+            value = f'0:0{value}'
+
+        # if time tap format is mm:ss.SS (eg 58:13.04), then add 0: at front
+        if re.match(r'^[0-9]{2}:[0-9]{2}.\d*', value):
             value = f'0:{value}'
 
-        if not re.match(r'^[0-9]:[0-9]{2}:[0-9]{2}.[0-9]{2}', value):
+        if not re.match(r'^[0-9]:[0-9]{2}:[0-9]{2}.\d*', value):
             raise serializers.ValidationError({'time_tap': 'Problem with time tap format'})
 
         hrs, mins, secs = value.split(':')
+
         secs, hdths = secs.split('.')
+
+        if re.match(r'^[0-9]{1}', hdths):
+            hdths = int(hdths) * 100
+        else:
+            hdths = int(hdths) * 10
         # convert to miliseconds
-        value = int(hrs)*60*60*1000 + int(mins)*60*1000 + int(secs)*1000 + int(hdths)*10
+        value = int(hrs)*60*60*1000 + int(mins)*60*1000 + int(secs)*1000 + hdths
 
         return value
 

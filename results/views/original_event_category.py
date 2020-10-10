@@ -33,7 +33,7 @@ class OriginalEventCategoryImport(APIView):
 
             serializer = ImportOriginalEventSerializer(original_event_categories, many=True)
 
-            self.calculate_computed_properties()
+            # self.calculate_computed_properties()
 
             return Response(serializer.data)
     

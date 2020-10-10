@@ -1,0 +1,837 @@
+Seq #,Bib,Name,Tap,Time tap,Bib tap,Category,Team name,Team name 2
+1,1,RDU,Start,2:30:22.16,,Op 2x Championship,Harris / Lawton,1137116
+2,2,TSS,Start,2:30:40.94,,Op 2x Championship,Stevenson / Meijer,1137872
+3,6,RDU,Start,2:31:02.05,,Op 2x Intermediate,Badcott / Few,1137118
+4,4,UTC,Start,2:31:09.99,,Op 2x Championship,Shimmin / Foster,1138054
+5,5,NCR,Start,2:31:12.56,,Op 2x Championship,Cowley / Larkin,1138676
+6,7,LEA,Start,2:31:22.66,,Op 2x Intermediate,Day / Cheale,1139655
+7,8,CNN,Start,2:31:41.90,,Op 2x Intermediate,Young / Thorn,1139797
+8,9,CYG,Start,2:31:52.87,,Op 2x Intermediate,Furby / Sears,1137281
+9,10,QBC,Start,2:31:59.73,,Op 2x Intermediate,Gillard / Gillard,1137952
+10,11,SOC,Start,2:32:07.74,,Op 2x Intermediate,Cracknell / Aitchison,1137720
+11,12,ASL,Start,2:32:26.66,,Op 2x Intermediate,Wilkin / Ben-Gacem,1140083
+12,13,PTR,Start,2:32:39.81,,Op 2x Intermediate,Diserens / Diserens,1137880
+13,14,FUL,Start,2:32:46.80,,Op 2x Intermediate,Pradera Anllo / hui- le marer,1139835
+14,15,DBY,Start,2:32:55.16,,Op 2x Intermediate,Remer / Remer,1137629
+15,16,WAR,Start,2:33:07.45,,Op 2x Intermediate,Giles / Garner,1138306
+16,17,CNN,Start,2:33:12.56,,Op 2x Intermediate,Mackworth / Butler,1139798
+17,19,TRC,Start,2:33:43.06,,Op 2- Championship,Moss / Robinson,1137208
+18,20,KCS,Start,2:33:49.38,,Op 2- Championship,Betteley / Thompson,1138568
+19,21,TRC,Start,2:33:58.90,,Op 2- Championship,Seely / Downey,1137138
+20,22,TRC,Start,2:34:11.51,,Op 2- Championship,Williamson / Brown,1137132
+21,23,TRC,Start,2:34:21.76,,Op 2- Championship,Reeder / Heap,1137250
+22,24,TRC,Start,2:34:29.16,,Op 2- Championship,Youell / Morgan,1137135
+23,25,TRC,Start,2:34:37.14,,Op 2- Championship,Walsh / Bakalli,1137136
+24,26,TRC,Start,2:34:58.80,,Op 2- Senior,O'Callaghan / Jones,1137133
+25,27,VRC,Start,2:35:11.20,,Op 2- Senior,King / Hunter,1139782
+26,28,TSS,Start,2:35:28.76,,Op 2- Senior,Brown / Wilkojc,1137152
+27,30,QBC,Start,2:35:31.75,,Op 2- Senior,Chatwin / Murdock,1138512
+28,31,CBR,Start,2:35:45.20,,Op 2- Senior,Piercy / Acton,1138514
+29,32,TSS,Start,2:35:54.06,,Op 2- Senior,Ogunyoye / Budenberg,1139995
+30,33,CNN,Start,2:36:16.98,,Op 2- Senior,Kabelik / Todd,1139799
+31,35,QBC,Start,2:36:33.32,,Op 2- Senior,Robins / Dawson,1138511
+32,36,CAM,Start,2:36:38.63,,Op 2- Senior,Douglas / Watt,1140009
+33,37,WRC,Start,2:36:52.26,,Op 2- Intermediate,Mentor / Hines,1138818
+34,38,MAG,Start,2:37:14.24,,Op 2- Intermediate,Barker / Kirk,1140209
+35,39,MON,Start,2:37:21.68,,Op 2- Intermediate,Baker / Morgan,1138486
+36,40,DBY,Start,2:37:37.73,,Op 2- Intermediate,Bennett / Walker,1138303
+37,41,WRC,Start,2:37:51.64,,Op 2- Intermediate,Fergus / Mason,1140069
+38,42,WAR,Start,2:37:58.99,,Op 2- Intermediate,Whitbread / Collett,1137698
+39,43,PTR,Start,2:38:08.20,,Op 2- Intermediate,Breeze / Fox,1138474
+40,44,LER,Start,2:38:20.62,,Op 2- Intermediate,Pickering / Harding,1138481
+41,45,WRR,Start,2:38:25.12,,Op 2- Intermediate,Pool / Phillips,1139639
+42,46,WAR,Start,2:38:32.79,,Op 2- Intermediate,BROWNING / Masson,1137646
+43,47,WRR,Start,2:38:49.17,,Op 2- Club,Restall / Hyland,1139640
+44,48,PBC,Start,2:38:57.65,,Op 2- Club,Wagenaar / Harris,1139976
+45,49,WRR,Start,2:39:12.93,,Op 2- Club,Morgan / Scholes,1139641
+46,50,BTC,Start,2:39:31.51,,Op 2- Club,Ratcliffe / Sturley,1138124
+47,51,TTR,Start,2:39:36.42,,Op 2- Club,Brewer / Jack,1138265
+48,52,SPS,Start,2:39:40.86,,Op J18 2- Championship,Middleton / Valt,1138575
+49,53,SHP,Start,2:39:46.54,,Op J18 2- Championship,Brockway / Hjortland-Marks,1138626
+50,54,SPS,Start,2:39:59.43,,Op J18 2- Championship,Kwok / Taylor,1138576
+51,55,SHP,Start,2:40:04.51,,Op J18 2- Championship,Ash / Burnand,1138645
+52,57,SHP,Start,2:40:14.87,,Op J18 2- Championship,Acton / Fox,1138643
+53,58,NSC,Start,2:40:26.90,,Op J18 2- Championship,Bacic / Tremelling,1138314
+54,59,SHP,Start,2:40:33.88,,Op J18 2- Championship,Hallsworth / Boret,1138644
+55,61,SPS,Start,2:40:42.23,,Op J18 2- Senior,Rizk / Varma,1138586
+56,63,SPS,Start,2:40:50.71,,Op J18 2- Championship,Langstone-Bolt / Ackrim,1138577
+57,64,SPS,Start,2:41:01.26,,Op J18 2- Championship,Elder / Moreno,1138578
+58,66,WLT,Start,2:41:12.53,,Op J18 2- Senior,O'Neill / Cleary,1137596
+59,68,KCA,Start,2:41:29.66,,Op J18 2- Senior,Wingfield / Wingfield,1138477
+60,70,WEY,Start,2:41:34.59,,Op J18 2- Intermediate,McLeod / Johnson,1137113
+61,72,MNK,Start,2:41:41.66,,Op J18 2- Intermediate,Ford / Bennett,1137712
+62,73,KCA,Start,2:41:53.33,,Op J18 2- Intermediate,Dominic / Lapsley,1138479
+63,74,EMA,Start,2:41:56.40,,Op J18 2- Intermediate,Kitchen / Zagorac,1137239
+64,76,WLT,Start,2:42:06.10,,Op J18 2- Intermediate,Maffi / Rackett,1137595
+65,77,CAB,Start,2:42:23.26,,Op J18 2- Intermediate,Askew / Pearson,1138523
+66,78,KSR,Start,2:42:38.59,,Op J18 2- Intermediate,Moniz Gomes / Hunt,1137897
+67,79,SON,Start,2:42:48.13,,Op 2x Club,Ewing / Watson,1140139
+68,80,CYG,Start,2:43:01.08,,Op 2x Club,Pugh / Stewart,1138061
+69,81,WAR,Start,2:43:15.38,,Op 2x Club,Lindstrom / Taylor,1137699
+70,82,TSS,Start,2:43:20.53,,Op 2x Club,Hashmi / Mackie,1139810
+71,83,VRC,Start,2:43:30.78,,Op 2x Club,Davies / Laird,1140016
+72,84,KRC,Start,2:43:31.46,,Op 2x Club,Keen-Tomlinson / Keen-Tomlinson,1137624
+73,85,TWK,Start,2:43:35.68,,Op Lwt 2x,Wooller / Lanfranconi,1137800
+74,86,CAM,Start,2:43:45.77,,Op Lwt 2x,Ladd / Briegal,1138638
+75,87,RDU,Start,2:43:50.49,,Op Lwt 2x,Powell / Holbrough,1137120
+76,88,CAB,Start,2:44:01.87,,Op Lwt 2x,Goode / Austin,1139844
+77,89,CAB,Start,2:44:13.46,,Op Lwt 2x,Turner / Evry,1139845
+78,90,CAM,Start,2:44:21.47,,Op Lwt 2x,Dubois / Sinclair,1138641
+79,91,SWI,Start,2:44:35.92,,Op Lwt 2x,Sinclair / Clements,1137869
+80,93,SHP,Start,2:44:44.36,,Op J18 2x Championship,van der Linden / Mulligan,1138642
+81,94,SHP,Start,2:44:53.48,,Op J18 2x Championship,Focosi / Humphris,1137691
+82,95,TSS,Start,2:45:01.90,,Op J18 2x Championship,Oliver / Kelly,1140174
+83,96,ETN,Start,2:45:12.34,,Op J18 2x Championship,Van Steenis / Watson-Gandy,1138731
+84,97,KGS,Start,2:45:29.06,,Op J18 2x Championship,Fletcher / Bradley,1139416
+85,98,SPS,Start,2:45:41.47,,Op J18 2x Senior,Gillard / O'Sullivan,1138579
+86,99,WYJ,Start,2:45:42.28,,Op J18 2x Senior,Birch / Rant,1138606
+87,100,WLT,Start,2:45:54.01,,Op J18 2x Senior,Roberts / Hawes,1137593
+88,102,EMA,Start,2:46:03.24,,Op J18 2x Senior,Bligh / Olby,1137241
+89,103,YRK,Start,2:46:08.18,,Op J18 2x Senior,Wilson / Orpin,1137980
+90,104,WLT,Start,2:46:20.98,,Op J18 2x Senior,McManus / Robinson,1137594
+91,105,ETN,Start,2:46:35.57,,Op J18 2x Senior,Geffen / Ferguson,1138730
+92,106,MHD,Start,2:46:38.23,,Op J18 2x Senior,Rayner / Evans,1137613
+93,107,NSC,Start,2:46:48.01,,Op J18 2x Senior,Parsons / Baker,1138317
+94,108,ETN,Start,2:47:07.60,,Op J18 2x Senior,Gorvy / Lucas,1138732
+95,109,WGT,Start,2:47:18.24,,Op J18 2x Intermediate,Crisanto- Roth / Ronte,1139542
+96,110,ETN,Start,2:47:38.33,,Op J18 2x Senior,Wahl / Grundy,1138729
+97,111,ETN,Start,2:47:56.56,,Op J18 2x Intermediate,Strang Steel / Rothschild,1138734
+98,112,BRX,Start,2:48:06.30,,Op J18 2x Intermediate,Day / Orpin,1137119
+99,113,ETN,Start,2:48:20.11,,Op J18 2x Intermediate,Gordon-Brown / Julius,1138735
+100,114,SPS,Start,2:48:26.75,,Op J18 2x Intermediate,Seery / Naresh,1138588
+101,115,WGT,Start,2:48:44.21,,Op J18 2x Intermediate,Warne / Donald,1139543
+102,116,KCS,Start,2:48:55.52,,Op J18 2x Intermediate,Caouki / Edington,1138574
+103,117,KCS,Start,2:49:05.49,,Op J18 2x Intermediate,Caouki / Mercieca,1138572
+104,118,NSC,Start,2:49:12.95,,Op J18 2x Senior,Sexton / Hempsall,1138316
+105,119,KCS,Start,2:49:33.56,,Op J18 2x Intermediate,Gugelmann / Pearson,1138570
+106,120,WYJ,Start,2:49:44.25,,Op J18 2x Intermediate,Worthington / Johnson,1141834
+107,121,KCS,Start,2:49:53.62,,Op J18 2x Intermediate,Taylor / Martin,1138573
+108,122,KCS,Start,2:50:01.86,,Op J18 2x Intermediate,Townsend / Heathcote,1138571
+109,123,NSC,Start,2:50:06.70,,Op J18 2x Intermediate,Chitre / Taylor,1138318
+110,124,NSC,Start,2:50:13.50,,Op J18 2x Intermediate,Prior / Elliott,1138315
+111,125,ETN,Start,2:50:24.52,,Op J18 2x Intermediate,McLusky / Whittaker,1138733
+112,126,SPS,Start,2:50:47.23,,Op J18 2x Intermediate,Applemans / Edward,1138590
+113,127,WYC,Start,2:50:57.15,,Op J18 2x Intermediate,Jones / Taylor,1141835
+114,128,SPS,Start,2:51:09.82,,Op J18 2x Intermediate,Tobelem / Spielmann,1138589
+115,129,STN,Start,2:51:24.57,,Op J18 2x Club,Geczy / Alexander,1140111
+116,130,STN,Start,2:51:33.09,,Op J18 2x Club,Holloway / Gupta,1140115
+117,131,KSR,Start,2:51:47.35,,Op J18 2x Club,Northridge / Caithness,1137898
+118,132,ASL,Start,2:51:57.84,,Op J18 2x Club,Clyde / Moran,1140085
+119,134,MHD,Start,2:52:03.77,,Op J16 2x Senior,Lewis / Towers,1137612
+120,135,SHP,Start,2:52:14.48,,Op J16 2x Senior,Hillier / Middleton,1138646
+121,136,SHS,Start,2:52:22.46,,Op J16 2x Senior,Walters / Horrix,1137216
+122,137,CBR,Start,2:52:32.40,,Op J16 2x Senior,Kay / Ainsley,1138796
+123,138,KGS,Start,2:52:41.66,,Op J16 2x Senior,Boyle / Canning,1139417
+124,139,NSC,Start,2:53:01.60,,Op J16 2x Senior,Catmull / Cooper,1138319
+125,140,KGS,Start,2:53:12.49,,Op J16 2x Intermediate,Currie / Middleton,1139418
+126,141,SPS,Start,2:53:23.49,,Op J16 2x Intermediate,THOROGOOD / Henke,1139881
+127,142,CBR,Start,2:53:35.59,,Op J16 2x Intermediate,Biggs / Grady,1138797
+128,143,SPS,Start,2:53:46.64,,Op J16 2x Intermediate,Lavington / Marshall,1139880
+129,144,WGT,Start,2:53:57.66,,Op J16 2x Intermediate,Albert / Tullis,1139541
+130,145,BAE,Start,2:54:05.08,,Op J16 2x Intermediate,Williams / Blagburn,1139524
+131,146,SPS,Start,2:54:11.84,,Op J16 2x Intermediate,Harker / Davies,1139886
+132,149,WYC,Start,2:54:27.32,,Op J16 2x Club,Robertson / Garrard,1141836
+133,151,ETN,Start,2:54:37.51,,Op J16 2x Club,Irving / Hinchliffe,1139354
+134,152,ETN,Start,2:54:52.65,,Op J16 2x Club,Stacey / Van Steenis,1139355
+135,153,ETN,Start,2:54:57.54,,Op J16 2x Club,Orr / Ferguson,1139356
+136,154,MAR,Start,2:55:11.89,,Op Supported Adaptive 2x,Marsden / Thomas,1138492
+137,155,MAR,Start,2:55:27.23,,W Supported Adaptive 2-,Holloway / Harrison,1138490
+138,156,GLB,Start,2:55:41.26,,Mx 2x Championship,Collins / Hughes,1137437
+139,157,WBK,Start,2:55:51.09,,Mx 2x Championship,Gallagher / Gallagher,1137134
+140,158,STK,Start,2:55:59.94,,Mx 2x Championship,Anderson / Cruxton,1137249
+141,160,WRR,Start,2:56:12.28,,Mx 2x Championship,Foulds / Woodman,1139642
+142,161,COX,Start,2:56:22.82,,Mx 2x Championship,Kerswell-Jensen / Armstrong,1138364
+143,162,HOL,Start,2:56:36.35,,Mx 2x Championship,Daniels / Hardman,1139734
+144,163,TSS,Start,2:57:24.15,,W 2x Championship,Wilkinson-Feller / Rawlins,1137149
+145,164,RDU,Start,2:57:35.23,,W 2x Championship,Ryan / Morgan,1137122
+146,165,RDU,Start,2:57:45.40,,W 2x Championship,Heap / Lewis,1137123
+147,166,LRC,Start,2:57:59.26,,W 2x Championship,Jackson / Cameron,1137741
+148,204,TRC,Start,3:00:53.43,,Op MasC 2x,Jacobs / Kerr,1138722
+149,167,SOC,Start,3:01:19.52,,Mx 2x Club,Starkey / Starkey,1139825
+150,168,TUN,Start,3:01:29.94,,Mx 2x Club,Hares / Hallett,1137144
+151,169,WOO,Start,3:01:40.44,,Mx 2x Club,Faleri / Sch�fer,1137739
+152,170,MAV,Start,3:02:01.08,,Mx 2x Club,Huggins / Huggins,1138199
+153,171,WAR,Start,3:02:11.44,,Mx 2x Club,Fidler / Lucey,1137643
+154,172,LYM,Start,3:02:20.82,,Mx 2x Club,Botting / Potter,1139795
+155,173,RVC,Start,3:02:31.46,,Mx 2x Club,Coni / Collier-Smith,1139544
+156,174,VRC,Start,3:02:35.56,,Mx 2x Club,Pipkin / Ruddick,1139781
+157,175,AKN,Start,3:02:47.43,,Op MasB 2x,MacKworth-Praed / Barton,1139978
+158,176,KRC,Start,3:02:58.54,,Op MasB 2x,Tjarks / Sharp,1137632
+159,177,HIL,Start,3:03:04.30,,Op MasB 2x,Perez-Milans / Rognoni,1137445
+160,178,VRC,Start,3:03:12.44,,Op MasB 2x,Cannon / Smith,1138399
+161,179,LRC,Start,3:03:19.10,,Op MasB 2x,Silver / Dutreige,1138551
+162,180,EXE,Start,3:03:30.38,,Op MasC 2x,Byrnes / Rowse,1140005
+163,181,LEA,Start,3:03:37.94,,Op MasC 2x,Richardson / Griffin,1137781
+164,182,PTR,Start,3:03:46.16,,Op MasC 2x,Hickling / Hayden,1138546
+165,183,KRC,Start,3:04:00.92,,Op MasC 2x,Young / Hepburn,1137626
+166,184,WLT,Start,3:04:07.11,,Op MasC 2x,Russell / Adams,1139903
+167,187,MON,Start,3:04:14.28,,Mx MasB/C 2x,Pascovitch / Fullman,1138513
+168,188,WLT,Start,3:04:28.53,,Mx MasB/C 2x,Jackson / Heywood,1139913
+169,189,UTC,Start,3:04:34.94,,Mx MasB/C 2x,Scott / Van Leemputten,1138509
+170,190,PTR,Start,3:04:46.19,,Mx MasB/C 2x,Holmes-Siedle / Culley,1137848
+171,191,ETX,Start,3:04:55.60,,Mx MasB/C 2x,Dix / Len,1138362
+172,192,LRC,Start,3:05:13.04,,Mx MasB/C 2x,Ablitt / Coles,1138507
+173,193,ARD,Start,3:05:23.87,,Mx MasD 2x,Billin / Tanner,1137927
+174,194,CBR,Start,3:05:29.85,,Mx MasD 2x,Linehan / Kelly,1139328
+175,195,SUA,Start,3:05:48.66,,Mx MasD 2x,Hayton / Doherty,1138097
+176,196,BEB,Start,3:05:56.04,,Mx MasE 2x,Morris / Morris,1137109
+177,197,WYC,Start,3:06:06.93,,Mx MasE 2x,Downey / Talbot,1138264
+178,198,UPT,Start,3:06:18.17,,Mx MasE 2x,Scrivener / Scrivener,1137704
+179,199,WLT,Start,3:06:24.09,,Mx MasE 2x,Thiemann / Thiemann,1139914
+180,200,PBD,Start,3:06:32.35,,Mx MasE 2x,Reid / Dwan,1138217
+181,201,BEB,Start,3:06:48.34,,Mx MasE 2x,Grant / Snowden,1138281
+182,202,ROS,Start,3:06:53.64,,Mx MasE 2x,Jones / Brace,1137659
+183,203,BEB,Start,3:06:57.48,,Mx MasF 2x,Suthers / Nugee,1138282
+184,205,GRF,Start,3:07:12.89,,Mx MasF 2x,Halse / Westcott,1137710
+185,206,MON,Start,3:07:17.66,,Op MasB 2-,Rodford / Butler,1138283
+186,207,LYM,Start,3:07:28.08,,Op MasB 2-,Lock / Mans,1139252
+187,208,SON,Start,3:07:34.28,,Op MasB 2-,de Lagarde / Thompson,1140063
+188,209,CYG,Start,3:07:46.56,,Op MasB 2-,De Groot / Hunter,1137327
+189,210,KCA,Start,3:07:56.96,,Op MasC 2- Championship,Brown / Williamson,1138014
+190,211,ARD,Start,3:08:05.66,,Op MasC 2- Championship,Humphris / Dombrowe,1137946
+191,212,SON,Start,3:08:15.63,,Op MasC 2- Championship,Young / Michel,1137207
+192,213,YRK,Start,3:08:38.66,,Op MasC 2- Championship,Baron / Jones,1138068
+193,214,CBR,Start,3:08:50.57,,Op MasC 2- Championship,Harding / Gibson,1137447
+194,215,VRC,Start,3:09:05.74,,Op MasC 2- Club,Williams / Brown,1138398
+195,216,RDG,Start,3:09:17.05,,Op MasC 2- Club,Wiles / Hopkins,1137630
+196,217,ETX,Start,3:09:39.22,,Op MasC 2- Club,Schofield / Wincomb,1138388
+197,219,PAR,Start,3:09:49.07,,Op MasC 2- Club,Wallace / Hewson,1140190
+198,220,LRC,Start,3:09:56.95,,Op MasD 2-,Harries / Theed,1137740
+199,221,UTC,Start,3:10:06.97,,Op MasD 2-,Jacobs / Sadler,1137154
+200,222,MHD,Start,3:10:22.66,,Op MasD 2-,Bird / Brockwell,1137206
+201,223,MHD,Start,3:10:29.51,,Op MasD 2-,Scott / Hutchins,1137247
+202,224,RDG,Start,3:10:36.84,,Op MasD 2-,Day / Baldwin,1137478
+203,225,TTR,Start,3:10:48.70,,Op MasD 2-,Howard / Tatton,1141839
+204,226,LEA,Start,3:11:01.44,,W 2- Championship,Minnich / Newbury,1138456
+205,228,VRC,Start,3:11:06.68,,W 2- Championship,Lidlow / Kelly,1139831
+206,229,LEA,Start,3:11:16.50,,W 2- Championship,Snaith / Benson-Skailes,1138391
+207,230,LEA,Start,3:11:24.25,,W 2- Championship,Parkinson / Ricketts,1138397
+208,231,LEA,Start,3:11:29.06,,W 2- Championship,Brock / Stokes,1138396
+209,232,TRC,Start,3:11:35.70,,W 2- Championship,Taylor / Carlotti,1137126
+210,233,TSS,Start,3:11:56.60,,W 2- Championship,Potter / Wagstaff,1137670
+211,235,KRC,Start,3:12:03.56,,W J18 2- Championship,Harwood / Medcalf,1137620
+212,237,PHS,Start,3:12:15.96,,W J18 2- Championship,Patton / Bridges,1139559
+213,238,SPG,Start,3:12:34.17,,W J18 2- Championship,Stuart-Smith / Louis,1140026
+214,239,EMA,Start,3:12:38.69,,W J18 2- Championship,McAuliffe / Jeynes,1137309
+215,240,WLT,Start,3:12:56.64,,W J18 2- Championship,Rushworth / Hewitt,1138046
+216,241,PTR,Start,3:13:11.93,,W 2- Senior,Perkins / Lewis,1138060
+217,242,PTR,Start,3:13:26.83,,W 2- Senior,Docherty / Gleave,1138159
+218,243,TSS,Start,3:13:37.75,,W 2- Senior,Scott / Perrin,1139811
+219,244,TRC,Start,3:13:50.78,,W 2- Senior,Colthurst / Manly,1137129
+220,246,TRC,Start,3:14:09.14,,W 2- Senior,Coad / Goodchild,1137127
+221,247,FSC,Start,3:14:11.42,,W 2- Senior,Hartley / Pesola,1138515
+222,248,COX,Start,3:14:19.74,,W 2- Senior,Merritt-Smith / Lefferts,1138363
+223,249,BBL,Start,3:14:28.18,,W 2- Intermediate,Oakley / Steedman,1140171
+224,250,TRC,Start,3:14:36.56,,W 2- Intermediate,McElhone / Gulley,1137130
+225,251,TSS,Start,3:14:45.91,,W 2- Intermediate,Holmes / Adebiyi,1139814
+226,252,TRC,Start,3:15:03.56,,W 2- Intermediate,Higginbotham / Woodward,1137209
+227,253,PTR,Start,3:15:19.14,,W 2- Intermediate,Dicks / Carboo,1138160
+228,254,BBL,Start,3:15:30.85,,W 2- Intermediate,Saary / Millar,1140188
+229,255,CAB,Start,3:15:44.14,,W 2- Intermediate,Laube / Mahoney,1138450
+230,256,CAM,Start,3:15:58.55,,W 2- Intermediate,Adriaenssens / Large,1138632
+231,257,CUR,Start,3:16:04.54,,W 2- Intermediate,Blomberg / Matulenaite,1140093
+232,259,CAM,Start,3:16:18.47,,W 2- Club,Pocock / Dubois-van Slageren,1138635
+233,260,TWK,Start,3:16:25.20,,W 2- Club,Luscombe / Edwards,1138287
+234,262,RDG,Start,3:16:32.76,,W 2- Club,Jackson / O'Connor,1138675
+235,263,KCA,Start,3:16:46.18,,W J18 2- Club,Josie / Southorn,1138476
+236,264,WLT,Start,3:16:50.81,,W J18 2- Club,Catlin / Roberts,1137597
+237,265,CAB,Start,3:17:06.46,,W J18 2- Club,Jennion / Hill,1138524
+238,266,MAV,Start,3:17:12.88,,W J18 2- Club,Palmer / Chapman,1138195
+239,268,AKN,Start,3:17:21.11,,W MasB/C 2-,Raffaele / Pankhurst,1139813
+240,269,WEY,Start,3:17:35.31,,W MasB/C 2-,Ferguson / Ferlez,1137131
+241,270,HSB,Start,3:17:41.34,,W MasB/C 2-,Hichens / Nidai,1138161
+242,271,TSS,Start,3:17:52.94,,W MasD/E 2-,Grose / Finn,1137873
+243,272,CAB,Start,3:18:01.28,,W MasD/E 2-,Weik / Cooper,1138307
+244,273,WEY,Start,3:18:20.64,,W MasD/E 2-,Kornberg / Brady,1137112
+245,274,ARD,Start,3:18:26.69,,W MasD/E 2-,Davison / Goldsmith,1137957
+246,133,MHD,Start,3:21:41.31,,Op J16 2x Senior,Bird / Ioras,1137611
+247,275,MAA,Start,3:22:15.56,,W 2x Senior,Bruce / Brass,1139786
+248,276,VRC,Start,3:22:25.60,,W 2x Senior,Wood / Mayall,1139788
+249,277,MAA,Start,3:22:36.28,,W 2x Senior,Brown / Piper,1138759
+250,278,NCR,Start,3:22:47.83,,W 2x Senior,Watson / O'Donnell,1138764
+251,279,NCR,Start,3:22:56.64,,W 2x Senior,Pepper / Smith,1138763
+252,280,WRC,Start,3:23:08.75,,W 2x Senior,Butler / Bard,1138798
+253,281,MAA,Start,3:23:21.17,,W 2x Senior,Gowan / Watson,1138761
+254,282,TSS,Start,3:23:33.17,,W 2x Senior,Hatch / Bowden,1140143
+255,283,MAA,Start,3:23:44.45,,W 2x Senior,Hampton / Brooks,1138760
+256,284,MAA,Start,3:23:56.80,,W 2x Senior,Zakers / Webb,1139783
+257,285,CAB,Start,3:24:11.12,,W 2x Intermediate,Darlington / Williams,1139843
+258,286,MAV,Start,3:24:23.68,,W 2x Intermediate,Drury / Gilbert-Ward,1138196
+259,287,MHD,Start,3:24:39.19,,W 2x Intermediate,Steel / Palmer,1137141
+260,288,SON,Start,3:24:49.47,,W 2x Intermediate,Scrine / Turnock,1137889
+261,289,BBL,Start,3:24:59.98,,W 2x Intermediate,Tsang / Gordon,1140175
+262,290,PLE,Start,3:25:11.72,,W 2x Intermediate,Matusova / Rimmer,1137709
+263,291,STA,Start,3:25:24.45,,W 2x Intermediate,Sadler / Feltham,1138013
+264,292,FSC,Start,3:25:36.00,,W 2x Intermediate,Adam / Thorp,1138516
+265,293,FSC,Start,3:25:51.22,,W 2x Intermediate,Tandy / Martinovich,1138517
+266,294,TSS,Start,3:26:00.89,,W J18 2x Championship,Lack / Scheske,1138285
+267,295,KGS,Start,3:26:16.52,,W J18 2x Championship,Abbott / Bergmann-Chornik,1139421
+268,296,WYJ,Start,3:26:29.14,,W J18 2x Championship,Weaver / Porteous,1138603
+269,297,MHD,Start,3:26:44.02,,W J18 2x Championship,Hollis / SELLERS,1137614
+270,298,KRC,Start,3:26:57.20,,W J18 2x Championship,Bowden / Shelton,1137622
+271,299,SWP,Start,3:27:14.72,,W J18 2x Championship,Kirkhope / Crosbie,1137237
+272,300,LEH,Start,3:27:39.04,,W J18 2x Championship,Supple / Taylor,1137268
+273,301,LEH,Start,3:28:07.69,,W J18 2x Senior,O'Connor / Summers,1137270
+274,302,SWP,Start,3:28:16.89,,W J18 2x Senior,Nearcou / Linney,1137759
+275,303,LEH,Start,3:28:34.35,,W J18 2x Senior,Radford / Snelling,1137269
+276,304,SWP,Start,3:28:47.64,,W J18 2x Senior,O'Donnell / Postlethwaite,1137238
+277,305,SPG,Start,3:29:07.73,,W J18 2x Senior,Alizadeh / Humphris,1140028
+278,306,SHP,Start,3:29:16.67,,W J18 2x Senior,Scott / Blois-Brooke,1138683
+279,307,PHS,Start,3:29:32.14,,W J18 2x Senior,Wickham / Mueller,1139591
+280,308,WLT,Start,3:29:49.94,,W J18 2x Senior,Beard / Fantham,1137600
+281,309,MHD,Start,3:30:05.30,,W J18 2x Senior,Hollis / Felix-Andrews,1139272
+282,310,KGS,Start,3:30:16.14,,W J18 2x Senior,Chorley / Hackworth,1139422
+283,311,FUL,Start,3:30:34.00,,W J18 2x Senior,Perry-Smith / Thomson,1138742
+284,312,KRC,Start,3:30:45.89,,W J18 2x Senior,King / Waddington,1137623
+285,313,SWP,Start,3:31:05.20,,W J18 2x Senior,David / Roles,1137761
+286,314,PHS,Start,3:31:17.48,,W J18 2x Senior,Boles / Larter,1139576
+287,315,LEH,Start,3:31:34.31,,W J18 2x Senior,Deol / Bellamy,1137272
+288,316,YRK,Start,3:31:46.02,,W J18 2x Senior,Forde / Soma,1137979
+289,317,MNK,Start,3:32:02.21,,W J18 2x Senior,Brown / Stratton,1138741
+290,318,WLT,Start,3:32:17.82,,W J18 2x Intermediate,Drew / Thomas,1137601
+291,319,YRK,Start,3:32:31.02,,W J18 2x Intermediate,Faint / Laidlaw,1137955
+292,321,EMA,Start,3:32:45.16,,W J18 2x Intermediate,Bucknall / Kitchen,1137984
+293,323,KGS,Start,3:32:58.27,,W J18 2x Intermediate,Merriman / Spires,1139423
+294,324,WYJ,Start,3:33:10.77,,W J18 2x Intermediate,Sumpter / Dening-Smitherman,1141833
+295,325,YRK,Start,3:33:19.34,,W J18 2x Intermediate,Lewis / Appleton,1137956
+296,327,LEH,Start,3:33:34.79,,W J18 2x Intermediate,Subak-Sharpe / Crees,1137271
+297,328,NSC,Start,3:33:49.56,,W J18 2x Intermediate,Udy / Holdcroft,1138313
+298,329,SHP,Start,3:33:54.00,,W J18 2x Intermediate,Knight / Gerecke,1139447
+299,330,PHS,Start,3:34:14.57,,W J18 2x Intermediate,Saunders / Cameron,1139593
+300,331,SHP,Start,3:34:25.25,,W J18 2x Intermediate,Keighley / Blake Hurworth,1138647
+301,332,GLB,Start,3:34:41.39,,W J18 2x Intermediate,Offiler / Atkinson,1137436
+302,333,PHS,Start,3:34:53.25,,W J18 2x Club,Thoroughgood / Groves,1139577
+303,337,ASL,Start,3:35:04.78,,W J18 2x Club,Bennett / Blair,1140089
+304,338,MAV,Start,3:35:20.22,,W J18 2x Club,Tymczyszyn / Bragin,1138194
+305,339,MHD,Start,3:35:29.63,,W J16 2x Championship,Carpenter / Hall,1137615
+306,340,MHD,Start,3:35:37.41,,W J16 2x Championship,Parcell-Arregi / Stockdale,1137801
+307,341,MHD,Start,3:35:55.52,,W J16 2x Championship,Jones / Thompson,1139266
+308,342,WYJ,Start,3:36:11.30,,W J16 2x Championship,Fletcher / Fullman,1138604
+309,343,SWP,Start,3:36:18.56,,W J16 2x Championship,O'Donnell / Illsley,1137758
+310,344,WYJ,Start,3:36:34.14,,W J16 2x Championship,Fielder / Edwards,1141842
+311,345,BAE,Start,3:36:45.56,,W J16 2x Championship,Hillier / Davidson,1137987
+312,346,BAE,Start,3:36:58.98,,W J16 2x Championship,Clausen / Woods,1137986
+313,347,SWP,Start,3:37:10.93,,W J16 2x Championship,Way / Jones,1137760
+314,348,WYJ,Start,3:37:25.28,,W J16 2x Championship,Cowell / Burton,1138605
+315,349,PHS,Start,3:37:36.84,,W J16 2x Club,Apatu / Rezvani,1139596
+316,350,PHS,Start,3:37:49.06,,W J16 2x Club,Saunders / Low,1139600
+317,351,PHS,Start,3:38:02.79,,W J16 2x Club,Patton / Potts,1139602
+318,352,KGS,Start,3:38:12.47,,W J16 2x Club,Cassidy / Dombrowsky,1139424
+319,353,PHS,Start,3:38:26.02,,W J16 2x Club,Jarvis / Hughes,1139598
+320,354,EMA,Start,3:38:41.71,,W J16 2x Club,Varley / Beauchamp,1137981
+321,357,BEB,Start,3:39:20.05,,Op MasD 2x Championship,Bogle / Knight,1137482
+322,358,MED,Start,3:39:30.67,,Op MasD 2x Championship,Martin / Humphrey,1137748
+323,359,WAR,Start,3:39:44.80,,Op MasD 2x Championship,Delahaye / Gosling,1137645
+324,360,MHD,Start,3:40:05.16,,Op MasD 2x Championship,Stockdale / Abbott,1137139
+325,361,SON,Start,3:40:15.69,,Op MasD 2x Championship,Baldwin / BROWN,1140105
+326,362,LYM,Start,3:40:27.38,,Op MasD 2x Club,Bull / Chalk,1137993
+327,363,KRC,Start,3:40:39.34,,Op MasD 2x Club,Bishop / Brownlee,1137627
+328,364,SON,Start,3:40:58.60,,Op MasD 2x Club,MacLachlan / Blackhurst,1140064
+329,365,RDG,Start,3:41:06.81,,Op MasD 2x Club,Ballsdon / Schonauer,1137479
+330,366,NOR,Start,3:43:56.94,,Op MasE 2x Championship,Hockley / Audinis,1137990
+331,367,TSS,Start,3:44:19.34,,Op MasE 2x Championship,Bridger / McChesney,1138566
+332,368,WBK,Start,3:44:31.69,,Op MasE 2x Championship,Lukes / Thomas,1137219
+333,369,MHD,Start,3:45:00.21,,Op MasE 2x Championship,Richards / Steel,1137166
+334,370,TWK,Start,3:45:08.64,,Op MasE 2x Championship,Stanley / Pullen,1138648
+335,371,BEB,Start,3:45:21.88,,Op MasE 2x Championship,Maunsell / Northwood,1137483
+336,372,BNT,Start,3:45:29.32,,Op MasE 2x Championship,Koepp / Bates,1137435
+337,373,VRC,Start,3:45:40.16,,Op MasE 2x Championship,Maynard / Moisley,1138497
+338,374,ETX,Start,3:45:57.38,,Op MasE 2x Championship,Maitland / White,1138342
+339,375,BTC,Start,3:46:09.99,,Op MasE 2x Club,Green / Edwards,1138405
+340,376,SNE,Start,3:46:21.65,,Op MasE 2x Club,Williams / Farrell,1137457
+341,377,NOR,Start,3:46:34.74,,Op MasE 2x Club,Davies / Bond,1137991
+342,378,TTR,Start,3:46:50.73,,Op MasE 2x Club,McManus / Reynolds,1141838
+343,379,MED,Start,3:47:05.40,,Op MasE 2x Club,Philpott / Semark,1137890
+344,380,WBK,Start,3:47:24.20,,Op MasE 2x Club,Sanders / Adebiyi,1138266
+345,381,WLT,Start,3:47:33.94,,Op MasF 2x Championship,Groom / Adey,1137592
+346,382,HOL,Start,3:47:40.81,,Op MasF 2x Championship,Booth / Lawton,1138650
+347,383,SON,Start,3:48:03.16,,Op MasF 2x Championship,Scrine / Whittle,1137945
+348,384,TSS,Start,3:48:21.17,,Op MasF 2x Championship,Alloway / Ridley,1138756
+349,385,NOR,Start,3:48:31.30,,Op MasF 2x Championship,Conway / Magrath,1139771
+350,386,WLT,Start,3:48:52.41,,Op MasF 2x Championship,Bishop / Della Casa,1137591
+351,387,MAA,Start,3:49:05.83,,Op MasF 2x Championship,Harvey / Roberts,1140195
+352,388,ARD,Start,3:49:16.60,,Op MasF 2x Club,Johnson / Radosevic,1138452
+353,389,ABN,Start,3:49:39.20,,Op MasF 2x Club,Ryan / Stargardt,1138062
+354,391,RDG,Start,3:49:56.98,,Op MasF 2x Club,O'Regan / Symons,1137458
+355,392,DAT,Start,3:50:03.05,,Op MasG 2x,Atkinson / Stewart,1138075
+356,393,TSS,Start,3:50:23.80,,Op MasG 2x,Swift / Watts,1138567
+357,394,GUI,Start,3:50:33.44,,Op MasG 2x,Woowat / Hopkins,1139969
+358,395,DAT,Start,3:50:45.55,,Op MasG 2x,Harris / Cadoux-Hudson,1138167
+359,396,QBC,Start,3:50:57.63,,Op MasG 2x,Peel / Ferris,1138047
+360,397,MED,Start,3:51:11.24,,Op MasG 2x,Powell / Frith,1137749
+361,398,GUI,Start,3:51:24.10,,Op MasH 2x,Watling / Hall,1137590
+362,399,QBC,Start,3:51:39.35,,Op MasH 2x,St John Bagnall / Lamka,1138048
+363,400,WBK,Start,3:51:52.12,,Op MasH 2x,Fain / Lanzer,1138063
+364,401,LRC,Start,3:52:07.76,,Op MasH 2x,Akehurst / Lynn,1137828
+365,402,CYG,Start,3:52:29.68,,Op MasH 2x,Jackson / Otterburn,1137631
+366,403,TWK,Start,3:53:20.78,,W 2x Club,Obenshain / O'Beirne,1138288
+367,404,MAA,Start,3:53:33.52,,W 2x Club,Hanaghan / Dadlani,1140092
+368,405,MAV,Start,3:53:41.60,,W 2x Club,Aisthorpe / Houghton,1138198
+369,406,DBY,Start,3:53:58.10,,W 2x Club,Rouke / Nutkins,1137628
+370,407,MAA,Start,3:54:08.65,,W 2x Club,White / Phillips-Hemming,1139801
+371,408,MAV,Start,3:54:33.06,,W 2x Club,O'Brien / Naylor,1138197
+372,409,YRK,Start,3:54:47.08,,W 2x Club,Thornton / Collins,1138621
+373,410,TRC,Start,3:54:55.03,,W MasB 2x,Worden / Urbanczyk,1137575
+374,411,LEA,Start,3:55:01.84,,W MasB 2x,Stackpool-Moore / Futoryanova,1137780
+375,412,MAA,Start,3:55:14.46,,W MasB 2x,Cassini / Sacre,1140167
+376,413,WRC,Start,3:55:32.51,,W MasB 2x,Lyons / Garrow,1140070
+377,414,NOR,Start,3:55:44.40,,W MasB 2x,Trehane / Lister,1138406
+378,415,CAB,Start,3:55:56.79,,W MasB 2x,Woolner / Hakenbeck,1138308
+379,417,PTR,Start,3:56:10.67,,W MasB 2x,In der Rieden / Kuricova,1138522
+380,418,FSC,Start,3:56:26.90,,W MasB 2x,Livermore / Buglass,1140007
+381,419,MAA,Start,3:56:42.20,,W MasC 2x,Gapper / Ramsden,1138343
+382,420,BBL,Start,3:56:56.85,,W MasC 2x,Bakkeren / Stackhouse,1140187
+383,421,ETX,Start,3:57:10.11,,W MasC 2x,Hague / Moon,1138337
+384,423,MAA,Start,3:57:32.24,,W MasC 2x,Vine / Huddle,1138341
+385,424,WRC,Start,3:59:10.15,,Op MasE 2-,Edge / King,1140068
+386,425,WLT,Start,3:59:29.02,,Op MasE 2-,Graywood / Tomalin,1138755
+387,426,TSS,Start,3:59:56.78,,Op MasE 2-,Priestley / Turner,1138758
+388,427,TTR,Start,4:00:00.97,,Op MasE 2-,Hindley / Arnold,1141841
+389,428,CRB,Start,4:00:21.24,,Op MasE 2-,Reynolds / Deane-Johns,1138067
+390,429,ARD,Start,4:00:27.87,,Op MasE 2-,Reed / Howe,1137924
+391,430,NWK,Start,4:00:40.77,,Op MasF 2-,Price / Price,1138484
+392,431,RDG,Start,4:00:52.40,,Op MasF 2-,Norton / Heron,1137455
+393,432,AVN,Start,4:01:03.66,,Op MasF 2-,Garner / Thornton,1138739
+394,433,ARD,Start,4:01:16.42,,Op MasG 2-,Banks / Andrews,1137925
+395,434,NOR,Start,4:01:34.42,,Op MasG 2-,Miller / Wynne,1138737
+396,435,MHD,Start,4:01:45.92,,Op MasG 2-,Alington / Janisch,1137200
+397,436,UTC,Start,4:02:17.56,,W MasD 2x,Skipper / Kallal,1137685
+398,437,ETX,Start,4:02:30.67,,W MasD 2x,Hewitt / Johnson,1138331
+399,438,HEN,Start,4:02:45.68,,W MasD 2x,Turnell / Orr,1137577
+400,439,ETX,Start,4:03:05.26,,W MasD 2x,Brewer / Kelly,1138332
+401,440,TSS,Start,4:03:18.38,,W MasD 2x,Kentish / Betts,1137711
+402,441,BRX,Start,4:03:32.56,,W MasD 2x,Denyer / Findell,1137155
+403,442,PBD,Start,4:03:44.00,,W MasD 2x,NEWLAND / Newland,1138220
+404,444,ETX,Start,4:03:57.69,,W MasE 2x,Allen / Arion,1138335
+405,445,KRC,Start,4:04:01.37,,W MasE 2x,Sims / Willett,1137625
+406,446,MHD,Start,4:04:12.10,,W MasE 2x,Lion / Harker,1137145
+407,447,TSS,Start,4:04:25.87,,W MasE 2x,Primmer / Hickmott,1137714
+408,448,YRK,Start,4:04:41.25,,W MasE 2x,Howe / Widdowson,1137213
+409,449,LER,Start,4:04:54.01,,W MasE 2x,Horrocks / Pulford,1140214
+410,450,AKN,Start,4:05:09.03,,W MasE 2x,Sargent / Howard,1137767
+411,451,BBL,Start,4:05:27.68,,W MasE 2x,Dick / Cox,1140172
+412,452,DUR,Start,4:05:32.36,,W MasF/G 2x,Rankin / Prescott,1138619
+413,453,TSS,Start,4:05:49.94,,W MasF/G 2x,Lawrence / Al-Janabi,1137700
+414,454,HEN,Start,4:06:06.43,,W MasF/G 2x,Hall / Mehers,1137243
+415,455,WEY,Start,4:06:19.56,,W MasF/G 2x,Morris / Sarsby,1137110
+416,456,YRK,Start,4:06:30.02,,W MasF/G 2x,Worsman / Porte,1138620
+417,457,TWK,Start,4:06:44.28,,W MasF/G 2x,Almond / Field,1140147
+418,458,MAA,Start,4:06:53.48,,W MasF/G 2x,Pattison / Poole,1137660
+1,1,RDU,Finish,2:43:10.74,,Op 2x Championship,Harris / Lawton,1137116
+2,2,TSS,Finish,2:43:37.92,,Op 2x Championship,Stevenson / Meijer,1137872
+3,5,NCR,Finish,2:44:23.86,,Op 2x Championship,Cowley / Larkin,1138676
+4,,,,2:44:24.25,,,,
+5,4,UTC,Finish,2:44:48.41,,Op 2x Championship,Shimmin / Foster,1138054
+6,8,CNN,Finish,2:45:09.57,,Op 2x Intermediate,Young / Thorn,1139797
+7,7,LEA,Finish,2:45:18.67,,Op 2x Intermediate,Day / Cheale,1139655
+8,11,SOC,Finish,2:45:20.34,,Op 2x Intermediate,Cracknell / Aitchison,1137720
+9,10,QBC,Finish,2:45:28.07,,Op 2x Intermediate,Gillard / Gillard,1137952
+10,12,ASL,Finish,2:46:14.28,,Op 2x Intermediate,Wilkin / Ben-Gacem,1140083
+11,13,PTR,Finish,2:46:15.48,,Op 2x Intermediate,Diserens / Diserens,1137880
+12,9,CYG,Finish,2:46:16.35,,Op 2x Intermediate,Furby / Sears,1137281
+13,14,FUL,Finish,2:46:19.11,,Op 2x Intermediate,Pradera Anllo / hui- le marer,1139835
+14,16,WAR,Finish,2:47:06.56,,Op 2x Intermediate,Giles / Garner,1138306
+15,17,CNN,Finish,2:47:12.35,,Op 2x Intermediate,Mackworth / Butler,1139798
+16,15,DBY,Finish,2:47:13.85,,Op 2x Intermediate,Remer / Remer,1137629
+17,19,TRC,Finish,2:47:31.84,,Op 2- Championship,Moss / Robinson,1137208
+18,20,KCS,Finish,2:47:38.54,,Op 2- Championship,Betteley / Thompson,1138568
+19,21,TRC,Finish,2:47:50.22,,Op 2- Championship,Seely / Downey,1137138
+20,22,TRC,Finish,2:47:59.94,,Op 2- Championship,Williamson / Brown,1137132
+21,23,TRC,Finish,2:48:11.66,,Op 2- Championship,Reeder / Heap,1137250
+22,18,TRC,Finish,2:48:16.43,,Op 2- Championship,Rae Smith / Nunayon,1137137
+23,25,TRC,Finish,2:48:26.00,,Op 2- Championship,Walsh / Bakalli,1137136
+24,26,TRC,Finish,2:48:55.57,,Op 2- Senior,O'Callaghan / Jones,1137133
+25,28,TSS,Finish,2:48:59.94,,Op 2- Senior,Brown / Wilkojc,1137152
+26,30,QBC,Finish,2:49:13.33,,Op 2- Senior,Chatwin / Murdock,1138512
+27,27,VRC,Finish,2:49:34.57,,Op 2- Senior,King / Hunter,1139782
+28,31,CBR,Finish,2:49:48.09,,Op 2- Senior,Piercy / Acton,1138514
+29,32,TSS,Finish,2:50:15.77,,Op 2- Senior,Ogunyoye / Budenberg,1139995
+30,33,CNN,Finish,2:50:32.40,,Op 2- Senior,Kabelik / Todd,1139799
+31,37,WRC,Finish,2:50:54.46,,Op 2- Intermediate,Mentor / Hines,1138818
+32,35,QBC,Finish,2:51:17.18,,Op 2- Senior,Robins / Dawson,1138511
+33,36,CAM,Finish,2:51:28.77,,Op 2- Senior,Douglas / Watt,1140009
+34,40,DBY,Finish,2:51:48.68,,Op 2- Intermediate,Bennett / Walker,1138303
+35,39,MON,Finish,2:51:51.56,,Op 2- Intermediate,Baker / Morgan,1138486
+36,38,MAG,Finish,2:52:09.81,,Op 2- Intermediate,Barker / Kirk,1140209
+37,41,WRC,Finish,2:52:16.67,,Op 2- Intermediate,Fergus / Mason,1140069
+38,42,WAR,Finish,2:52:26.38,,Op 2- Intermediate,Whitbread / Collett,1137698
+39,44,LER,Finish,2:52:27.78,,Op 2- Intermediate,Pickering / Harding,1138481
+40,43,PTR,Finish,2:52:36.86,,Op 2- Intermediate,Breeze / Fox,1138474
+41,46,WAR,Finish,2:52:40.60,,Op 2- Intermediate,BROWNING / Masson,1137646
+42,48,PBC,Finish,2:52:59.04,,Op 2- Club,Wagenaar / Harris,1139976
+43,52,SPS,Finish,2:53:07.57,,Op J18 2- Championship,Middleton / Valt,1138575
+44,45,WRR,Finish,2:53:24.08,,Op 2- Intermediate,Pool / Phillips,1139639
+45,55,SHP,Finish,2:53:28.43,,Op J18 2- Championship,Ash / Burnand,1138645
+46,53,SHP,Finish,2:53:47.68,,Op J18 2- Championship,Brockway / Hjortland-Marks,1138626
+47,54,SPS,Finish,2:53:53.33,,Op J18 2- Championship,Kwok / Taylor,1138576
+48,50,BTC,Finish,2:54:09.97,,Op 2- Club,Ratcliffe / Sturley,1138124
+49,51,TTR,Finish,2:54:34.62,,Op 2- Club,Brewer / Jack,1138265
+50,59,SHP,Finish,2:54:36.56,,Op J18 2- Championship,Hallsworth / Boret,1138644
+51,57,SHP,Finish,2:54:40.33,,Op J18 2- Championship,Acton / Fox,1138643
+52,63,SPS,Finish,2:54:43.22,,Op J18 2- Championship,Langstone-Bolt / Ackrim,1138577
+53,58,NSC,Finish,2:54:54.91,,Op J18 2- Championship,Bacic / Tremelling,1138314
+54,47,WRR,Finish,2:55:07.79,,Op 2- Club,Restall / Hyland,1139640
+55,61,SPS,Finish,2:55:23.67,,Op J18 2- Senior,Rizk / Varma,1138586
+56,66,WLT,Finish,2:55:35.02,,Op J18 2- Senior,O'Neill / Cleary,1137596
+57,49,WRR,Finish,2:55:41.74,,Op 2- Club,Morgan / Scholes,1139641
+58,64,SPS,Finish,2:55:43.26,,Op J18 2- Championship,Elder / Moreno,1138578
+59,68,KCA,Finish,2:55:54.22,,Op J18 2- Senior,Wingfield / Wingfield,1138477
+60,70,WEY,Finish,2:55:58.28,,Op J18 2- Intermediate,McLeod / Johnson,1137113
+61,76,WLT,Finish,2:56:11.32,,Op J18 2- Intermediate,Maffi / Rackett,1137595
+62,72,MNK,Finish,2:56:09.83,,Op J18 2- Intermediate,Ford / Bennett,1137712
+63,74,EMA,Finish,2:56:23.91,,Op J18 2- Intermediate,Kitchen / Zagorac,1137239
+64,77,CAB,Finish,2:57:10.23,,Op J18 2- Intermediate,Askew / Pearson,1138523
+65,84,KRC,Finish,2:57:14.71,,Op 2x Club,Keen-Tomlinson / Keen-Tomlinson,1137624
+66,79,SON,Finish,2:57:19.13,,Op 2x Club,Ewing / Watson,1140139
+67,,,,2:57:23.57,,,,
+68,87,RDU,Finish,2:57:30.80,,Op Lwt 2x,Powell / Holbrough,1137120
+69,86,CAM,Finish,2:57:42.84,,Op Lwt 2x,Ladd / Briegal,1138638
+70,88,CAB,Finish,2:57:43.97,,Op Lwt 2x,Goode / Austin,1139844
+71,85,TWK,Finish,2:57:54.83,,Op Lwt 2x,Wooller / Lanfranconi,1137800
+72,82,TSS,Finish,2:57:58.81,,Op 2x Club,Hashmi / Mackie,1139810
+73,94,SHP,Finish,2:58:15.14,,Op J18 2x Championship,Focosi / Humphris,1137691
+74,80,CYG,Finish,2:58:17.15,,Op 2x Club,Pugh / Stewart,1138061
+75,93,SHP,Finish,2:58:20.76,,Op J18 2x Championship,van der Linden / Mulligan,1138642
+76,90,CAM,Finish,2:58:28.56,,Op Lwt 2x,Dubois / Sinclair,1138641
+77,95,TSS,Finish,2:58:31.41,,Op J18 2x Championship,Oliver / Kelly,1140174
+78,89,CAB,Finish,2:58:34.25,,Op Lwt 2x,Turner / Evry,1139845
+79,91,SWI,Finish,2:58:35.33,,Op Lwt 2x,Sinclair / Clements,1137869
+80,78,KSR,Finish,2:58:43.46,,Op J18 2- Intermediate,Moniz Gomes / Hunt,1137897
+81,96,ETN,Finish,2:58:49.09,,Op J18 2x Championship,Van Steenis / Watson-Gandy,1138731
+82,81,WAR,Finish,2:59:17.11,,Op 2x Club,Lindstrom / Taylor,1137699
+83,97,KGS,Finish,2:59:18.85,,Op J18 2x Championship,Fletcher / Bradley,1139416
+84,98,SPS,Finish,2:59:24.42,,Op J18 2x Senior,Gillard / O'Sullivan,1138579
+85,99,WYJ,Finish,2:59:42.62,,Op J18 2x Senior,Birch / Rant,1138606
+86,83,VRC,Finish,2:59:48.17,,Op 2x Club,Davies / Laird,1140016
+87,103,YRK,Finish,2:59:52.45,,Op J18 2x Senior,Wilson / Orpin,1137980
+88,102,EMA,Finish,2:59:55.30,,Op J18 2x Senior,Bligh / Olby,1137241
+89,104,WLT,Finish,3:00:02.17,,Op J18 2x Senior,McManus / Robinson,1137594
+90,100,WLT,Finish,3:00:02.97,,Op J18 2x Senior,Roberts / Hawes,1137593
+91,105,ETN,Finish,3:00:38.07,,Op J18 2x Senior,Geffen / Ferguson,1138730
+92,106,MHD,Finish,3:00:49.68,,Op J18 2x Senior,Rayner / Evans,1137613
+93,107,NSC,Finish,3:00:51.84,,Op J18 2x Senior,Parsons / Baker,1138317
+94,108,ETN,Finish,3:01:03.56,,Op J18 2x Senior,Gorvy / Lucas,1138732
+95,109,WGT,Finish,3:01:06.41,,Op J18 2x Intermediate,Crisanto- Roth / Ronte,1139542
+96,110,ETN,Finish,3:01:46.56,,Op J18 2x Senior,Wahl / Grundy,1138729
+97,111,ETN,Finish,3:01:48.94,,Op J18 2x Intermediate,Strang Steel / Rothschild,1138734
+98,112,BRX,Finish,3:02:21.08,,Op J18 2x Intermediate,Day / Orpin,1137119
+99,114,SPS,Finish,3:02:36.48,,Op J18 2x Intermediate,Seery / Naresh,1138588
+100,113,ETN,Finish,3:02:42.36,,Op J18 2x Intermediate,Gordon-Brown / Julius,1138735
+101,115,WGT,Finish,3:02:52.24,,Op J18 2x Intermediate,Warne / Donald,1139543
+102,118,NSC,Finish,3:02:55.38,,Op J18 2x Senior,Sexton / Hempsall,1138316
+103,117,KCS,Finish,3:02:58.74,,Op J18 2x Intermediate,Caouki / Mercieca,1138572
+104,119,KCS,Finish,3:03:00.36,,Op J18 2x Intermediate,Gugelmann / Pearson,1138570
+105,116,KCS,Finish,3:03:10.97,,Op J18 2x Intermediate,Caouki / Edington,1138574
+106,122,KCS,Finish,3:04:11.56,,Op J18 2x Intermediate,Townsend / Heathcote,1138571
+107,123,NSC,Finish,3:04:13.02,,Op J18 2x Intermediate,Chitre / Taylor,1138318
+108,124,NSC,Finish,3:04:29.67,,Op J18 2x Intermediate,Prior / Elliott,1138315
+109,120,WYJ,Finish,3:04:31.18,,Op J18 2x Intermediate,Worthington / Johnson,1141834
+110,125,ETN,Finish,3:04:36.73,,Op J18 2x Intermediate,McLusky / Whittaker,1138733
+111,121,KCS,Finish,3:04:46.81,,Op J18 2x Intermediate,Taylor / Martin,1138573
+112,126,SPS,Finish,3:05:26.05,,Op J18 2x Intermediate,Applemans / Edward,1138590
+113,128,SPS,Finish,3:05:28.98,,Op J18 2x Intermediate,Tobelem / Spielmann,1138589
+114,127,WYC,Finish,3:05:44.57,,Op J18 2x Intermediate,Jones / Taylor,1141835
+115,129,STN,Finish,3:06:01.48,,Op J18 2x Club,Geczy / Alexander,1140111
+116,136,SHS,Finish,3:06:17.18,,Op J16 2x Senior,Walters / Horrix,1137216
+117,135,SHP,Finish,3:06:23.64,,Op J16 2x Senior,Hillier / Middleton,1138646
+118,132,ASL,Finish,3:06:26.90,,Op J18 2x Club,Clyde / Moran,1140085
+119,134,MHD,Finish,3:06:30.13,,Op J16 2x Senior,Lewis / Towers,1137612
+120,130,STN,Finish,3:06:35.40,,Op J18 2x Club,Holloway / Gupta,1140115
+121,137,CBR,Finish,3:06:54.94,,Op J16 2x Senior,Kay / Ainsley,1138796
+122,138,KGS,Finish,3:07:04.33,,Op J16 2x Senior,Boyle / Canning,1139417
+123,139,NSC,Finish,3:07:18.97,,Op J16 2x Senior,Catmull / Cooper,1138319
+124,141,SPS,Finish,3:07:27.90,,Op J16 2x Intermediate,THOROGOOD / Henke,1139881
+125,140,KGS,Finish,3:07:29.94,,Op J16 2x Intermediate,Currie / Middleton,1139418
+126,131,KSR,Finish,3:07:36.96,,Op J18 2x Club,Northridge / Caithness,1137898
+127,142,CBR,Finish,3:07:55.98,,Op J16 2x Intermediate,Biggs / Grady,1138797
+128,144,WGT,Finish,3:08:18.38,,Op J16 2x Intermediate,Albert / Tullis,1139541
+129,146,SPS,Finish,3:08:28.55,,Op J16 2x Intermediate,Harker / Davies,1139886
+130,143,SPS,Finish,3:08:39.51,,Op J16 2x Intermediate,Lavington / Marshall,1139880
+131,145,BAE,Finish,3:08:53.08,,Op J16 2x Intermediate,Williams / Blagburn,1139524
+132,152,ETN,Finish,3:08:55.59,,Op J16 2x Club,Stacey / Van Steenis,1139355
+133,151,ETN,Finish,3:09:05.26,,Op J16 2x Club,Irving / Hinchliffe,1139354
+134,153,ETN,Finish,3:09:26.71,,Op J16 2x Club,Orr / Ferguson,1139356
+135,157,WBK,Finish,3:09:57.03,,Mx 2x Championship,Gallagher / Gallagher,1137134
+136,156,GLB,Finish,3:09:59.62,,Mx 2x Championship,Collins / Hughes,1137437
+137,149,WYC,Finish,3:10:00.60,,Op J16 2x Club,Robertson / Garrard,1141836
+138,158,STK,Finish,3:10:02.68,,Mx 2x Championship,Anderson / Cruxton,1137249
+139,160,WRR,Finish,3:10:22.45,,Mx 2x Championship,Foulds / Woodman,1139642
+140,154,MAR,Finish,3:10:43.86,,Op Supported Adaptive 2x,Marsden / Thomas,1138492
+141,161,COX,Finish,3:10:53.18,,Mx 2x Championship,Kerswell-Jensen / Armstrong,1138364
+142,155,MAR,Finish,3:11:10.00,,W Supported Adaptive 2-,Holloway / Harrison,1138490
+143,163,TSS,Finish,3:11:10.70,,W 2x Championship,Wilkinson-Feller / Rawlins,1137149
+144,164,RDU,Finish,3:11:31.01,,W 2x Championship,Ryan / Morgan,1137122
+145,165,RDU,Finish,3:12:00.55,,W 2x Championship,Heap / Lewis,1137123
+146,162,HOL,Finish,3:12:01.18,,Mx 2x Championship,Daniels / Hardman,1139734
+147,166,LRC,Finish,3:12:41.40,,W 2x Championship,Jackson / Cameron,1137741
+148,204,TRC,Finish,3:15:36.55,,Op MasC 2x,Jacobs / Kerr,1138722
+149,169,WOO,Finish,3:16:02.11,,Mx 2x Club,Faleri / Sch�fer,1137739
+150,167,SOC,Finish,3:16:02.36,,Mx 2x Club,Starkey / Starkey,1139825
+151,168,TUN,Finish,3:16:11.88,,Mx 2x Club,Hares / Hallett,1137144
+152,175,AKN,Finish,3:16:26.49,,Op MasB 2x,MacKworth-Praed / Barton,1139978
+153,176,KRC,Finish,3:17:15.64,,Op MasB 2x,Tjarks / Sharp,1137632
+154,171,WAR,Finish,3:17:20.67,,Mx 2x Club,Fidler / Lucey,1137643
+155,170,MAV,Finish,3:17:31.84,,Mx 2x Club,Huggins / Huggins,1138199
+156,180,EXE,Finish,3:17:40.75,,Op MasC 2x,Byrnes / Rowse,1140005
+157,178,VRC,Finish,3:17:47.38,,Op MasB 2x,Cannon / Smith,1138399
+158,177,HIL,Finish,3:18:00.56,,Op MasB 2x,Perez-Milans / Rognoni,1137445
+159,182,PTR,Finish,3:18:01.45,,Op MasC 2x,Hickling / Hayden,1138546
+160,172,LYM,Finish,3:18:06.49,,Mx 2x Club,Botting / Potter,1139795
+161,174,VRC,Finish,3:18:10.28,,Mx 2x Club,Pipkin / Ruddick,1139781
+162,179,LRC,Finish,3:18:19.51,,Op MasB 2x,Silver / Dutreige,1138551
+163,187,MON,Finish,3:18:34.10,,Mx MasB/C 2x,Pascovitch / Fullman,1138513
+164,173,RVC,Finish,3:18:46.96,,Mx 2x Club,Coni / Collier-Smith,1139544
+165,183,KRC,Finish,3:18:47.62,,Op MasC 2x,Young / Hepburn,1137626
+166,181,LEA,Finish,3:19:02.14,,Op MasC 2x,Richardson / Griffin,1137781
+167,188,WLT,Finish,3:19:14.62,,Mx MasB/C 2x,Jackson / Heywood,1139913
+168,184,WLT,Finish,3:19:31.42,,Op MasC 2x,Russell / Adams,1139903
+169,189,UTC,Finish,3:19:48.00,,Mx MasB/C 2x,Scott / Van Leemputten,1138509
+170,192,LRC,Finish,3:20:46.18,,Mx MasB/C 2x,Ablitt / Coles,1138507
+171,193,ARD,Finish,3:20:47.82,,Mx MasD 2x,Billin / Tanner,1137927
+172,196,BEB,Finish,3:20:53.05,,Mx MasE 2x,Morris / Morris,1137109
+173,190,PTR,Finish,3:20:58.37,,Mx MasB/C 2x,Holmes-Siedle / Culley,1137848
+174,206,MON,Finish,3:21:23.13,,Op MasB 2-,Rodford / Butler,1138283
+175,197,WYC,Finish,3:21:24.35,,Mx MasE 2x,Downey / Talbot,1138264
+176,198,UPT,Finish,3:21:29.47,,Mx MasE 2x,Scrivener / Scrivener,1137704
+177,194,CBR,Finish,3:21:38.43,,Mx MasD 2x,Linehan / Kelly,1139328
+178,195,SUA,Finish,3:21:39.79,,Mx MasD 2x,Hayton / Doherty,1138097
+179,199,WLT,Finish,3:21:40.99,,Mx MasE 2x,Thiemann / Thiemann,1139914
+180,200,PBD,Finish,3:21:51.45,,Mx MasE 2x,Reid / Dwan,1138217
+181,191,ETX,Finish,3:22:21.10,,Mx MasB/C 2x,Dix / Len,1138362
+182,207,LYM,Finish,3:22:22.02,,Op MasB 2-,Lock / Mans,1139252
+183,210,KCA,Finish,3:22:25.31,,Op MasC 2- Championship,Brown / Williamson,1138014
+184,211,ARD,Finish,3:22:31.81,,Op MasC 2- Championship,Humphris / Dombrowe,1137946
+185,208,SON,Finish,3:22:36.64,,Op MasB 2-,de Lagarde / Thompson,1140063
+186,203,BEB,Finish,3:22:46.30,,Mx MasF 2x,Suthers / Nugee,1138282
+187,201,BEB,Finish,3:22:58.70,,Mx MasE 2x,Grant / Snowden,1138281
+188,205,GRF,Finish,3:23:11.71,,Mx MasF 2x,Halse / Westcott,1137710
+189,209,CYG,Finish,3:23:29.08,,Op MasB 2-,De Groot / Hunter,1137327
+190,212,SON,Finish,3:23:39.47,,Op MasC 2- Championship,Young / Michel,1137207
+191,202,ROS,Finish,3:23:55.67,,Mx MasE 2x,Jones / Brace,1137659
+192,214,CBR,Finish,3:23:58.86,,Op MasC 2- Championship,Harding / Gibson,1137447
+193,213,YRK,Finish,3:24:29.81,,Op MasC 2- Championship,Baron / Jones,1138068
+194,220,LRC,Finish,3:24:39.86,,Op MasD 2-,Harries / Theed,1137740
+195,221,UTC,Finish,3:24:45.49,,Op MasD 2-,Jacobs / Sadler,1137154
+196,216,RDG,Finish,3:25:04.49,,Op MasC 2- Club,Wiles / Hopkins,1137630
+197,222,MHD,Finish,3:25:22.60,,Op MasD 2-,Bird / Brockwell,1137206
+198,224,RDG,Finish,3:25:28.34,,Op MasD 2-,Day / Baldwin,1137478
+199,223,MHD,Finish,3:25:33.88,,Op MasD 2-,Scott / Hutchins,1137247
+200,215,VRC,Finish,3:25:52.15,,Op MasC 2- Club,Williams / Brown,1138398
+201,219,PAR,Finish,3:26:05.32,,Op MasC 2- Club,Wallace / Hewson,1140190
+202,217,ETX,Finish,3:26:16.46,,Op MasC 2- Club,Schofield / Wincomb,1138388
+203,225,TTR,Finish,3:26:24.06,,Op MasD 2-,Howard / Tatton,1141839
+204,232,TRC,Finish,3:26:31.99,,W 2- Championship,Taylor / Carlotti,1137126
+205,226,LEA,Finish,3:26:40.78,,W 2- Championship,Minnich / Newbury,1138456
+206,233,TSS,Finish,3:26:41.62,,W 2- Championship,Potter / Wagstaff,1137670
+207,229,LEA,Finish,3:26:50.80,,W 2- Championship,Snaith / Benson-Skailes,1138391
+208,228,VRC,Finish,3:26:52.71,,W 2- Championship,Lidlow / Kelly,1139831
+209,235,KRC,Finish,3:27:21.04,,W J18 2- Championship,Harwood / Medcalf,1137620
+210,231,LEA,Finish,3:27:24.91,,W 2- Championship,Brock / Stokes,1138396
+211,238,SPG,Finish,3:27:46.92,,W J18 2- Championship,Stuart-Smith / Louis,1140026
+212,239,EMA,Finish,3:27:57.20,,W J18 2- Championship,McAuliffe / Jeynes,1137309
+213,237,PHS,Finish,3:27:59.98,,W J18 2- Championship,Patton / Bridges,1139559
+214,230,LEA,Finish,3:28:07.47,,W 2- Championship,Parkinson / Ricketts,1138397
+215,243,TSS,Finish,3:28:36.01,,W 2- Senior,Scott / Perrin,1139811
+216,240,WLT,Finish,3:28:41.56,,W J18 2- Championship,Rushworth / Hewitt,1138046
+217,241,PTR,Finish,3:28:44.02,,W 2- Senior,Perkins / Lewis,1138060
+218,244,TRC,Finish,3:29:22.31,,W 2- Senior,Colthurst / Manly,1137129
+219,242,PTR,Finish,3:29:35.03,,W 2- Senior,Docherty / Gleave,1138159
+220,246,TRC,Finish,3:29:42.80,,W 2- Senior,Coad / Goodchild,1137127
+221,248,COX,Finish,3:29:45.40,,W 2- Senior,Merritt-Smith / Lefferts,1138363
+222,247,FSC,Finish,3:29:52.44,,W 2- Senior,Hartley / Pesola,1138515
+223,251,TSS,Finish,3:30:14.22,,W 2- Intermediate,Holmes / Adebiyi,1139814
+224,249,BBL,Finish,3:30:23.85,,W 2- Intermediate,Oakley / Steedman,1140171
+225,252,TRC,Finish,3:30:42.47,,W 2- Intermediate,Higginbotham / Woodward,1137209
+226,250,TRC,Finish,3:30:43.87,,W 2- Intermediate,McElhone / Gulley,1137130
+227,253,PTR,Finish,3:31:08.89,,W 2- Intermediate,Dicks / Carboo,1138160
+228,255,CAB,Finish,3:31:46.18,,W 2- Intermediate,Laube / Mahoney,1138450
+229,256,CAM,Finish,3:31:52.70,,W 2- Intermediate,Adriaenssens / Large,1138632
+230,254,BBL,Finish,3:32:07.68,,W 2- Intermediate,Saary / Millar,1140188
+231,257,CUR,Finish,3:32:11.67,,W 2- Intermediate,Blomberg / Matulenaite,1140093
+232,259,CAM,Finish,3:32:18.45,,W 2- Club,Pocock / Dubois-van Slageren,1138635
+233,262,RDG,Finish,3:32:20.25,,W 2- Club,Jackson / O'Connor,1138675
+234,263,KCA,Finish,3:32:47.57,,W J18 2- Club,Josie / Southorn,1138476
+235,260,TWK,Finish,3:32:56.82,,W 2- Club,Luscombe / Edwards,1138287
+236,264,WLT,Finish,3:33:14.54,,W J18 2- Club,Catlin / Roberts,1137597
+237,268,AKN,Finish,3:33:27.51,,W MasB/C 2-,Raffaele / Pankhurst,1139813
+238,271,TSS,Finish,3:33:35.38,,W MasD/E 2-,Grose / Finn,1137873
+239,265,CAB,Finish,3:33:43.31,,W J18 2- Club,Jennion / Hill,1138524
+240,272,CAB,Finish,3:34:02.38,,W MasD/E 2-,Weik / Cooper,1138307
+241,266,MAV,Finish,3:34:11.60,,W J18 2- Club,Palmer / Chapman,1138195
+242,269,WEY,Finish,3:34:14.08,,W MasB/C 2-,Ferguson / Ferlez,1137131
+243,270,HSB,Finish,3:34:16.25,,W MasB/C 2-,Hichens / Nidai,1138161
+244,273,WEY,Finish,3:34:21.21,,W MasD/E 2-,Kornberg / Brady,1137112
+245,274,ARD,Finish,3:34:36.68,,W MasD/E 2-,Davison / Goldsmith,1137957
+246,133,MHD,Finish,3:35:40.22,,Op J16 2x Senior,Bird / Ioras,1137611
+247,276,VRC,Finish,3:37:14.27,,W 2x Senior,Wood / Mayall,1139788
+248,277,MAA,Finish,3:37:33.74,,W 2x Senior,Brown / Piper,1138759
+249,278,NCR,Finish,3:37:47.51,,W 2x Senior,Watson / O'Donnell,1138764
+250,279,NCR,Finish,3:38:01.09,,W 2x Senior,Pepper / Smith,1138763
+251,275,MAA,Finish,3:38:22.85,,W 2x Senior,Bruce / Brass,1139786
+252,280,WRC,Finish,3:38:27.39,,W 2x Senior,Butler / Bard,1138798
+253,282,TSS,Finish,3:38:37.97,,W 2x Senior,Hatch / Bowden,1140143
+254,281,MAA,Finish,3:38:48.07,,W 2x Senior,Gowan / Watson,1138761
+255,284,MAA,Finish,3:39:12.10,,W 2x Senior,Zakers / Webb,1139783
+256,283,MAA,Finish,3:39:24.20,,W 2x Senior,Hampton / Brooks,1138760
+257,285,CAB,Finish,3:39:25.00,,W 2x Intermediate,Darlington / Williams,1139843
+258,286,MAV,Finish,3:39:46.13,,W 2x Intermediate,Drury / Gilbert-Ward,1138196
+259,287,MHD,Finish,3:40:06.28,,W 2x Intermediate,Steel / Palmer,1137141
+260,291,STA,Finish,3:40:39.70,,W 2x Intermediate,Sadler / Feltham,1138013
+261,290,PLE,Finish,3:40:40.56,,W 2x Intermediate,Matusova / Rimmer,1137709
+262,289,BBL,Finish,3:40:44.46,,W 2x Intermediate,Tsang / Gordon,1140175
+263,294,TSS,Finish,3:40:45.30,,W J18 2x Championship,Lack / Scheske,1138285
+264,288,SON,Finish,3:40:54.47,,W 2x Intermediate,Scrine / Turnock,1137889
+265,295,KGS,Finish,3:41:27.42,,W J18 2x Championship,Abbott / Bergmann-Chornik,1139421
+266,296,WYJ,Finish,3:41:36.13,,W J18 2x Championship,Weaver / Porteous,1138603
+267,297,MHD,Finish,3:41:50.31,,W J18 2x Championship,Hollis / SELLERS,1137614
+268,292,FSC,Finish,3:41:53.42,,W 2x Intermediate,Adam / Thorp,1138516
+269,298,KRC,Finish,3:42:12.54,,W J18 2x Championship,Bowden / Shelton,1137622
+270,299,SWP,Finish,3:42:31.00,,W J18 2x Championship,Kirkhope / Crosbie,1137237
+271,293,FSC,Finish,3:42:57.37,,W 2x Intermediate,Tandy / Martinovich,1138517
+272,300,LEH,Finish,3:43:00.06,,W J18 2x Championship,Supple / Taylor,1137268
+273,301,LEH,Finish,3:43:31.70,,W J18 2x Senior,O'Connor / Summers,1137270
+274,303,LEH,Finish,3:43:40.38,,W J18 2x Senior,Radford / Snelling,1137269
+275,302,SWP,Finish,3:43:43.78,,W J18 2x Senior,Nearcou / Linney,1137759
+276,304,SWP,Finish,3:44:17.42,,W J18 2x Senior,O'Donnell / Postlethwaite,1137238
+277,306,SHP,Finish,3:44:39.25,,W J18 2x Senior,Scott / Blois-Brooke,1138683
+278,308,WLT,Finish,3:45:01.81,,W J18 2x Senior,Beard / Fantham,1137600
+279,307,PHS,Finish,3:45:06.39,,W J18 2x Senior,Wickham / Mueller,1139591
+280,305,SPG,Finish,3:45:42.47,,W J18 2x Senior,Alizadeh / Humphris,1140028
+281,310,KGS,Finish,3:45:53.61,,W J18 2x Senior,Chorley / Hackworth,1139422
+282,309,MHD,Finish,3:46:02.06,,W J18 2x Senior,Hollis / Felix-Andrews,1139272
+283,311,FUL,Finish,3:46:05.23,,W J18 2x Senior,Perry-Smith / Thomson,1138742
+284,312,KRC,Finish,3:46:34.25,,W J18 2x Senior,King / Waddington,1137623
+285,313,SWP,Finish,3:46:54.55,,W J18 2x Senior,David / Roles,1137761
+286,315,LEH,Finish,3:46:56.71,,W J18 2x Senior,Deol / Bellamy,1137272
+287,314,PHS,Finish,3:47:09.59,,W J18 2x Senior,Boles / Larter,1139576
+288,317,MNK,Finish,3:47:13.01,,W J18 2x Senior,Brown / Stratton,1138741
+289,319,YRK,Finish,3:47:30.40,,W J18 2x Intermediate,Faint / Laidlaw,1137955
+290,316,YRK,Finish,3:47:33.57,,W J18 2x Senior,Forde / Soma,1137979
+291,318,WLT,Finish,3:47:56.14,,W J18 2x Intermediate,Drew / Thomas,1137601
+292,321,EMA,Finish,3:48:26.21,,W J18 2x Intermediate,Bucknall / Kitchen,1137984
+293,323,KGS,Finish,3:48:53.53,,W J18 2x Intermediate,Merriman / Spires,1139423
+294,327,LEH,Finish,3:48:54.80,,W J18 2x Intermediate,Subak-Sharpe / Crees,1137271
+295,329,SHP,Finish,3:49:04.95,,W J18 2x Intermediate,Knight / Gerecke,1139447
+296,325,YRK,Finish,3:49:13.09,,W J18 2x Intermediate,Lewis / Appleton,1137956
+297,324,WYJ,Finish,3:49:18.71,,W J18 2x Intermediate,Sumpter / Dening-Smitherman,1141833
+298,331,SHP,Finish,3:49:37.12,,W J18 2x Intermediate,Keighley / Blake Hurworth,1138647
+299,328,NSC,Finish,3:49:54.07,,W J18 2x Intermediate,Udy / Holdcroft,1138313
+300,332,GLB,Finish,3:50:25.47,,W J18 2x Intermediate,Offiler / Atkinson,1137436
+301,339,MHD,Finish,3:50:40.19,,W J16 2x Championship,Carpenter / Hall,1137615
+302,337,ASL,Finish,3:50:44.94,,W J18 2x Club,Bennett / Blair,1140089
+303,338,MAV,Finish,3:51:00.80,,W J18 2x Club,Tymczyszyn / Bragin,1138194
+304,333,PHS,Finish,3:51:05.55,,W J18 2x Club,Thoroughgood / Groves,1139577
+305,340,MHD,Finish,3:51:16.40,,W J16 2x Championship,Parcell-Arregi / Stockdale,1137801
+306,330,PHS,Finish,3:51:41.02,,W J18 2x Intermediate,Saunders / Cameron,1139593
+307,343,SWP,Finish,3:51:43.09,,W J16 2x Championship,O'Donnell / Illsley,1137758
+308,341,MHD,Finish,3:51:48.33,,W J16 2x Championship,Jones / Thompson,1139266
+309,344,WYJ,Finish,3:52:02.61,,W J16 2x Championship,Fielder / Edwards,1141842
+310,342,WYJ,Finish,3:52:08.47,,W J16 2x Championship,Fletcher / Fullman,1138604
+311,346,BAE,Finish,3:52:49.85,,W J16 2x Championship,Clausen / Woods,1137986
+312,347,SWP,Finish,3:52:50.62,,W J16 2x Championship,Way / Jones,1137760
+313,345,BAE,Finish,3:52:51.51,,W J16 2x Championship,Hillier / Davidson,1137987
+314,348,WYJ,Finish,3:53:45.48,,W J16 2x Championship,Cowell / Burton,1138605
+315,350,PHS,Finish,3:53:54.13,,W J16 2x Club,Saunders / Low,1139600
+316,358,MED,Finish,3:54:03.79,,Op MasD 2x Championship,Martin / Humphrey,1137748
+317,352,KGS,Finish,3:54:04.32,,W J16 2x Club,Cassidy / Dombrowsky,1139424
+318,,,,3:54:08.22,,,,
+319,359,WAR,Finish,3:54:19.03,,Op MasD 2x Championship,Delahaye / Gosling,1137645
+320,349,PHS,Finish,3:54:42.68,,W J16 2x Club,Apatu / Rezvani,1139596
+321,354,EMA,Finish,3:54:45.75,,W J16 2x Club,Varley / Beauchamp,1137981
+322,351,PHS,Finish,3:54:51.45,,W J16 2x Club,Patton / Potts,1139602
+323,353,PHS,Finish,3:55:05.74,,W J16 2x Club,Jarvis / Hughes,1139598
+324,360,MHD,Finish,3:55:08.72,,Op MasD 2x Championship,Stockdale / Abbott,1137139
+325,362,LYM,Finish,3:55:24.57,,Op MasD 2x Club,Bull / Chalk,1137993
+326,361,SON,Finish,3:55:50.37,,Op MasD 2x Championship,Baldwin / BROWN,1140105
+327,365,RDG,Finish,3:56:27.90,,Op MasD 2x Club,Ballsdon / Schonauer,1137479
+328,363,KRC,Finish,3:56:36.21,,Op MasD 2x Club,Bishop / Brownlee,1137627
+329,364,SON,Finish,3:57:18.28,,Op MasD 2x Club,MacLachlan / Blackhurst,1140064
+330,366,NOR,Finish,3:57:54.08,,Op MasE 2x Championship,Hockley / Audinis,1137990
+331,367,TSS,Finish,3:58:57.62,,Op MasE 2x Championship,Bridger / McChesney,1138566
+332,368,WBK,Finish,3:59:15.48,,Op MasE 2x Championship,Lukes / Thomas,1137219
+333,370,TWK,Finish,4:00:03.72,,Op MasE 2x Championship,Stanley / Pullen,1138648
+334,371,BEB,Finish,4:00:06.51,,Op MasE 2x Championship,Maunsell / Northwood,1137483
+335,369,MHD,Finish,4:00:44.45,,Op MasE 2x Championship,Richards / Steel,1137166
+336,372,BNT,Finish,4:00:51.48,,Op MasE 2x Championship,Koepp / Bates,1137435
+337,373,VRC,Finish,4:01:05.25,,Op MasE 2x Championship,Maynard / Moisley,1138497
+338,376,SNE,Finish,4:01:35.40,,Op MasE 2x Club,Williams / Farrell,1137457
+339,375,BTC,Finish,4:01:46.08,,Op MasE 2x Club,Green / Edwards,1138405
+340,374,ETX,Finish,4:01:52.21,,Op MasE 2x Championship,Maitland / White,1138342
+341,377,NOR,Finish,4:01:54.77,,Op MasE 2x Club,Davies / Bond,1137991
+342,381,WLT,Finish,4:02:28.23,,Op MasF 2x Championship,Groom / Adey,1137592
+343,382,HOL,Finish,4:02:35.52,,Op MasF 2x Championship,Booth / Lawton,1138650
+344,383,SON,Finish,4:02:53.67,,Op MasF 2x Championship,Scrine / Whittle,1137945
+345,378,TTR,Finish,4:03:10.67,,Op MasE 2x Club,McManus / Reynolds,1141838
+346,380,WBK,Finish,4:03:14.07,,Op MasE 2x Club,Sanders / Adebiyi,1138266
+347,385,NOR,Finish,4:03:26.02,,Op MasF 2x Championship,Conway / Magrath,1139771
+348,379,MED,Finish,4:03:28.95,,Op MasE 2x Club,Philpott / Semark,1137890
+349,384,TSS,Finish,4:03:43.45,,Op MasF 2x Championship,Alloway / Ridley,1138756
+350,386,WLT,Finish,4:04:11.43,,Op MasF 2x Championship,Bishop / Della Casa,1137591
+351,388,ARD,Finish,4:04:20.37,,Op MasF 2x Club,Johnson / Radosevic,1138452
+352,387,MAA,Finish,4:04:37.35,,Op MasF 2x Championship,Harvey / Roberts,1140195
+353,392,DAT,Finish,4:04:48.70,,Op MasG 2x,Atkinson / Stewart,1138075
+354,389,ABN,Finish,4:04:55.19,,Op MasF 2x Club,Ryan / Stargardt,1138062
+355,393,TSS,Finish,4:06:08.62,,Op MasG 2x,Swift / Watts,1138567
+356,391,RDG,Finish,4:06:09.73,,Op MasF 2x Club,O'Regan / Symons,1137458
+357,396,QBC,Finish,4:06:24.80,,Op MasG 2x,Peel / Ferris,1138047
+358,395,DAT,Finish,4:06:40.25,,Op MasG 2x,Harris / Cadoux-Hudson,1138167
+359,394,GUI,Finish,4:06:49.97,,Op MasG 2x,Woowat / Hopkins,1139969
+360,399,QBC,Finish,4:07:10.62,,Op MasH 2x,St John Bagnall / Lamka,1138048
+361,398,GUI,Finish,4:07:35.38,,Op MasH 2x,Watling / Hall,1137590
+362,397,MED,Finish,4:07:41.15,,Op MasG 2x,Powell / Frith,1137749
+363,400,WBK,Finish,4:08:07.07,,Op MasH 2x,Fain / Lanzer,1138063
+364,401,LRC,Finish,4:08:52.78,,Op MasH 2x,Akehurst / Lynn,1137828
+365,404,MAA,Finish,4:09:49.82,,W 2x Club,Hanaghan / Dadlani,1140092
+366,407,MAA,Finish,4:09:51.50,,W 2x Club,White / Phillips-Hemming,1139801
+367,405,MAV,Finish,4:09:54.94,,W 2x Club,Aisthorpe / Houghton,1138198
+368,408,MAV,Finish,4:10:01.01,,W 2x Club,O'Brien / Naylor,1138197
+369,411,LEA,Finish,4:10:06.68,,W MasB 2x,Stackpool-Moore / Futoryanova,1137780
+370,403,TWK,Finish,4:10:17.28,,W 2x Club,Obenshain / O'Beirne,1138288
+371,402,CYG,Finish,4:10:32.77,,Op MasH 2x,Jackson / Otterburn,1137631
+372,412,MAA,Finish,4:10:37.41,,W MasB 2x,Cassini / Sacre,1140167
+373,406,DBY,Finish,4:10:51.72,,W 2x Club,Rouke / Nutkins,1137628
+374,409,YRK,Finish,4:11:07.34,,W 2x Club,Thornton / Collins,1138621
+375,410,TRC,Finish,4:11:11.98,,W MasB 2x,Worden / Urbanczyk,1137575
+376,414,NOR,Finish,4:11:22.47,,W MasB 2x,Trehane / Lister,1138406
+377,413,WRC,Finish,4:11:24.19,,W MasB 2x,Lyons / Garrow,1140070
+378,415,CAB,Finish,4:11:37.84,,W MasB 2x,Woolner / Hakenbeck,1138308
+379,419,MAA,Finish,4:11:57.85,,W MasC 2x,Gapper / Ramsden,1138343
+380,418,FSC,Finish,4:12:04.65,,W MasB 2x,Livermore / Buglass,1140007
+381,420,BBL,Finish,4:12:16.99,,W MasC 2x,Bakkeren / Stackhouse,1140187
+382,417,PTR,Finish,4:12:26.08,,W MasB 2x,In der Rieden / Kuricova,1138522
+383,421,ETX,Finish,4:12:55.07,,W MasC 2x,Hague / Moon,1138337
+384,424,WRC,Finish,4:13:46.84,,Op MasE 2-,Edge / King,1140068
+385,423,MAA,Finish,4:14:19.27,,W MasC 2x,Vine / Huddle,1138341
+386,425,WLT,Finish,4:14:45.23,,Op MasE 2-,Graywood / Tomalin,1138755
+387,427,TTR,Finish,4:15:36.97,,Op MasE 2-,Hindley / Arnold,1141841
+388,426,TSS,Finish,4:15:53.93,,Op MasE 2-,Priestley / Turner,1138758
+389,430,NWK,Finish,4:15:54.55,,Op MasF 2-,Price / Price,1138484
+390,429,ARD,Finish,4:16:09.59,,Op MasE 2-,Reed / Howe,1137924
+391,431,RDG,Finish,4:16:10.39,,Op MasF 2-,Norton / Heron,1137455
+392,428,CRB,Finish,4:16:20.50,,Op MasE 2-,Reynolds / Deane-Johns,1138067
+393,432,AVN,Finish,4:16:39.49,,Op MasF 2-,Garner / Thornton,1138739
+394,433,ARD,Finish,4:16:50.28,,Op MasG 2-,Banks / Andrews,1137925
+395,437,ETX,Finish,4:17:46.17,,W MasD 2x,Hewitt / Johnson,1138331
+396,435,MHD,Finish,4:17:49.97,,Op MasG 2-,Alington / Janisch,1137200
+397,436,UTC,Finish,4:18:02.80,,W MasD 2x,Skipper / Kallal,1137685
+398,434,NOR,Finish,4:18:07.62,,Op MasG 2-,Miller / Wynne,1138737
+399,438,HEN,Finish,4:18:28.66,,W MasD 2x,Turnell / Orr,1137577
+400,439,ETX,Finish,4:19:24.28,,W MasD 2x,Brewer / Kelly,1138332
+401,445,KRC,Finish,4:19:44.38,,W MasE 2x,Sims / Willett,1137625
+402,440,TSS,Finish,4:19:56.23,,W MasD 2x,Kentish / Betts,1137711
+403,446,MHD,Finish,4:20:00.09,,W MasE 2x,Lion / Harker,1137145
+404,447,TSS,Finish,4:20:15.73,,W MasE 2x,Primmer / Hickmott,1137714
+405,441,BRX,Finish,4:20:24.28,,W MasD 2x,Denyer / Findell,1137155
+406,444,ETX,Finish,4:20:30.44,,W MasE 2x,Allen / Arion,1138335
+407,442,PBD,Finish,4:20:45.26,,W MasD 2x,NEWLAND / Newland,1138220
+408,449,LER,Finish,4:20:58.81,,W MasE 2x,Horrocks / Pulford,1140214
+409,448,YRK,Finish,4:21:18.31,,W MasE 2x,Howe / Widdowson,1137213
+410,452,DUR,Finish,4:21:20.12,,W MasF/G 2x,Rankin / Prescott,1138619
+411,453,TSS,Finish,4:22:14.78,,W MasF/G 2x,Lawrence / Al-Janabi,1137700
+412,450,AKN,Finish,4:22:19.03,,W MasE 2x,Sargent / Howard,1137767
+413,454,HEN,Finish,4:22:40.20,,W MasF/G 2x,Hall / Mehers,1137243
+414,455,WEY,Finish,4:23:11.04,,W MasF/G 2x,Morris / Sarsby,1137110
+415,456,YRK,Finish,4:23:27.04,,W MasF/G 2x,Worsman / Porte,1138620
+416,451,BBL,Finish,4:23:33.52,,W MasE 2x,Dick / Cox,1140172
+417,458,MAA,Finish,4:23:40.71,,W MasF/G 2x,Pattison / Poole,1137660
+418,457,TWK,Finish,4:25:24.61,,W MasF/G 2x,Almond / Field,1140147

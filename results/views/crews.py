@@ -15,7 +15,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from ..serializers import CrewSerializer, PopulatedCrewSerializer, WriteCrewSerializer, CrewExportSerializer
 
-from ..models import Crew, RaceTime
+from ..models import Crew, RaceTime, OriginalEventCategory
 
 from ..pagination import CrewPaginationWithAggregates
 
@@ -65,6 +65,8 @@ class CrewUpdateRankings(APIView):
             print(crew.overall_rank)
             print(crew.gender_rank)
             print(crew.category_rank)
+            print(crew.masters_adjustment)
+
             crew.requires_recalculation = False
             crew.save()
 
@@ -79,8 +81,9 @@ class CrewDataImport(APIView):
         # Start by deleting all existing crews and times
         Crew.objects.all().delete()
         RaceTime.objects.all().delete()
+        OriginalEventCategory.objects.all().delete()
 
-        Meeting = os.getenv("MEETING2019") # Competition Meeting API from the Information --> API Key menu
+        Meeting = os.getenv("MEETING2020") # Competition Meeting API from the Information --> API Key menu
         UserAPI = os.getenv("USERAPI") # As supplied in email
         UserAuth = os.getenv("USERAUTH") # As supplied in email
 

@@ -85,6 +85,19 @@ class ImportData extends React.Component {
             </div>
           </div>
 
+          <div className="columns">
+            <div className="column is-one-quarter">
+              <DataLoader
+                url='/api/crew-update-rankings/'
+                buttonText='Calculate race times'
+                class='double-height-button'
+              />
+            </div>
+            <div className="column left">
+              This button initiates a calculation of rankings and masters adjustments.
+            </div>
+          </div>
+
 
         </div>
       </section>

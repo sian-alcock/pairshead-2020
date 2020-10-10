@@ -23,7 +23,7 @@ class BandDataImport(APIView):
         Band.objects.all().delete()
 
 
-        Meeting = os.getenv("MEETING2019") # Competition Meeting API
+        Meeting = os.getenv("MEETING2020") # Competition Meeting API
         UserAPI = os.getenv("USERAPI") # As supplied in email
         UserAuth = os.getenv("USERAUTH") # As supplied in email
 

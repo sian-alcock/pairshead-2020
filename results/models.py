@@ -198,16 +198,27 @@ class Crew(models.Model):
 # Need to calculate the fastest time in race type
 
     def get_masters_adjustment(self):
-        # if OriginalEventCategory.DoesNotExist:
-        #         return 0
-        try:
 
+        if not OriginalEventCategory.objects.filter(event_original='2x').exists():
+            go = None
+
+        if not RaceTime.objects.filter(sequence=1).exists():
+            go = None
+
+        else:
+            go = 1
+            # print('python thinks go is 1')
+
+        if go is not None:
+            # print('python has started to run the calcs')
             if self.event_band is not None and '/' in str(self.event_band) and self.event.type == 'Master':
-                fastest_men_scull = Crew.objects.all().filter(event_band__startswith='Op', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time'))
-                fastest_men_sweep = Crew.objects.all().filter(event_band__startswith='Op', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time'))
-                fastest_female_scull = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time'))
-                fastest_female_sweep = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time'))
-                fastest_mixed_scull = Crew.objects.all().filter(event_band__startswith='Mx', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time'))
+                fastest_men_scull = Crew.objects.all().filter(event_band__startswith='Op', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
+                fastest_men_sweep = Crew.objects.all().filter(event_band__startswith='Op', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time')) or 0
+                fastest_female_scull = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
+                fastest_female_sweep = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time')) or 0
+                fastest_mixed_scull = Crew.objects.all().filter(event_band__startswith='Mx', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
+
+                # print('The masters adjustment calculation is running ...')
 
                 # Fastest men's scull (2x)
 
@@ -540,8 +551,7 @@ class Crew(models.Model):
 
             else:
                 return 0
-        except OriginalEventCategory.DoesNotExist:
-                return 0
+
 
 
 # Add the masters adjusted time into adjusted time
