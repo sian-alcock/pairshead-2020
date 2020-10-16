@@ -126,7 +126,7 @@ class CrewRaceTimesImport(APIView):
 
             serializer = RaceTimesSerializer(race_times, many=True)
 
-            self.calculate_computed_properties()
+            # self.calculate_computed_properties()
 
             return Response(serializer.data)
     

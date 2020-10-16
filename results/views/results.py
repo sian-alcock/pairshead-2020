@@ -2,6 +2,7 @@ from __future__ import absolute_import
 import csv
 import os
 import requests
+import time
 # if this is where you store your django-rest-framework settings
 from django.conf import settings
 from django.http import Http404, HttpResponse
@@ -67,7 +68,7 @@ class ResultDataExport(APIView):
                 rank = crew.overall_rank
 
             if crew.published_time > 0:
-                hundredths = int((crew.published_time / 10)%60)
+                hundredths = int((crew.published_time / 10)%100)
                 seconds = int((crew.published_time / 1000)%60)
                 minutes = int((crew.published_time / (1000*60))%60)
 
@@ -76,7 +77,7 @@ class ResultDataExport(APIView):
                 published_time = 0
 
             if crew.masters_adjusted_time > 0:
-                hundredths = int((crew.masters_adjusted_time / 10)%60)
+                hundredths = int((crew.masters_adjusted_time / 10)%100)
                 seconds = int((crew.masters_adjusted_time / 1000)%60)
                 minutes = int((crew.masters_adjusted_time / (1000*60))%60)
 
@@ -84,8 +85,9 @@ class ResultDataExport(APIView):
             else:
                 masters_adjusted_time = ''
 
+
             if crew.penalty > 0:
-                penalty = crew.penalty
+                penalty = 'P'
             else:
                 penalty = ''
 

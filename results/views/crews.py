@@ -132,7 +132,7 @@ class CrewDataExport(APIView):
         response['Content-Disposition'] = 'attachment; filename="crewdata.csv"'
 
         writer = csv.writer(response, delimiter=',')
-        writer.writerow(['Crew ID', 'Event ID', 'Event', 'Band', 'Division', 'CrewNum', 'Crew Name', 'Crew Club', 'Position In Event', 'Raw Time', 'Time', 'Status',])
+        writer.writerow(['Crew ID', 'Event ID', 'Event', 'Band', 'Division', 'Crew Name', 'Crew Club', 'Position In Event', 'Raw Time', 'Time', 'Status',])
 
 
         for crew in crews:
@@ -140,7 +140,7 @@ class CrewDataExport(APIView):
             if crew.raw_time == 0:
                 rank = 0
             else:
-                rank = crew.overall_rank
+                rank = crew.category_rank
 
             if crew.raw_time > 0 and crew.time_only:
                 status = 'Time Only'
@@ -161,7 +161,7 @@ class CrewDataExport(APIView):
                 band = crew.band.name
 
             if crew.raw_time > 0:
-                hundredths = int((crew.raw_time / 10)%60)
+                hundredths = int((crew.raw_time / 10)%100)
                 seconds = int((crew.raw_time / 1000)%60)
                 minutes = int((crew.raw_time / (1000*60))%60)
 
@@ -170,7 +170,7 @@ class CrewDataExport(APIView):
                 raw_time = 0
 
             if crew.published_time > 0:
-                hundredths = int((crew.published_time / 10)%60)
+                hundredths = int((crew.published_time / 10)%100)
                 seconds = int((crew.published_time / 1000)%60)
                 minutes = int((crew.published_time / (1000*60))%60)
 
@@ -184,7 +184,6 @@ class CrewDataExport(APIView):
             crew.event.name,
             band,
             '',
-            crew.bib_number,
             crew.name,
             crew.club.name,
             rank,

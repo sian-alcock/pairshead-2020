@@ -129,14 +129,15 @@ class CrewDrawReport extends React.Component {
               changePage={this.changePage}
             />
           </div>
-
-          <PageTotals
-            totalCount={this.state.totalCrews}
-            entities='crews'
-            pageSize={this.state.pageSize}
-            pageNumber={this.state.pageNumber}  
-          />
-          
+          <div className="no-print">
+            <PageTotals
+              totalCount={this.state.totalCrews}
+              entities='crews'
+              pageSize={this.state.pageSize}
+              pageNumber={this.state.pageNumber}  
+            />
+          </div>
+          <div className="title is-4">Pairs Head 2020 - Start order</div>
           <table className="table">
             <thead>
               <tr>
@@ -149,7 +150,7 @@ class CrewDrawReport extends React.Component {
                 <td>Category</td>
               </tr>
             </thead>
-            <tfoot>
+            <tfoot className="no-print">
               <tr>
                 <td>Crew ID</td>
                 <td>Crew</td>
