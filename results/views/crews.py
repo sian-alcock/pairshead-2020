@@ -62,6 +62,7 @@ class CrewUpdateRankings(APIView):
     def update_rankings(self, crews):
         # Recalculate rankings for all crews
         for crew in crews:
+            print(crew.id)
             print(crew.overall_rank)
             print(crew.gender_rank)
             print(crew.category_rank)

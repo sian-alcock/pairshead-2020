@@ -1,6 +1,8 @@
-# ![](https://ga-dash.s3.amazonaws.com/production/assets/logo-9f88ae6c9c3871690e33280fcf557f33.png) Project #4: A Flack + React App
+# Calculations
 
-## Overview
+## Masters adjustments
+
+The masters adjustments cannot be calculated until all the times have been important such that we have the required raw times for the masters 2x, 2- etc.
 
 **You’ve come a long way, and it's time to show it.** This will be your most advanced project to date. It is __IMPORTANT__ to note that when we say _advanced_, the project doesn't necessarily need to have lots more functionality.
 
