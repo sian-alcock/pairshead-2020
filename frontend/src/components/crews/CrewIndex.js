@@ -55,7 +55,8 @@ class CrewIndex extends React.Component {
         fastestMenSweep: res.data['fastest_open_sweep_time'].raw_time__min,
         fastestFemaleSweep: res.data['fastest_female_sweep_time'].raw_time__min,
         fastestMixed2x: res.data['fastest_mixed_2x_time'].raw_time__min,
-        mastersAdjustmentsApplied: res.data['num_crews_masters_adjusted']
+        mastersAdjustmentsApplied: res.data['num_crews_masters_adjusted'],
+        mastersAdjustmentsRequired: res.data['num_crews_require_masters_adjusted']
       })
       )
   }
@@ -274,6 +275,7 @@ class CrewIndex extends React.Component {
             fastestFemaleSweep={formatTimes(this.state.fastestFemaleSweep)}
             fastestMixed2x={formatTimes(this.state.fastestMixed2x)}
             mastersAdjustmentsApplied={this.state.mastersAdjustmentsApplied}
+            mastersAdjustmentsRequired={this.state.mastersAdjustmentsRequired}
             handleMastersAdjustments={this.handleMastersAdjustments}
           />
 

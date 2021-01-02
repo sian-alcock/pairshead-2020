@@ -92,7 +92,7 @@ class WriteCrewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Crew
-        fields = ('id', 'name', 'composite_code', 'club', 'rowing_CRI', 'rowing_CRI_max', 'sculling_CRI', 'sculling_CRI_max', 'event', 'status', 'band', 'bib_number')
+        fields = ('id', 'name', 'composite_code', 'club', 'rowing_CRI', 'sculling_CRI', 'event', 'status', 'band', 'bib_number')
 
 class WriteRaceTimesSerializer(serializers.ModelSerializer):
 

@@ -101,7 +101,7 @@ class ResultIndex extends React.Component {
     const raceTimes = crewsInCategory.map(crew => crew.category_position_time)
     const sorted = raceTimes.slice().sort((a,b) => a - b)
     const flagForReview = Math.abs(sorted[0]-sorted[1]) <= timeDifference ? true : false
-    console.log(flagForReview)
+    // console.log(flagForReview)
     return flagForReview
   }
 

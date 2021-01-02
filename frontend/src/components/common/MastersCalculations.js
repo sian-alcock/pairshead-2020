@@ -2,7 +2,7 @@ import React from 'react'
 import { Accordion, AccordionItem } from 'react-light-accordion'
 import 'react-light-accordion/demo/css/index.css'
 
-const MastersCalculations = ({ fastestMen2x, fastestFemale2x, fastestMenSweep, fastestFemaleSweep, fastestMixed2x, mastersAdjustmentsApplied, handleMastersAdjustments }) => {
+const MastersCalculations = ({ fastestMen2x, fastestFemale2x, fastestMenSweep, fastestFemaleSweep, fastestMixed2x, mastersAdjustmentsApplied, mastersAdjustmentsRequired, handleMastersAdjustments }) => {
   return (
     <div>
       <Accordion atomic={true}>
@@ -41,6 +41,7 @@ const MastersCalculations = ({ fastestMen2x, fastestFemale2x, fastestMenSweep, f
               </table>
             </div>
             <div className="column">
+              <div className="field"><small>Number of masters crews that require adjustment: {mastersAdjustmentsRequired}</small></div>
               <div className="field">
                 <label className="checkbox" htmlFor="crewsWithMastersAdjustments">
                   <input type="checkbox"  className="checkbox" id="crewsWithMastersAdjustments" onChange={handleMastersAdjustments} />

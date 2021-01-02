@@ -33,9 +33,7 @@ class Crew(models.Model):
     club = models.ForeignKey(Club, related_name='crews',
     on_delete=models.CASCADE)
     rowing_CRI = models.IntegerField(blank=True, null=True)
-    rowing_CRI_max = models.IntegerField(blank=True, null=True)
     sculling_CRI = models.IntegerField(blank=True, null=True)
-    sculling_CRI_max = models.IntegerField(blank=True, null=True)
     event = models.ForeignKey(Event, related_name='crews',
     on_delete=models.CASCADE)
     status = models.CharField(max_length=20)

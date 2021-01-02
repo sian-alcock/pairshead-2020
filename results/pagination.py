@@ -12,6 +12,7 @@ class CrewPaginationWithAggregates(PageNumberPagination):
         self.num_accepted_crews_no_finish_time = len(queryset.filter(status__exact='Accepted', finish_time__exact=0))
         self.num_accepted_crews_invalid_time = len(queryset.filter(status__exact='Accepted', invalid_time__exact=1))
         self.num_crews_masters_adjusted = len(queryset.filter(status__exact='Accepted', masters_adjustment__gt=0))
+        self.num_crews_require_masters_adjusted = len(queryset.filter(status__exact='Accepted', event_band__contains='/'))
         self.requires_ranking_update = len(queryset.filter(requires_recalculation__exact=True))
         self.fastest_open_2x_time = (queryset.filter(event_band__startswith='Op', event_band__contains='2x', raw_time__gt=0)).aggregate(Min('raw_time'))
         self.fastest_female_2x_time = (queryset.filter(event_band__startswith='W', event_band__contains='2x', raw_time__gt=0)).aggregate(Min('raw_time'))
@@ -30,6 +31,7 @@ class CrewPaginationWithAggregates(PageNumberPagination):
         paginated_response.data['num_accepted_crews_no_finish_time'] = self.num_accepted_crews_no_finish_time
         paginated_response.data['num_accepted_crews_invalid_time'] = self.num_accepted_crews_invalid_time
         paginated_response.data['num_crews_masters_adjusted'] = self.num_crews_masters_adjusted
+        paginated_response.data['num_crews_require_masters_adjusted'] = self.num_crews_require_masters_adjusted
         paginated_response.data['requires_ranking_update'] = self.requires_ranking_update
         paginated_response.data['fastest_open_2x_time'] = self.fastest_open_2x_time
         paginated_response.data['fastest_female_2x_time'] = self.fastest_female_2x_time
