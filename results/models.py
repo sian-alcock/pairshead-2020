@@ -198,11 +198,9 @@ class Crew(models.Model):
     def get_masters_adjustment(self):
 
         if not OriginalEventCategory.objects.filter(event_original='2x').exists():
-            print('Original event category does not exist')
             return 0
 
         elif self.event_band is not None and '/' in str(self.event_band) and self.event.type == 'Master':
-            print('Is this code trying to run?')
             fastest_men_scull = Crew.objects.all().filter(event_band__startswith='Op', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
             fastest_men_sweep = Crew.objects.all().filter(event_band__startswith='Op', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time')) or 0
             fastest_female_scull = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0

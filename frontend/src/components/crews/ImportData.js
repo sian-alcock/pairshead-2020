@@ -53,7 +53,33 @@ class ImportData extends React.Component {
               <BROELoader/>
             </div>
             <div className="column left">
-              Fetch the club, event and crew data from British Rowing.  Note:  Data is deleted before importing.
+              Fetch the club, event data from British Rowing.  Note:  Data is deleted before importing.
+            </div>
+          </div>
+
+          <div className="columns">
+            <div className="column is-one-quarter">
+              <DataLoader
+                url='/api/crew-data-import'
+                buttonText='Get crew data'
+                class='single-height-button'
+              />
+            </div>
+            <div className="column left">
+              Import crew data from BROE.
+            </div>
+          </div>
+
+          <div className="columns">
+            <div className="column is-one-quarter">
+              <DataLoader
+                url='/api/competitor-data-import'
+                buttonText='Get competitor data'
+                class='single-height-button'
+              />
+            </div>
+            <div className="column left">
+              Import competitor data from BROE.
             </div>
           </div>
 

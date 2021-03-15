@@ -30,14 +30,7 @@ class BROELoader extends Component {
 
       // wait for first two calls before running the event bands
       const bands = await axios.get('/api/band-data-import/')
-      console.log(bands.data)
-
-      // next run crew import
-      const crews = await axios.get('/api/crew-data-import/')
-      console.log(crews.data)
-      // next run competitor import
-      const competitors = await axios.get('/api/competitor-data-import/')
-      console.log(competitors.data, {
+      console.log(bands.data, {
         cancelToken: this.cancelTokenSource.token
       })
 
