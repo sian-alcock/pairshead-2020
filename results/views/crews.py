@@ -51,14 +51,20 @@ class CrewListView(generics.ListCreateAPIView):
     def get_num_scratched_crews(self):
         return len(self.queryset.filter(status__exact='Scratched'))
 
-class CrewUpdateRankings(APIView):
-    
+class CrewUpdateRankings(APIView): 
     def get(self, _request):
-        crews = Crew.objects.filter(status__in=('Accepted', 'Scratched',)) # get all the crews
+        crews = Crew.objects.filter(status__exact=('Accepted')) # get all the crews
         serializer = CrewSerializer(crews, many=True)
+        self.update_masters_adjustment(crews)
         self.update_rankings(crews)
         return Response(serializer.data) # send the JSON to the client
 
+    def update_masters_adjustment(self, crews):
+        # Recalculate rankings for all crews
+        for crew in crews:
+            print(crew.id)
+            print(crew.masters_adjustment)
+            crew.save()
     def update_rankings(self, crews):
         # Recalculate rankings for all crews
         for crew in crews:
@@ -66,8 +72,6 @@ class CrewUpdateRankings(APIView):
             print(crew.overall_rank)
             print(crew.gender_rank)
             print(crew.category_rank)
-            print(crew.masters_adjustment)
-
             crew.requires_recalculation = False
             crew.save()
 

@@ -17,6 +17,7 @@ import ResultIndex from './components/crews/ResultIndex'
 import ImportData from './components/crews/ImportData'
 import ExportData from './components/crews/ExportData'
 import CrewDrawReport from './components/crews/CrewDrawReport'
+import Events from './components/crews/Events'
 import Navbar from './components/common/Navbar'
 import Footer from './components/common/Footer'
 import Header from './components/common/Header'
@@ -42,6 +43,7 @@ class App extends React.Component {
             <Route path="/crews" component={CrewIndex} />
             <Route path="/race-times/:id" component={RaceTimeEdit} />
             <Route path="/race-times" component={RaceTimeIndex} />
+            <Route path="/events" component={Events} />
             <Route path="/summary" component={Home} />
             <Route path="/import" component={ImportData} />
             <Route path="/export" component={ExportData} />

@@ -198,76 +198,70 @@ class Crew(models.Model):
     def get_masters_adjustment(self):
 
         if not OriginalEventCategory.objects.filter(event_original='2x').exists():
-            print('There are no original event categories and the masters adjustments cannot go ahead...')
-            go = None
+            print('Original event category does not exist')
+            return 0
 
-        elif not RaceTime.objects.filter(sequence=1).exists():
-            go = None
+        elif self.event_band is not None and '/' in str(self.event_band) and self.event.type == 'Master':
+            print('Is this code trying to run?')
+            fastest_men_scull = Crew.objects.all().filter(event_band__startswith='Op', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
+            fastest_men_sweep = Crew.objects.all().filter(event_band__startswith='Op', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time')) or 0
+            fastest_female_scull = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
+            fastest_female_sweep = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time')) or 0
+            fastest_mixed_scull = Crew.objects.all().filter(event_band__startswith='Mx', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
+            # print(fastest_men_scull)
+            # print(fastest_men_sweep)
+            # print(fastest_female_scull)
+            # print(fastest_female_sweep)
+            # print(fastest_mixed_scull)
+
+            # Mens 2x (scull)
+            if self.event.gender == 'Open' and '2x' in self.event_original.first().event_original:
+                master_category = self.event_original.first().event_original[:4]
+                
+                try:
+                    adjustment = MastersAdjustment.objects.get(master_category=master_category, standard_time_ms=round(int(fastest_men_scull['raw_time__min']), -3)).master_time_adjustment_ms
+                except MastersAdjustment.DoesNotExist:
+                    adjustment = 0
+                return adjustment
+            # Mens 2- (sweep)
+            elif self.event.gender == 'Open' and '2-' in self.event_original.first().event_original:
+                master_category = self.event_original.first().event_original[:4]
+                
+                try:
+                    adjustment = MastersAdjustment.objects.get(master_category=master_category, standard_time_ms=round(int(fastest_men_sweep['raw_time__min']), -3)).master_time_adjustment_ms
+                except MastersAdjustment.DoesNotExist:
+                    adjustment = 0
+                return adjustment
+            # Female 2x (scull)
+            elif self.event.gender == 'Female' and '2x' in self.event_original.first().event_original:
+                master_category = self.event_original.first().event_original[2:6]
+                
+                try:
+                    adjustment = MastersAdjustment.objects.get(master_category=master_category, standard_time_ms=round(int(fastest_female_scull['raw_time__min']), -3)).master_time_adjustment_ms
+                except MastersAdjustment.DoesNotExist:
+                    adjustment = 0
+                return adjustment
+            # Female 2- (sweep)
+            elif self.event.gender == 'Female' and '2-' in self.event_original.first().event_original:
+                master_category = self.event_original.first().event_original[2:6]
+                
+                try:
+                    adjustment = MastersAdjustment.objects.get(master_category=master_category, standard_time_ms=round(int(fastest_female_sweep['raw_time__min']), -3)).master_time_adjustment_ms
+                except MastersAdjustment.DoesNotExist:
+                    adjustment = 0
+                return adjustment
+            # Mixed 2x (scull)
+            elif self.event.gender == 'Mixed' and '2x' in self.event_original.first().event_original:
+                master_category = self.event_original.first().event_original[3:7]
+                
+                try:
+                    adjustment = MastersAdjustment.objects.get(master_category=master_category, standard_time_ms=round(int(fastest_mixed_scull['raw_time__min']), -3)).master_time_adjustment_ms
+                except MastersAdjustment.DoesNotExist:
+                    adjustment = 0
+                return adjustment
 
         else:
-            go = 1
-            # print('python thinks go is 1')
-
-        if go is not None:
-            # print('python has started to run the calcs')
-            if self.event_band is not None and '/' in str(self.event_band) and self.event.type == 'Master':
-                fastest_men_scull = Crew.objects.all().filter(event_band__startswith='Op', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
-                fastest_men_sweep = Crew.objects.all().filter(event_band__startswith='Op', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time')) or 0
-                fastest_female_scull = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
-                fastest_female_sweep = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time')) or 0
-                fastest_mixed_scull = Crew.objects.all().filter(event_band__startswith='Mx', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
-                # print(fastest_men_scull)
-                # print(fastest_men_sweep)
-                # print(fastest_female_scull)
-                # print(fastest_female_sweep)
-                # print(fastest_mixed_scull)
-                masters_categories = ['MasB', 'MasC', 'MasD', 'MasE', 'MasF', 'MasG', 'MasH', 'MasI', 'MasJ', 'MasK',]
-
-                for category in masters_categories:
-                    if category in self.event_original.first().event_original and '2x' in self.event_original.first().event_original and self.event.gender == 'Open':
-                        # Mens 2x (scull)
-                        try:
-                            adjustment = MastersAdjustment.objects.get(master_category=category, standard_time_ms=round(int(fastest_men_scull['raw_time__min']), -3)).master_time_adjustment_ms
-                        except MastersAdjustment.DoesNotExist:
-                            adjustment = 0
-                        return adjustment
-
-                    elif category in self.event_original.first().event_original and '2-' in self.event_original.first().event_original and self.event.gender == 'Open':
-                        # Mens 2- (sweep)
-                        try:
-                            adjustment = MastersAdjustment.objects.get(master_category=category, standard_time_ms=round(int(fastest_men_sweep['raw_time__min']), -3)).master_time_adjustment_ms
-                        except MastersAdjustment.DoesNotExist:
-                            adjustment = 0
-                        return adjustment
-
-                    elif category in self.event_original.first().event_original and '2x' in self.event_original.first().event_original and self.event.gender == 'Female':
-                        # Womens 2x (scull)
-                        try:
-                            adjustment = MastersAdjustment.objects.get(master_category=category, standard_time_ms=round(int(fastest_female_scull['raw_time__min']), -3)).master_time_adjustment_ms
-                        except MastersAdjustment.DoesNotExist:
-                            adjustment = 0
-                        return adjustment
-
-                    elif category in self.event_original.first().event_original and '2-' in self.event_original.first().event_original and self.event.gender == 'Female':
-                        # Womens 2- (sweep)
-                        try:
-                            adjustment = MastersAdjustment.objects.get(master_category=category, standard_time_ms=round(int(fastest_female_sweep['raw_time__min']), -3)).master_time_adjustment_ms
-                        except MastersAdjustment.DoesNotExist:
-                            adjustment = 0
-                        return adjustment
-
-                    elif category in self.event_original.first().event_original and '2x' in self.event_original.first().event_original and self.event.gender == 'Mixed':
-                        # Mixed 2x (scull)
-                        try:
-                            adjustment = MastersAdjustment.objects.get(master_category=category, standard_time_ms=round(int(fastest_mixed_scull['raw_time__min']), -3)).master_time_adjustment_ms
-                        except MastersAdjustment.DoesNotExist:
-                            adjustment = 0
-                        return adjustment
-
-            else:
-                return 0
-
-
+            return 0
 
 # Add the masters adjusted time into adjusted time
     @property

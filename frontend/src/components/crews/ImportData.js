@@ -1,8 +1,45 @@
 import React from 'react'
-import ClubEventLoader from '../common/ImportClubEventData'
+import BROELoader from '../common/ImportBROEData'
 import DataLoader from '../common/DataLoader'
+import axios from 'axios'
 
 class ImportData extends React.Component {
+  constructor() {
+    super()
+
+    this.handleFile = this.handleFile.bind(this)
+    this.handleSubmitData = this.handleSubmitData.bind(this)
+  }
+
+  handleFile (e) {
+    e.preventDefault()
+
+    const fileToUpload = e.target.files[0]
+    this.setState({
+      fileToUpload: fileToUpload
+    })
+  }
+
+  handleSubmitData (e) {
+    e.preventDefault()
+
+    const formData = new FormData()
+    formData.append('file', this.state.fileToUpload)
+
+    axios
+      .put('/api/masters-adjustments-import-front-end/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then((response) => {
+        console.log(response)
+        console.log(response.data)
+      })
+      .catch((error) => {
+        console.log(error.response)
+      })
+  }
 
 
   render() {
@@ -13,36 +50,10 @@ class ImportData extends React.Component {
 
           <div className="columns">
             <div className="column is-one-quarter">
-              <ClubEventLoader/>
+              <BROELoader/>
             </div>
             <div className="column left">
-              This button gets the clubs, events and bands from British Rowing.  Note:  Data is deleted before importing.
-            </div>
-          </div>
-
-          <div className="columns">
-            <div className="column is-one-quarter">
-              <DataLoader
-                url='/api/crew-data-import'
-                buttonText='Get crew data'
-                class='single-height-button'
-              />
-            </div>
-            <div className="column left">
-              This button gets the crew data from British Rowing.  Note:  Data is deleted before importing.
-            </div>
-          </div>
-
-          <div className="columns">
-            <div className="column is-one-quarter">
-              <DataLoader
-                url='/api/competitor-data-import'
-                buttonText='Get competitor data'
-                class='single-height-button'
-              />
-            </div>
-            <div className="column left">
-              This button gets the competitor data from British Rowing.  Note:  Data is deleted before importing.
+              Fetch the club, event and crew data from British Rowing.  Note:  Data is deleted before importing.
             </div>
           </div>
 
@@ -55,7 +66,7 @@ class ImportData extends React.Component {
               />
             </div>
             <div className="column left">
-              This button imports race time data from a CSV file generated from Web Scorer that needs to be saved in the project folder ..results / csv.  Note:  Data is deleted before importing.
+              Import race time data from Web Scorer CSV file (NB: CSV must be saved in the project folder ..results / csv).
             </div>
           </div>
 
@@ -68,7 +79,7 @@ class ImportData extends React.Component {
               />
             </div>
             <div className="column left">
-              This button imports data from a CSV file containing the masters adjustments that needs to be saved in the project folder ..results / csv.  Note:  Data is deleted before importing.
+              Imports data from a CSV file containing the masters adjustments that needs to be saved in the project folder ..results / csv.  Note:  Data is deleted before importing.
             </div>
           </div>
 
@@ -81,7 +92,7 @@ class ImportData extends React.Component {
               />
             </div>
             <div className="column left">
-              This button imports data from a CSV file created manually after entries have closed and BEFORE the events are changed that needs to be saved in the project folder ..results / csv.  Note:  Data is deleted before importing.
+              Imports data from a CSV file created manually after entries have closed and BEFORE the events are changed that needs to be saved in the project folder ..results / csv.  Note:  Data is deleted before importing.
             </div>
           </div>
 
@@ -94,11 +105,27 @@ class ImportData extends React.Component {
               />
             </div>
             <div className="column left">
-              This button initiates a calculation of rankings and masters adjustments.
+              Initiates a calculation (or re-calculation) of rankings and masters adjustments.
             </div>
           </div>
 
-
+          {/* <div className="columns">
+            <div className="column is-one-quarter">
+              <form onSubmit={this.handleSubmitData}>
+                <input
+                  type="file"
+                  name="file"
+                  multiple={true}
+                  accept=".xls,.xlsx,.csv,.txt"
+                  onChange={this.handleFile}
+                />
+                <button className="button is-primary">Submit</button>
+              </form>
+            </div>
+            <div className="column left">
+              Import downloaded race times from application.
+            </div>
+          </div> */}
         </div>
       </section>
     )

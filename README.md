@@ -2,10 +2,7 @@
 
 ## Overview
 
-Launch on [Heroku](https://pairshead-2020.herokuapp.com/).  Log on using the following credentials:
-
-Email: pairshead@lawena.org
-Password: rowing-demon
+Launch on [Heroku](https://pairshead-2020.herokuapp.com/).
 
 ![Screenshot](/readme-assets/results-index.png)
 

@@ -1,12 +1,21 @@
 import re
+from django.db.models import Count
+
 from rest_framework import serializers
 from .models import Club, Event, Band, Crew, RaceTime, Competitor, MastersAdjustment, OriginalEventCategory
 
 
 class EventSerializer(serializers.ModelSerializer):
+    crews = Crew.objects.annotate(Count('event'))
     class Meta:
         model = Event
-        fields = ('id', 'name', 'override_name', 'info', 'type', 'gender',)
+        fields = ('id', 'name', 'override_name', 'info', 'type', 'gender', )
+
+class PopulatedEventSerializer(serializers.ModelSerializer):
+    crews = Crew.objects.annotate(Count('event'))
+    class Meta:
+        model = Event
+        fields = ('id', 'name', 'override_name', 'info', 'type', 'gender', 'crews', )
 
 class BandSerializer(serializers.ModelSerializer):
 

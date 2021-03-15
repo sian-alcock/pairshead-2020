@@ -1,14 +1,17 @@
 import csv
 import os
 from django.http import Http404
+from pprint import pprint
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 from rest_framework.pagination import PageNumberPagination
 
 from django.conf import settings
-
+from django.core.files.storage import default_storage
 from rest_framework import filters, generics
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.parsers import MultiPartParser, FormParser, ParseError
 
 
 from ..serializers import WriteRaceTimesSerializer, RaceTimesSerializer, PopulatedRaceTimesSerializer
@@ -126,7 +129,7 @@ class CrewRaceTimesImport(APIView):
 
             serializer = RaceTimesSerializer(race_times, many=True)
 
-            # self.calculate_computed_properties()
+            self.calculate_computed_properties()
 
             return Response(serializer.data)
     
@@ -147,4 +150,90 @@ class CrewRaceTimesImport(APIView):
             print(crew.finish_sequence)
             print(crew.competitor_names)
             crew.save()
-        
+
+# Attempt to read in the RaceTimes CSV from the front end
+
+# class RegisterData(APIView):
+#     parser_classes = (FormParser, MultiPartParser)
+
+#     def post(self, request):
+#         RaceTime.objects.all().delete()
+#         for file in request.FILES.values():
+#             print(file)
+#             # with open(file) as csvfile:
+#             reader = csv.reader(file)
+#             next(reader) # skips the first row
+
+#             print(reader)
+#             # reader = csv.reader(file)
+#             objects = []
+#             for row in reader:
+#                 objects.append(RaceTime(
+#                     sequence=row[0],
+#                     tap=row[3] or 'Finish',
+#                     time_tap=row[4],
+#                     crew=row[8] or None
+#                 ))
+#             # RaceTime.objects.bulk_create(objects)
+#             print(objects)
+#         return Response({"success": "Good job, buddy"})
+
+# class RegisterData(APIView):
+#     parser_classes = (FormParser, MultiPartParser)
+
+#     def post(self, request):
+#         RaceTime.objects.all().delete()
+#         for file in request.FILES.values():
+#             reader = csv.reader(file)
+#         print(reader)
+            # next(reader) # skips the first row
+            # objects = []
+            # for row in reader:
+            #     if row:
+            #         data = {
+            #             'sequence': row[0],
+            #             'tap': row[3] or 'Finish',
+            #             'time_tap': row[4],
+            #             'crew':row[8] or None
+            #         }
+
+            # RaceTime.objects.bulk_create(objects)
+        # print(uploaded_file_name)
+        # print(uploaded_file_content)
+
+        # return Response({"success": "Good job, buddy"})
+
+class RegisterData(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+    renderer_classes = [JSONRenderer]
+
+    def put(self, request, format=None):
+        if 'file' not in request.data:
+            raise ParseError("Empty content")
+        f = request.data['file']
+        filename = f.name
+        if filename.endswith('.csv'):
+            file = default_storage.save(filename, f)
+            r = csv_file_parser(file)
+            status = 204
+        else:
+            status = 406
+            r = "File format error"
+        return Response(r, status=status)
+
+def csv_file_parser(file):
+    result_dict = {}
+    with open(file) as csvfile:
+        reader = csv.DictReader(csvfile)
+        next(reader)
+        line_count = 1
+        for rows in reader:
+            for key, value in rows.items():
+                if not value:
+                    raise ParseError('Missing value in file. Check the {} line'.format(line_count))
+            result_dict[line_count] = rows
+            line_count += 1
+
+    
+    return result_dict
+

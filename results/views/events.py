@@ -2,17 +2,18 @@ import os
 import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.db.models import Count
 
 
-from ..serializers import EventSerializer
+from ..serializers import EventSerializer, PopulatedEventSerializer
 
-from ..models import Event
+from ..models import Event, Crew
 
 class EventListView(APIView): # extend the APIView
 
     def get(self, _request):
-        events = Event.objects.all() # get all the clubs
-        serializer = EventSerializer(events, many=True)
+        events = Event.objects.all() # get all the events
+        serializer = PopulatedEventSerializer(events, many=True)
 
         return Response(serializer.data) # send the JSON to the client
 
