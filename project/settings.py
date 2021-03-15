@@ -28,7 +28,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*', '0.0.0.0', 'localhost', 'pairshead-results.herokuapp.com', 'pairshead-2020.herokuapp.com/',]
+ALLOWED_HOSTS = ['*', '0.0.0.0', 'localhost', 'pairshead-results.herokuapp.com', 'pairshead-2020.herokuapp.com', 'pairshead-2021.herokuapp.com']
 
 
 # Application definition
@@ -58,7 +58,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = False
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3030',
