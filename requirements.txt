@@ -44,7 +44,7 @@ pytz==2019.3
 PyYAML==3.13
 requests==2.20.1
 requests-oauthlib==1.2.0
-rsa==3.4.2
+rsa==4.7
 s3transfer==0.2.1
 semantic-version==2.5.0
 six==1.12.0
