@@ -62,9 +62,6 @@ class Crew(models.Model):
     start_time = computed_property.ComputedIntegerField(compute_from='get_start_time', blank=True, null=True)
     finish_time = computed_property.ComputedIntegerField(compute_from='get_finish_time', blank=True, null=True)
     invalid_time = computed_property.ComputedIntegerField(compute_from='get_invalidated_times', blank=True, null=True)
-    start_sequence = computed_property.ComputedIntegerField(compute_from='get_start_sequence', blank=True, null=True)
-    finish_sequence = computed_property.ComputedIntegerField(compute_from='get_finish_sequence', blank=True, null=True)
-    competitor_names = computed_property.ComputedCharField(compute_from='get_competitor_names', blank=True, null=True, max_length=30)
 
 
     def __str__(self):
@@ -77,6 +74,7 @@ class Crew(models.Model):
     def get_event_band(self):
         return str(self.event.override_name) + ' ' + str(self.band.name) if self.band else self.event.override_name
 
+    
     def calc_raw_time(self):
         try:
             if len(self.times.filter(tap='Start')) > 1 or len(self.times.filter(tap='Finish')) > 1:
@@ -92,39 +90,40 @@ class Crew(models.Model):
         
         except RaceTime.DoesNotExist:
             return 0
-
+    
     def calc_race_time(self):
         # The race time can include the penalty as by default it is 0
         return self.raw_time + self.penalty*1000
-
+    
     def calc_published_time(self):
         # If overall time has been overriden - use the override time + penalty otherwise use race_time
         if self.manual_override_time > 0:
             return self.manual_override_time + self.penalty*1000
         return self.race_time
-
+    
     def calc_overall_rank(self):
         crews = Crew.objects.all().filter(status__exact='Accepted', published_time__gt=0, published_time__lt=self.published_time)
         return len(crews) + 1
 
+    
     def calc_gender_rank(self):
         crews = Crew.objects.all().filter(status__exact='Accepted', event__gender__exact=self.event.gender, published_time__gt=0, published_time__lt=self.published_time)
         return len(crews) + 1
 
-
+    
     def calc_category_position_time(self):
         # This property created purely for use when calculating position in category ranking.  It uses the published time or masters adjusted time if one exists.
         if self.masters_adjusted_time is not None and self.masters_adjusted_time > 0:
             return self.masters_adjusted_time + self.penalty*1000
         return self.published_time
-
+    
     def calc_category_rank(self):
         crews = Crew.objects.all().filter(status__exact='Accepted', time_only__exact=False, event_band__exact=self.event_band, published_time__gt=0, category_position_time__lt=self.category_position_time)
         if self.time_only:
             return 0
 
         return len(crews) + 1
-
+    
     def get_start_time(self):
         try:
             if len(self.times.filter(tap='Start')) > 1:
@@ -135,7 +134,7 @@ class Crew(models.Model):
 
         except RaceTime.DoesNotExist:
             return 0
-
+    
     def get_finish_time(self):
         try:
             if len(self.times.filter(tap='Finish')) > 1:
@@ -156,16 +155,8 @@ class Crew(models.Model):
 
         except RaceTime.DoesNotExist:
             return 0
-
-    def get_competitor_names(self):
-        if not self.competitors:
-            return 0
-
-        competitor_list = list(map(lambda competitor: competitor.last_name, self.competitors.all()))
-        value = ' / '.join(competitor_list)
-        return value
-
-    def get_start_sequence(self):
+    @property
+    def start_sequence(self):
         try:
             if len(self.times.filter(tap='Start')) > 1:
                 return 0
@@ -173,8 +164,8 @@ class Crew(models.Model):
             return sequence
         except RaceTime.DoesNotExist:
             return 0
-
-    def get_finish_sequence(self):
+    @property
+    def finish_sequence(self):
         try:
             if len(self.times.filter(tap='Finish')) > 1:
                 return 0
@@ -190,11 +181,20 @@ class Crew(models.Model):
         time = (self.manual_override_minutes*60*1000) + (self.manual_override_seconds*1000) + (self.manual_override_hundredths_seconds*10)
         return time
 
+    @property
+    def competitor_names(self):
+        if not self.competitors:
+            return 0
+
+        competitor_list = list(map(lambda competitor: competitor.last_name, self.competitors.all()))
+        value = ' / '.join(competitor_list)
+        return value
+
 # Calculate masters adjusted time - only applies to categories that have a mix of different masters categories
 # Denoted by a '/' in the event.override_name
 # Masters adjustments are looked up from the MastersAdjustment table (imported)
 # Need to calculate the fastest time in race type
-
+    
     def get_masters_adjustment(self):
 
         if not OriginalEventCategory.objects.filter(event_original='2x').exists():

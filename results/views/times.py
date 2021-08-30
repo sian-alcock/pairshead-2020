@@ -146,9 +146,9 @@ class CrewRaceTimesImport(APIView):
             print(crew.gender_rank)
             print(crew.category_position_time)
             print(crew.category_rank)
-            print(crew.start_sequence)
-            print(crew.finish_sequence)
-            print(crew.competitor_names)
+            # print(crew.start_sequence)
+            # print(crew.finish_sequence)
+            # print(crew.competitor_names)
             crew.save()
 
 # Attempt to read in the RaceTimes CSV from the front end
