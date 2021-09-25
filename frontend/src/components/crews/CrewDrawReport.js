@@ -137,7 +137,7 @@ class CrewDrawReport extends React.Component {
               pageNumber={this.state.pageNumber}  
             />
           </div>
-          <div className="title is-4">Pairs Head 2020 - Start order</div>
+          <div className="title is-4">Pairs Head {(new Date().getFullYear())} - Start order</div>
           <table className="table">
             <thead>
               <tr>

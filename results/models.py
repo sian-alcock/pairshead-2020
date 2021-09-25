@@ -62,7 +62,9 @@ class Crew(models.Model):
     start_time = computed_property.ComputedIntegerField(compute_from='get_start_time', blank=True, null=True)
     finish_time = computed_property.ComputedIntegerField(compute_from='get_finish_time', blank=True, null=True)
     invalid_time = computed_property.ComputedIntegerField(compute_from='get_invalidated_times', blank=True, null=True)
-
+    competitor_names = computed_property.ComputedCharField(compute_from='get_competitor_names', blank=True, null=True, max_length=30)
+    start_sequence = computed_property.ComputedIntegerField(compute_from='get_start_sequence', blank=True, null=True)
+    finish_sequence = computed_property.ComputedIntegerField(compute_from='get_finish_sequence', blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -155,8 +157,8 @@ class Crew(models.Model):
 
         except RaceTime.DoesNotExist:
             return 0
-    @property
-    def start_sequence(self):
+
+    def get_start_sequence(self):
         try:
             if len(self.times.filter(tap='Start')) > 1:
                 return 0
@@ -164,8 +166,8 @@ class Crew(models.Model):
             return sequence
         except RaceTime.DoesNotExist:
             return 0
-    @property
-    def finish_sequence(self):
+
+    def get_finish_sequence(self):
         try:
             if len(self.times.filter(tap='Finish')) > 1:
                 return 0
@@ -181,8 +183,7 @@ class Crew(models.Model):
         time = (self.manual_override_minutes*60*1000) + (self.manual_override_seconds*1000) + (self.manual_override_hundredths_seconds*10)
         return time
 
-    @property
-    def competitor_names(self):
+    def get_competitor_names(self):
         if not self.competitors:
             return 0
 

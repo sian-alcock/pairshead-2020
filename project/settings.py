@@ -26,7 +26,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*', '0.0.0.0', 'localhost', 'pairshead-results.herokuapp.com', 'pairshead-2020.herokuapp.com', 'pairshead-2021.herokuapp.com']
 
@@ -140,7 +140,7 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'frontend/dist')
     ]
-
+DEFAULT_AUTO_FIELD='django.db.models.AutoField'
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 25,
@@ -152,7 +152,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.BasicAuthentication'
-    ]
+    ],
 }
 
 django_heroku.settings(locals())

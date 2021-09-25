@@ -245,3 +245,30 @@ Major learning points:
 * how to manage time fields
 * how to manage three different API requests in a single function using promises and Async/await
 * if you get the data model wrong initially, that can cause problems so make sure you do the planning ahead of time.
+
+## Setting up the system for a new race
+
+### Tasks to be done in advance of the race (generally after entries close)
+
+* Get the new meeting API code / ID from BROE and store it in the .ENV file as eg MEETING2021.
+* Replace the meeting variable in all views that make an api request to BROE (eg search for MEETING2020 and replace with MEETING2021)
+* Import, club, event, band, crew and competitor data.  Consider using Insomnia the first time you do this as better error reporting.
+* If not done already, the bib number that Sarah generates when she does the draw needs to be added to BROE as this is brought in as part of the api call
+* Create / extract template for original masters category csv import as not currently available in the BROE API.  The file is made up of two columns, the first column contains the CrewID and the second column contains the original event category (eg Mx.2x).  The column is usually labelled 'Event identity'.
+Import original event categories into PHORR.  NB:  It is hoped in future, this will be accessible via the API
+* Check the original event categories can be imported OK
+
+### Tasks to be done ON DAY of the race (to generate the results)
+
+* Import latest data from BROE, including original event category
+* Extract the CSV files from WebScorer
+* Before attempting to import the race times, inspect the csv.  Things to check:
+    * Does each line have an entry for Start/Finish? If not, add to csv.
+    * Are the times in the format h:mm:ss.SS?  If not, this may need adjusting in csv.
+    * Are there broadly the number of start/finish times that you are expecting?
+* Import race times and check a sample against those shown in Webscorer.
+
+### From this point, further imports should be avoided as changes will be overridden
+
+* 
+

@@ -16,7 +16,7 @@ class CompetitorDataImport(APIView):
         # Start by deleting all existing competitors
         Competitor.objects.all().delete()
 
-        Meeting = os.getenv("MEETING2020") # Competition Meeting API from the Information --> API Key menu
+        Meeting = os.getenv("MEETING2021") # Competition Meeting API from the Information --> API Key menu
         UserAPI = os.getenv("USERAPI") # As supplied in email
         UserAuth = os.getenv("USERAUTH") # As supplied in email
 
@@ -42,9 +42,15 @@ class CompetitorDataImport(APIView):
 
             competitors = Competitor.objects.all()
             serializer = CompetitorSerializer(competitors, many=True)
+            self.calculate_computed_properties()
             return Response(serializer.data)
 
         return Response(status=400)
+    def calculate_computed_properties(self):
+
+        for crew in Crew.objects.all():
+            print(crew.competitor_names)
+            crew.save()
 
 class CompetitorDataExport(APIView):
 
