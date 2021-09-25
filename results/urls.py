@@ -1,3 +1,4 @@
+from results.views import testing_celery
 from django.urls import path
 from .views import clubs
 from .views import events
@@ -33,4 +34,5 @@ path('crew-race-times/', times.CrewRaceTimesImport.as_view()),
 # path('crew-race-times-import/', times.RegisterData.as_view()),
 path('masters-adjustments-import/', masters_adjustments.MastersAdjustmentsImport.as_view()),
 path('original-event-import/', original_event_category.OriginalEventCategoryImport.as_view()),
+path('test-celery/', testing_celery.index, name='index'),
 ]

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'results',
     'django_filters',
     'computed_property',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -157,3 +158,10 @@ REST_FRAMEWORK = {
 
 django_heroku.settings(locals())
 # DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+CELERY_BROKER_URL = 'redis://:pac30a269b4d3c80d63aa64098c8346ee300682e60c0ad72db1d337deaa630013@ec2-52-215-55-250.eu-west-1.compute.amazonaws.com:12970'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULTS_BACKEND = 'django-db'

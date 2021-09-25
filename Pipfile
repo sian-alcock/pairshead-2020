@@ -18,6 +18,9 @@ pyjwt = "*"
 django-cors-headers = "*"
 django-computed-property = "*"
 django-filter = "*"
+celery = "*"
+redis = "*"
+django-celery-results = "*"
 
 [requires]
 python_version = "3.7"

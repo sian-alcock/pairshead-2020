@@ -134,6 +134,18 @@ class ImportData extends React.Component {
               Initiates a calculation (or re-calculation) of rankings and masters adjustments.
             </div>
           </div>
+          <div className="columns">
+            <div className="column is-one-quarter">
+              <DataLoader
+                url='/api/test-celery/'
+                buttonText='Test celery'
+                class='double-height-button'
+              />
+            </div>
+            <div className="column left">
+              Trying to get stuff to work as a background task using celery.
+            </div>
+          </div>
 
           {/* <div className="columns">
             <div className="column is-one-quarter">
