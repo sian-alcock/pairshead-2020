@@ -19,6 +19,10 @@ class Info extends React.Component {
             <p><strong>Masters adjustment</strong> - where Masters categories have been combined into a single event band, times are adjusted according to masters interpolated times set out on British Rowing website (and imported into this app via a .csv)</p>
             <p><strong>Masters adjusted time</strong> - the race time minus a masters adjustment.  Note:  The Masters adjusted time is only used to calculate the position in category for masters events that have been combined</p>
             <p><strong>Position in category</strong> - the position in category is the ranking within a specific event</p>
+            <p><strong>Pennant</strong> - pennant image is presented alongside ranking for all ranked 1 within a category</p>
+            <p><strong>Trophy</strong> - trophy image is presented alongside ranking if crew is fastest female double scull or crew is fastest female pair or is fastest mixed double scull</p>
+            <p><strong>Position in category</strong> - the position in category is the ranking within a specific event</p>
+
           </div>
         </div>
       </section>
