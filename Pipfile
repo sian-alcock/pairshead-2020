@@ -18,6 +18,7 @@ pyjwt = "*"
 django-cors-headers = "*"
 django-computed-property = "*"
 django-filter = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.7"

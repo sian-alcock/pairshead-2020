@@ -216,13 +216,6 @@ I learned a great deal about working with data from APIs and reading in data fro
 
 My other great challenge was to get the data coming in at the click of a button but in a managed way.  I have described this function in a section above.
 
-### Blocker: Pagination
-
-I am troubled by the fact that the pages are a little slow - in particular on the Heroku deployment site.  I ran out of time, but it is my intention to employ paging on all the list pages.  I hope this will improve the response times.
-
-### Blocker: Broken images
-
-I wanted to replace broken blade images on the Results page with a default image.  I downloaded a package called React Image which purports to replace broken image links with default images.  However, I failed to get it working in the time and removed the code from this project.
 
 ### Blocker: Automated tests not completed
 
