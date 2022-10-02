@@ -25,11 +25,10 @@ class CrewDrawReport extends React.Component {
   componentDidMount() {
     axios.get('/api/crews', {
       params: {
-        page_size: 20,
+        page_size: 500,
         page: 1,
         order: 'bib_number',
         status: 'Accepted'
-
       }
     })
       .then(res => this.setState({ 
