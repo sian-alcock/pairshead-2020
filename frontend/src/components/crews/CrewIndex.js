@@ -31,6 +31,7 @@ class CrewIndex extends React.Component {
     this.handleCrewsWithTooManyTimes = this.handleCrewsWithTooManyTimes.bind(this)
     this.handleScratchedCrews = this.handleScratchedCrews.bind(this)
     this.handleMastersAdjustments = this.handleMastersAdjustments.bind(this)
+    this.handlePagingChange = this.handlePagingChange.bind(this)
   }
 
   componentDidMount() {
@@ -167,6 +168,14 @@ class CrewIndex extends React.Component {
       searchTerm: '',
       mastersAdjustmentsBoolean: e.target.checked
     }, () => this.refreshData())
+  }
+
+  handlePagingChange(selectedOption){
+    this.setState({
+      pageSize: selectedOption.value,
+      pageNumber: 1
+    }, () => this.refreshData())
+    
   }
 
   render() {
