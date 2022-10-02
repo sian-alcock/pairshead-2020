@@ -5,6 +5,7 @@ import { formatTimes, getImage } from '../../lib/helpers'
 import Paginator from '../common/Paginator'
 import CrewTimeCalculatedFieldsUpdate from '../common/UpdateCrewTimeCalculatedFields'
 import PageTotals from '../common/PageTotals'
+import Img from 'react-image'
 
 class ResultIndex extends React.Component {
   constructor() {
@@ -44,6 +45,11 @@ class ResultIndex extends React.Component {
       .then(res => this.setState({
         totalCrews: res.data['count'],
         crews: res.data['results'],
+        fastestMen2x: res.data['fastest_open_2x_time'].raw_time__min,
+        fastestFemale2x: res.data['fastest_female_2x_time'].raw_time__min,
+        fastestMenSweep: res.data['fastest_open_sweep_time'].raw_time__min,
+        fastestFemaleSweep: res.data['fastest_female_sweep_time'].raw_time__min,
+        fastestMixed2x: res.data['fastest_mixed_2x_time'].raw_time__min,
         categories: this.getCategories(res.data['results']),
         updateRequired: res.data['requires_ranking_update']
       })
@@ -291,7 +297,7 @@ class ResultIndex extends React.Component {
                 <td>Crew</td>
                 <td>Composite code</td>
                 <td>Event</td>
-                <td colSpan='2'>Pos in category</td>
+                <td colSpan='4'>Pos in category</td>
                 <td>Penalty</td>
                 <td>TO</td>
               </tr>
@@ -306,7 +312,7 @@ class ResultIndex extends React.Component {
                 <td>Crew</td>
                 <td>Composite code</td>
                 <td>Event</td>
-                <td colSpan='2'>Pos in category</td>
+                <td colSpan='4'>Pos in category</td>
                 <td>Penalty</td>
                 <td>TO</td>
               </tr>
@@ -323,7 +329,9 @@ class ResultIndex extends React.Component {
                   <td>{crew.competitor_names}</td>
                   <td>{crew.composite_code}</td>
                   <td>{crew.event_band}</td>
-                  <td>{crew.category_rank}</td>
+                  <td>{!crew.category_rank ? '' : crew.category_rank} </td>
+                  <td>{crew.category_rank === 1 ? <Img src="http://www.bblrc.co.uk/wp-content/uploads/2021/09/pennant-ph80.png" width="20px" />  : ''} </td>
+                  <td>{crew.overall_rank === 1 || crew.published_time === this.state.fastestFemale2x || crew.published_time === this.state.fastestFemaleSweep || crew.published_time === this.state.fastestMixed2x ? <Img src="http://www.bblrc.co.uk/wp-content/uploads/2021/09/trophy-ph80.png" width="20px" />  : ''} </td>
                   <td>{this.getTopCrews(crew.event_band, this.state.crews) && this.state.closeFirstAndSecondCrewsBoolean ? '❓' : ''}</td>
                   <td>{crew.penalty ? 'P' : ''}</td>
                   <td>{crew.time_only ? 'TO' : ''}</td>
