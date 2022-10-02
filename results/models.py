@@ -201,20 +201,25 @@ class Crew(models.Model):
         if not OriginalEventCategory.objects.filter(event_original='2x').exists():
             return 0
 
-        elif self.event_band is not None and '/' in str(self.event_band) and self.event.type == 'Master':
+        elif self.event_band is not None and '/' in str(self.event_band) and self.event.type == 'Master' and self.raw_time > 0:
             fastest_men_scull = Crew.objects.all().filter(event_band__startswith='Op', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
             fastest_men_sweep = Crew.objects.all().filter(event_band__startswith='Op', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time')) or 0
             fastest_female_scull = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
             fastest_female_sweep = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time')) or 0
             fastest_mixed_scull = Crew.objects.all().filter(event_band__startswith='Mx', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
-            # print(fastest_men_scull)
-            # print(fastest_men_sweep)
-            # print(fastest_female_scull)
-            # print(fastest_female_sweep)
-            # print(fastest_mixed_scull)
+            print('Fastest men scull')
+            print(fastest_men_scull)
+            print('Fastest men sweep')
+            print(fastest_men_sweep)
+            print('Fastest female scull')
+            print(fastest_female_scull)
+            print('Fastest female sweep')
+            print(fastest_female_sweep)
+            print('Fastest mixed scull')
+            print(fastest_mixed_scull)
 
             # Mens 2x (scull)
-            if self.event.gender == 'Open' and '2x' in self.event_original.first().event_original:
+            if fastest_men_scull['raw_time__min'] is not None and self.event.gender == 'Open' and '2x' in self.event_original.first().event_original:
                 master_category = self.event_original.first().event_original[:4]
                 
                 try:
@@ -223,7 +228,7 @@ class Crew(models.Model):
                     adjustment = 0
                 return adjustment
             # Mens 2- (sweep)
-            elif self.event.gender == 'Open' and '2-' in self.event_original.first().event_original:
+            elif fastest_men_sweep['raw_time__min'] is not None and self.event.gender == 'Open' and '2-' in self.event_original.first().event_original:
                 master_category = self.event_original.first().event_original[:4]
                 
                 try:
@@ -232,7 +237,7 @@ class Crew(models.Model):
                     adjustment = 0
                 return adjustment
             # Female 2x (scull)
-            elif self.event.gender == 'Female' and '2x' in self.event_original.first().event_original:
+            elif fastest_female_scull['raw_time__min'] is not None and self.event.gender == 'Female' and '2x' in self.event_original.first().event_original:
                 master_category = self.event_original.first().event_original[2:6]
                 
                 try:
@@ -241,7 +246,7 @@ class Crew(models.Model):
                     adjustment = 0
                 return adjustment
             # Female 2- (sweep)
-            elif self.event.gender == 'Female' and '2-' in self.event_original.first().event_original:
+            elif fastest_female_sweep['raw_time__min'] is not None and self.event.gender == 'Female' and '2-' in self.event_original.first().event_original:
                 master_category = self.event_original.first().event_original[2:6]
                 
                 try:
@@ -250,7 +255,7 @@ class Crew(models.Model):
                     adjustment = 0
                 return adjustment
             # Mixed 2x (scull)
-            elif self.event.gender == 'Mixed' and '2x' in self.event_original.first().event_original:
+            elif fastest_mixed_scull['raw_time__min'] is not None and self.event.gender == 'Mixed' and '2x' in self.event_original.first().event_original:
                 master_category = self.event_original.first().event_original[3:7]
                 
                 try:
