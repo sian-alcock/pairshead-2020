@@ -241,6 +241,7 @@ class RaceTimeIndex extends React.Component {
                 <th>Crew ID</th>
                 <th>Crew name</th>
                 <th>Competitors</th>
+                <th>Category</th>
               </tr>
             </thead>
             <tfoot>
@@ -252,6 +253,7 @@ class RaceTimeIndex extends React.Component {
                 <th>Crew ID</th>
                 <th>Crew name</th>
                 <th>Competitors</th>
+                <th>Category</th>
               </tr>
             </tfoot>
             <tbody>
@@ -264,6 +266,7 @@ class RaceTimeIndex extends React.Component {
                   <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.id}</td>
                   <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.times.length > 2 ? raceTime.crew.name + '❗️' : raceTime.crew.name}</td>
                   <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.competitor_names}</td>
+                  <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.event_band}</td>
 
                 </tr>
               )}
