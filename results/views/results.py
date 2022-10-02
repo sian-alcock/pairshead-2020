@@ -54,10 +54,10 @@ class ResultDataExport(APIView):
 
         crews = Crew.objects.filter(status__exact='Accepted', raw_time__gt=0,).order_by('overall_rank')
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="crewdata.csv"'
+        response['Content-Disposition'] = 'attachment; filename="crewresult.csv"'
 
         writer = csv.writer(response, delimiter=',')
-        writer.writerow(['Overall position', 'Number', 'Time', 'Masters adjusted time','Blade', 'Club', 'Crew', 'Composite code', 'Event', 'Position In Category', 'Penalty', 'Time only',])
+        writer.writerow(['Overall pos', 'No', 'Time', 'Mas adj time','Blade(img)', 'Blade(lnk)', 'Club', 'Crew', 'Com code', 'Category', 'Pos in Cat', 'Penalty', 'Time only',])
 
 
         for crew in crews:
@@ -96,8 +96,14 @@ class ResultDataExport(APIView):
             else:
                 time_only = ''
 
+            if crew.category_rank == 0:
+                category_rank = ''
+            else:
+                category_rank = crew.category_rank
+
             if crew.club.blade_image:
                 image = '=IMAGE("' + crew.club.blade_image + '")'
+                blade_link = '<img width="80px" src="' + crew.club.blade_image + '"></img>'
 
             writer.writerow(
             [
@@ -106,11 +112,12 @@ class ResultDataExport(APIView):
             published_time,
             masters_adjusted_time,
             image,
+            blade_link,
             crew.club.name,
             crew.competitor_names,
             crew.composite_code,
             crew.event_band,
-            crew.category_rank,
+            category_rank,
             penalty,
             time_only,
             ])

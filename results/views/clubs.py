@@ -22,7 +22,7 @@ class ClubDataImport(APIView):
         # Start by deleting all existing clubs
         Club.objects.all().delete()
 
-        Meeting = os.getenv("MEETING2021") # Competition Meeting API
+        Meeting = os.getenv("MEETING2022") # Competition Meeting API
         UserAPI = os.getenv("USERAPI") # As supplied in email
         UserAuth = os.getenv("USERAUTH") # As supplied in email
 

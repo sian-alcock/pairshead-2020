@@ -88,7 +88,7 @@ class CrewDataImport(APIView):
         RaceTime.objects.all().delete()
         OriginalEventCategory.objects.all().delete()
 
-        Meeting = os.getenv("MEETING2021") # Competition Meeting API from the Information --> API Key menu
+        Meeting = os.getenv("MEETING2022") # Competition Meeting API from the Information --> API Key menu
         UserAPI = os.getenv("USERAPI") # As supplied in email
         UserAuth = os.getenv("USERAUTH") # As supplied in email
 
@@ -127,7 +127,6 @@ class CrewDataImport(APIView):
         return Response(status=400)
 
 class CrewDataExport(APIView):
-
     def get(self, _request):
 
         crews = Crew.objects.filter(status__exact='Accepted')

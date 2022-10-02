@@ -16,7 +16,7 @@ class CompetitorDataImport(APIView):
         # Start by deleting all existing competitors
         Competitor.objects.all().delete()
 
-        Meeting = os.getenv("MEETING2021") # Competition Meeting API from the Information --> API Key menu
+        Meeting = os.getenv("MEETING2022") # Competition Meeting API from the Information --> API Key menu
         UserAPI = os.getenv("USERAPI") # As supplied in email
         UserAuth = os.getenv("USERAUTH") # As supplied in email
 
