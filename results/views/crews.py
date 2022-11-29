@@ -55,23 +55,27 @@ class CrewUpdateRankings(APIView):
     def get(self, _request):
         crews = Crew.objects.filter(status__exact=('Accepted')) # get all the crews
         serializer = CrewSerializer(crews, many=True)
-        self.update_masters_adjustment(crews)
-        self.update_rankings(crews)
+        self.update_timing_calcs(crews)
         return Response(serializer.data) # send the JSON to the client
 
-    def update_masters_adjustment(self, crews):
+    def update_timing_calcs(self, crews):
         # Recalculate rankings for all crews
+
         for crew in crews:
-            print(crew.id)
-            print(crew.masters_adjustment)
-            crew.save()
-    def update_rankings(self, crews):
-        # Recalculate rankings for all crews
-        for crew in crews:
-            print(crew.id)
-            print(crew.overall_rank)
-            print(crew.gender_rank)
-            print(crew.category_rank)
+            crew.event_band = crew.calc_event_band()
+            crew.raw_time = crew.calc_raw_time()
+            crew.race_time = crew.calc_race_time()
+            crew.published_time = crew.calc_published_time()
+            crew.start_time = crew.calc_start_time()
+            crew.finish_time = crew.calc_finish_time()
+            crew.invalid_time = crew.calc_invalid_time()
+            crew.overall_rank = crew.calc_overall_rank()
+            crew.gender_rank = crew.calc_gender_rank()
+            crew.category_rank = crew.calc_category_rank()
+            crew.category_position_time = crew.calc_category_position_time()
+            crew.start_sequence = crew.calc_start_sequence()
+            crew.finish_sequence = crew.calc_finish_sequence()
+            crew.masters_adjustment = crew.calc_masters_adjustment()
             crew.requires_recalculation = False
             crew.save()
 

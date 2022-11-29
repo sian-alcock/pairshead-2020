@@ -136,21 +136,22 @@ class CrewRaceTimesImport(APIView):
     def calculate_computed_properties(self):
 
         for crew in Crew.objects.all():
-            print(crew.start_time)
-            print(crew.finish_time)
-            print(crew.invalid_time)
-            print(crew.published_time)
-            print(crew.raw_time)
-            print(crew.race_time)
-            print(crew.overall_rank)
-            print(crew.gender_rank)
-            print(crew.category_position_time)
-            print(crew.category_rank)
-            print(crew.start_sequence)
-            print(crew.finish_sequence)
-            # print(crew.masters_adjustment)
-            # print(crew.competitor_names)
+            crew.raw_time = crew.calc_raw_time()
+            crew.race_time = crew.calc_race_time()
+            crew.published_time = crew.calc_published_time()
+            crew.start_time = crew.calc_start_time()
+            crew.finish_time = crew.calc_finish_time()
+            crew.invalid_time = crew.calc_invalid_time()
+            crew.overall_rank = crew.calc_overall_rank()
+            crew.gender_rank = crew.calc_gender_rank()
+            crew.category_position_time = crew.calc_category_position_time()
+            crew.category_rank = crew.calc_category_rank()
+            crew.start_sequence = crew.calc_start_sequence()
+            crew.finish_sequence = crew.calc_finish_sequence()
+            crew.masters_adjustment = crew.calc_masters_adjustment()
+            crew.requires_recalculation = False
             crew.save()
+
 
 # Attempt to read in the RaceTimes CSV from the front end
 
