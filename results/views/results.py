@@ -3,6 +3,8 @@ import csv
 import os
 import requests
 import time
+from django.db.models import Min
+
 # if this is where you store your django-rest-framework settings
 from django.conf import settings
 from django.http import Http404, HttpResponse
@@ -53,11 +55,15 @@ class ResultDataExport(APIView):
     def get(self, _request):
 
         crews = Crew.objects.filter(status__exact='Accepted', raw_time__gt=0,).order_by('overall_rank')
+        fastest_female_scull = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time'))
+        fastest_female_sweep = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time'))
+        fastest_mixed_scull = Crew.objects.all().filter(event_band__startswith='Mx', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time'))
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="crewresult.csv"'
 
         writer = csv.writer(response, delimiter=',')
-        writer.writerow(['Overall pos', 'No', 'Time', 'Mas adj time','Blade(img)', 'Blade(lnk)', 'Club', 'Crew', 'Com code', 'Category', 'Pos in Cat', 'Penalty', 'Time only',])
+        writer.writerow(['Overall pos', 'No', 'Time', 'Mas adj time','Blade(img)', 'Club', 'Crew', 'Com code', 'Category', 'Pos in Cat', 'Pennant', 'Trophy', 'Penalty', 'Time only',])
+
 
 
         for crew in crews:
@@ -101,9 +107,18 @@ class ResultDataExport(APIView):
             else:
                 category_rank = crew.category_rank
 
+            if crew.category_rank == 1:
+                pennant = '=IMAGE("https://www.bblrc.co.uk/wp-content/uploads/2021/09/pennant-ph80.png")'
+            else:
+                pennant = ''
+
+            if crew.overall_rank == 1 or crew.published_time == fastest_female_scull['raw_time__min'] or crew.published_time == fastest_female_sweep['raw_time__min'] or crew.published_time == fastest_mixed_scull['raw_time__min']:
+                trophy = '=IMAGE("http://www.bblrc.co.uk/wp-content/uploads/2021/09/trophy-ph80.png")'
+            else:
+                trophy = ''
+
             if crew.club.blade_image:
                 image = '=IMAGE("' + crew.club.blade_image + '")'
-                blade_link = '<img width="80px" src="' + crew.club.blade_image + '"></img>'
 
             writer.writerow(
             [
@@ -112,14 +127,20 @@ class ResultDataExport(APIView):
             published_time,
             masters_adjusted_time,
             image,
-            blade_link,
             crew.club.name,
             crew.competitor_names,
             crew.composite_code,
             crew.event_band,
             category_rank,
+            pennant,
+            trophy,
             penalty,
             time_only,
             ])
+
+            print(crew.calc_published_time)
+            print(fastest_female_scull)
+            print(fastest_female_sweep)
+            print(fastest_mixed_scull)
 
         return response

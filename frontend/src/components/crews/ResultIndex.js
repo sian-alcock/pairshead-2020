@@ -113,8 +113,10 @@ class ResultIndex extends React.Component {
 
   getCategories(data){
     // Populate the category (event_band) pull down with all event_bands
+    console.log(data)
     let eventBands = data.map(crew => crew.event_band)
     eventBands = Array.from(new Set(eventBands)).sort()
+    console.log(eventBands)
     const options = eventBands.map(option => {
       return {label: option, value: option}
     })

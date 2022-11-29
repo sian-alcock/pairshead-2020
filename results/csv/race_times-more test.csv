@@ -1,0 +1,49 @@
+﻿Seq #,Bib,Name,Tap,Time tap,Bib tap,Category,Team name,Team name 2,Time tap (time of day),Recorded by
+1,1,BEB,Start,1:01:39.51,,Op MasD 2x,Jahnich / Long,1247184,17:37:40.88,iPad
+2,2,WAR,Start,1:01:46.88,,Op MasD 2x,Gosling / Delahaye,1247294,17:37:48.25,iPad
+3,3,BEB,Start,1:01:52.93,,Op MasD 2x,McLean / Ribbens,1247189,17:37:54.28,iPad
+4,4,TSS,Start,1:02:00.98,,Op MasD 2x,Moraitis / Bridger,1248083,17:38:02.35,iPad
+5,5,SON,Start,1:02:08.90,,Op MasD 2x,Smith / Foden,1247201,17:38:10.27,iPad
+6,7,LYM,Start,1:02:21.27,,Op MasE 2x Championship,Bull / Chalk,1247423,17:38:22.64,iPad
+7,8,WLT,Start,1:02:32.27,,Op MasE 2x Championship,Knight / Tomalin,1247723,17:38:33.64,iPad
+8,9,KRC,Start,1:02:39.54,,Op MasE 2x Championship,Young / Bishop,1247315,17:38:40.91,iPad
+9,10,BEB,Start,1:02:46.07,,Op MasE 2x Championship,Maunsell / Lauerman,1247311,17:38:47.44,iPad
+10,11,TSS,Start,1:02:57.03,,Op MasE 2x Championship,Ratcliffe / Schonauer,1248079,17:38:58.40,iPad
+11,12,RDG,Start,1:03:06.07,,Op MasE 2x Club,Coneybeare / Day,1247240,17:39:07.44,iPad
+12,13,BOA,Start,1:03:16.15,,Op MasE 2x Club,Frost / Thomas,1248004,17:39:17.52,iPad
+13,14,RDG,Start,1:03:28.22,,Op MasE 2x Club,,1247237,17:39:29.59,iPad
+14,146,SON,Start,1:04:04.11,,Op 2- Intermediate,Nunn / Reynolds,1247178,17:40:05.48,iPad
+15,148,STA,Start,1:04:08.50,,Op 2- Intermediate,Totty / Sharp,1247598,17:40:09.87,iPad
+16,151,OUL,Start,1:04:26.83,,Op 2- Intermediate,Baker / Pattenden,1247269,17:40:28.20,iPad
+17,255,FUL,Start,1:04:44.47,,Mx MasB 2x,Jones / Schloegl,1247478,17:40:45.84,iPad
+18,258,KRC,Start,1:04:50.07,,Mx MasC 2x,Kerr / Saunders,1247310,17:40:51.44,iPad
+19,261,MAA,Start,1:04:55.89,,W 2x Intermediate,Brooks / Bailey,1247894,17:40:57.26,iPad
+20,263,UTC,Start,1:05:02.85,,W 2x Intermediate,Pickthall / Watson,1247260,17:41:04.22,iPad
+21,320,HSB,Start,1:05:29.89,,W MasC 2-,Hichens / Beresford-Knox,1247555,17:41:31.26,iPad
+22,318,BBL,Start,1:05:35.67,,W MasC 2-,Cahill / Saary,1248317,17:41:37.04,iPad
+23,327,WYJ,Start,1:05:47.44,,W J18 2x,Palmer / Pelly,1247392,17:41:48.81,iPad
+24,332,WLT,Start,1:05:53.33,,W J18 2x,Holloway / Hooker,1247699,17:41:54.70,iPad
+1,320,HSB,Finish,1:15:52.69,,W MasC 2-,Hichens / Beresford-Knox,1247555,17:51:54.02,iPad
+2,332,WLT,Finish,1:15:57.00,,W J18 2x,Holloway / Hooker,1247699,17:51:58.32,iPad
+3,255,FUL,Finish,1:16:29.13,,Mx MasB 2x,Jones / Schloegl,1247478,17:52:30.45,iPad
+4,258,KRC,Finish,1:16:41.10,,Mx MasC 2x,Kerr / Saunders,1247310,17:52:42.42,iPad
+5,261,MAA,Finish,1:16:49.92,,W 2x Intermediate,Brooks / Bailey,1247894,17:52:51.24,iPad
+6,263,UTC,Finish,1:17:02.00,,W 2x Intermediate,Pickthall / Watson,1247260,17:53:03.32,iPad
+7,327,WYJ,Finish,1:17:19.85,,W J18 2x,Palmer / Pelly,1247392,17:53:21.17,iPad
+8,1,BEB,Finish,1:17:41.90,,Op MasD 2x,Jahnich / Long,1247184,17:53:43.22,iPad
+9,2,WAR,Finish,1:18:15.71,,Op MasD 2x,Gosling / Delahaye,1247294,17:54:17.03,iPad
+10,3,BEB,Finish,1:18:15.92,,Op MasD 2x,McLean / Ribbens,1247189,17:54:17.24,iPad
+11,5,SON,Finish,1:18:16.13,,Op MasD 2x,Smith / Foden,1247201,17:54:17.45,iPad
+12,4,TSS,Finish,1:18:20.33,,Op MasD 2x,Moraitis / Bridger,1248083,17:54:21.65,iPad
+13,6,TSS,Finish,1:18:25.47,,Op MasE 2x Championship,Ohrenstein / McChesney,1248078,17:54:26.80,iPad
+14,7,LYM,Finish,1:18:27.89,,Op MasE 2x Championship,Bull / Chalk,1247423,17:54:29.21,iPad
+15,8,WLT,Finish,1:18:31.14,,Op MasE 2x Championship,Knight / Tomalin,1247723,17:54:32.47,iPad
+16,9,KRC,Finish,1:18:32.40,,Op MasE 2x Championship,Young / Bishop,1247315,17:54:33.73,iPad
+17,10,BEB,Finish,1:18:33.98,,Op MasE 2x Championship,Maunsell / Lauerman,1247311,17:54:35.30,iPad
+18,11,TSS,Finish,1:18:35.03,,Op MasE 2x Championship,Ratcliffe / Schonauer,1248079,17:54:36.35,iPad
+19,12,RDG,Finish,1:18:36.08,,Op MasE 2x Club,Coneybeare / Day,1247240,17:54:37.40,iPad
+20,13,BOA,Finish,1:18:37.02,,Op MasE 2x Club,Frost / Thomas,1248004,17:54:38.35,iPad
+21,14,RDG,Finish,1:18:38.49,,Op MasE 2x Club,,1247237,17:54:39.82,iPad
+22,17,BTC,Finish,1:18:39.65,,Op MasE 2x Club,Skinner / Mayer,1247772,17:54:40.97,iPad
+23,16,PTR,Finish,1:18:39.96,,Op MasE 2x Club,Fryer / Oswell,1247238,17:54:41.28,iPad
+24,15,WIM,Finish,1:18:42.17,,Op MasE 2x Club,Harries / Theed,1247726,17:54:43.49,iPad

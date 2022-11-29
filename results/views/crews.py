@@ -171,14 +171,20 @@ class CrewDataExport(APIView):
             else:
                 raw_time = 0
 
-            if crew.published_time > 0:
+            if crew.masters_adjusted_time > 0:
+                hundredths = int((crew.masters_adjusted_time / 10)%100)
+                seconds = int((crew.masters_adjusted_time / 1000)%60)
+                minutes = int((crew.masters_adjusted_time / (1000*60))%60)
+                race_time = str("%02d" % minutes)+':'+str("%02d" % seconds)+'.'+str("%02d" % hundredths)
+
+            elif crew.published_time > 0:
                 hundredths = int((crew.published_time / 10)%100)
                 seconds = int((crew.published_time / 1000)%60)
                 minutes = int((crew.published_time / (1000*60))%60)
 
-                published_time = str("%02d" % minutes)+':'+str("%02d" % seconds)+'.'+str("%02d" % hundredths)
+                race_time = str("%02d" % minutes)+':'+str("%02d" % seconds)+'.'+str("%02d" % hundredths)
             else:
-                published_time = 0
+                race_time = 0
 
             writer.writerow(
             [crew.id,
@@ -190,7 +196,7 @@ class CrewDataExport(APIView):
             crew.club.name,
             rank,
             raw_time,
-            published_time,
+            race_time,
             status
             ])
 
