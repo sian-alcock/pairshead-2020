@@ -49,7 +49,6 @@ class CompetitorDataImport(APIView):
     def calculate_computed_properties(self):
 
         for crew in Crew.objects.all():
-            print(crew.competitor_names)
             crew.save()
 
 class CompetitorDataExport(APIView):
