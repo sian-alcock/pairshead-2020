@@ -10,7 +10,7 @@
 #             # "raceid":198625,
 #             "raceid":224232,
 #             "EmailAddress":"slp@lawena.org",
-#             "Password":"Awe$omeTimer$",
+#             "Password":"TimingTeam22",
 #             "udid": "ffffff75e3bbe75cd7432863a0d8937b396fffff"
 #             }
 

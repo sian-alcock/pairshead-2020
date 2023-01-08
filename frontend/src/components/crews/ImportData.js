@@ -1,44 +1,13 @@
 import React from 'react'
 import BROELoader from '../common/ImportBROEData'
 import DataLoader from '../common/DataLoader'
-import axios from 'axios'
+import CSVDataLoader from '../common/CSVDataLoader'
+// import axios from 'axios'
 
 class ImportData extends React.Component {
   constructor() {
     super()
 
-    this.handleFile = this.handleFile.bind(this)
-    this.handleSubmitData = this.handleSubmitData.bind(this)
-  }
-
-  handleFile (e) {
-    e.preventDefault()
-
-    const fileToUpload = e.target.files[0]
-    this.setState({
-      fileToUpload: fileToUpload
-    })
-  }
-
-  handleSubmitData (e) {
-    e.preventDefault()
-
-    const formData = new FormData()
-    formData.append('file', this.state.fileToUpload)
-
-    axios
-      .put('/api/masters-adjustments-import-front-end/', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      .then((response) => {
-        console.log(response)
-        console.log(response.data)
-      })
-      .catch((error) => {
-        console.log(error.response)
-      })
   }
 
 
@@ -47,111 +16,110 @@ class ImportData extends React.Component {
     return (
       <section className="section">
         <div className="container">
+          <section className="section-has-lines">
+            <div className="text-container has-text-left">
+              <h2 className="title is-2">Get data from BROE</h2>
+              <p className="left">Import data from BROE via the api</p>
+            </div>
+            <div className="columns">
+              <div className="column is-one-quarter">
+                <BROELoader/>
+              </div>
+              <div className="column left">
+                Fetch the club, event data from British Rowing.  Note:  Data is deleted before importing.
+              </div>
+            </div>
 
-          <div className="columns">
-            <div className="column is-one-quarter">
-              <BROELoader/>
-            </div>
-            <div className="column left">
-              Fetch the club, event data from British Rowing.  Note:  Data is deleted before importing.
-            </div>
-          </div>
-
-          <div className="columns">
-            <div className="column is-one-quarter">
-              <DataLoader
-                url='/api/crew-data-import'
-                buttonText='Get crew data'
-                class='single-height-button'
-              />
-            </div>
-            <div className="column left">
-              Import crew data from BROE.
-            </div>
-          </div>
-
-          <div className="columns">
-            <div className="column is-one-quarter">
-              <DataLoader
-                url='/api/competitor-data-import'
-                buttonText='Get competitor data'
-                class='single-height-button'
-              />
-            </div>
-            <div className="column left">
-              Import competitor data from BROE.
-            </div>
-          </div>
-
-          <div className="columns">
-            <div className="column is-one-quarter">
-              <DataLoader
-                url='/api/crew-race-times'
-                buttonText='Get race times'
-                class='single-height-button'
-              />
-            </div>
-            <div className="column left">
-              Import race time data from Web Scorer CSV file (NB: CSV must be saved in the project folder ..results / csv).
-            </div>
-          </div>
-
-          <div className="columns">
-            <div className="column is-one-quarter">
-              <DataLoader
-                url='/api/masters-adjustments-import/'
-                buttonText='Get masters adjustment lookup'
-                class='double-height-button'
-              />
-            </div>
-            <div className="column left">
-              Imports data from a CSV file containing the masters adjustments that needs to be saved in the project folder ..results / csv.  Note:  Data is deleted before importing.
-            </div>
-          </div>
-
-          <div className="columns">
-            <div className="column is-one-quarter">
-              <DataLoader
-                url='/api/original-event-import/'
-                buttonText='Get original event categories'
-                class='double-height-button'
-              />
-            </div>
-            <div className="column left">
-              Imports data from a CSV file created manually after entries have closed and BEFORE the events are changed that needs to be saved in the project folder ..results / csv.  Note:  Data is deleted before importing.
-            </div>
-          </div>
-
-          <div className="columns">
-            <div className="column is-one-quarter">
-              <DataLoader
-                url='/api/crew-update-rankings/'
-                buttonText='Calculate race times'
-                class='double-height-button'
-              />
-            </div>
-            <div className="column left">
-              Initiates a calculation (or re-calculation) of rankings and masters adjustments.
-            </div>
-          </div>
-
-          {/* <div className="columns">
-            <div className="column is-one-quarter">
-              <form onSubmit={this.handleSubmitData}>
-                <input
-                  type="file"
-                  name="file"
-                  multiple={true}
-                  accept=".xls,.xlsx,.csv,.txt"
-                  onChange={this.handleFile}
+            <div className="columns">
+              <div className="column is-one-quarter">
+                <DataLoader
+                  url='/api/crew-data-import'
+                  buttonText='Get crew data'
+                  class='single-height-button'
                 />
-                <button className="button is-primary">Submit</button>
-              </form>
+              </div>
+              <div className="column left">
+                Import crew data from BROE.
+              </div>
             </div>
-            <div className="column left">
-              Import downloaded race times from application.
+
+            <div className="columns">
+              <div className="column is-one-quarter">
+                <DataLoader
+                  url='/api/competitor-data-import'
+                  buttonText='Get competitor data'
+                  class='single-height-button'
+                />
+              </div>
+              <div className="column left">
+                Import competitor data from BROE.
+              </div>
             </div>
-          </div> */}
+          </section>
+
+          <section className="section-has-lines">
+            <div className="has-text-left">
+              <h2 className="title is-2">Import race times from csv</h2>
+              <p className="left">Import webscorer race times from csv.</p>
+            </div>
+
+            <div className="column is-one-half">
+              <CSVDataLoader
+                url='/api/crew-race-times-import/'
+                buttonText='Import race times'
+                class='single-height-button'
+              />
+            </div>
+          </section>
+
+          <section className="section-has-lines">
+            <div className="has-text-left">
+              <h2 className="title is-2">Import original event categories from csv</h2>
+              <p className="left">Import event categories from csv.</p>
+            </div>
+
+            <div className="column is-one-half">
+              <CSVDataLoader
+                url='/api/original-event-import/'
+                buttonText='Import original event categories'
+                class='double-height-button'
+              />
+            </div>
+          </section>
+
+          <section className="section-has-lines">
+            <div className="has-text-left">
+              <h2 className="title is-2">Import masters adjustments from csv</h2>
+              <p className="left">Import masters adjustments from csv.</p>
+            </div>
+
+            <div className="column is-one-half">
+              <CSVDataLoader
+                url='/api/masters-adjustments-import/'
+                buttonText='Import masters adjustments'
+                class='double-height-button'
+              />
+            </div>
+          </section>
+          <section className="section-has-lines">
+            <div className="text-container has-text-left">
+              <h2 className="title is-2">Update all calculations</h2>
+              <p className="left">Refresh all calculations eg ranking etc - this may be needed after making changes such as adding penalties.</p>
+            </div>
+            <div className="columns">
+              <div className="column is-one-quarter">
+                <DataLoader
+                  url='/api/crew-update-rankings/'
+                  buttonText='Refresh calculations'
+                  class='single-height-button'
+                />
+              </div>
+              <div className="column left">
+                Initiates a calculation (or re-calculation) of rankings and masters adjustments.
+              </div>
+            </div>
+          </section>
+
         </div>
       </section>
     )

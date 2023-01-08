@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
 
+
 $family-primary: 'Open Sans', sans-serif;
 $bblBlue: #341499;
 $phLogoBlue: #00B4FC;
@@ -19,6 +20,8 @@ $navbar-item-color: $bblBlue;
 $navbar-item-hover-background-color: $phLogoBlue;
 $navbar-item-hover-color: white;
 $navbar-height: 1 rem;
+
+@import "~bulma";
 
 .startTab.active, .finishTab.active {
   text-align: center;
@@ -44,7 +47,6 @@ table {
 }
 
 .container {
-  text-align: center;
   align-content: center;
 }
 
@@ -133,4 +135,17 @@ td, th, .control {
   width: 100%;
 }
 
-@import "~bulma"
+.file.is-right {
+  justify-content: flex-start;
+  margin-bottom: 15px;
+}
+
+.section-has-lines {
+  border-top: 1px solid $bblBlue;
+  padding: 15px 0;
+}
+
+.text-container {
+  margin-bottom: 15px;
+}
+

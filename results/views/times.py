@@ -1,5 +1,6 @@
 import csv
 import os
+import tempfile
 from django.http import Http404
 from pprint import pprint
 from rest_framework.views import APIView
@@ -48,26 +49,6 @@ class RaceTimeListView(generics.ListCreateAPIView):
         return queryset
 
 
-# class RaceTimeListView(APIView): # extend the APIView
-
-#     def get(self, request):
-#         race_times = RaceTime.objects.all() # get all the crews
-
-#         paginator = LimitOffsetPagination()
-#         result_page = paginator.paginate_queryset(race_times, request)
-#         serializer = PopulatedRaceTimesSerializer(result_page, many=True, context={'request':request})
-
-#         return Response(serializer.data) # send the JSON to the client
-
-#     def post(self, request):
-#         serializer = PopulatedRaceTimesSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(serializer.data, status=201)
-
-#         return Response(serializer.errors, status=422)
-
-
 class RaceTimeDetailView(APIView):
 
     def get_race_time(self, pk):
@@ -99,143 +80,64 @@ class RaceTimeDetailView(APIView):
         return Response(status=204)
 
 
-class CrewRaceTimesImport(APIView):
-    # Start by deleting all existing times
-
-    def get(self, _request):
-        RaceTime.objects.all().delete()
-        script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
-        rel_path = "../csv/race_times.csv"
-        abs_file_path = os.path.join(script_dir, rel_path)
-
-        with open(abs_file_path, newline='') as f:
-            reader = csv.reader(f)
-            next(reader) # skips the first row
-
-            for row in reader:
-
-                if row:
-                    data = {
-                        'sequence': row[0],
-                        'tap': row[3] or 'Finish',
-                        'time_tap': row[4],
-                        'crew':row[8] or None
-                    }
-                    serializer = WriteRaceTimesSerializer(data=data)
-                    if serializer.is_valid():
-                        serializer.save()
-
-            race_times = RaceTime.objects.all()
-
-            serializer = RaceTimesSerializer(race_times, many=True)
-
-            self.calculate_computed_properties()
-
-            return Response(serializer.data)
-    
-    def calculate_computed_properties(self):
-
-        for crew in Crew.objects.all():
-            crew.raw_time = crew.calc_raw_time()
-            crew.race_time = crew.calc_race_time()
-            crew.published_time = crew.calc_published_time()
-            crew.start_time = crew.calc_start_time()
-            crew.finish_time = crew.calc_finish_time()
-            crew.invalid_time = crew.calc_invalid_time()
-            crew.overall_rank = crew.calc_overall_rank()
-            crew.gender_rank = crew.calc_gender_rank()
-            crew.category_position_time = crew.calc_category_position_time()
-            crew.category_rank = crew.calc_category_rank()
-            crew.start_sequence = crew.calc_start_sequence()
-            crew.finish_sequence = crew.calc_finish_sequence()
-            crew.masters_adjustment = crew.calc_masters_adjustment()
-            crew.requires_recalculation = False
-            crew.save()
-
-
 # Attempt to read in the RaceTimes CSV from the front end
 
-# class RegisterData(APIView):
-#     parser_classes = (FormParser, MultiPartParser)
-
-#     def post(self, request):
-#         RaceTime.objects.all().delete()
-#         for file in request.FILES.values():
-#             print(file)
-#             # with open(file) as csvfile:
-#             reader = csv.reader(file)
-#             next(reader) # skips the first row
-
-#             print(reader)
-#             # reader = csv.reader(file)
-#             objects = []
-#             for row in reader:
-#                 objects.append(RaceTime(
-#                     sequence=row[0],
-#                     tap=row[3] or 'Finish',
-#                     time_tap=row[4],
-#                     crew=row[8] or None
-#                 ))
-#             # RaceTime.objects.bulk_create(objects)
-#             print(objects)
-#         return Response({"success": "Good job, buddy"})
-
-# class RegisterData(APIView):
-#     parser_classes = (FormParser, MultiPartParser)
-
-#     def post(self, request):
-#         RaceTime.objects.all().delete()
-#         for file in request.FILES.values():
-#             reader = csv.reader(file)
-#         print(reader)
-            # next(reader) # skips the first row
-            # objects = []
-            # for row in reader:
-            #     if row:
-            #         data = {
-            #             'sequence': row[0],
-            #             'tap': row[3] or 'Finish',
-            #             'time_tap': row[4],
-            #             'crew':row[8] or None
-            #         }
-
-            # RaceTime.objects.bulk_create(objects)
-        # print(uploaded_file_name)
-        # print(uploaded_file_content)
-
-        # return Response({"success": "Good job, buddy"})
-
 class RegisterData(APIView):
-    parser_classes = (MultiPartParser, FormParser)
-    renderer_classes = [JSONRenderer]
+    parser_classes = (FormParser, MultiPartParser)
 
-    def put(self, request, format=None):
-        if 'file' not in request.data:
-            raise ParseError("Empty content")
-        f = request.data['file']
-        filename = f.name
-        if filename.endswith('.csv'):
-            file = default_storage.save(filename, f)
-            r = csv_file_parser(file)
-            status = 204
-        else:
-            status = 406
-            r = "File format error"
-        return Response(r, status=status)
+    def post(self, request):
+        RaceTime.objects.all().delete()
+        # Convert the InMemoryUploadedFile to a NamedTemporaryFile
+        for csv_upload in request.FILES.values():
+            file_temp = tempfile.NamedTemporaryFile()
+            file_temp.write(csv_upload.read())
+            print(file_temp.name) # This is the path.
 
-def csv_file_parser(file):
-    result_dict = {}
-    with open(file) as csvfile:
-        reader = csv.DictReader(csvfile)
-        next(reader)
-        line_count = 1
-        for rows in reader:
-            for key, value in rows.items():
-                if not value:
-                    raise ParseError('Missing value in file. Check the {} line'.format(line_count))
-            result_dict[line_count] = rows
-            line_count += 1
+            with open(file_temp.name, newline='') as f:
+                reader = csv.reader(f)
+                next(reader) # skips the first row
 
-    
-    return result_dict
+                for row in reader:
+
+                    if row:
+                        data = {
+                            'sequence': row[0],
+                            'tap': row[3] or 'Finish',
+                            'time_tap': row[4],
+                            'crew':row[8] or None
+                        }
+                        serializer = WriteRaceTimesSerializer(data=data)
+                        if serializer.is_valid():
+                            serializer.save()
+
+                race_times = RaceTime.objects.all()
+
+                serializer = RaceTimesSerializer(race_times, many=True)
+
+                self.calculate_computed_properties()
+
+                file_temp.close()
+
+                return Response(serializer.data)
+
+        return Response({"Success!": "CSV imported OK"})
+
+    def calculate_computed_properties(self):
+
+            for crew in Crew.objects.all():
+                crew.raw_time = crew.calc_raw_time()
+                crew.race_time = crew.calc_race_time()
+                crew.published_time = crew.calc_published_time()
+                crew.start_time = crew.calc_start_time()
+                crew.finish_time = crew.calc_finish_time()
+                crew.invalid_time = crew.calc_invalid_time()
+                crew.overall_rank = crew.calc_overall_rank()
+                crew.gender_rank = crew.calc_gender_rank()
+                crew.category_position_time = crew.calc_category_position_time()
+                crew.category_rank = crew.calc_category_rank()
+                crew.start_sequence = crew.calc_start_sequence()
+                crew.finish_sequence = crew.calc_finish_sequence()
+                crew.masters_adjustment = crew.calc_masters_adjustment()
+                crew.requires_recalculation = False
+                crew.save()
 
