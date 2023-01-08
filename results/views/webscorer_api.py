@@ -1,5 +1,9 @@
+import os
 # class RaceTimeDataImport(APIView):
 # # Not finished... attempting to get race time data direct from Webscorer via API
+
+    # User = os.getenv("WEBSCORERUSER")
+    # Password = os.getenv("WEBSCORERPASS")
   
 #     def get(self, _request):
 #         # Start by deleting all existing times
@@ -9,8 +13,8 @@
 #         payload = {
 #             # "raceid":198625,
 #             "raceid":224232,
-#             "EmailAddress":"slp@lawena.org",
-#             "Password":"TimingTeam22",
+#             "EmailAddress":User,
+#             "Password":Password,
 #             "udid": "ffffff75e3bbe75cd7432863a0d8937b396fffff"
 #             }
 
