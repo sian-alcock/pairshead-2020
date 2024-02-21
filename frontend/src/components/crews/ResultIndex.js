@@ -328,12 +328,12 @@ class ResultIndex extends React.Component {
                   <td>{!crew.masters_adjusted_time ? '' : formatTimes(crew.masters_adjusted_time)}</td>
                   <td>{getImage(crew)}</td>
                   <td>{crew.club.name}</td>
-                  <td>{crew.competitor_names}</td>
+                  <td>{!crew.competitor_names ? crew.name : crew.competitor_names }</td>
                   <td>{crew.composite_code}</td>
                   <td>{crew.event_band}</td>
                   <td>{!crew.category_rank ? '' : crew.category_rank} </td>
-                  <td>{crew.category_rank === 1 ? <Img src="http://www.bblrc.co.uk/wp-content/uploads/2021/09/pennant-ph80.png" width="20px" />  : ''} </td>
-                  <td>{crew.overall_rank === 1 || crew.published_time === this.state.fastestFemale2x || crew.published_time === this.state.fastestFemaleSweep || crew.published_time === this.state.fastestMixed2x ? <Img src="http://www.bblrc.co.uk/wp-content/uploads/2021/09/trophy-ph80.png" width="20px" />  : ''} </td>
+                  <td>{crew.category_rank === 1 ? <Img src="https://www.bblrc.co.uk/wp-content/uploads/2023/10/pennant_PH-2.jpg" width="20px" />  : ''} </td>
+                  <td>{crew.overall_rank === 1 || crew.published_time === this.state.fastestFemale2x || crew.published_time === this.state.fastestFemaleSweep || crew.published_time === this.state.fastestMixed2x ? <Img src="https://www.bblrc.co.uk/wp-content/uploads/2023/10/trophy_PH-2.jpg" width="20px" />  : ''} </td>
                   <td>{this.getTopCrews(crew.event_band, this.state.crews) && this.state.closeFirstAndSecondCrewsBoolean ? '❓' : ''}</td>
                   <td>{crew.penalty ? 'P' : ''}</td>
                   <td>{crew.time_only ? 'TO' : ''}</td>

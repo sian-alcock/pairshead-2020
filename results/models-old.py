@@ -16,7 +16,7 @@ class Event(models.Model):
     info = models.CharField(max_length=30, blank=True, null=True)
     type = models.CharField(max_length=30, blank=True, null=True)
     gender = models.CharField(max_length=20, blank=True, null=True)
-
+            
 class Band(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=30)
@@ -31,6 +31,8 @@ class Crew(models.Model):
     composite_code = models.CharField(max_length=10, blank=True, null=True)
     club = models.ForeignKey(Club, related_name='crews',
     on_delete=models.CASCADE)
+    host_club = models.ForeignKey(Club, related_name='hosted_crews',
+    on_delete=models.SET_NULL, blank=True, null=True, default=None)
     rowing_CRI = models.IntegerField(blank=True, null=True)
     sculling_CRI = models.IntegerField(blank=True, null=True)
     event = models.ForeignKey(Event, related_name='crews',
@@ -49,6 +51,14 @@ class Crew(models.Model):
     disqualified = models.BooleanField(default=False)
     requires_recalculation = models.BooleanField(default=False)
 
+    # The following fields are only populated to run the On the day contact report
+    # Importing for the results will set these to null
+    otd_contact = models.CharField(max_length=50, blank=True, null=True)
+    otd_home_phone = models.CharField(max_length=20, blank=True, null=True)
+    otd_mobile_phone = models.CharField(max_length=20, blank=True, null=True)
+    otd_work_phone = models.CharField(max_length=20, blank=True, null=True)
+
+
     # Calculated fields
     event_band = models.CharField(max_length=40, null=True)
     raw_time = models.IntegerField(blank=True, null=True)
@@ -64,6 +74,9 @@ class Crew(models.Model):
     invalid_time = models.IntegerField(blank=True, null=True)
     start_sequence = models.IntegerField(blank=True, null=True)
     finish_sequence = models.IntegerField(blank=True, null=True)
+    draw_start_score = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=4)
+    calculated_start_order = models.IntegerField(blank=True, null=True)
+
 
     def __str__(self):
         return self.name
@@ -265,16 +278,16 @@ class Crew(models.Model):
             fastest_female_scull = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
             fastest_female_sweep = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time')) or 0
             fastest_mixed_scull = Crew.objects.all().filter(event_band__startswith='Mx', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
-            print('Fastest men scull')
-            print(fastest_men_scull)
-            print('Fastest men sweep')
-            print(fastest_men_sweep)
-            print('Fastest female scull')
-            print(fastest_female_scull)
-            print('Fastest female sweep')
-            print(fastest_female_sweep)
-            print('Fastest mixed scull')
-            print(fastest_mixed_scull)
+            # print('Fastest men scull')
+            # print(fastest_men_scull)
+            # print('Fastest men sweep')
+            # print(fastest_men_sweep)
+            # print('Fastest female scull')
+            # print(fastest_female_scull)
+            # print('Fastest female sweep')
+            # print(fastest_female_sweep)
+            # print('Fastest mixed scull')
+            # print(fastest_mixed_scull)
 
             # Mens 2x (scull)
             if fastest_men_scull['raw_time__min'] is not None and self.event.gender == 'Open' and '2x' in self.event_original.first().event_original:
@@ -324,6 +337,54 @@ class Crew(models.Model):
 
         else:
             return 0
+        
+# Calculate the draw start score (event order plus rowing / sculling CRI as appropriate)
+
+    def save(self, *args, **kwargs):
+        self.draw_start_score = self.calc_draw_start_score()
+        super(Crew, self).save(*args, **kwargs)
+    
+    def calc_draw_start_score(self):
+        if not EventOrder.objects.filter(event_order=1).exists():
+            return None
+        if not self.event_band:
+            return None
+        if '2x' in self.event_band:
+            crewsWithHigherScullingCRIInCategory = Crew.objects.all().filter(status__exact='Accepted', event_band__exact=self.event_band, sculling_CRI__gt=self.sculling_CRI)
+            row_score = (len(crewsWithHigherScullingCRIInCategory) + 1) / 1000
+        elif '2-' in self.event_band:
+            crewsWithHigherRowingCRIInCategory = Crew.objects.all().filter(status__exact='Accepted', event_band__exact=self.event_band, rowing_CRI__gt=self.rowing_CRI)
+            row_score = (len(crewsWithHigherRowingCRIInCategory) + 1) / 1000
+            
+        try:
+            draw_start_score = EventOrder.objects.get(event=self.event_band).event_order + row_score
+        except EventOrder.DoesNotExist:
+            draw_start_score = 0
+        return draw_start_score
+    
+# Calculate the draw start order
+    def save(self, *args, **kwargs):
+        self.calculated_start_order = self.calc_calculated_start_order()
+        super(Crew, self).save(*args, **kwargs)
+    
+    def calc_calculated_start_order(self):
+        if not self.draw_start_score or self.draw_start_score == 0 or self.draw_start_score == None:
+            return 9999999
+
+        crews_with_lower_score = Crew.objects.all().filter(status__exact='Accepted', draw_start_score__gt=0, draw_start_score__lt=self.draw_start_score)
+        crews_with_same_score = Crew.objects.all().filter(status__exact='Accepted', draw_start_score__gt=0, draw_start_score=self.draw_start_score).order_by('name')
+        
+        if crews_with_same_score.exists() and len(crews_with_same_score) > 1:
+            position = len(crews_with_lower_score) + 1 + list(crews_with_same_score).index(self)
+        else:
+            position = len(crews_with_lower_score) + 1
+        
+        return position
+
+# Look up the event order number
+    @property
+    def event_order(self):
+        return EventOrder.objects.get(event=self.event_band).event_order
 
 # Add the masters adjusted time into adjusted time
     @property
@@ -333,6 +394,24 @@ class Crew(models.Model):
 
         adjusted_time = self.race_time - self.masters_adjustment
         return adjusted_time
+
+# Look up marshalling division
+    @property
+    def marshalling_division(self):
+        bib = self.bib_number
+        if bib:
+            return MarshallingDivision.objects.get(bottom_range__lte=bib, top_range__gte=bib).name
+        elif self.calculated_start_order:
+            return MarshallingDivision.objects.get(bottom_range__lte=self.calculated_start_order, top_range__gte=self.calculated_start_order).name
+
+# Look up number location
+    @property
+    def number_location(self):
+        club_name = self.host_club.name
+        if club_name == 'Unknown':
+            return Club.objects.get(id=289).name
+        return NumberLocation.objects.get(club__exact=club_name).number_location
+
 
 
 class Competitor(models.Model):
@@ -360,3 +439,24 @@ class OriginalEventCategory(models.Model):
     crew = models.ForeignKey(Crew, related_name='event_original',
     on_delete=models.SET_NULL, blank=True, null=True,)
     event_original = models.CharField(max_length=30)
+
+class EventOrder(models.Model):
+    event=models.CharField(max_length=40)
+    event_order=models.IntegerField()
+
+class MarshallingDivision(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=50)
+    bottom_range=models.IntegerField()
+    top_range=models.IntegerField()
+
+class NumberLocation(models.Model):
+    id = models.IntegerField(primary_key=True)
+    club = models.CharField(max_length=50)
+    number_location=models.CharField(max_length=50)
+
+class EventMeetingKey(models.Model):
+    id = models.IntegerField(primary_key=True)
+    event_meeting_key = models.CharField(max_length=50)
+    event_meeting_name = models.CharField(max_length=50)
+    current_event_meeting=models.BooleanField(default=False)

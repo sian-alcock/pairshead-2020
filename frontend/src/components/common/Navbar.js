@@ -51,7 +51,6 @@ class Navbar extends React.Component {
             <div className={`navbar-menu ${this.state.navbarOpen ? 'is-active' : ''}`}>
               <div className="navbar-start">
                 {Auth.isAuthenticated() && <Link to="/summary" className="navbar-item">Summary</Link>}
-                {Auth.isAuthenticated() && <Link to="/events" className="navbar-item">Events</Link>}
                 {Auth.isAuthenticated() && <Link to="/crews" className="navbar-item">All crews</Link>}
                 {Auth.isAuthenticated() && <Link to="/race-times" className="navbar-item">Race times</Link>}
                 {Auth.isAuthenticated() && <Link to="/results" className="navbar-item">Results</Link>}
@@ -59,7 +58,8 @@ class Navbar extends React.Component {
                 {Auth.isAuthenticated() && <Link to="/export" className="navbar-item">Export data</Link>}
               </div>
               <div className="navbar-end">
-                {Auth.isAuthenticated() && <Link to="/crew-draw-report" className="navbar-item">Draw</Link>}
+                {Auth.isAuthenticated() && <Link to="/draw-menu" className="navbar-item">Draw</Link>}
+                {Auth.isAuthenticated() && <Link to="/generate-start-order" className="navbar-item">Generate start order</Link>}
                 {Auth.isAuthenticated() && <Link to="/info" className="navbar-item">Info</Link>}
                 {Auth.isAuthenticated() && <Link to="/register" className="navbar-item">Register</Link>}
                 {!Auth.isAuthenticated() && <Link to="/login" className="navbar-item">Log in</Link>}

@@ -18,43 +18,13 @@ class ImportData extends React.Component {
         <div className="container">
           <section className="section-has-lines">
             <div className="text-container has-text-left">
-              <h2 className="title is-2">Get data from BROE</h2>
-              <p className="left">Import data from BROE via the api</p>
+              <h2 className="title is-2">Get data from British Rowing</h2>
+              <p className="left">Import data from British Rowing via the api</p>
             </div>
-            <div className="columns">
-              <div className="column is-one-quarter">
-                <BROELoader/>
-              </div>
-              <div className="column left">
-                Fetch the club, event data from British Rowing.  Note:  Data is deleted before importing.
-              </div>
-            </div>
+            <BROELoader
+              importPersonalData={false}
+            />
 
-            <div className="columns">
-              <div className="column is-one-quarter">
-                <DataLoader
-                  url='/api/crew-data-import'
-                  buttonText='Get crew data'
-                  class='single-height-button'
-                />
-              </div>
-              <div className="column left">
-                Import crew data from BROE.
-              </div>
-            </div>
-
-            <div className="columns">
-              <div className="column is-one-quarter">
-                <DataLoader
-                  url='/api/competitor-data-import'
-                  buttonText='Get competitor data'
-                  class='single-height-button'
-                />
-              </div>
-              <div className="column left">
-                Import competitor data from BROE.
-              </div>
-            </div>
           </section>
 
           <section className="section-has-lines">

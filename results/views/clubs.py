@@ -6,7 +6,7 @@ from rest_framework.response import Response
 
 from ..serializers import WriteClubSerializer, ClubSerializer
 
-from ..models import Club
+from ..models import Club, EventMeetingKey
 
 class ClubListView(APIView): # extend the APIView
 
@@ -22,7 +22,8 @@ class ClubDataImport(APIView):
         # Start by deleting all existing clubs
         Club.objects.all().delete()
 
-        Meeting = os.getenv("MEETING2022") # Competition Meeting API
+        Meeting = EventMeetingKey.objects.get(current_event_meeting=True).event_meeting_key
+
         UserAPI = os.getenv("USERAPI") # As supplied in email
         UserAuth = os.getenv("USERAUTH") # As supplied in email
 

@@ -6,3 +6,7 @@ from .events import *
 from .times import *
 from .results import *
 from .masters_adjustments import *
+from .event_order import *
+from .marshalling_division import *
+from .number_location import *
+from .event_meeting_key import *

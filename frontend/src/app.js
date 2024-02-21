@@ -16,11 +16,18 @@ import RaceTimeEdit from './components/crews/RaceTimeEdit'
 import ResultIndex from './components/crews/ResultIndex'
 import ImportData from './components/crews/ImportData'
 import ExportData from './components/crews/ExportData'
+import DrawMenu from './components/crews/DrawMenu'
 import CrewDrawReport from './components/crews/CrewDrawReport'
-import Events from './components/crews/Events'
+import CrewStartOrder from './components/crews/CrewStartOrder'
+import GenerateStartOrder from './components/crews/GenerateStartOrder'
+import CrewStartByHostClub from './components/crews/CrewStartByHostClub'
+import ContactDetailReport from './components/crews/CrewJuniorContactDetails'
 import Navbar from './components/common/Navbar'
 import Footer from './components/common/Footer'
 import Header from './components/common/Header'
+import EventKeys from './components/events/EventKeys'
+import EventKeyEdit from './components/events/EventKeyEdit'
+import EventKeyNew from './components/events/EventKeyNew'
 
 
 // import 'react-toastify/dist/ReactToastify.css'
@@ -43,11 +50,18 @@ class App extends React.Component {
             <Route path="/crews" component={CrewIndex} />
             <Route path="/race-times/:id" component={RaceTimeEdit} />
             <Route path="/race-times" component={RaceTimeIndex} />
-            <Route path="/events" component={Events} />
             <Route path="/summary" component={Home} />
+            <Route path="/keys/new" component={EventKeyNew} />
+            <Route path="/keys/:id" component={EventKeyEdit} />
+            <Route path="/keys" component={EventKeys} />
             <Route path="/import" component={ImportData} />
             <Route path="/export" component={ExportData} />
+            <Route path="/draw-menu" component={DrawMenu} />
             <Route path="/crew-draw-report" component={CrewDrawReport} />
+            <Route path="/crew-on-the-day-contact" component={ContactDetailReport} />
+            <Route path="/generate-start-order" component={GenerateStartOrder} />
+            <Route path="/crew-start-order" component={CrewStartOrder} />
+            <Route path="/crew-start-order-by-host" component={CrewStartByHostClub} />
             <Route path="/info" component={Info} />
             <Route path="/register" component={Register} />
             <Route path="/login" component={Login} />

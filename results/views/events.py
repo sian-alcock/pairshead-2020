@@ -1,5 +1,7 @@
 import os
+import csv
 import requests
+from django.http import Http404, HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Count
@@ -7,7 +9,7 @@ from django.db.models import Count
 
 from ..serializers import EventSerializer, PopulatedEventSerializer
 
-from ..models import Event, Crew
+from ..models import Event, EventMeetingKey
 
 class EventListView(APIView): # extend the APIView
 
@@ -23,8 +25,8 @@ class EventDataImport(APIView):
         # Start by deleting all existing events
         Event.objects.all().delete()
 
+        Meeting = EventMeetingKey.objects.get(current_event_meeting=True).event_meeting_key
 
-        Meeting = os.getenv("MEETING2022") # Competition Meeting API
         UserAPI = os.getenv("USERAPI") # As supplied in email
         UserAuth = os.getenv("USERAUTH") # As supplied in email
 
@@ -55,3 +57,4 @@ class EventDataImport(APIView):
             return Response(serializer.data)
 
         return Response(status=400)
+    

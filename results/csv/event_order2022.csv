@@ -1,0 +1,55 @@
+event,order
+Op MasD 2x,1
+Op MasE 2x Championship,2
+Op MasE 2x Club,3
+Op MasF 2x,4
+Op MasG 2x,5
+Op MasH 2x,6
+Mx MasD 2x,7
+Mx MasE 2x,8
+Mx MasF/G 2x,9
+Op MasD 2-,10
+Op MasE 2-,11
+Op MasF 2-,12
+W MasD 2x,13
+W MasE 2x,14
+W MasF 2x,15
+W MasG/H 2x,16
+Op MasG/H 2-,17
+Op MasH/I 2x,18
+W MasD 2-,19
+W MasE/F 2-,20
+Supported Adaptive Op 2-,21
+W Supported Adaptive 2-,22
+Op 2x Championship,23
+Op 2x Intermediate,24
+Op Lwt 2x,25
+Op 2x Club,26
+Op 2- Championship,27
+Op 2- Intermediate,28
+Op 2- Club,29
+Op J18 2-,30
+Op J18 2x,31
+Op J16 2x,32
+Mx 2x,33
+W 2x Championship,34
+Op MasB 2x,35
+Op MasC 2x,36
+Op MasB 2-,37
+Op MasC 2-,38
+Mx MasB 2x,39
+Mx MasC 2x,40
+W 2x Intermediate,41
+W Lwt 2x,42
+W 2x Club,43
+W MasB 2x,44
+W MasC 2x Championship,45
+W MasC 2x Club,46
+W 2- Championship,47
+W 2- Intermediate,48
+W 2- Club,49
+W MasB 2-,50
+W MasC 2-,51
+W J18 2x,52
+W J18 2-,53
+W J16 2x,54

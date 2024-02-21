@@ -8,7 +8,7 @@ from rest_framework.response import Response
 
 from ..serializers import CompetitorSerializer, CompetitorExportSerializer
 
-from ..models import Competitor, Crew
+from ..models import Competitor, Crew, EventMeetingKey
 
 class CompetitorDataImport(APIView):
 
@@ -16,7 +16,8 @@ class CompetitorDataImport(APIView):
         # Start by deleting all existing competitors
         Competitor.objects.all().delete()
 
-        Meeting = os.getenv("MEETING2022") # Competition Meeting API from the Information --> API Key menu
+        Meeting = EventMeetingKey.objects.get(current_event_meeting=True).event_meeting_key
+
         UserAPI = os.getenv("USERAPI") # As supplied in email
         UserAuth = os.getenv("USERAUTH") # As supplied in email
 

@@ -3,10 +3,9 @@ import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-
 from ..serializers import  BandSerializer, PopulatedBandSerializer
 
-from ..models import Band
+from ..models import Band, EventMeetingKey
 
 class BandListView(APIView): # used to populate the pulldown on the CrewTimeEdit page
 
@@ -22,8 +21,8 @@ class BandDataImport(APIView):
         # Start by deleting all existing bands
         Band.objects.all().delete()
 
+        Meeting = EventMeetingKey.objects.get(current_event_meeting=True).event_meeting_key
 
-        Meeting = os.getenv("MEETING2022") # Competition Meeting API
         UserAPI = os.getenv("USERAPI") # As supplied in email
         UserAuth = os.getenv("USERAUTH") # As supplied in email
 

@@ -7,7 +7,7 @@ import Paginator from '../common/Paginator'
 import PageTotals from '../common/PageTotals'
 
 
-class CrewDrawReport extends React.Component {
+class CrewStartOrder extends React.Component {
   constructor() {
     super()
     this.state = {
@@ -18,8 +18,6 @@ class CrewDrawReport extends React.Component {
     this.changePage = this.changePage.bind(this)
     this.refreshData = this.refreshData.bind(this)
     this.handlePagingChange = this.handlePagingChange.bind(this)
-
-
   }
 
   componentDidMount() {
@@ -27,17 +25,17 @@ class CrewDrawReport extends React.Component {
       params: {
         page_size: 500,
         page: 1,
-        order: 'bib_number',
-        status: ['Accepted', 'Scratched']
+        order: 'start-score',
+        status: 'Accepted'
       }
     })
       .then(res => this.setState({ 
-        totalCrews: res.data['count'],
-        crews: res.data['results'],
-        scratchedCrews: res.data['num_scratched_crews'],
-        acceptedCrewsNoStart: res.data['num_accepted_crews_no_start_time'],
-        acceptedCrewsNoFinish: res.data['num_accepted_crews_no_finish_time'],
-        crewsInvalidTimes: res.data['num_accepted_crews_invalid_time']
+        // totalCrews: res.data['count'],
+        crews: res.data['results']
+        // scratchedCrews: res.data['num_scratched_crews'],
+        // acceptedCrewsNoStart: res.data['num_accepted_crews_no_start_time'],
+        // acceptedCrewsNoFinish: res.data['num_accepted_crews_no_finish_time'],
+        // crewsInvalidTimes: res.data['num_accepted_crews_invalid_time']
       })
       )
   }
@@ -56,14 +54,12 @@ class CrewDrawReport extends React.Component {
 
       params: {
         page_size: this.state.pageSize,
-        page: this.state.pageNumber,
-        status: this.state.scratchedCrewsBoolean ? 'Accepted' : ['Accepted', 'Scratched']
+        page: this.state.pageNumber
       }
     })
       .then(res => this.setState({
         totalCrews: res.data['count'],
         crews: res.data['results'],
-        scratchedCrews: res.data['num_scratched_crews'],
         loading: false
       })
       )
@@ -147,6 +143,14 @@ class CrewDrawReport extends React.Component {
                 <td>Bib</td>
                 <td>Club</td>
                 <td>Category</td>
+                <td>Event order</td>
+                <td>Sculling CRI</td>
+                <td>Rowing CRI</td>
+                <td>Start score</td>
+                <td>Start order</td>
+                <td>Host club</td>
+                <td>Number location</td>
+                <td>Marshalling division</td>
               </tr>
             </thead>
             <tfoot className="no-print">
@@ -158,6 +162,14 @@ class CrewDrawReport extends React.Component {
                 <td>Bib</td>
                 <td>Club</td>
                 <td>Category</td>
+                <td>Event order</td>
+                <td>Sculling CRI</td>
+                <td>Rowing CRI</td>
+                <td>Start score</td>
+                <td>Start order</td>
+                <td>Host club</td>
+                <td>Number location</td>
+                <td>Marshalling division</td>
               </tr>
             </tfoot>
             <tbody>
@@ -170,6 +182,14 @@ class CrewDrawReport extends React.Component {
                   <td>{!crew.bib_number ? '' : crew.bib_number}</td>
                   <td>{crew.club.index_code}</td>
                   <td>{crew.event_band}</td>
+                  <td>{crew.event_order}</td>
+                  <td>{crew.sculling_CRI}</td>
+                  <td>{crew.rowing_CRI}</td>
+                  <td>{crew.draw_start_score}</td>
+                  <td>{crew.calculated_start_order}</td>
+                  <td>{crew.host_club.name === 'Unknown club' ? `⚠️ ${crew.host_club.name}` : crew.host_club.name}</td>
+                  <td>{crew.number_location}</td>
+                  <td>{crew.marshalling_division}</td>
                 </tr>
               )}
             </tbody>
@@ -189,4 +209,4 @@ class CrewDrawReport extends React.Component {
   }
 }
 
-export default CrewDrawReport
+export default CrewStartOrder

@@ -1,5 +1,6 @@
 from __future__ import absolute_import
 import csv
+import datetime
 import os
 import requests
 import time
@@ -15,41 +16,96 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from ..serializers import CrewSerializer, PopulatedCrewSerializer, WriteCrewSerializer, CrewExportSerializer
 
-from ..models import Crew, RaceTime, OriginalEventCategory
+from ..models import Crew, RaceTime, OriginalEventCategory, EventMeetingKey
 
 from ..pagination import CrewPaginationWithAggregates
 
 class CrewListView(generics.ListCreateAPIView):
-    queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted'))
+    queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted', 'Submitted'))
     serializer_class = PopulatedCrewSerializer
     pagination_class = CrewPaginationWithAggregates
     PageNumberPagination.page_size_query_param = 'page_size' or 10
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
     ordering_fields = '__all__'
-    search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number', 'competitor_names', ]
-    filterset_fields = ['status', 'event_band', 'start_time', 'finish_time', 'invalid_time', ]
+    search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number',]
+    filterset_fields = ['status', 'event_band', 'start_time', 'finish_time', 'invalid_time',]
 
     def get_queryset(self):
 
-        queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted'))
+        queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted', 'Submitted'))
 
         masters = self.request.query_params.get('masters')
-        print(masters)
+        # print(masters)
         if masters == 'true':
             queryset = queryset.filter(status__exact='Accepted', masters_adjustment__gt=0).order_by('event_band')
             return queryset
 
         order = self.request.query_params.get('order', None)
-        if order == 'crew':
-            return queryset.order_by('competitor_names', 'name',)
-        if order == '-crew':
-            return queryset.order_by('-competitor_names', '-name',)
+        if order == 'start-score':
+            return queryset.order_by('draw_start_score')
+        if order == 'club':
+            return queryset.order_by('club__name', 'name',)
+        # if order == 'crew':
+        #     return queryset.order_by('competitor_names', 'name',)
+        # if order == '-crew':
+        #     return queryset.order_by('-competitor_names', '-name',)
         if order is not None:
             return queryset.order_by(order)
         return queryset.order_by('bib_number')
 
     def get_num_scratched_crews(self):
         return len(self.queryset.filter(status__exact='Scratched'))
+    
+class CrewGetEventBand(APIView):
+    def get(self, _request):
+        crews = Crew.objects.filter(status__exact='Accepted') # get all the Accepted crews
+        serializer = CrewSerializer(crews, many=True)
+        self.get_event_band(crews)
+        return Response(serializer.data) # send the JSON to the client
+    
+    def get_event_band(self, crews):
+        # Get event band for all crews
+        for crew in crews:
+            crew.event_band = crew.calc_event_band()
+            crew.save()
+
+class CrewGetStartScore(APIView):
+    def get(self, _request):
+        crews = Crew.objects.filter(status__exact='Accepted') # get all the Accepted crews
+        serializer = CrewSerializer(crews, many=True)
+        self.get_start_score(crews)
+        return Response(serializer.data) # send the JSON to the client
+    
+    def get_start_score(self, crews):
+        # Recalculate rankings for all crews
+        for crew in crews:
+            crew.draw_start_score = crew.calc_draw_start_score()
+            crew.save()
+
+class CrewGetStartOrder(APIView):
+    def get(self, _request):
+        crews = Crew.objects.filter(status__exact='Accepted') # get all the Accepted crews
+        serializer = CrewSerializer(crews, many=True)
+        self.update_start_order(crews)
+        return Response(serializer.data) # send the JSON to the client
+
+    def update_start_order(self, crews):
+        # Add the start order
+
+        for crew in crews:
+            crew.calculated_start_order = crew.calc_calculated_start_order()
+            crew.save()
+
+class CheckStartOrderUnique(APIView):
+    def get(self, _request):
+        crews = Crew.objects.filter(status__exact='Accepted')
+        crews_with_unique_start_order = set(Crew.objects.filter(status__exact='Accepted').values_list('calculated_start_order'))
+
+        if len(crews) != len(crews_with_unique_start_order):
+            return Response('There are Accepted crews that do not have a unique start order')
+        else:
+            return Response('The start order is unique amongst accepted crews')
+
 
 class CrewUpdateRankings(APIView): 
     def get(self, _request):
@@ -86,13 +142,14 @@ class CrewDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 class CrewDataImport(APIView):
 
-    def get(self, _request):
+    def get(self, _request, personal=0):
         # Start by deleting all existing crews and times
         Crew.objects.all().delete()
         RaceTime.objects.all().delete()
         OriginalEventCategory.objects.all().delete()
 
-        Meeting = os.getenv("MEETING2022") # Competition Meeting API from the Information --> API Key menu
+        Meeting = EventMeetingKey.objects.get(current_event_meeting=True).event_meeting_key
+
         UserAPI = os.getenv("USERAPI") # As supplied in email
         UserAuth = os.getenv("USERAUTH") # As supplied in email
 
@@ -107,18 +164,40 @@ class CrewDataImport(APIView):
 
             for crew in r.json()['crews']:
 
-                data = {
-                    'name': crew['name'],
-                    'id': crew['id'],
-                    'composite_code': crew['compositeCode'],
-                    'club': crew['clubId'],
-                    'rowing_CRI': crew['rowingCRI'],
-                    'sculling_CRI': crew['scullingCRI'],
-                    'event': crew['eventId'],
-                    'status': crew['status'],
-                    'bib_number': crew['customCrewNumber'],
-                    'band': crew['bandId'],
-                }
+                if personal > 0:
+
+                    data = {
+                        'name': crew['name'],
+                        'id': crew['id'],
+                        'composite_code': crew['compositeCode'],
+                        'club': crew['clubId'],
+                        'rowing_CRI': crew['rowingCRI'],
+                        'sculling_CRI': crew['scullingCRI'],
+                        'event': crew['eventId'],
+                        'status': crew['status'],
+                        'bib_number': crew['customCrewNumber'],
+                        'band': crew['bandId'],
+                        'host_club': crew['boatingPermissionsClubID'] or 999999,
+                        'otd_contact': crew['competitionContactName'],
+                        'otd_home_phone': crew['competitionContactHomePhone'],
+                        'otd_mobile_phone': crew['competitionContactMobilePhone'],
+                        'otd_work_phone': crew['competitionContactWorkPhone'],
+                    }
+
+                else:
+                    data = {
+                        'name': crew['name'],
+                        'id': crew['id'],
+                        'composite_code': crew['compositeCode'],
+                        'club': crew['clubId'],
+                        'rowing_CRI': crew['rowingCRI'],
+                        'sculling_CRI': crew['scullingCRI'],
+                        'event': crew['eventId'],
+                        'status': crew['status'],
+                        'bib_number': crew['customCrewNumber'],
+                        'band': crew['bandId'],
+                        'host_club': crew['boatingPermissionsClubID'] or 999999
+                    }
 
                 serializer = WriteCrewSerializer(data=data)
                 serializer.is_valid(raise_exception=True)
@@ -133,10 +212,11 @@ class CrewDataImport(APIView):
 class CrewDataExport(APIView):
     def get(self, _request):
 
+        filename = 'crewdataforimporttobroe - ' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M.csv")
+
         crews = Crew.objects.filter(status__exact='Accepted')
         response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="crewdata.csv"'
-
+        response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
         writer = csv.writer(response, delimiter=',')
         writer.writerow(['Crew ID', 'Event ID', 'Event', 'Band', 'Division', 'Crew Name', 'Crew Club', 'Position In Event', 'Raw Time', 'Time', 'Status',])
 
@@ -203,5 +283,165 @@ class CrewDataExport(APIView):
             race_time,
             status
             ])
+
+        return response
+    
+
+class BibDataExport(APIView):
+    def get(self, _request):
+        filename = 'bibdata - ' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M.csv")
+
+        crews = Crew.objects.filter(status__exact='Accepted')
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
+
+        writer = csv.writer(response, delimiter=',')
+        writer.writerow(['Crew ID', 'Bib',])
+
+
+        for crew in crews:
+
+            writer.writerow(
+            [
+                crew.id,
+                crew.name,
+                crew.calculated_start_order,
+            ])
+
+        return response
+    
+class StartOrderDataExport(APIView):
+    def get(self, _request):
+        filename = 'startorderdata - ' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M.csv")
+
+        crews = Crew.objects.filter(status__exact=['Accepted']).order_by('calculated_start_order')
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
+
+        writer = csv.writer(response, delimiter=',')
+        writer.writerow(['Crew No', 'Division', 'Category', 'Club', 'Club code', 'ComCode', 'Crew', 'Host club', 'Number location', ])
+
+
+        for crew in crews:
+
+            if crew.competitor_names is None:
+                crew_name = crew.name
+            else:
+                crew_name = crew.competitor_names
+
+
+            writer.writerow(
+            [
+                crew.calculated_start_order,
+                crew.marshalling_division,
+                crew.event_band,
+                crew.club.name,
+                crew.club.index_code,
+                crew.composite_code,
+                crew_name,
+                crew.host_club.name,
+                crew.number_location,
+            ])
+
+        return response
+    
+class CrewStartOrderDataExport(APIView):
+    def get(self, _request):
+
+        crews = Crew.objects.filter(status__in=['Accepted', 'Scratched']).order_by('bib_number')
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="crewstartorderdata.csv"'
+
+        writer = csv.writer(response, delimiter=',')
+        writer.writerow(['Bib', 'Crew No', 'Crew', 'Club name', 'Club code', 'Event band'])
+
+
+        for crew in crews:
+
+            if crew.competitor_names is None:
+                crew_name = crew.name
+            else:
+                crew_name = crew.competitor_names
+
+
+            writer.writerow(
+            [
+                crew.bib_number,
+                crew.id,
+                crew.status,
+                crew_name,
+                crew.club.name,
+                crew.club.index_code,
+                crew.event_band,
+            ])
+
+        return response
+    
+class CrewWebScorerDataExport (APIView):
+    def get(self, _request):
+
+        filename = 'webscorerdata - ' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M.csv")
+
+        crews = Crew.objects.filter(status__exact='Accepted').order_by('bib_number')
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
+
+        writer = csv.writer(response, delimiter=',')
+        writer.writerow(['Name', 'Team name', 'Team name 2', 'Category', 'Bib', 'Info 1'])
+
+
+        for crew in crews:
+
+            if crew.competitor_names is None:
+                crew_name = crew.club.index_code + ' - ' + crew.name
+            else:
+                crew_name = crew.club.index_code +  ' - ' + crew.competitor_names.rsplit('/', 1)[-1]
+
+
+            writer.writerow(
+            [
+                crew_name,
+                crew.club.name,
+                crew.id,
+                crew.event_band,
+                crew.bib_number,
+                crew.status,
+            ])
+
+        return response
+
+class CreateEventOrderTemplate(APIView):
+    def get(self, _request):
+
+        filename = 'eventordertemplate - ' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M.csv")
+
+        crews = Crew.objects.filter(status__exact='Accepted')
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
+
+        writer = csv.writer(response, delimiter=',')
+        writer.writerow(['Event', 'Order' ])
+
+        unique_event_bands = []
+        for crew in crews:
+            print(crew.id)
+            crew.event_band=crew.calc_event_band()
+            crew.save()
+
+        for crew in crews:
+
+            if crew.event_band not in unique_event_bands:
+                unique_event_bands.append(crew.event_band)
+
+                # print(unique_event_bands)
+
+        for event in unique_event_bands:
+            writer.writerow(
+                [
+                    event,
+                    ''
+
+                ])
+            # print(event)
 
         return response

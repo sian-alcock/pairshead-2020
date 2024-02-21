@@ -30,6 +30,7 @@ class MastersAdjustmentsImport(APIView):
                 for row in reader:
 
                     if row:
+                        
                         data = {
                             'standard_time_label': row[0],
                             'standard_time_ms': row[1],
@@ -37,7 +38,7 @@ class MastersAdjustmentsImport(APIView):
                             'master_time_adjustment_ms':row[3]
                         }
                         serializer = WriteMastersAdjustmentSerializer(data=data)
-                        if serializer.is_valid():
+                        if serializer.is_valid(raise_exception=True):
                             serializer.save()
 
                 masters_adjustments = MastersAdjustment.objects.all()
