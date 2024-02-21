@@ -55,7 +55,7 @@ const EventKeys = () => {
                 </tr>
               </tfoot>
               <tbody>
-                {data['results'].map(key =>
+                {data['results'].length > 0 && data['results'].map(key =>
                   <tr key={key.id}>
                     <td><Link to={`/keys/${key.id}`}>{key.id}</Link></td>
                     <td>{key.event_meeting_name}</td>
