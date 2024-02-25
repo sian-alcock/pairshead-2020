@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 
 
 import { HashRouter, Route, Switch } from 'react-router-dom'
-// import { ToastContainer } from 'react-toastify'
+import SecureRoute from './components/common/SecureRoute'
 
 import Home from './components/pages/Home'
 import Info from './components/pages/Info'
@@ -30,7 +30,6 @@ import EventKeyEdit from './components/events/EventKeyEdit'
 import EventKeyNew from './components/events/EventKeyNew'
 
 
-// import 'react-toastify/dist/ReactToastify.css'
 import '@fortawesome/fontawesome-free/js/all.js'
 import 'bulma'
 import './style.scss'
@@ -46,24 +45,24 @@ class App extends React.Component {
           <Header />
           <Navbar />
           <Switch>
-            <Route path="/crews/:id" component={CrewTimeEdit} />
-            <Route path="/crews" component={CrewIndex} />
-            <Route path="/race-times/:id" component={RaceTimeEdit} />
-            <Route path="/race-times" component={RaceTimeIndex} />
-            <Route path="/summary" component={Home} />
-            <Route path="/keys/new" component={EventKeyNew} />
-            <Route path="/keys/:id" component={EventKeyEdit} />
-            <Route path="/keys" component={EventKeys} />
-            <Route path="/import" component={ImportData} />
-            <Route path="/export" component={ExportData} />
-            <Route path="/draw-menu" component={DrawMenu} />
-            <Route path="/crew-draw-report" component={CrewDrawReport} />
-            <Route path="/crew-on-the-day-contact" component={ContactDetailReport} />
-            <Route path="/generate-start-order" component={GenerateStartOrder} />
-            <Route path="/crew-start-order" component={CrewStartOrder} />
-            <Route path="/crew-start-order-by-host" component={CrewStartByHostClub} />
-            <Route path="/info" component={Info} />
-            <Route path="/register" component={Register} />
+            <SecureRoute path="/crews/:id" component={CrewTimeEdit} />
+            <SecureRoute path="/crews" component={CrewIndex} />
+            <SecureRoute path="/race-times/:id" component={RaceTimeEdit} />
+            <SecureRoute path="/race-times" component={RaceTimeIndex} />
+            <SecureRoute path="/summary" component={Home} />
+            <SecureRoute path="/keys/new" component={EventKeyNew} />
+            <SecureRoute path="/keys/:id" component={EventKeyEdit} />
+            <SecureRoute path="/keys" component={EventKeys} />
+            <SecureRoute path="/import" component={ImportData} />
+            <SecureRoute path="/export" component={ExportData} />
+            <SecureRoute path="/draw-menu" component={DrawMenu} />
+            <SecureRoute path="/crew-draw-report" component={CrewDrawReport} />
+            <SecureRoute path="/crew-on-the-day-contact" component={ContactDetailReport} />
+            <SecureRoute path="/generate-start-order" component={GenerateStartOrder} />
+            <SecureRoute path="/crew-start-order" component={CrewStartOrder} />
+            <SecureRoute path="/crew-start-order-by-host" component={CrewStartByHostClub} />
+            <SecureRoute path="/info" component={Info} />
+            <SecureRoute path="/register" component={Register} />
             <Route path="/login" component={Login} />
             <Route path="/" component={ResultIndex} />
           </Switch>
