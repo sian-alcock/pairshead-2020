@@ -1,10 +1,8 @@
 import React from 'react'
 import BROELoader from '../common/ImportBROEData'
-import DataLoader from '../common/DataLoader'
 import CSVDataLoader from '../common/CSVDataLoader'
 import CalculateStartOrder from '../common/CalculateStartOrder'
 import { Link } from 'react-router-dom/cjs/react-router-dom.min'
-// import axios from 'axios'
 
 class GenerateStartOrder extends React.Component {
   constructor() {
@@ -42,13 +40,10 @@ class GenerateStartOrder extends React.Component {
               <h2 className="title is-2">Get data from BROE</h2>
               <p className="left">Import data from BROE via the api</p>
             </div>
-            <div className="columns">
-              <div className="column is-one-quarter">
-                <BROELoader
-                  importPersonalData={true}
-                />
-              </div>
-            </div>
+
+            <BROELoader
+              importPersonalData={true}
+            />
 
           </section>
 
@@ -78,13 +73,6 @@ class GenerateStartOrder extends React.Component {
               />
             </div>
           </section>
-          <div className="column is-one-half">
-            <CSVDataLoader
-              url='/api/masters-adjustments-import/'
-              buttonText='Import masters adjustments'
-              class='double-height-button'
-            />
-          </div>
           
           <section className="section-has-lines">
             <div className="has-text-left">
@@ -94,7 +82,7 @@ class GenerateStartOrder extends React.Component {
 
             <div className="column is-one-half">
               <CSVDataLoader
-                url='/api/masters-adjustments-import/'
+                url='/api/marshalling-division-import/'
                 buttonText='Import marshalling division ranges'
                 class='double-height-button'
               />
@@ -108,7 +96,11 @@ class GenerateStartOrder extends React.Component {
             </div>
 
             <div className="column is-one-half">
-            
+              <CSVDataLoader
+                url='/api/number-location-import/'
+                buttonText='Import number locations'
+                class='double-height-button'
+              /> 
             </div>
           </section>
 
@@ -117,14 +109,7 @@ class GenerateStartOrder extends React.Component {
               <h2 className="title is-2">Calculate start order</h2>
               <p className="left">Use the CRI scores and event order to calculate the overall start order</p>
             </div>
-            <div className="columns">
-              <div className="column is-one-quarter">
-                <CalculateStartOrder/>
-              </div>
-              <div className="column left">
-                Initiates a calculation (or re-calculation) of start order.
-              </div>
-            </div>
+            <CalculateStartOrder/>
           </section>
 
           <section className="section-has-lines">

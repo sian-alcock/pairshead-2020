@@ -1,54 +1,38 @@
 import csv
-import os
-import tempfile
+from .helpers import decode_utf8
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FormParser, ParseError
+from rest_framework.parsers import MultiPartParser, FormParser
 from ..serializers import ImportMarshallingDivisionSerializer
-from ..models import MarshallingDivision, Crew
+from ..models import MarshallingDivision
 
-class ImportMarshallingDivisionCSVFolder(APIView):
-    # This function imports the csv from the projects folder
-    # Ideally replace with one imported via the frontend (from others that are working)
-    # Start by deleting all existing event cats
+class ImportMarshallingDivision(APIView):
+    # This function imports the csv from frontend
+    # Start by deleting all existing marshalling divisions
 
-    def get(self, _request):
+    parser_classes = (FormParser, MultiPartParser)
+
+    def post(self, request):
         MarshallingDivision.objects.all().delete()
-        script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
-        rel_path = "../csv/marshalling_division.csv"
-        abs_file_path = os.path.join(script_dir, rel_path)
 
-        with open(abs_file_path, newline='') as f:
-            reader = csv.reader(f)
-            next(reader) # skips the first row
+        reader = csv.reader(decode_utf8(request.FILES['file']))
+        next(reader) # skips the first row
+        for row in reader:
 
-            for row in reader:
+            if row:
+                data = {
+                    'name': row[0],
+                    'bottom_range': row[1],
+                    'top_range': row[2],
 
-                if row:
-                    data = {
-                        'name': row[0],
-                        'bottom_range': row[1],
-                        'top_range': row[2]
-                    }
-                    serializer = ImportMarshallingDivisionSerializer(data=data)
-                    if serializer.is_valid(raise_exception=True):
-                        serializer.save()
+                }
+                serializer = ImportMarshallingDivisionSerializer(data=data)
+                if serializer.is_valid():
+                    serializer.save()
 
-            divisions = MarshallingDivision.objects.all()
+        marshalling_divisions = MarshallingDivision.objects.all()
 
-            serializer = ImportMarshallingDivisionSerializer(divisions, many=True)
+        serializer = ImportMarshallingDivisionSerializer(marshalling_divisions, many=True)
 
-            # self.calculate_computed_properties()
-
-
-            return Response(serializer.data)
-        
-    # def calculate_computed_properties(self):
-
-    #     for crew in Crew.objects.all():
-    #         crew.event_band = crew.calc_event_band()
-    #         crew.draw_start_score = crew.calc_draw_start_score()
-    #         crew.calculated_start_order = crew.calc_calculated_start_order()
-    #         crew.save()
-
+        return Response(serializer.data)
 

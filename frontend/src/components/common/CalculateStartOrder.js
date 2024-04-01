@@ -30,19 +30,19 @@ class CalculateStartOrder extends Component {
       const eventBand = await axios.get('/api/crew-get-event-band/')
       console.log(eventBand.data, )
       this.setState({
-        eventBandsSuccessMessage: 'Event bands updated'
+        eventBandsSuccessMessage: '✅ Event bands updated'
       })
       const startScore = await axios.get('/api/crew-get-start-score/')
       console.log(startScore.data, )
       this.setState({
-        startScoreSuccessMessage: 'Start score calculated based on Rowing/Sculling CRI'
+        startScoreSuccessMessage: '✅ Start score calculated based on Rowing/Sculling CRI'
       })
       const startOrder = await axios.get('/api/crew-get-start-order/')
       console.log(startOrder.data, {
         cancelToken: this.cancelTokenSource.token
       })
       this.setState({
-        startOrderSuccessMessage: 'Crews have been allocated a start order'
+        startOrderSuccessMessage: '✅ Crews have been allocated a start order'
       })
       const checkStartOrder = await axios.get('/api/crew-check-start-order/')
       console.log(checkStartOrder)
@@ -80,7 +80,7 @@ class CalculateStartOrder extends Component {
         <p><small>{!this.state.eventBandsSuccessMessage ? '' : this.state.eventBandsSuccessMessage}</small></p>
         <p><small>{!this.state.startScoreSuccessMessage ? '' : this.state.startScoreSuccessMessage}</small></p>
         <p><small>{!this.state.startOrderSuccessMessage ? '' : this.state.startOrderSuccessMessage}</small></p>
-        <p><small>{!this.state.crewDataUpdated ? '' : `Updated: ${formatTimeDate(this.state.crewDataUpdated)}`}</small></p>
+        <p><small>{!this.state.crewDataUpdated ? '' : `✅ Updated: ${formatTimeDate(this.state.crewDataUpdated)}`}</small></p>
 
       </div>
     )
