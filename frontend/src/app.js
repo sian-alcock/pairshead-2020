@@ -22,12 +22,11 @@ import CrewStartOrder from './components/crews/CrewStartOrder'
 import GenerateStartOrder from './components/crews/GenerateStartOrder'
 import CrewStartByHostClub from './components/crews/CrewStartByHostClub'
 import ContactDetailReport from './components/crews/CrewJuniorContactDetails'
-import Navbar from './components/common/Navbar'
 import Footer from './components/common/Footer'
-import Header from './components/common/Header'
 import EventKeys from './components/events/EventKeys'
 import EventKeyEdit from './components/events/EventKeyEdit'
 import EventKeyNew from './components/events/EventKeyNew'
+import Header from './components/organisms/Header/Header'
 
 
 import '@fortawesome/fontawesome-free/js/all.js'
@@ -43,7 +42,6 @@ class App extends React.Component {
       <div>
         <HashRouter>
           <Header />
-          <Navbar />
           <Switch>
             <SecureRoute path="/crews/:id" component={CrewTimeEdit} />
             <SecureRoute path="/crews" component={CrewIndex} />

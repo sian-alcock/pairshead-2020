@@ -1,0 +1,11 @@
+@import '../../../style.scss';
+
+.page-hero {
+  background-color: $bblBlue;
+  padding: 1rem 1.5rem;
+  color: $white;
+
+  h1 {
+    font-size: 2rem;
+  }
+}

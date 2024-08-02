@@ -1,0 +1,13 @@
+@import '../../../style.scss';
+
+.menu-button {
+  cursor: pointer;
+  background-color: $phLogoBlue;
+  padding: 1rem 2rem;
+  border: unset;
+
+  &:hover {
+    background-color: $bblBlue;
+    color: $white;
+  }
+}

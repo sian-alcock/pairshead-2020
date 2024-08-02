@@ -21,6 +21,10 @@ $navbar-item-hover-background-color: $phLogoBlue;
 $navbar-item-hover-color: white;
 $navbar-height: 1 rem;
 
+$mobile: 320px;
+$tablet: 678px;
+$desktop: 1024px;
+
 @import "~bulma";
 
 .startTab.active, .finishTab.active {
@@ -177,5 +181,13 @@ td, th, .control {
     margin-bottom: 0.5rem;
   }
 
+}
+
+.header__inner {
+  @media (min-width: 640px) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 
