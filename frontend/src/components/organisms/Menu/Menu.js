@@ -1,5 +1,4 @@
 import React, { useState} from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
 import Button from '../../atoms/MenuButton/MenuButton'
 import './menu.scss'
 
@@ -39,20 +38,14 @@ export default function Menu({menuItems}) {
           <span aria-hidden="true"></span>
           <span aria-hidden="true"></span>
         </a>
-        <AnimatePresence>
-          {mobileNavOpen && <motion.ul             
-            initial={{ x: '100%' }}
-            animate={{ x: '0' }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'tween' }}
-            className='menu__container menu__container--mobile'>
-            {menuItems.map((item) => <li className='menu__item' key={item.key}>
-              <h2>{item.parentItem}</h2>
-              <ul>{item.items.map((child, idx) => <li key={idx}>{child.title}</li>)}</ul>
-            </li>
-            )}
-          </motion.ul>}
-        </AnimatePresence>
+        {mobileNavOpen && <ul
+          className='menu__container menu__container--mobile'>
+          {menuItems.map((item) => <li className='menu__item' key={item.key}>
+            <h2>{item.parentItem}</h2>
+            <ul>{item.items.map((child, idx) => <li key={idx}>{child.title}</li>)}</ul>
+          </li>
+          )}
+        </ul>}
       </div>
       <ul className='menu__container menu__container--desktop'>
         {menuItems.map((item) => <li className='menu__item' key={item.key}>
