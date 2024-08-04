@@ -52,6 +52,9 @@ class ResultIndex extends React.Component {
         fastestMixed2x: res.data['fastest_mixed_2x_time'].raw_time__min,
         categories: this.getCategories(res.data['results']),
         updateRequired: res.data['requires_ranking_update']
+      }).catch((error) => {
+        // here you will have access to error.response
+        console.log(error.response)
       })
       )
   }

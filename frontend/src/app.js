@@ -1,7 +1,5 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
-
-
+import { createRoot } from 'react-dom/client'
 import { HashRouter, Route, Switch } from 'react-router-dom'
 import SecureRoute from './components/common/SecureRoute'
 
@@ -30,11 +28,10 @@ import Header from './components/organisms/Header/Header'
 
 
 import '@fortawesome/fontawesome-free/js/all.js'
-import 'bulma'
 import './style.scss'
 
 
-class App extends React.Component {
+export default class App extends React.Component {
 
 
   render(){
@@ -71,8 +68,13 @@ class App extends React.Component {
   }
 }
 
+const rootElement = document.getElementById('root')
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('root')
+// New as of React v18.x
+const root = createRoot(rootElement)
+
+root.render(
+  // <StrictMode>
+  <App />
+  // </StrictMode>
 )

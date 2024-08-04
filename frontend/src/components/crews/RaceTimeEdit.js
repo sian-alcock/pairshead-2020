@@ -1,6 +1,6 @@
 import React from 'react'
 
-import AsyncPaginate from 'react-select-async-paginate'
+import { AsyncPaginate } from 'react-select-async-paginate'
 
 import axios from 'axios'
 import { formatTimes } from '../../lib/helpers'

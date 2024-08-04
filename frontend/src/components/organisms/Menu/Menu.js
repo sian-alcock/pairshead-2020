@@ -1,5 +1,5 @@
 import React, { useState} from 'react'
-import Button from '../../atoms/MenuButton/MenuButton'
+import MenuButton from '../../atoms/MenuButton/MenuButton.tsx'
 import './menu.scss'
 
 export default function Menu({menuItems}) {
@@ -49,7 +49,7 @@ export default function Menu({menuItems}) {
       </div>
       <ul className='menu__container menu__container--desktop'>
         {menuItems.map((item) => <li className='menu__item' key={item.key}>
-          <Button title={item.parentItem} clickHandler={() => toggleMenu(item.key)} />
+          <MenuButton title={item.parentItem} clickHandler={() => toggleMenu(item.key)} />
           <ul className={`menu__child ${expandedSubMenu === item.key ? 'menu__child--show' : 'menu__child--hide'}`}>{item.items.map((child, idx) => <li key={idx}>{child.title}</li>)}</ul>
         </li>
         )}
