@@ -10,6 +10,7 @@
     "outDir": "frontend/dist",
     "moduleResolution": "node",
     "allowJs": true,
+    "typeRoots": ["node_modules/@types", "src/types"]
   },
   "include": ["**/*.ts", "**/*.tsx", "frontend/src/app.js", "webpack.config.js"]
 }

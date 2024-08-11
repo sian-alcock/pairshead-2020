@@ -3,7 +3,7 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
-  mode: 'production',
+  mode: 'development',
   entry: './src/app.js',
   context: path.resolve(__dirname, 'frontend'),
   output: {
@@ -12,7 +12,7 @@ module.exports = {
     publicPath: '/'
   },
   resolve: {
-    extensions: ['.tsx', '.ts', '.js'],
+    extensions: ['.tsx', '.ts', '.js', '.jsx'],
     fallback: { 
       'buffer': require.resolve('buffer/'),
       'stream': require.resolve('stream-browserify'),
@@ -44,7 +44,9 @@ module.exports = {
     proxy: [
       {
         context: ['/api'],
-        target: 'http://localhost:4000'
+        target: 'http://127.0.0.1:4000',
+        secure: false,
+        changeOrigin: true
       }
     ]
   },

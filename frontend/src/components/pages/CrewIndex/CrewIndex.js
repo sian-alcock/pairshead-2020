@@ -1,12 +1,12 @@
 import React from 'react'
-import Select from 'react-select'
+// import Select from 'react-select'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
+// import { Link } from 'react-router-dom'
 
-import { formatTimes, getImage } from '../../lib/helpers'
-import Paginator from '../common/Paginator'
-import MastersCalculations from '../common/MastersCalculations'
-import PageTotals from '../common/PageTotals'
+// import { formatTimes, getImage } from '../../lib/helpers'
+// import Paginator from '../common/Paginator'
+// import MastersCalculations from '../common/MastersCalculations'
+// import PageTotals from '../common/PageTotals'
 
 
 class CrewIndex extends React.Component {
@@ -181,8 +181,8 @@ class CrewIndex extends React.Component {
   render() {
 
     !this.state.crews ? <h2>loading...</h2> : console.log(this.state.crews)
-    const totalPages = Math.floor((this.state.totalCrews) / this.state.pageSize)
-    const pagingOptions = [{label: '20 crews', value: '20'}, {label: '50 crews', value: '50'}, {label: '100 crews', value: '100'}, {label: 'All crews', value: '500'}]
+    // const totalPages = Math.floor((this.state.totalCrews) / this.state.pageSize)
+    // const pagingOptions = [{label: '20 crews', value: '20'}, {label: '50 crews', value: '50'}, {label: '100 crews', value: '100'}, {label: 'All crews', value: '500'}]
 
     return (
       <section className="section">
@@ -207,12 +207,12 @@ class CrewIndex extends React.Component {
               <div className="field">
                 <label className="label has-text-left" htmlFor="paging">Select page size</label>
                 <div className="control">
-                  <Select
+                  {/* <Select
                     id="paging"
                     onChange={this.handlePagingChange}
                     options={pagingOptions}
                     placeholder='Select page size'
-                  />
+                  /> */}
                 </div>
               </div>
             </div>
@@ -222,7 +222,7 @@ class CrewIndex extends React.Component {
               <div className="field">
                 <label className="label has-text-left" htmlFor="selectSort">Sort by</label>
                 <div className="select control-full-width" id="selectSort">
-                  <select className="control-full-width" onChange={this.handleSortChange}>
+                  {/* <select className="control-full-width" onChange={this.handleSortChange}>
                     <option value=""></option>
                     <option value="crew">Crew A-Z</option>
                     <option value="-crew">Crew Z-A</option>
@@ -238,7 +238,7 @@ class CrewIndex extends React.Component {
                     <option value="-bib_number">Bib, desc</option>
                     <option value="masters_adjustment">Masters adjust, asc</option>
                     <option value="-masters_adjustment">Masters adjust, desc</option>
-                  </select>
+                  </select> */}
                 </div>
               </div>
             </div>
@@ -277,7 +277,7 @@ class CrewIndex extends React.Component {
             </div>
           </div>
 
-          <MastersCalculations
+          {/* <MastersCalculations
             fastestMen2x={formatTimes(this.state.fastestMen2x)}
             fastestFemale2x={formatTimes(this.state.fastestFemale2x)}
             fastestMenSweep={formatTimes(this.state.fastestMenSweep)}
@@ -286,19 +286,19 @@ class CrewIndex extends React.Component {
             mastersAdjustmentsApplied={this.state.mastersAdjustmentsApplied}
             mastersAdjustmentsRequired={this.state.mastersAdjustmentsRequired}
             handleMastersAdjustments={this.handleMastersAdjustments}
-          />
+          /> */}
 
-          <Paginator
+          {/* <Paginator
             pageNumber={this.state.pageNumber}
             totalPages={totalPages}
             changePage={this.changePage}
-          />
-          <PageTotals
+          /> */}
+          {/* <PageTotals
             totalCount={this.state.totalCrews}
             entities='crews'
             pageSize={this.state.pageSize}
             pageNumber={this.state.pageNumber}  
-          />
+          /> */}
           <table className="table">
             <thead>
               <tr>
@@ -353,24 +353,24 @@ class CrewIndex extends React.Component {
             <tbody>
               {this.state.crews.map(crew =>
                 <tr key={crew.id}>
-                  <td><Link to={`/crews/${crew.id}`}>{crew.id}</Link></td>
+                  {/* <td><Link to={`/crews/${crew.id}`}>{crew.id}</Link></td> */}
                   <td>{!crew.competitor_names ? crew.name : crew.times.length && crew.times.length > 2 ? crew.competitor_names + '❗️' : crew.competitor_names}</td>
                   <td>{crew.status}</td>
-                  <td>{getImage(crew)}</td>
+                  {/* <td>{getImage(crew)}</td> */}
                   <td>{!crew.bib_number ? '' : crew.bib_number}</td>
                   <td>{crew.club.index_code}</td>
                   <td>{crew.event_band}</td>
                   <td>{crew.start_sequence ? crew.start_sequence : '⚠️'}</td>
                   <td>{crew.finish_sequence ? crew.finish_sequence : '⚠️'}</td>
                   <td>{crew.penalty}</td>
-                  <td>{crew.start_time ? formatTimes(crew.start_time) : '⚠️'}</td>
-                  <td>{crew.finish_time ? formatTimes(crew.finish_time) : '⚠️'}</td>
-                  <td>{crew.disqualified ? '❌' : crew.did_not_start ? '❌' : crew.did_not_finish ? '❌' :crew.raw_time ? formatTimes(crew.raw_time) : '⚠️'}</td>
-                  <td>{crew.disqualified ? 'Disqualified' : crew.did_not_start ? 'Did not start' : crew.did_not_finish ? 'Did not finish' :crew.raw_time ? formatTimes(crew.race_time) : '⚠️'}</td>
+                  {/* <td>{crew.start_time ? formatTimes(crew.start_time) : '⚠️'}</td> */}
+                  {/* <td>{crew.finish_time ? formatTimes(crew.finish_time) : '⚠️'}</td> */}
+                  {/* <td>{crew.disqualified ? '❌' : crew.did_not_start ? '❌' : crew.did_not_finish ? '❌' :crew.raw_time ? formatTimes(crew.raw_time) : '⚠️'}</td> */}
+                  {/* <td>{crew.disqualified ? 'Disqualified' : crew.did_not_start ? 'Did not start' : crew.did_not_finish ? 'Did not finish' :crew.raw_time ? formatTimes(crew.race_time) : '⚠️'}</td> */}
                   <td>{crew.event.type === 'Master' && crew.event_original[0] ? crew.event_original[0].event_original : ''}</td>
-                  <td>{crew.event.type !== 'Master' ? '' : formatTimes(crew.masters_adjustment)}</td>
-                  <td>{crew.event.type !== 'Master' ? '' : formatTimes(crew.masters_adjusted_time)}</td>
-                  <td>{crew.manual_override_time ? formatTimes(crew.manual_override_time) : ''}</td>
+                  {/* <td>{crew.event.type !== 'Master' ? '' : formatTimes(crew.masters_adjustment)}</td> */}
+                  {/* <td>{crew.event.type !== 'Master' ? '' : formatTimes(crew.masters_adjusted_time)}</td> */}
+                  {/* <td>{crew.manual_override_time ? formatTimes(crew.manual_override_time) : ''}</td> */}
                   <td>{crew.time_only ? 'TO' : ''}</td>
                   <td>{!crew.overall_rank ? '' : crew.overall_rank}</td>
                   <td>{!crew.category_rank ? '' : crew.category_rank}</td>
@@ -379,11 +379,11 @@ class CrewIndex extends React.Component {
             </tbody>
           </table>
 
-          <Paginator
+          {/* <Paginator
             pageNumber={this.state.pageNumber}
             totalPages={totalPages}
             changePage={this.changePage}
-          />
+          /> */}
 
         </div>
       </section>

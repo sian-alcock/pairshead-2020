@@ -11,14 +11,14 @@
     }
 
     &--mobile {
-      @media (min-width: $desktop) {
+      @media (min-width: $lg) {
         display: none;
       }
     }
 
     &--desktop {
       display: none;
-      @media (min-width: $desktop) {
+      @media (min-width: $lg) {
         display: flex;
       }
     }

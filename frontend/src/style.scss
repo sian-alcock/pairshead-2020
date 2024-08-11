@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
-
+@import './lib.scss';
 
 $family-primary: 'Open Sans', sans-serif;
 $bblBlue: #341499;
@@ -22,9 +22,7 @@ $navbar-item-hover-background-color: $phLogoBlue;
 $navbar-item-hover-color: white;
 $navbar-height: 1 rem;
 
-$mobile: 320px;
-$tablet: 678px;
-$desktop: 1024px;
+
 
 @import "~bulma";
 

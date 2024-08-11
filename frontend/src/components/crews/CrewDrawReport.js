@@ -3,8 +3,8 @@ import Select from 'react-select'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import { getImage } from '../../lib/helpers'
-import Paginator from '../common/Paginator'
-import PageTotals from '../common/PageTotals'
+import Paginator from '../molecules/Paginator/Paginator'
+import PageTotals from '../molecules/PageTotals/PageTotals'
 
 
 class CrewDrawReport extends React.Component {

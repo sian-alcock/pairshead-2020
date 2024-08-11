@@ -5,6 +5,10 @@
   padding: 1rem 1.5rem;
   color: $white;
 
+  &__container {
+    @include container;
+  }
+
   h1 {
     font-size: 2rem;
   }
