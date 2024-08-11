@@ -11,6 +11,7 @@
     }
 
     &--mobile {
+      display: block;
       @media (min-width: $lg) {
         display: none;
       }

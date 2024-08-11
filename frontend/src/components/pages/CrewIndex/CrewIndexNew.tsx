@@ -6,10 +6,10 @@ import { formatTimes } from "../../../lib/helpers";
 import BladeImage from "../../atoms/BladeImage/BladeImage";
 import { headings, pagingOptions, sortingOptions } from "./defaultProps"
 import MastersCalculations from "./MastersCalculations"
-
 import { CrewProps } from "../../components.types";
 import Paginator from "../../molecules/Paginator/Paginator";
 import PageTotals from "../../molecules/PageTotals/PageTotals";
+import "./crewIndex.scss"
 
 interface ResponseParamsProps {
   page_size?: string;
@@ -292,23 +292,24 @@ export default function CrewIndex() {
             pageSize={pageSize}
             pageNumber={pageNumber}  
           />
-          <table className="table">
-            <thead>
-              <tr>
-                {headings.map((heading) => (
-                  <td key={heading}>{heading}</td>
-                ))}
-              </tr>
-            </thead>
-            <tfoot>
-              <tr>
-                {headings.map((heading) => (
-                  <td key={heading}>{heading}</td>
-                ))}
-              </tr>
-            </tfoot>
-            <tbody>
-              {crews &&
+          <div className="crew-index__table-container">
+            <table className="crew-index__table table">
+              <thead>
+                <tr>
+                  {headings.map((heading) => (
+                    <td key={heading}>{heading}</td>
+                  ))}
+                </tr>
+              </thead>
+              <tfoot>
+                <tr>
+                  {headings.map((heading) => (
+                    <td key={heading}>{heading}</td>
+                  ))}
+                </tr>
+              </tfoot>
+              <tbody>
+                {crews &&
                 crews.map((crew) => (
                   <tr key={crew.id}>
                     <td>
@@ -364,8 +365,9 @@ export default function CrewIndex() {
                     <td>{!crew.category_rank ? "" : crew.category_rank}</td>
                   </tr>
                 ))}
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
           <Paginator pageNumber={pageNumber} totalPages={totalPages} changePage={changePage} />
         </div>
       </section>
