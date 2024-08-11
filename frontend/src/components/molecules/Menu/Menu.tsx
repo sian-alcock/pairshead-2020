@@ -53,10 +53,10 @@ export default function Menu({menuItems}: MenuProps): ReactElement {
 
   return (
     <nav className='menu' ref={noClickOutsideRef}>
-      <div className="navbar-brandxx">
+      <div className="navbar-brand">
         <a
           role="button"
-          className={`navbar-burgerxx ${mobileNavOpen ? "is-active" : ""}`}
+          className={`navbar-burger ${mobileNavOpen ? "is-active" : ""}`}
           onClick={toggleNavbar}
         >
           <span aria-hidden="true"></span>
