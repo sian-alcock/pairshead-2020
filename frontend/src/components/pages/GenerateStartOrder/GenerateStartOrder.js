@@ -106,7 +106,7 @@ class GenerateStartOrder extends React.Component {
             </div>
             <div className="columns">
               <div className="column is-one-quarter">
-                <TextButton label="Start order by host club" pathName='/crew-start-order-by-host' />
+                <TextButton label="Start order by number location" pathName='/crew-start-order-by-host' />
               </div>
             </div>
           </section>

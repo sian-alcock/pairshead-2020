@@ -63,7 +63,7 @@ export default function CrewStartOrder() {
     fetchData(`/api/crews?${refreshDataQueryString}`, {
       page_size: pageSize,
       page: pageNumber,
-      status: ["Accepted", "Scratched"],
+      status: ["Accepted"],
     });
   };
 
