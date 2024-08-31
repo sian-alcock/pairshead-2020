@@ -201,7 +201,7 @@ export default function ResultIndex () {
   return (
     <>
       <Header />
-      <Hero title={"New Results page"} />
+      <Hero title={"Results"} />
       {(updateRequired && updateRequired > 0) ? 
         <div className="box">
           <CrewTimeCalculatedFieldsUpdate refreshData={refreshData} updateRequired={updateRequired}/>
