@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom'
 import { formatTimes } from '../../lib/helpers'
 import Paginator from '../molecules/Paginator/Paginator'
 import PageTotals from '../molecules/PageTotals/PageTotals'
+import Header from '../organisms/Header/Header'
 
 class RaceTimeIndex extends React.Component {
   constructor() {
@@ -161,7 +162,7 @@ class RaceTimeIndex extends React.Component {
     const pagingOptions = [{label: '20 times', value: '20'}, {label: '50 times', value: '50'}, {label: '100 times', value: '100'}, {label: 'All times', value: '500'}]
 
     return (
-      <section className="section">
+      <><Header /><section className="section">
         <div className="container">
           <div className="tabContainer no-print">
             <div className="tabs is-toggle is-large is-centered">
@@ -193,23 +194,22 @@ class RaceTimeIndex extends React.Component {
                     id="paging"
                     onChange={this.handlePagingChange}
                     options={pagingOptions}
-                    placeholder='Select page size'
-                  />
+                    placeholder='Select page size' />
                 </div>
               </div>
             </div>
 
             <div className="column has-text-left">
               <div className="field no-print">
-                <label className="checkbox" >
-                  <input type="checkbox"  className="checkbox" onClick={this.handleTimesWithoutCrew} value={this.state.timesWithoutCrewBoolean} defaultChecked={!!this.state.timesWithoutCrewBoolean} />
+                <label className="checkbox">
+                  <input type="checkbox" className="checkbox" onClick={this.handleTimesWithoutCrew} value={this.state.timesWithoutCrewBoolean} defaultChecked={!!this.state.timesWithoutCrewBoolean} />
                   ⚠️ Times with no crew ({this.state.startTab ? this.state.startTimesWithNoCrew : this.state.finishTimesWithNoCrew})
                 </label>
               </div>
 
               <div className="field no-print">
-                <label className="checkbox" >
-                  <input type="checkbox"  className="checkbox" onClick={this.handleCrewsWithTooManyTimes} value={this.state.crewsWithTooManyTimesBoolean} defaultChecked={!!this.state.crewsWithTooManyTimesBoolean} />
+                <label className="checkbox">
+                  <input type="checkbox" className="checkbox" onClick={this.handleCrewsWithTooManyTimes} value={this.state.crewsWithTooManyTimesBoolean} defaultChecked={!!this.state.crewsWithTooManyTimesBoolean} />
                   ❗️ Crews with too many times ({this.state.startTab ? this.state.startTimesInvalid : this.state.finishTimesInvalid})
                 </label>
               </div>
@@ -222,15 +222,13 @@ class RaceTimeIndex extends React.Component {
             <Paginator
               pageNumber={this.state.pageNumber}
               totalPages={totalPages}
-              changePage={this.changePage}
-            />
+              changePage={this.changePage} />
           </div>
           <PageTotals
             totalCount={this.state.totalTimes}
             entities='times'
             pageSize={this.state.pageSize}
-            pageNumber={this.state.pageNumber}  
-          />
+            pageNumber={this.state.pageNumber} />
           <table className="table">
             <thead>
               <tr>
@@ -257,18 +255,17 @@ class RaceTimeIndex extends React.Component {
               </tr>
             </tfoot>
             <tbody>
-              {this.state.raceTimes.map(raceTime =>
-                <tr key={raceTime.id}>
-                  <td><Link to={`/race-times/${raceTime.id}`}>{raceTime.sequence}</Link></td>
-                  <td>{raceTime.tap}</td>
-                  <td>{formatTimes(raceTime.time_tap)}</td>
-                  <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.bib_number}</td>
-                  <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.id}</td>
-                  <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.times.length > 2 ? raceTime.crew.name + '❗️' : raceTime.crew.name}</td>
-                  <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.competitor_names}</td>
-                  <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.event_band}</td>
+              {this.state.raceTimes.map(raceTime => <tr key={raceTime.id}>
+                <td><Link to={`/race-times/${raceTime.id}`}>{raceTime.sequence}</Link></td>
+                <td>{raceTime.tap}</td>
+                <td>{formatTimes(raceTime.time_tap)}</td>
+                <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.bib_number}</td>
+                <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.id}</td>
+                <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.times.length > 2 ? raceTime.crew.name + '❗️' : raceTime.crew.name}</td>
+                <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.competitor_names}</td>
+                <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.event_band}</td>
 
-                </tr>
+              </tr>
               )}
             </tbody>
           </table>
@@ -277,13 +274,12 @@ class RaceTimeIndex extends React.Component {
             <Paginator
               pageNumber={this.state.pageNumber}
               totalPages={totalPages}
-              changePage={this.changePage}
-            />
+              changePage={this.changePage} />
           </div>
 
         </div>
 
-      </section>
+      </section></>
     )
   }
 }

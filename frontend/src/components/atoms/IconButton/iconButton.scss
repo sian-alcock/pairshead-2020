@@ -1,0 +1,53 @@
+@import '../../../style.scss';
+
+.icon-button {
+  display: flex;
+  width: rem(44px);
+  height: rem(44px);
+  align-items: center;
+  justify-content: center;
+  border-radius: 100%;
+  background-color: $phLogoBlue;
+  color: $bblBlue;
+  transition: all 0.3s ease-in;
+  border: 1px solid $phLogoBlue;
+
+  &:disabled {
+    opacity: 0.15;
+    pointer-events: none;
+  }
+
+  &__icon {
+    display: flex;
+    width: 24px;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: 100%;
+      object-fit: cover;
+
+      path {
+        fill: $bblBlue;
+        stroke: $bblBlue;
+      }
+    }
+  }
+
+  @media screen and (min-width: $md) {
+    width: rem(48px);
+    height: rem(48px);
+  }
+
+
+  &:focus-visible {
+    border: 2px solid $bblBlue;
+    background: $bblBlue;
+    outline: 2px solid $phLogoBlue;
+
+    path {
+      fill: $white;
+      stroke: $white;
+    }
+  }
+}

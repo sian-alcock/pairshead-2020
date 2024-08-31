@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useHistory } from 'react-router'
 import axios from 'axios'
-import useFetchData from '../hooks/use-fetch-data'
+import useFetchData from '../../hooks/use-fetch-data'
 
 const EventKeyEdit = () => {
   const routeParams = useParams()

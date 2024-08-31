@@ -1,5 +1,6 @@
 import React from 'react'
 import axios from 'axios'
+import Header from '../organisms/Header/Header'
 
 class ContactDetailReport extends React.Component {
   constructor() {
@@ -38,7 +39,7 @@ class ContactDetailReport extends React.Component {
 
 
     return (
-      <section className="section">
+      <><Header /><section className="section">
         <div className="container">
           <div className="title is-4">Pairs Head {(new Date().getFullYear())} - On the day contact details - all crews</div>
           <table className="table">
@@ -84,7 +85,7 @@ class ContactDetailReport extends React.Component {
           </table>
 
         </div>
-      </section>
+      </section></>
     )
   }
 }

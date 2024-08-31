@@ -3,7 +3,10 @@ import MenuButton from "../../atoms/MenuButton/MenuButton"
 import "./menu.scss"
 import { Link } from "react-router-dom";
 import Auth from "../../../lib/Auth";
-import useOnClickOutside from "../../hooks/useOnClickOutside";
+import { IconButton } from "../../atoms/IconButton/IconButton";
+import { AnimatePresence, motion } from 'framer-motion';
+import FocusTrap from "../../hooks/useFocusTrap";
+import useOnClickOutside from '../../hooks/useOnClickOutside';
 
 interface ChildMenuItem {
   link: string;
@@ -22,27 +25,22 @@ export type MenuProps = {
 }
 
 export default function Menu({menuItems}: MenuProps): ReactElement {
-  const [expandedSubMenu, setExpandedSubMenu] = useState<number | undefined>()
-  const [mobileNavOpen, setmobileNavOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
   const noClickOutsideRef = useRef<HTMLInputElement>(null);
 
-  const toggleMenu = (key: number | undefined): void => {
-    if(key === expandedSubMenu) {
-      setExpandedSubMenu(undefined)
-    } else {
-      setExpandedSubMenu(key)
-    }
-  }
+  const openMenuButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  const closeMenu = ()=> setExpandedSubMenu(undefined)
-  
+  const closeMenu = (): void => {
+    setIsOpen(false);
+  };
 
-  const toggleNavbar = () => {
-    setmobileNavOpen(!mobileNavOpen)
-  }
+  const openMenu = (): void => {
+    setIsOpen(true);
+    // Prevent body from scrolling when Header is open
+    document.body.classList.add('lock-scroll');
+  };
 
   useOnClickOutside(noClickOutsideRef, () => closeMenu());
-
 
   // Not sure how to make this work... what is it even doing?
   //   componentDidUpdate(prevProps) {
@@ -52,35 +50,91 @@ export default function Menu({menuItems}: MenuProps): ReactElement {
   //   }
 
   return (
-    <nav className='menu' ref={noClickOutsideRef}>
-      <div className="navbar-brand">
-        <a
-          role="button"
-          className={`navbar-burger ${mobileNavOpen ? "is-active" : ""}`}
-          onClick={toggleNavbar}
-        >
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-          <span aria-hidden="true"></span>
-        </a>
-        {mobileNavOpen && <ul
-          className='menu__container menu__container--mobile'>
-          {menuItems.map((item) => <li className='menu__item' key={item.key}>
-            <h2>{item.parentItem}</h2>
-            <ul>{item.items.map((item, idx) => <li key={idx}>
-              {item.authenticated ? Auth.isAuthenticated() && <Link to={item.link} className="">{item.title}</Link> : <Link to={item.link} className="">{item.title}</Link>}
-            </li>)}</ul>
-          </li>
+    <>
+    <div className="menu__menu-button">
+      <span>Menu</span>
+      <IconButton
+        icon="hamburger"
+        onClick={openMenu}
+        title="Open menu"
+        ariaControls="header"
+        ref={openMenuButtonRef}
+        ariaExpanded={isOpen}
+      />
+    </div>
+    {isOpen && <div className="menu__overlay"></div>}
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              className="menu__open"
+              initial={{ x: '100%' }}
+              animate={{ x: '0' }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'tween' }}
+              key="menu__open"
+              ref={noClickOutsideRef}
+            >
+              <FocusTrap>
+                <div className="menu__nav">
+                  <div className="menu__top-container">
+                    <div className="menu__right-wrapper">
+                      <div className="menu__menu-button menu__menu-button--close">
+                        <span>Close</span>
+                        <IconButton
+                          icon="cross"
+                          onClick={closeMenu}
+                          title="Close menu"
+                          ariaControls="menu"
+                        />
+                      </div>
+                      
+                      <ul className='menu__container'>
+                          {menuItems.map((item) => <li className='menu__item' key={item.key}>
+                            <h2 className="menu__item-header">{item.parentItem}</h2>
+                            <ul>{item.items.map((item, idx) => <li key={idx}>
+                              {item.authenticated ? Auth.isAuthenticated() && <Link to={item.link} className="menu__item-link">{item.title}</Link> : <Link to={item.link} className="menu__item-link">{item.title}</Link>}
+                            </li>)}</ul>
+                          </li>
+                          )}
+                        </ul>
+                    </div>
+                  </div>
+                </div>
+              </FocusTrap>
+            </motion.div>
           )}
-        </ul>}
-      </div>
-      <ul className='menu__container menu__container--desktop'>
-        {menuItems.map((item) => <li className='menu__item' key={item.key}>
-          <MenuButton title={item.parentItem} isActive={expandedSubMenu === item.key} clickHandler={() => toggleMenu(item.key)} />
-          <ul className={`menu__child ${expandedSubMenu === item.key ? "menu__child--show" : "menu__child--hide"}`}>{item.items.map((item, idx) => <li key={idx}>{item.authenticated ? Auth.isAuthenticated() && <Link to={item.link} className="">{item.title}</Link> : <Link to={item.link} className="">{item.title}</Link>}</li>)}</ul>
-        </li>
-        )}
-      </ul>
-    </nav>
-  )
-}
+          
+        </AnimatePresence>
+        </>
+          )
+        }
+    // <nav className='menu' ref={noClickOutsideRef}>
+    //   <div className="navbar-brand">
+    //     <a
+    //       role="button"
+    //       className={`navbar-burger ${mobileNavOpen ? "is-active" : ""}`}
+    //       onClick={toggleNavbar}
+    //     >
+    //       <span aria-hidden="true"></span>
+    //       <span aria-hidden="true"></span>
+    //       <span aria-hidden="true"></span>
+    //     </a>
+    //     {mobileNavOpen && <ul
+    //       className='menu__container menu__container--mobile'>
+    //       {menuItems.map((item) => <li className='menu__item' key={item.key}>
+    //         <h2>{item.parentItem}</h2>
+    //         <ul>{item.items.map((item, idx) => <li key={idx}>
+    //           {item.authenticated ? Auth.isAuthenticated() && <Link to={item.link} className="">{item.title}</Link> : <Link to={item.link} className="">{item.title}</Link>}
+    //         </li>)}</ul>
+    //       </li>
+    //       )}
+    //     </ul>}
+    //   </div>
+    //   <ul className='menu__container menu__container--desktop'>
+    //     {menuItems.map((item) => <li className='menu__item' key={item.key}>
+    //       <MenuButton title={item.parentItem} isActive={expandedSubMenu === item.key} clickHandler={() => toggleMenu(item.key)} />
+    //       <ul className={`menu__child ${expandedSubMenu === item.key ? "menu__child--show" : "menu__child--hide"}`}>{item.items.map((item, idx) => <li key={idx}>{item.authenticated ? Auth.isAuthenticated() && <Link to={item.link} className="">{item.title}</Link> : <Link to={item.link} className="">{item.title}</Link>}</li>)}</ul>
+    //     </li>
+    //     )}
+    //   </ul>
+    // </nav>

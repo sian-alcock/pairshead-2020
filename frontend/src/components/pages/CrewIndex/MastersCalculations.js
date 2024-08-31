@@ -1,10 +1,15 @@
 import React from "react"
+import Icon from "../../atoms/Icons/Icons"
 
 const MastersCalculations = ({ fastestMen2x, fastestFemale2x, fastestMenSweep, fastestFemaleSweep, fastestMixed2x, mastersAdjustmentsApplied, mastersAdjustmentsRequired, handleMastersAdjustments }) => {
   return (
-    <div>
-      <details>
-        <summary>Masters calculations</summary>
+    <div className="masters-calculation__container">
+      <details className="masters-calculation__details">
+        <summary className="masters-calculation__summary">Masters calculations
+          <i className="masters-calculation__icon">
+            <Icon icon={"chevron-down"}  />
+          </i>
+        </summary>
         <div className="columns">
           <div className="column">
             <table className="table">

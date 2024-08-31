@@ -1,3 +1,5 @@
+@import '../../../style.scss';
+
 .crew-index {
   &__table-container {
       overflow-x: auto;
@@ -6,4 +8,47 @@
   &__table {
     max-width: 100%;
   }
+}
+
+.masters-calculation {
+
+  &__container {
+    @media (min-width: $lg) {
+      @include grid;
+    }
+  }
+
+  &__summary {
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: $bblGrey;
+    margin-bottom: 1.5rem;
+    padding: 0.5rem 1rem;
+
+    &::marker, /* Latest Chrome, Edge, Firefox */
+    &::-webkit-details-marker /* Safari */ {
+      display: none;
+      content: '';
+    }
+  }
+
+  &[open] > summary {
+    .masters-calculation__icon {
+      transform: rotate(180deg);
+      transition: filter 0.3s ease-in;
+    }
+  }
+
+  &__details {
+    @media (min-width: $lg) {
+      grid-column: 3 / span 8;
+    }
+  }
+
+  &__icon {
+    margin-top: 0.5rem;
+  }
+
 }

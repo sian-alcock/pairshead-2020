@@ -1,0 +1,25 @@
+@import '../../../style.scss';
+
+.csv-data-loader {
+  &__file-name {
+    display: inline-block;
+    @media (min-width: $lg) {
+      min-width: 420px;
+    }
+  }
+
+  &__section {
+    @include section-with-lines;
+  }
+  
+  &__title {
+    margin-bottom: 1rem;
+    color: $bblBlue;
+    @include h3;
+  }
+
+  &__description {
+    margin-bottom: 1rem;
+    @include body;
+  }
+}

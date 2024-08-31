@@ -21,6 +21,10 @@ module.exports = {
       'util': require.resolve('util')
     }
   },
+  watchOptions: {
+    poll: 1000,
+    ignored: /node_modules/,
+  },
   devtool: 'source-map',
   module: {
     rules: [

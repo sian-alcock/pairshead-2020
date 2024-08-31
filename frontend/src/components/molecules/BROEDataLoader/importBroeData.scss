@@ -1,0 +1,31 @@
+@import '../../../style.scss';
+
+.c-data-loader {
+
+  &__section {
+    @include section;
+  }
+
+  &__progress {
+    @media (min-width: $md) {
+      width: 70%;
+      margin-left: 1rem;
+      padding: 1rem;
+    }
+  }
+  
+  &__title {
+    margin-bottom: 1rem;
+    color: $bblBlue;
+    @include h3;
+  }
+
+  &__description {
+    margin-bottom: 1rem;
+    @include body;
+  }
+
+  @media (min-width: $md) {
+    display: flex;
+  }
+}

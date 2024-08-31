@@ -4,6 +4,7 @@ import { AsyncPaginate } from 'react-select-async-paginate'
 
 import axios from 'axios'
 import { formatTimes } from '../../lib/helpers'
+import Header from '../organisms/Header/Header'
 
 
 class RaceTimeEdit extends React.Component {
@@ -113,6 +114,8 @@ class RaceTimeEdit extends React.Component {
     console.log(this.state.crewId)
 
     return (
+      <>
+      <Header />
       <section className="section">
         <div className="container">
           <div className="box">
@@ -141,15 +144,14 @@ class RaceTimeEdit extends React.Component {
                   id="crew"
                   onChange={this.handleSelectChange}
                   loadOptions={this.loadOptions}
-                  additional={{page: 1}}
-                  value={!this.state.raceTimeFormData.crew ? '' : this.state.crews.find(option => option.value === this.state.raceTimeFormData.crew.id)}
-                />
+                  additional={{ page: 1 }}
+                  value={!this.state.raceTimeFormData.crew ? '' : this.state.crews.find(option => option.value === this.state.raceTimeFormData.crew.id)} />
               </div>
             </div>
             <button className="button is-primary">Submit</button>
           </form>
         </div>
-      </section>
+      </section></>
     )
   }
 }

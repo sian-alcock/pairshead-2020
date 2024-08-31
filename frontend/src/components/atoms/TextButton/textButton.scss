@@ -1,0 +1,35 @@
+@import "../../../style.scss";
+
+.text-button {
+  display: inline-block;
+  height: fit-content;
+  padding: rem(11px) rem(24px);
+  border-radius: rem(60px);
+  text-decoration: none;
+  transition: all 0.2s ease-in;
+  border: 1px solid $bblBlue;
+  background: $bblBlue;
+  color: $white;
+  @include body-small(bold);
+
+  &:hover {
+    background: none;
+    color: $bblBlue;
+  }
+
+  &:focus-visible {
+    border: 2px solid $bblBlue;
+    background: $bblBlue;
+    color: $white;
+    outline: 2px solid $phLogoBlue;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  @media screen and (min-width: $lg) {
+    padding: rem(16px) rem(36px);
+  }
+}

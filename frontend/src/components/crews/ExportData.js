@@ -1,4 +1,5 @@
 import React from 'react'
+import Header from '../organisms/Header/Header'
 
 
 class DrawMenu extends React.Component {
@@ -43,7 +44,7 @@ class DrawMenu extends React.Component {
   render() {
 
     return (
-      <section className="section">
+      <><Header /><section className="section">
         <div className="container">
 
           <div className="columns">
@@ -96,7 +97,7 @@ class DrawMenu extends React.Component {
           </div>
 
         </div>
-      </section>
+      </section></>
     )
   }
 }

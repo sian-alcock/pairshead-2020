@@ -1,0 +1,18 @@
+@import '../../../style.scss';
+
+.crew-start-by-number-location {
+  &__section {
+    @include section;
+  }
+  &__container {
+    @include container;
+  }
+  &__title {
+    margin-bottom: 1rem;
+    @include h2;
+  }
+  &__location-title {
+    margin-bottom: 1rem;
+    @include h4;
+  }
+}

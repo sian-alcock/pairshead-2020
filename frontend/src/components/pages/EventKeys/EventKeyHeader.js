@@ -1,7 +1,7 @@
 import React from 'react'
-import Auth from '../../lib/Auth'
+import Auth from '../../../lib/Auth'
 import { Link } from 'react-router-dom'
-import useFetchData from '../hooks/use-fetch-data'
+import useFetchData from '../../hooks/use-fetch-data'
 
 const EventKeyHeader = () => {
   const {

@@ -1,6 +1,7 @@
 import React from 'react'
 import Select from 'react-select'
 import axios from 'axios'
+import Header from '../organisms/Header/Header'
 
 // import CrewTimeCalculatedFieldsUpdate from '../common/UpdateCrewTimeCalculatedFields'
 
@@ -80,7 +81,7 @@ class CrewTimeEdit extends React.Component {
     console.log(this.state.formData.time_only)
 
     return (
-      <section className="section">
+      <><Header /><section className="section">
         <div className="container">
 
           <div className="box">
@@ -114,8 +115,7 @@ class CrewTimeEdit extends React.Component {
                     id="penalty"
                     placeholder="eg: 5"
                     value={this.state.formData.penalty || ''}
-                    onChange={this.handleChange}
-                  />
+                    onChange={this.handleChange} />
                   {this.state.errors.penalty && <small className="help is-danger">{this.state.errors.penalty}</small>}
                 </div>
               </div>
@@ -128,8 +128,7 @@ class CrewTimeEdit extends React.Component {
                       id="band"
                       onChange={this.handleBandChange}
                       options={this.getBandOptions()}
-                      value={!this.state.formData.band ? '' : this.state.bands.find(option => option.value === this.state.formData.band.id)}
-                    />
+                      value={!this.state.formData.band ? '' : this.state.bands.find(option => option.value === this.state.formData.band.id)} />
 
                     {this.state.errors.band && <small className="help is-danger">{this.state.errors.band}</small>}
                   </div>
@@ -151,8 +150,7 @@ class CrewTimeEdit extends React.Component {
                     min="0"
                     max="59"
                     value={this.state.formData.manual_override_minutes || ''}
-                    onChange={this.handleChange}
-                  />
+                    onChange={this.handleChange} />
                   {this.state.errors.manual_override_minutes && <small className="help is-danger">{this.state.errors.manual_override_minutes}</small>}
                 </div>
               </div>
@@ -168,8 +166,7 @@ class CrewTimeEdit extends React.Component {
                     min="0"
                     max="59"
                     value={this.state.formData.manual_override_seconds || ''}
-                    onChange={this.handleChange}
-                  />
+                    onChange={this.handleChange} />
                   {this.state.errors.manual_override_seconds && <small className="help is-danger">{this.state.errors.manual_override_seconds}</small>}
                 </div>
               </div>
@@ -185,8 +182,7 @@ class CrewTimeEdit extends React.Component {
                     min="0"
                     max="99"
                     value={this.state.formData.manual_override_hundredths_seconds || ''}
-                    onChange={this.handleChange}
-                  />
+                    onChange={this.handleChange} />
                   {this.state.errors.manual_override_hundredths_seconds && <small className="help is-danger">{this.state.errors.manual_override_hundredths_seconds}</small>}
                 </div>
               </div>
@@ -202,8 +198,7 @@ class CrewTimeEdit extends React.Component {
                       name="time_only"
                       value={this.state.formData.time_only}
                       checked={!!this.state.formData.time_only}
-                      onChange={this.handleCheckbox}
-                    /> Time only
+                      onChange={this.handleCheckbox} /> Time only
                   </label>
                   {this.state.errors.time_only && <small className="help is-danger">{this.state.errors.time_only}</small>}
 
@@ -217,8 +212,7 @@ class CrewTimeEdit extends React.Component {
                       name="did_not_start"
                       value={this.state.formData.did_not_start}
                       checked={!!this.state.formData.did_not_start}
-                      onChange={this.handleCheckbox}
-                    /> Did not start
+                      onChange={this.handleCheckbox} /> Did not start
                   </label>
                   {this.state.errors.did_not_start && <small className="help is-danger">{this.state.errors.did_not_start}</small>}
 
@@ -232,8 +226,7 @@ class CrewTimeEdit extends React.Component {
                       name="did_not_finish"
                       value={this.state.formData.did_not_finish}
                       checked={!!this.state.formData.did_not_finish}
-                      onChange={this.handleCheckbox}
-                    /> Did not finish
+                      onChange={this.handleCheckbox} /> Did not finish
                   </label>
                   {this.state.errors.did_not_finish && <small className="help is-danger">{this.state.errors.did_not_finish}</small>}
 
@@ -247,8 +240,7 @@ class CrewTimeEdit extends React.Component {
                       name="disqualified"
                       value={this.state.formData.disqualified}
                       checked={!!this.state.formData.disqualified}
-                      onChange={this.handleCheckbox}
-                    /> Disqualified
+                      onChange={this.handleCheckbox} /> Disqualified
                   </label>
                   {this.state.errors.disqualified && <small className="help is-danger">{this.state.errors.disqualified}</small>}
 
@@ -283,7 +275,7 @@ class CrewTimeEdit extends React.Component {
           </div>
 
         </div>
-      </section>
+      </section></>
     )
   }
 }

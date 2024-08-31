@@ -1,3 +1,6 @@
+@use "bulma/sass/base";
+@use "bulma/sass/themes";
+@use "bulma/sass/elements/button";
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
 @import './lib.scss';
 
@@ -24,7 +27,7 @@ $navbar-height: 1 rem;
 
 
 
-@import "~bulma";
+
 
 .startTab.active, .finishTab.active {
   text-align: center;
@@ -85,13 +88,6 @@ div.list-totals {
 .search {
   width: 400px;
   margin: 0 auto;
-}
-
-.header {
-  margin-left: 55px;
-  margin-top: 10px;
-  display: inline-flex;
-  align-items: baseline;
 }
 
 .navbar-item {
@@ -162,31 +158,3 @@ td, th, .control {
 .text-container {
   margin-bottom: 15px;
 }
-
-.c-data-loader {
-  @media (min-width: 640px) {
-    display: flex;
-  }
-
-  &__progress {
-    @media (min-width: 640px) {
-      width: 70%;
-      margin-left: 1rem;
-      padding: 1rem;
-    }
-  }
-
-  &__status-message {
-    margin-bottom: 0.5rem;
-  }
-
-}
-
-.header__inner {
-  @media (min-width: 640px) {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-}
-

@@ -16,18 +16,18 @@ import ImportData from "./components/crews/ImportData"
 import ExportData from "./components/crews/ExportData"
 import DrawMenu from "./components/crews/DrawMenu"
 import CrewDrawReport from "./components/crews/CrewDrawReport"
-import CrewStartOrder from "./components/crews/CrewStartOrder"
-import GenerateStartOrder from "./components/crews/GenerateStartOrder"
-import CrewStartByHostClub from "./components/crews/CrewStartByHostClub"
+import CrewStartOrder from "./components/pages/CrewStartOrder/CrewStartOrder"
+import GenerateStartOrder from "./components/pages/GenerateStartOrder/GenerateStartOrder"
+import CrewStartByNumberLocation from "./components/pages/CrewStartByNumberLocation/CrewStartByNumberLocation"
 import ContactDetailReport from "./components/crews/CrewJuniorContactDetails"
 import Footer from "./components/organisms/Footer/Footer"
-import EventKeys from "./components/events/EventKeys"
-import EventKeyEdit from "./components/events/EventKeyEdit"
-import EventKeyNew from "./components/events/EventKeyNew"
-import Header from "./components/organisms/Header/Header"
-
+import EventKeys from "./components/pages/EventKeys/EventKeys"
+import EventKeyEdit from "./components/pages/EventKeys/EventKeyEdit"
+import EventKeyNew from "./components/pages/EventKeys/EventKeyNew"
+import CrewLabels from "./components/pages/CrewLabels/CrewLabels"
 
 import "@fortawesome/fontawesome-free/js/all.js"
+import 'bulma'
 import "./style.scss"
 
 
@@ -38,10 +38,10 @@ export default class App extends React.Component {
     return(
       <div>
         <HashRouter>
-          <Header />
           <Switch>
             <SecureRoute path="/crews/:id" component={CrewTimeEdit} />
             <SecureRoute path="/crews" component={CrewIndex} />
+            <SecureRoute path="/crew-labels" component={CrewLabels} />
             <SecureRoute path="/race-times/:id" component={RaceTimeEdit} />
             <SecureRoute path="/race-times" component={RaceTimeIndex} />
             <SecureRoute path="/summary" component={Home} />
@@ -55,7 +55,7 @@ export default class App extends React.Component {
             <SecureRoute path="/crew-on-the-day-contact" component={ContactDetailReport} />
             <SecureRoute path="/generate-start-order" component={GenerateStartOrder} />
             <SecureRoute path="/crew-start-order" component={CrewStartOrder} />
-            <SecureRoute path="/crew-start-order-by-host" component={CrewStartByHostClub} />
+            <SecureRoute path="/crew-start-order-by-host" component={CrewStartByNumberLocation} />
             <SecureRoute path="/info" component={Info} />
             <SecureRoute path="/register" component={Register} />
             <Route path="/login" component={Login} />

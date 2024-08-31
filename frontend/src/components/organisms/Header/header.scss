@@ -1,1 +1,27 @@
 @import '../../../style.scss';
+
+.header {
+
+  @include container;
+
+  &__logo {
+    width: 200px;
+
+    img {
+      width: 100%;
+      object-fit: cover;
+    }
+
+    @media screen and (min-width: $md) {
+      width: 300px;
+    }
+  }
+
+  &__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+  }
+}

@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
-import useFetchData from '../hooks/use-fetch-data'
+import useFetchData from '../../hooks/use-fetch-data'
+import Hero from '../../organisms/Hero/Hero'
 
 const EventKeys = () => {
   const {
@@ -36,6 +37,9 @@ const EventKeys = () => {
 
   const headings = ['Id', 'Event', 'Meeting Key', 'Select' ]
   return (
+    <>
+    <Header />
+    <Hero title={'Event keys'}/>
     <section className='section'>
       <div className="container">
         {loading && <div>Loading</div>}
@@ -43,25 +47,20 @@ const EventKeys = () => {
           <form className="has-text-centered">
             <table className="table">
               <thead>
-                <tr>{headings.map((heading, i) =>
-                  <td key={i}>{heading}</td>)
-                }
+                <tr>{headings.map((heading, i) => <td key={i}>{heading}</td>)}
                 </tr>
               </thead>
               <tfoot>
-                <tr>{headings.map((heading, i) =>
-                  <td key={i}>{heading}</td>)
-                }
+                <tr>{headings.map((heading, i) => <td key={i}>{heading}</td>)}
                 </tr>
               </tfoot>
               <tbody>
-                {data && data['results'].map(key =>
-                  <tr key={key.id}>
-                    <td><Link to={`/keys/${key.id}`}>{key.id}</Link></td>
-                    <td>{key.event_meeting_name}</td>
-                    <td>{'******' + key.event_meeting_key.slice(-5)}</td>
-                    <td><label><input onClick={handleRadio} type="radio" id={key.id} name="meeting-key" defaultChecked={key.current_event_meeting}></input></label></td>
-                  </tr>
+                {data && data['results'].map(key => <tr key={key.id}>
+                  <td><Link to={`/keys/${key.id}`}>{key.id}</Link></td>
+                  <td>{key.event_meeting_name}</td>
+                  <td>{'******' + key.event_meeting_key.slice(-5)}</td>
+                  <td><label><input onClick={handleRadio} type="radio" id={key.id} name="meeting-key" defaultChecked={key.current_event_meeting}></input></label></td>
+                </tr>
                 )}
               </tbody>
             </table>
@@ -75,7 +74,7 @@ const EventKeys = () => {
                     pathname: '/keys/new'
                   }}>
                   <button className="button is-primary">
-                  Add new
+                    Add new
                   </button>
                 </Link>
               </p>
@@ -83,7 +82,7 @@ const EventKeys = () => {
           </form>
         )}
       </div>
-    </section>
+    </section></>
   )
 }
 

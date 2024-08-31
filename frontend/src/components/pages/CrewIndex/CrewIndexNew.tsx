@@ -9,7 +9,10 @@ import MastersCalculations from "./MastersCalculations"
 import { CrewProps } from "../../components.types";
 import Paginator from "../../molecules/Paginator/Paginator";
 import PageTotals from "../../molecules/PageTotals/PageTotals";
+import CrewTimeCalculatedFieldsUpdate from "../../common/UpdateCrewTimeCalculatedFields";
+
 import "./crewIndex.scss"
+import Header from "../../organisms/Header/Header";
 
 interface ResponseParamsProps {
   page_size?: string;
@@ -21,6 +24,7 @@ interface ResponseParamsProps {
 
 interface ResponseDataProps {
   count: number;
+  requires_ranking_update: number;
   next: number | null;
   previous: number | null;
   results: CrewProps[];
@@ -59,6 +63,7 @@ export default function CrewIndex() {
   const [mastersAdjustmentsApplied, setMastersAdjustmentsApplied] = useState(false)
   const [mastersAdjustmentsRequired, setMastersAdjustmentsRequired] = useState(false)
   const [mastersAdjustmentsBoolean, setMastersAdjustmentsBoolean] = useState(false)
+  const [updateRequired, setUpdateRequired] = useState(0)
 
   // const [loading, setLoading] = useState(false)
   const [sortTerm, setSortTerm] = useState("bib_number");
@@ -89,6 +94,7 @@ export default function CrewIndex() {
       setFastestMixed2x(responseData.fastest_mixed_2x_time.raw_time__min),
       setMastersAdjustmentsApplied(responseData.num_crews_masters_adjusted),
       setMastersAdjustmentsRequired(responseData.num_crews_require_masters_adjusted)
+      setUpdateRequired(responseData.requires_ranking_update)
     } catch (error) {
       console.error(error);
     }
@@ -114,9 +120,6 @@ export default function CrewIndex() {
   };
 
   useEffect(() => {
-    if (searchTerm) {
-      setRefreshDataQueryString(`search=${searchTerm}&`)
-    }
     refreshData(refreshDataQueryString);
   }, [pageNumber, searchTerm, pageSize, scratchedCrewsBoolean, crewsWithTooManyTimesBoolean, crewsWithoutFinishTimeBoolean, crewsWithoutStartTimeBoolean, sortTerm, mastersAdjustmentsBoolean]);
 
@@ -148,6 +151,8 @@ export default function CrewIndex() {
     setPageNumber(1)
     if(e.target.checked) {
       setRefreshDataQueryString("status=Accepted&start_time=0")
+    } else {
+      setRefreshDataQueryString("")
     }
   }
 
@@ -159,6 +164,8 @@ export default function CrewIndex() {
     setPageNumber(1)
     if(e.target.checked) {
       setRefreshDataQueryString("status=Accepted&finish_time=0")
+    } else {
+      setRefreshDataQueryString("")
     }
   }
 
@@ -170,6 +177,8 @@ export default function CrewIndex() {
     setSearchTerm("")
     if(e.target.checked) {
       setRefreshDataQueryString("status=Accepted&invalid_time=1")
+    } else {
+      setRefreshDataQueryString("")
     }
   }
 
@@ -192,7 +201,12 @@ export default function CrewIndex() {
 
   return (
     <>
+      <Header />
       <Hero title={"All crews"} />
+      {(updateRequired && updateRequired > 0) ? 
+        <div className="box">
+          <CrewTimeCalculatedFieldsUpdate refreshData={refreshData} updateRequired={updateRequired}/>
+        </div> : ''}
       <section className="section">
         <div className="container">
           <div className="columns is-vtop">
@@ -356,7 +370,7 @@ export default function CrewIndex() {
                               ? formatTimes(crew.race_time)
                               : "⚠️"}
                     </td>
-                    <td>{crew.event.type === "Master" && crew.event_original[0] ? crew.event_original[0].event_original : ""}</td>
+                    <td>{crew.event.type === "Master" && crew.event_original && crew.event_original[0] ? crew.event_original[0].event_original : ""}</td>
                     <td>{crew.event.type !== "Master" ? "" : formatTimes(crew.masters_adjustment)}</td>
                     <td>{crew.event.type !== "Master" ? "" : formatTimes(crew.masters_adjusted_time)}</td>
                     <td>{crew.manual_override_time ? formatTimes(crew.manual_override_time) : ""}</td>

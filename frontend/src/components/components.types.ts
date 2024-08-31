@@ -25,6 +25,7 @@ export type EventProps = {
 }
   
 export type CrewProps = {
+  category_position_time: number;
   id: string;
   name: string;
   bib_number?: string;
@@ -53,7 +54,17 @@ export type CrewProps = {
   masters_adjusted_time?: number;
   club: ClubProps;
   times: TimeProps[];
-  event_original: EventOriginalProps[];
+  event_original?: EventOriginalProps[];
+  event_order?: number;
+  sculling_CRI?: number;
+  rowing_CRI?: number;
+  draw_start_score?: number;
+  calculated_start_order?: number;
+  host_club: {
+    name: string;
+  }
+  number_location?: string;
+  marshalling_division?: string;
 }
 
 export type EventOriginalProps = {

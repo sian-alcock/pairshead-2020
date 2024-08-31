@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import Auth from '../../lib/Auth'
-
+import Header from '../organisms/Header/Header'
 class DrawMenu extends React.Component {
   constructor() {
     super()
@@ -15,7 +15,7 @@ class DrawMenu extends React.Component {
   render() {
 
     return (
-      <section className="section">
+      <><Header /><section className="section">
         <div className="container">
 
           <div className="columns">
@@ -25,12 +25,11 @@ class DrawMenu extends React.Component {
                   pathname: '/crew-draw-report'
                 }}>
                 <button className="button is-primary">
-                    Crew draw report
+                  Crew draw report
                 </button>
-              </Link>
-              }
+              </Link>}
             </div>
-              
+
           </div>
           <div className="columns">
             <div className="column is-one-quarter has-text-centered">
@@ -39,14 +38,14 @@ class DrawMenu extends React.Component {
                   pathname: '/crew-on-the-day-contact'
                 }}>
                 <button className="button is-primary">
-                    On the day crew contact list
+                  On the day crew contact list
                 </button>
               </Link>
             </div>
           </div>
 
         </div>
-      </section>
+      </section></>
     )
   }
 }

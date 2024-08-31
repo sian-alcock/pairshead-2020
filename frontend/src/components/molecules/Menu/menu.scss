@@ -1,47 +1,67 @@
 @import '../../../style.scss';
 
+$container-width: $width;
+
 .menu {
   position: relative;
+  width: 100%;
 
-  &__container {
-    display: flex;
+  &__right-wrapper {
+    padding: 0 rem(24px);
 
-    .menu__item:not(:last-child) {
-      margin-right: 1rem;
+    @media screen and (min-width: $md) {
+      padding: 0 rem(48px);
     }
 
-    &--mobile {
-      display: block;
-      @media (min-width: $lg) {
-        display: none;
-      }
-    }
-
-    &--desktop {
-      display: none;
-      @media (min-width: $lg) {
-        display: flex;
-      }
+    @media (min-width: $container-width) {
+      margin-right: calc((100vw - #{$container-width}) / 2);
     }
   }
 
-  &__child {
-    position: absolute;
-    z-index: 2;
-    top: 100%;
-    left: 0;
-    right: 0;
-    min-height: 200px;
-    padding: 1rem;
-    background-color: $white;
-    border: 1px solid $bblGrey;
+  &__menu-button {
+    display: flex;
+    align-items: center;
 
-    &--hide {
-      display: none;
+    &--close {
+      justify-content: flex-end;
     }
 
-    &--show {
-      display: block;
+    span {
+      margin-right: 1rem;
+    }
+  }
+
+  &__overlay {
+    position: fixed;
+    z-index: 10;
+    inset: 0;
+    background-color: $bblGrey;
+    opacity: 0.7;
+  }
+
+  &__item-header {
+    margin-bottom: 1rem;
+    @include h3;
+  }
+
+  &__item-link {
+    display: inline-block;
+    margin-bottom: 1rem;
+  }
+
+  &__open {
+    position: fixed;
+    z-index: 20;
+    top: 0;
+    right: 0;
+    width: 90%;
+    height: 100%;
+    overflow-y: auto;
+    background-color: $white;
+    padding: 1rem;
+
+    @media screen and (min-width: $md) {
+      width: 50%;
     }
   }
 }

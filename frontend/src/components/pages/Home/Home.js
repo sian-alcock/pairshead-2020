@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
+import Header from '../../organisms/Header/Header'
 
 class Home extends React.Component {
   constructor() {
@@ -48,6 +49,8 @@ class Home extends React.Component {
   render() {
 
     return (
+      <>
+      <Header />
       <section className="section">
         <div className="container">
 
@@ -146,14 +149,14 @@ class Home extends React.Component {
                   state: { startTab: false, finishTab: true }
                 }}>
                 <button className="button is-primary">
-                Fix Finish Sequence
+                  Fix Finish Sequence
                 </button>
               </Link>
             </div>
           </div>
 
         </div>
-      </section>
+      </section></>
     )
   }
 }

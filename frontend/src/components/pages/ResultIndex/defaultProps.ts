@@ -24,7 +24,7 @@ export const tableHeadings = [
     colSpan: 1
   },
   {
-    name: "Composite cod",
+    name: "Composite code",
     colSpan: 1
   },
   {
@@ -43,4 +43,18 @@ export const tableHeadings = [
     name: "TO",
     colSpan: 1
   }
+]
+
+export const pagingOptions = [
+  {label: "20 results", value: "20"},
+  {label: "50 results", value: "50"},
+  {label: "100 results", value: "100"},
+  {label: "All results", value: "500"}
+]
+
+export const genderOptions = [
+  {label: 'All', value: 'all'},
+  {label: 'Open', value: 'Open'},
+  {label: 'Female', value: 'Female'},
+  {label: 'Mixed', value: 'Mixed'}
 ]

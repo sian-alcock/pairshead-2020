@@ -2,14 +2,17 @@
 
 .page-hero {
   background-color: $bblBlue;
-  padding: 1rem 1.5rem;
   color: $white;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
 
   &__container {
     @include container;
   }
 
   h1 {
-    font-size: 2rem;
+    color: $white;
+
+    @include h1;
   }
 }

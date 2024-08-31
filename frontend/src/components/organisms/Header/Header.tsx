@@ -8,9 +8,11 @@ import "./header.scss"
 export default function Header () {
 
   return(
-    <header className="container">
+    <header className="header no-print">
       <div className="header__inner">
-        <Link to="/"><img className="logo" src={image} alt='Pairs Head of the River logo' /></Link>
+        <Link className="header__logo" to="/">
+          <img className="logo" src={image} alt='Pairs Head of the River logo' />
+        </Link>
         <Navbar {...menuProps}/>
       </div>
     </header>

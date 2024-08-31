@@ -1,8 +1,10 @@
 import React from 'react'
-import BROELoader from '../common/ImportBROEData'
+import BROELoader from '../molecules/BROEDataLoader/ImportBROEData'
 import DataLoader from '../common/DataLoader'
-import CSVDataLoader from '../common/CSVDataLoader'
+import CSVDataLoader from '../molecules/CSVDataLoader/CSVDataLoader'
+import Hero from '../organisms/Hero/Hero'
 // import axios from 'axios'
+import Header from '../organisms/Header/Header'
 
 class ImportData extends React.Component {
   constructor() {
@@ -14,63 +16,38 @@ class ImportData extends React.Component {
   render() {
 
     return (
-      <section className="section">
-        <div className="container">
-          <section className="section-has-lines">
-            <div className="text-container has-text-left">
-              <h2 className="title is-2">Get data from British Rowing</h2>
-              <p className="left">Import data from British Rowing via the api</p>
-            </div>
+      <>
+        <Header />
+        <Hero title={"Import data"} />
+        <section className="section">
+          <div className="container">
             <BROELoader
-              importPersonalData={false}
-            />
+              importPersonalData={false} title={'Get data from British Rowing'} description={'Import data from BROE via the api'} />
 
-          </section>
-
-          <section className="section-has-lines">
-            <div className="has-text-left">
-              <h2 className="title is-2">Import race times from csv</h2>
-              <p className="left">Import webscorer race times from csv.</p>
-            </div>
-
-            <div className="column is-one-half">
               <CSVDataLoader
                 url='/api/crew-race-times-import/'
                 buttonText='Import race times'
                 class='single-height-button'
+                title='Import race times from csv'
+                description='Import webscorer race times from csv.' 
               />
-            </div>
-          </section>
 
-          <section className="section-has-lines">
-            <div className="has-text-left">
-              <h2 className="title is-2">Import original event categories from csv</h2>
-              <p className="left">Import event categories from csv.</p>
-            </div>
-
-            <div className="column is-one-half">
               <CSVDataLoader
                 url='/api/original-event-import/'
                 buttonText='Import original event categories'
-                class='double-height-button'
-              />
-            </div>
-          </section>
+                class='double-height-button' 
+                title='Import original event categories from csv'
+                description='Import event categories from csv.' 
+                />
 
-          <section className="section-has-lines">
-            <div className="has-text-left">
-              <h2 className="title is-2">Import masters adjustments from csv</h2>
-              <p className="left">Import masters adjustments from csv.</p>
-            </div>
-
-            <div className="column is-one-half">
               <CSVDataLoader
                 url='/api/masters-adjustments-import/'
                 buttonText='Import masters adjustments'
                 class='double-height-button'
+                title='Import masters adjustments from csv'
+                description='Import masters adjustments from csv.' 
               />
-            </div>
-          </section>
+
           <section className="section-has-lines">
             <div className="text-container has-text-left">
               <h2 className="title is-2">Update all calculations</h2>
@@ -81,8 +58,7 @@ class ImportData extends React.Component {
                 <DataLoader
                   url='/api/crew-update-rankings/'
                   buttonText='Refresh calculations'
-                  class='single-height-button'
-                />
+                  class='single-height-button' />
               </div>
               <div className="column left">
                 Initiates a calculation (or re-calculation) of rankings and masters adjustments.
@@ -91,7 +67,7 @@ class ImportData extends React.Component {
           </section>
 
         </div>
-      </section>
+      </section></>
     )
   }
 }
