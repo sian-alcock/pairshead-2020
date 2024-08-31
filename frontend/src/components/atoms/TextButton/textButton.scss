@@ -10,6 +10,7 @@
   border: 1px solid $bblBlue;
   background: $bblBlue;
   color: $white;
+  text-align: center;
   @include body-small(bold);
 
   &:hover {
