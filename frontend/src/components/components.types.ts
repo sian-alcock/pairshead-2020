@@ -71,3 +71,10 @@ export type EventOriginalProps = {
   crew: number;
   event_original: string;
 }
+
+export type KeyProps = {
+  id: number;
+  event_meeting_key: string;
+  event_meeting_name: string;
+  current_event_meeting: boolean;
+}

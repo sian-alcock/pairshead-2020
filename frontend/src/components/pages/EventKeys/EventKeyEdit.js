@@ -3,6 +3,9 @@ import { useParams } from 'react-router-dom'
 import { useHistory } from 'react-router'
 import axios from 'axios'
 import useFetchData from '../../hooks/use-fetch-data'
+import Header from '../../organisms/Header/Header'
+import Hero from '../../organisms/Hero/Hero'
+import TextButton from '../../atoms/TextButton/TextButton'
 
 const EventKeyEdit = () => {
   const routeParams = useParams()
@@ -46,6 +49,9 @@ const EventKeyEdit = () => {
 
   }
   return (
+    <>
+    <Header />
+    <Hero title={'Modify event key'} />
     <section className='section'>
       <div className="container">
         {loading && <div>Loading</div>}
@@ -59,8 +65,7 @@ const EventKeyEdit = () => {
                 name="event_meeting_name"
                 id="eventKeyName"
                 defaultValue={formData.event_meeting_name}
-                onChange={handleChange}
-              />
+                onChange={handleChange} />
             </div>
 
             <div className="field">
@@ -70,8 +75,7 @@ const EventKeyEdit = () => {
                 name="event_meeting_key"
                 id="eventKey"
                 defaultValue={formData.event_meeting_key || ''}
-                onChange={handleChange}
-              />
+                onChange={handleChange} />
             </div>
 
             <div className="field">
@@ -82,22 +86,21 @@ const EventKeyEdit = () => {
                   name="current_event_meeting"
                   value={formData.current_event_meeting}
                   checked={!!formData.current_event_meeting}
-                  onChange={handleCheckbox}
-                /> Set to current meeting
+                  onChange={handleCheckbox} /> Set to current meeting
               </label>
 
             </div>
 
             <div className="field">
-              <button className="button is-primary" type="submit">Submit</button>
+              <TextButton label={"Submit"} isSubmit={true}/>
             </div>
             <div className="field">
-              <button className="button is-primary" onClick={handleDelete} type="cancel">Delete key</button>
+              <TextButton label={"Delete key"} onClick={handleDelete} type="cancel"/>
             </div>
           </form>
         )}
       </div>
-    </section>
+    </section></>
   )
 }
 

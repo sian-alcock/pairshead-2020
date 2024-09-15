@@ -1,11 +1,12 @@
-import React from "react"
+import React, { ReactElement } from "react"
 import image from "../../../assets/ph-logo.jpg"
 import { Link } from "react-router-dom"
 import Navbar from "../../molecules/Navbar/Navbar"
 import { menuProps } from "./defaultProps"
+import EventKeyHeader from "../../atoms/EventKeyHeader/EventKeyHeader"
 import "./header.scss"
 
-export default function Header () {
+export default function Header ():ReactElement {
 
   return(
     <header className="header no-print">

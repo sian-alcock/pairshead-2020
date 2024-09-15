@@ -2,7 +2,10 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
 import useFetchData from '../../hooks/use-fetch-data'
+import Header from '../../organisms/Header/Header'
 import Hero from '../../organisms/Hero/Hero'
+import TextButton from '../../atoms/TextButton/TextButton'
+import './eventKeys.scss'
 
 const EventKeys = () => {
   const {
@@ -44,8 +47,8 @@ const EventKeys = () => {
       <div className="container">
         {loading && <div>Loading</div>}
         {!loading && (
-          <form className="has-text-centered">
-            <table className="table">
+          <form>
+            <table className="table event-keys__table">
               <thead>
                 <tr>{headings.map((heading, i) => <td key={i}>{heading}</td>)}
                 </tr>
@@ -66,17 +69,10 @@ const EventKeys = () => {
             </table>
             <div className="field is-grouped">
               <p className="control">
-                <button className="button is-primary" onClick={handleSubmit}>Submit</button>
+                <TextButton label={'Submit'} onClick={handleSubmit}/>
               </p>
               <p className="control">
-                <Link
-                  to={{
-                    pathname: '/keys/new'
-                  }}>
-                  <button className="button is-primary">
-                    Add new
-                  </button>
-                </Link>
+                <TextButton label={'Add new'} pathName={'/keys/new'}/>
               </p>
             </div>
           </form>

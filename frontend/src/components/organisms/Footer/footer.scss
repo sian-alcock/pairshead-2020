@@ -1,0 +1,11 @@
+@import '../../../style.scss';
+
+.footer {
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+}

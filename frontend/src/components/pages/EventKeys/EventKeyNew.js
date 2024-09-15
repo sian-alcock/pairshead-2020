@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { useHistory } from 'react-router'
 import axios from 'axios'
+import Header from '../../organisms/Header/Header'
+import Hero from '../../organisms/Hero/Hero'
+import TextButton from '../../atoms/TextButton/TextButton'
 
 const EventKeyNew = () => {
   const history = useHistory()
@@ -29,9 +32,12 @@ const EventKeyNew = () => {
   }
 
   return (
+    <>
+    <Header />
+    <Hero title={'Modify event key'} />
     <section className='section'>
       <div className="container">
-        <form className="has-text-centered" onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
 
           <div className="field">
             <label className="label" htmlFor="eventKeyName">Event name</label>
@@ -74,12 +80,13 @@ const EventKeyNew = () => {
           </div>
 
           <div className="field">
-            <button className="button is-primary" type="submit">Submit</button>
+            <TextButton label={'Submit'} isSubmit={true} />
           </div>
         </form>
 
       </div>
     </section>
+    </>
   )
 }
 
