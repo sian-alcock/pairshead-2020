@@ -1,6 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import TextButton from '../atoms/TextButton/TextButton'
 
 import Auth from '../../lib/Auth'
 
@@ -77,7 +78,7 @@ class Login extends React.Component {
                     </div>
                     {this.state.error && <small className="help is-danger">{this.state.error}</small>}
                   </div>
-                  <button className="button is-primary">Submit</button>
+                  <TextButton label={"Submit"} isSubmit={true} />
                 </form>
               </div>
             </div>

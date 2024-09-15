@@ -54,7 +54,7 @@ export default function CrewStartOrder() {
     fetchData("/api/crews", {
       page_size: "20",
       page: 1,
-      order: "bib_number",
+      order: "start-score",
       status: "Accepted"
     });
   }, []);
