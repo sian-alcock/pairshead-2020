@@ -43,7 +43,7 @@ class BROELoader extends Component {
       const [clubs, events] = await Promise.all([clubsPromise, eventsPromise])
       console.log(clubs.data, events.data)
       this.setState({
-        clubEventImportSuccessMessage: 'Importing clubs and events from British rowing',
+        clubEventImportSuccessMessage: 'Importing clubs and events from British Rowing',
         clubsAndEventsAreLoading: false,
         bandsAreLoading: true
       })
@@ -53,7 +53,7 @@ class BROELoader extends Component {
       console.log(bands.data)
 
       this.setState({ 
-        bandImportSuccessMessage: 'Importing event band data from British rowing',
+        bandImportSuccessMessage: 'Importing event band data from British Rowing',
         bandsAreLoading: false,
         crewsAreLoading: true
       })
@@ -62,7 +62,7 @@ class BROELoader extends Component {
       const [crews] = await Promise.all([crewPromise])
       console.log(crews.data)
       this.setState({
-        crewImportSuccessMessage: 'Importing crew data from British rowing',
+        crewImportSuccessMessage: 'Importing crew data from British Rowing',
         crewsAreLoading: false,
         competitorsAreLoading: true
       })
@@ -70,7 +70,7 @@ class BROELoader extends Component {
       const competitors = await axios.get('/api/competitor-data-import')
       console.log(competitors.data)
       this.setState({
-        competitorImportSuccessMessage: 'Importing competitor data from British rowing',
+        competitorImportSuccessMessage: 'Importing competitor data from British Rowing',
         competitorsAreLoading: false,
         eventBandsAreUpdating: true
       })
@@ -115,17 +115,17 @@ class BROELoader extends Component {
       <div className="c-data-loader">
           <TextButton label={'Get BROE data'} onClick={this.getData} disabled={loading}/>
           <div className="c-data-loader__progress">
-            {this.state.clubsAndEventsAreLoading &&<ProgressMessage message={'Importing clubs and events from British rowing'} status={'loading'} />}
+            {this.state.clubsAndEventsAreLoading &&<ProgressMessage message={'Importing clubs and events from British Rowing'} status={'loading'} />}
             {this.state.clubEventImportSuccessMessage &&<ProgressMessage message={this.state.clubEventImportSuccessMessage} status={'success'} />}
-            {this.state.bandsAreLoading &&<ProgressMessage message={'Importing event band data from British rowing'} status={'loading'} />}
+            {this.state.bandsAreLoading &&<ProgressMessage message={'Importing event band data from British Rowing'} status={'loading'} />}
             {this.state.bandImportSuccessMessage &&<ProgressMessage message={this.state.bandImportSuccessMessage} status={'success'} />}
-            {this.state.crewsAreLoading &&<ProgressMessage message={'Importing crew data from British rowing'} status={'loading'} />}
+            {this.state.crewsAreLoading &&<ProgressMessage message={'Importing crew data from British Rowing'} status={'loading'} />}
             {this.state.crewImportSuccessMessage &&<ProgressMessage message={this.state.crewImportSuccessMessage} status={'success'} />}
-            {this.state.competitorsAreLoading &&<ProgressMessage message={'Importing competitor data from British rowing'} status={'loading'} />}
+            {this.state.competitorsAreLoading &&<ProgressMessage message={'Importing competitor data from British Rowing'} status={'loading'} />}
             {this.state.competitorImportSuccessMessage &&<ProgressMessage message={this.state.competitorImportSuccessMessage} status={'success'} />}
             {this.state.eventBandsAreUpdating &&<ProgressMessage message={'Updating event bands for all crews'} status={'loading'} />}
             {this.state.eventBandsSuccessMessage &&<ProgressMessage message={this.state.eventBandsSuccessMessage} status={'success'} />}
-            {this.state.crewDataUpdated && <ProgressMessage message={`All British rowing data imported successfully: ${formatTimeDate(this.state.crewDataUpdated)}!`} status={'success'}/>}
+            {this.state.crewDataUpdated && <ProgressMessage message={`All British Rowing data imported successfully: ${formatTimeDate(this.state.crewDataUpdated)}!`} status={'success'}/>}
           </div>
         </div>
       </section>

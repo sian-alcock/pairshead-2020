@@ -18,8 +18,14 @@
     @include h2;
   }
 
+  &__crew-details,
+  &__start-order {
+    margin-bottom: 0.5rem;
+  }
+
   &__host {
-    @include h4;
+    @include h5;
+    font-weight: $bold;
   }
 }
 

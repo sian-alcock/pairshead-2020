@@ -88,9 +88,9 @@ class CalculateStartOrder extends Component {
           <div className="calculate-start-order__progress">
             {this.state.eventBandsAreUpdating &&<ProgressMessage message={'Updating event bands'} status={'loading'} />}
             {this.state.eventBandsSuccessMessage &&<ProgressMessage message={this.state.eventBandsSuccessMessage} status={'success'} />}
-            {this.state.startScoresCalculating &&<ProgressMessage message={'Importing event band data from British rowing'} status={'loading'} />}
+            {this.state.startScoresCalculating &&<ProgressMessage message={'Importing event band data from British Rowing'} status={'loading'} />}
             {this.state.startScoreSuccessMessage &&<ProgressMessage message={this.state.startScoreSuccessMessage} status={'success'} />}
-            {this.state.startScoresOrdering &&<ProgressMessage message={'Importing crew data from British rowing'} status={'loading'} />}
+            {this.state.startScoresOrdering &&<ProgressMessage message={'Importing crew data from British Rowing'} status={'loading'} />}
             {this.state.startOrderSuccessMessage &&<ProgressMessage message={this.state.startOrderSuccessMessage} status={'success'} />}
           
             {this.state.crewDataUpdated && <ProgressMessage message={`Start order calculated: ${formatTimeDate(this.state.crewDataUpdated)}!`} status={'success'}/>}

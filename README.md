@@ -64,7 +64,7 @@ Below is an example wireframe for the Crew index page.
 
 ![Screenshot](./readme-assets/Screenshot-wireframe.png)
 
-My first task was to get the crew data from British Rowing and from the timing data from WebScorer.  British rowing have a fully supported API which is well documented.  After signing up for an accounting and getting completing a terms of use form, I was given a set of keys.  I was quickly able to establish a connection to the three desired end points, namely Clubs, Events and Crews.
+My first task was to get the crew data from British Rowing and from the timing data from WebScorer.  British Rowing have a fully supported API which is well documented.  After signing up for an accounting and getting completing a terms of use form, I was given a set of keys.  I was quickly able to establish a connection to the three desired end points, namely Clubs, Events and Crews.
 
 Getting the WebScorer data was more difficult.  WebScorer does have an API but it is not documented.  The WebScorer application does enable download to .csv file.  So I researched how to read in data from a .csv file.  This was done by creating a serializer and a view to read in the data and save it to the database.
 
@@ -85,7 +85,7 @@ The Summary page includes the following features:
 
 ### Import data page
 
-The data from British rowing API comes from three end points.  Each crew has an associated rowing club and competes in a specific event (eg senior scullers, junior pairs etc).  I use async / await to ensure that the club and event data GET request is completed before initiating the crew data GET request.  The import takes around 8 seconds so a spinner icon is presented in the body of the button to help manage the user experience.
+The data from British Rowing API comes from three end points.  Each crew has an associated rowing club and competes in a specific event (eg senior scullers, junior pairs etc).  I use async / await to ensure that the club and event data GET request is completed before initiating the crew data GET request.  The import takes around 8 seconds so a spinner icon is presented in the body of the button to help manage the user experience.
 
 I have also implemented cancelToken to ensure the asynchronous GET requests are cancelled before the component unmounts.
 

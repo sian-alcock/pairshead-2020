@@ -61,13 +61,16 @@ export default function CrewLabels() {
           <div className="crew-labels__grid">
             {crews.map((crew, idx) => <div key={crew.id} className="crew-labels__label">
               <h1 className="crew-labels__start-order">{crew.calculated_start_order}</h1>
-              <div>
+              <div className="crew-labels__crew-details">
                 <span className="crew-labels__names">{crew.competitor_names}</span>
                 <span> - </span>
-                <span className="crew-labels__club">{crew.club.abbreviation}</span>
+                <span className="crew-labels__club">{crew.club.index_code}</span>
+                <span> - </span>
+                <span className="crew-labels__id">{crew.id}</span>
+                <span> - </span>
+                <span className="crew-labels__event">{crew.event_band}</span>
               </div>
-              <p className="crew-labels__event">{crew.event_band}</p>
-              <p className="crew-labels__host">{crew.number_location}</p>
+              <p className="crew-labels__host"><span>Number location: </span>{crew.number_location}</p>
             </div>)}
           </div>
         </div>
