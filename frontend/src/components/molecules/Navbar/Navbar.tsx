@@ -22,8 +22,8 @@ function Navbar (): ReactElement {
   return (
     <div className="nav-bar">
       {Auth.isAuthenticated() && <div className="nav-bar__desktop">
-        <MenuButton label={'Generate start order'} pathName={"generate-start-order"} />
-        <MenuButton label={'Generate results'} pathName={"import-data"}/>
+        <MenuButton label={'Generate start order'} pathName={"/generate-start-order"} />
+        <MenuButton label={'Generate results'} pathName={"/generate-results"}/>
       </div>}
       <Menu menuItems={menuProps.menuItems} />
       {Auth.isAuthenticated() && <Link className="nav-bar__login" to="/" onClick={logout}>Log out</Link>}

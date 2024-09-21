@@ -59,7 +59,7 @@ const EventKeys = () => {
               </tfoot>
               <tbody>
                 {data && data['results'].map(key => <tr key={key.id}>
-                  <td><Link to={`/keys/${key.id}`}>{key.id}</Link></td>
+                  <td><Link to={`/settings/keys/${key.id}`}>{key.id}</Link></td>
                   <td>{key.event_meeting_name}</td>
                   <td>{'******' + key.event_meeting_key.slice(-5)}</td>
                   <td><label><input onClick={handleRadio} type="radio" id={key.id} name="meeting-key" defaultChecked={key.current_event_meeting}></input></label></td>
