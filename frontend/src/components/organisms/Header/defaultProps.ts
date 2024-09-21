@@ -28,6 +28,11 @@ export const menuProps: MenuProps = {
           authenticated: true
         },
         {
+          link: "/logistics/crew-draw-reports",
+          title: "Crew draw reports",
+          authenticated: true
+        },
+        {
           link: "/logistics/crew-on-the-day-contact",
           title: "On the day contact details",
           authenticated: true

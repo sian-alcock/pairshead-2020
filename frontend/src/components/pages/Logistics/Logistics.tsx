@@ -18,7 +18,7 @@ export default function Logistics () {
             </div>
             <div className="columns">
               <div className="column is-one-quarter">
-                <TextButton label="Crew draw report" pathName='/logistics/crew-draw-report' />
+                <TextButton label="Crew draw report" pathName='/logistics/crew-draw-reports' />
               </div>
             </div>
             <div className="columns">

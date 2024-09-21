@@ -1,0 +1,12 @@
+@import '../../../style.scss';
+
+.crew-draw-reports {
+  &__table-container {
+      overflow-x: auto;
+  }
+
+  &__table {
+    max-width: 100%;
+    margin-left: 0;
+  }
+}

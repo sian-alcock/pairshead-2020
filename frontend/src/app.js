@@ -14,7 +14,7 @@ import RaceTimeEdit from "./components/pages/RaceTimes/RaceTimeEdit"
 import ResultIndex from "./components/pages/ResultIndex/ResultIndexNew"
 import GenerateResults from "./components/pages/GenerateResults/GenerateResults"
 import ExportData from "./components/crews/ExportData"
-import CrewDrawReport from "./components/crews/CrewDrawReport"
+import CrewDrawReports from "./components/pages/CrewDrawReports/CrewDrawReports"
 import CrewStartOrder from "./components/pages/CrewStartOrder/CrewStartOrder"
 import GenerateStartOrder from "./components/pages/GenerateStartOrder/GenerateStartOrder"
 import CrewStartByNumberLocation from "./components/pages/CrewStartByNumberLocation/CrewStartByNumberLocation"
@@ -52,7 +52,7 @@ export default class App extends React.Component {
             <SecureRoute path="/settings/info" component={Info} />
             <SecureRoute path="/settings/register" component={Register} />
             <SecureRoute path="/settings" component={Settings} />
-            <SecureRoute path="/logistics/crew-draw-report" component={CrewDrawReport} />
+            <SecureRoute path="/logistics/crew-draw-reports" component={CrewDrawReports} />
             <SecureRoute path="/logistics/crew-labels" component={CrewLabels} />
             <SecureRoute path="/logistics/crew-on-the-day-contact" component={ContactDetailReport} />
             <SecureRoute path="/logistics/start-order-by-number-location" component={CrewStartByNumberLocation} />
