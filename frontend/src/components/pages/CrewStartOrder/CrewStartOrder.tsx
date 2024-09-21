@@ -22,6 +22,7 @@ interface ResponseParamsProps {
 interface ResponseDataProps {
   count: number;
   requires_ranking_update: number;
+  num_scratched_crews: number;
   next: number | null;
   previous: number | null;
   results: CrewProps[];
@@ -32,6 +33,8 @@ export default function CrewStartOrder() {
   const [totalCrews, setTotalCrews] = useState(0);
   const [pageSize, setPageSize] = useState("20");
   const [pageNumber, setPageNumber] = useState(1);
+  const [scratchedCrews, setScratchedCrews] = useState(0);
+  const [scratchedCrewsBoolean, setScratchedCrewsBoolean] = useState(sessionStorage.getItem("showScratchedCrewsOnStartOrderPage") === "true" || false)
   
   const fetchData = async (url: string, params: ResponseParamsProps) => {
     console.log(url);
@@ -45,6 +48,7 @@ export default function CrewStartOrder() {
 
       setCrews(responseData.results);
       setTotalCrews(responseData.count);
+      setScratchedCrews(responseData.num_scratched_crews);
     } catch (error) {
       console.error(error);
     }
@@ -63,13 +67,14 @@ export default function CrewStartOrder() {
     fetchData(`/api/crews?${refreshDataQueryString}`, {
       page_size: pageSize,
       page: pageNumber,
-      status: ["Accepted"],
+      order: "start-score",
+      status: scratchedCrewsBoolean ? "Accepted" : ["Accepted", "Scratched"],
     });
   };
 
   useEffect(() => {
     refreshData();
-  }, [pageNumber, pageSize]);
+  }, [pageNumber, pageSize, scratchedCrewsBoolean]);
 
   const changePage = (pageNumber: number, totalPages: number) => {
     if (pageNumber > totalPages || pageNumber < 0) return null;
@@ -79,6 +84,11 @@ export default function CrewStartOrder() {
   const handlePagingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setPageSize(e.target.value)
     setPageNumber(1)
+  }
+
+  const handleScratchedCrews = (e: React.ChangeEvent<HTMLInputElement>) => {
+    sessionStorage.setItem("showScratchedCrewsOnStartOrderPage", e.target.checked ? "true" : "false")
+    setScratchedCrewsBoolean(e.target.checked)
   }
 
   console.log(crews);
@@ -105,6 +115,15 @@ export default function CrewStartOrder() {
                     )}
                   </select>
                 </div>
+              </div>
+            </div>
+
+            <div className="column">
+              <div className="field">
+                <label className="checkbox" htmlFor="showScratchedCrews" >
+                  <input type="checkbox"  className="checkbox" id="showScratchedCrews" checked={!!scratchedCrewsBoolean} onChange={handleScratchedCrews} />
+                  <small>Hide scratched crews {scratchedCrews ? `(${scratchedCrews})` : ""}</small>
+                </label>
               </div>
             </div>
           </div>

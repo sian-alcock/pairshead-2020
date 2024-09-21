@@ -38,7 +38,7 @@ export default function EventKeyHeader ():ReactElement {
   return(
     <div className="event-key-header">
       <span>Current event: </span>{keys && <span>{getCurrentKey(keys)}</span>}
-      <span>&nbsp;</span>({Auth.isAuthenticated() && <Link to="/keys">Change</Link>})
+      <span>&nbsp;</span>({Auth.isAuthenticated() && <Link to="/settings/keys">Change</Link>})
     </div>
   )
 }

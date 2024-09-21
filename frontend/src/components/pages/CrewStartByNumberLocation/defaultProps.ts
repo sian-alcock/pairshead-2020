@@ -5,6 +5,5 @@ export const tableHeadings = [
   'Club',
   'Category',
   'Number location',
-  'Marshalling division',
   ''
 ]

@@ -314,7 +314,7 @@ class StartOrderDataExport(APIView):
     def get(self, _request):
         filename = 'startorderdata - ' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M.csv")
 
-        crews = Crew.objects.filter(status__exact=['Accepted']).order_by('calculated_start_order')
+        crews = Crew.objects.filter(status__exact='Accepted').order_by('calculated_start_order')
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
 

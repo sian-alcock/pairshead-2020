@@ -3,8 +3,8 @@ import React from 'react'
 import { AsyncPaginate } from 'react-select-async-paginate'
 
 import axios from 'axios'
-import { formatTimes } from '../../lib/helpers'
-import Header from '../organisms/Header/Header'
+import { formatTimes } from '../../../lib/helpers'
+import Header from '../../organisms/Header/Header'
 
 
 class RaceTimeEdit extends React.Component {

@@ -1,0 +1,10 @@
+@import '../../../style.scss';
+
+.settings {
+    &__section {
+      @include section;
+    }
+    &__container {
+      @include container;
+    }
+  }

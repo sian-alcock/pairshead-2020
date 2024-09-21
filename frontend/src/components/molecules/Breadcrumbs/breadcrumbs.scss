@@ -1,0 +1,19 @@
+@import '../../../style.scss';
+
+.breadcrumbs {
+  &__container {
+    @include container;
+  }
+
+  &__divider {
+    margin: 0 0.25rem;
+  }
+
+  a {
+    color: $white;
+    text-decoration: underline;
+     &:hover {
+      color: $phLogoBlue;
+     }
+  }
+}

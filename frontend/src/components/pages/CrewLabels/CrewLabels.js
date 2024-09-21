@@ -1,26 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
-// import { CrewProps } from "../../components.types";
+import Hero from "../../organisms/Hero/Hero";
 
 import "./crewLabels.scss"
 import Header from "../../organisms/Header/Header";
-
-// interface CrewLabelsProps {
-//   crewNum: number;
-//   club: string;
-// }
-
-// interface ResponseParamsProps {
-//     page_size?: string;
-//     page?: number;
-//     order?: string;
-//     status?: string | string[];
-//   }
-
-// interface ResponseDataProps {
-//   count: number;
-//   results: CrewProps[];
-// }
 
 export default function CrewLabels() {
   const [crews, setCrews] = useState([]);
@@ -56,6 +39,7 @@ export default function CrewLabels() {
   return (
     <>
       <Header />
+      <Hero title={'Crew labels'}/>
       <div id="print-report">
         <div className="crew-labels__page">
           <div className="crew-labels__grid">

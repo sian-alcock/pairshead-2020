@@ -1,0 +1,47 @@
+Event,Order
+Op J18 2x,1
+Op J18 2-,2
+Op J16 2x,3
+W J18 2x,4
+W J18 2-,5
+W J16 2x,6
+Op 2x Championship,7
+Op 2x Intermediate,8
+Op 2x Club,9
+Op 2- Championship,10
+Op 2- Senior,11
+Op 2- Intermediate,12
+Op 2- Club,13
+W 2x Championship,14
+W 2x Intermediate,15
+W 2x Club,16
+W 2- Championship,17
+W Lwt 2-,18
+W 2- Intermediate,19
+W 2- Club,20
+Mx 2x,21
+Op MasB 2x,22
+Op MasC 2x,23
+Op MasD 2x,24
+Op MasE 2x,25
+Op MasF 2x,26
+Op MasG 2x,27
+Op MasH/I 2x,28
+Op MasB 2-,29
+Op MasC 2-,30
+Op MasD 2-,31
+Op MasE 2-,32
+Op MasF 2-,33
+Op MasH/G 2-,34
+Mx MasB/C 2x,35
+Mx MasD/E 2x,36
+Mx MasF/G 2x,37
+W MasB 2x,39
+W MasC 2x,40
+W MasD 2x Championship,41
+W MasD 2x Club,42
+W MasE 2x,43
+W MasF 2x,44
+W MasG/H 2x,45
+W MasB/C 2-,46
+W MasD 2-,47

@@ -1,0 +1,21 @@
+@import '../../../style.scss';
+
+.nav-bar {
+  display: flex;
+  align-items: center;
+  
+  &__desktop {
+    display: none;
+    @media (min-width: $md) {
+      display: block;
+    }
+  }
+
+  &__login {
+    margin-left: 0.5rem;
+    color: $bblBlue;
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}

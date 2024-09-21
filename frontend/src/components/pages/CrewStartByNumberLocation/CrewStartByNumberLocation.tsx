@@ -69,7 +69,7 @@ export default function CrewStartByNumberLocation () {
 
           {uniqueNumberLocations.map((host, i) => <div className='block' key={i}>
             <div className="crew-start-by-number-location__location-title">{host}</div>
-            <table className="table has-text-left">
+            <table className="table crew-start-by-number-location__table has-text-left">
               <thead>
                 <tr>{tableHeadings.map((heading, i) => <td key={i}>{heading}</td>
                 )}
@@ -90,7 +90,6 @@ export default function CrewStartByNumberLocation () {
                   <td>{crew.club.index_code}</td>
                   <td>{crew.event_band}</td>
                   <td>{crew.number_location}</td>
-                  <td>{crew.marshalling_division}</td>
                   <td>&#9634;</td>
                 </tr>
                 )}

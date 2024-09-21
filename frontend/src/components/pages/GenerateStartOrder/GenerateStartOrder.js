@@ -91,26 +91,12 @@ class GenerateStartOrder extends React.Component {
 
           <section className="section-has-lines">
             <div className="text-container has-text-left">
-              <h2 className="generate-start-order__title">Start order reports</h2>
+              <h2 className="generate-start-order__title">Inspect calculated start order</h2>
+              <p className="generate-start-order__description">Report showing crews with calculated start order for inspection</p>
             </div>
             <div className="columns">
               <div className="column is-one-quarter">
-                <TextButton label="Start order" pathName='/crew-start-order' />
-              </div>
-            </div>
-            <div className="columns">
-              <div className="column is-one-quarter">
-                <TextButton label="Crew labels" pathName='/crew-labels' />
-              </div>
-            </div>
-            <div className="columns">
-              <div className="column is-one-quarter">
-                <TextButton label="Start order by number location" pathName='/crew-start-order-by-host' />
-              </div>
-            </div>
-            <div className="columns">
-              <div className="column is-one-quarter">
-                <TextButton label="On the day contact details" pathName='/crew-on-the-day-contact' />
+                <TextButton label="Start order" pathName='/generate-start-order/crew-start-order' />
               </div>
             </div>
           </section>

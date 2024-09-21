@@ -14,64 +14,75 @@ export const menuProps: MenuProps = {
       ]
     },
     {
-      parentItem: "Results",
       key: 1,
+      parentItem: "Logistics",
       items: [
         {
-          link: "/crews",
+          link: "/logistics/crew-labels",
+          title: "Crew labels",
+          authenticated: true
+        },
+        {
+          link: "/logistics/start-order-by-number-location",
+          title: "Start order by number location",
+          authenticated: true
+        },
+        {
+          link: "/logistics/crew-on-the-day-contact",
+          title: "On the day contact details",
+          authenticated: true
+        }
+      ]
+    },
+    {
+      parentItem: "Results",
+      key: 2,
+      items: [
+        {
+          link: "/generate-results",
+          title: "Generate results",
+          authenticated: true
+        },
+        {
+          link: "generate-results/crews",
           title: "All crews",
           authenticated: true
         },
         {
-          link: "/race-times",
+          link: "generate-results/race-times",
           title: "Race times",
           authenticated: true
         },
         {
           link: "/results",
-          title: "Results",
+          title: "Final results",
           authenticated: false
         },
         {
-          link: "/import",
-          title: "Import data",
-          authenticated: true
-        },
-        {
-          link: "/export",
-          title: "Export data",
+          link: "generate-results/export",
+          title: "Data exports",
           authenticated: true
         }
       ]
     },
     {
       parentItem: "Settings",
-      key: 2,
+      key: 3,
       items: [
         {
-          link: "/keys",
+          link: "settings/keys",
           title: "Add or change event key",
           authenticated: true
         },
         {
-          link: "/register",
+          link: "settings/register",
           title: "Register user",
           authenticated: true
         },
         {
-          link: "/login",
-          title: "Login",
-          authenticated: false
-        },
-        {
-          link: "/logout",
-          title: "Logout",
-          authenticated: false
-        },
-        {
-          link: "/logout",
-          title: "Need to restore the onclick Logout function...",
-          authenticated: false
+          link: "settings/info",
+          title: "About this application",
+          authenticated: true
         }
       ]
     }

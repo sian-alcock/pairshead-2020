@@ -1,0 +1,10 @@
+@import '../../../style.scss';
+
+.logistics {
+  &__section {
+    @include section;
+  }
+  &__container {
+    @include container;
+  }
+}

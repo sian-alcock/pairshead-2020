@@ -1,15 +1,14 @@
 import React from 'react'
-import BROELoader from '../molecules/BROEDataLoader/ImportBROEData'
-import DataLoader from '../common/DataLoader'
-import CSVDataLoader from '../molecules/CSVDataLoader/CSVDataLoader'
-import Hero from '../organisms/Hero/Hero'
-// import axios from 'axios'
-import Header from '../organisms/Header/Header'
+import BROELoader from '../../molecules/BROEDataLoader/ImportBROEData'
+import DataLoader from '../../common/DataLoader'
+import CSVDataLoader from '../../molecules/CSVDataLoader/CSVDataLoader'
+import Hero from '../../organisms/Hero/Hero'
+import Header from '../../organisms/Header/Header'
+import TextButton from '../../atoms/TextButton/TextButton'
 
-class ImportData extends React.Component {
+class GenerateResults extends React.Component {
   constructor() {
     super()
-
   }
 
 
@@ -18,7 +17,7 @@ class ImportData extends React.Component {
     return (
       <>
         <Header />
-        <Hero title={"Import data"} />
+        <Hero title={"Generate results"} />
         <section className="section">
           <div className="container">
             <BROELoader
@@ -66,10 +65,32 @@ class ImportData extends React.Component {
             </div>
           </section>
 
+          <section className="section-has-lines">
+            <div className="text-container has-text-left">
+              <h2 className="generate-start-order__title">Reports</h2>
+            </div>
+            <div className="columns">
+              <div className="column is-one-quarter">
+                <TextButton label="All crews" pathName='/generate-results/crews' />
+              </div>
+            </div>
+            <div className="columns">
+              <div className="column is-one-quarter">
+                <TextButton label="Race times" pathName='/generate-results/race-times' />
+              </div>
+            </div>
+            <div className="columns">
+              <div className="column is-one-quarter">
+                <TextButton label="Result data exports" pathName='/generate-results/export' />
+              </div>
+            </div>
+          </section>
+
         </div>
-      </section></>
+      </section>
+      </>
     )
   }
 }
 
-export default ImportData
+export default GenerateResults

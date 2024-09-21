@@ -2,10 +2,10 @@ import React from 'react'
 import Select from 'react-select'
 import axios from 'axios'
 import { Link } from 'react-router-dom'
-import { formatTimes } from '../../lib/helpers'
-import Paginator from '../molecules/Paginator/Paginator'
-import PageTotals from '../molecules/PageTotals/PageTotals'
-import Header from '../organisms/Header/Header'
+import { formatTimes } from '../../../lib/helpers'
+import Paginator from '../../molecules/Paginator/Paginator'
+import PageTotals from '../../molecules/PageTotals/PageTotals'
+import Header from '../../organisms/Header/Header'
 
 class RaceTimeIndex extends React.Component {
   constructor() {

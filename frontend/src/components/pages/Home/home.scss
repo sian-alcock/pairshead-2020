@@ -1,0 +1,15 @@
+@import '../../../style.scss';
+
+.summary {
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+
+  &__button-wrapper {
+    padding: 1rem 0;
+  }
+}

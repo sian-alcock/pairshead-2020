@@ -1,7 +1,9 @@
 import React from 'react'
 import axios from 'axios'
-import { Link } from 'react-router-dom'
 import Header from '../../organisms/Header/Header'
+import TextButton from '../../atoms/TextButton/TextButton'
+import Hero from '../../organisms/Hero/Hero'
+import './home.scss'
 
 class Home extends React.Component {
   constructor() {
@@ -51,15 +53,9 @@ class Home extends React.Component {
     return (
       <>
       <Header />
-      <section className="section">
-        <div className="container">
-
-
-          <div className="box">
-            <h2 className="subtitle has-text-centered">Summary</h2>
-          </div>
-
-
+      <Hero title={"Summary"}/>
+      <section className="summary__section">
+        <div className="summary__container">
           <div className="columns is-centered">
             <div className="column">
               <p>Total crews</p>
@@ -104,59 +100,31 @@ class Home extends React.Component {
               <p>{this.state.scratchedCrewsWithTime}</p>
             </div>
           </div>
+          <div className="summary__button-column">
 
-
-          <div className="columns is-centered">
-
-            <div className="column has-text-centered">
-              <Link
-                to={{
-                  pathname: '/import'
-                }}>
-                <button className="button is-primary">
-                  Import data
-                </button>
-              </Link>
+            <div className="summary__button-wrapper">
+              <TextButton pathName={"/generate-start-order"} label={"Generate start order"} />
             </div>
 
-            <div className="column has-text-centered">
-              <Link
-                to={{
-                  pathname: '/export'
-                }}>
-                <button className="button is-primary">
-                  Export data
-                </button>
-              </Link>
+            <div className="summary__button-wrapper">
+              <TextButton pathName={"/logistics"} label={"On the day logistics"} />
+            </div>
+          </div>          
+          
+          <div className="summary__button-column">
+
+            <div className="summary__button-wrapper">
+              <TextButton pathName={"/generate-results"} label={"Generate results"} />
             </div>
 
-            <div className="column has-text-centered">
-              <Link
-                to={{
-                  pathname: '/race-times',
-                  state: { startTab: true, finishTab: false }
-                }}>
-                <button className="button is-primary">
-                  Fix Start Sequence
-                </button>
-              </Link>
-            </div>
-
-            <div className="column has-text-centered">
-              <Link
-                to={{
-                  pathname: '/race-times',
-                  state: { startTab: false, finishTab: true }
-                }}>
-                <button className="button is-primary">
-                  Fix Finish Sequence
-                </button>
-              </Link>
+            <div className="summary__button-wrapper">
+              <TextButton pathName={"/settings"} label={"System settings"} />
             </div>
           </div>
 
         </div>
-      </section></>
+      </section>
+      </>
     )
   }
 }

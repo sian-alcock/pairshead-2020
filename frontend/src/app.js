@@ -9,12 +9,11 @@ import Register from "./components/auth/Register"
 import Login from "./components/auth/Login"
 import CrewIndex from "./components/pages/CrewIndex/CrewIndexNew"
 import CrewTimeEdit from "./components/crews/CrewTimeEdit"
-import RaceTimeIndex from "./components/crews/RaceTimeIndex"
-import RaceTimeEdit from "./components/crews/RaceTimeEdit"
+import RaceTimeIndex from "./components/pages/RaceTimes/RaceTimeIndex"
+import RaceTimeEdit from "./components/pages/RaceTimes/RaceTimeEdit"
 import ResultIndex from "./components/pages/ResultIndex/ResultIndexNew"
-import ImportData from "./components/crews/ImportData"
+import GenerateResults from "./components/pages/GenerateResults/GenerateResults"
 import ExportData from "./components/crews/ExportData"
-import DrawMenu from "./components/crews/DrawMenu"
 import CrewDrawReport from "./components/crews/CrewDrawReport"
 import CrewStartOrder from "./components/pages/CrewStartOrder/CrewStartOrder"
 import GenerateStartOrder from "./components/pages/GenerateStartOrder/GenerateStartOrder"
@@ -25,6 +24,8 @@ import EventKeys from "./components/pages/EventKeys/EventKeys"
 import EventKeyEdit from "./components/pages/EventKeys/EventKeyEdit"
 import EventKeyNew from "./components/pages/EventKeys/EventKeyNew"
 import CrewLabels from "./components/pages/CrewLabels/CrewLabels"
+import Logistics from "./components/pages/Logistics/Logistics"
+import Settings from "./components/pages/PHSettings/Settings"
 
 import "@fortawesome/fontawesome-free/js/all.js"
 import 'bulma'
@@ -39,25 +40,26 @@ export default class App extends React.Component {
       <div>
         <HashRouter>
           <Switch>
-            <SecureRoute path="/crews/:id" component={CrewTimeEdit} />
-            <SecureRoute path="/crews" component={CrewIndex} />
-            <SecureRoute path="/crew-labels" component={CrewLabels} />
-            <SecureRoute path="/race-times/:id" component={RaceTimeEdit} />
-            <SecureRoute path="/race-times" component={RaceTimeIndex} />
-            <SecureRoute path="/summary" component={Home} />
-            <SecureRoute path="/keys/new" component={EventKeyNew} />
-            <SecureRoute path="/keys/:id" component={EventKeyEdit} />
-            <SecureRoute path="/keys" component={EventKeys} />
-            <SecureRoute path="/import" component={ImportData} />
-            <SecureRoute path="/export" component={ExportData} />
-            <SecureRoute path="/draw-menu" component={DrawMenu} />
-            <SecureRoute path="/crew-draw-report" component={CrewDrawReport} />
-            <SecureRoute path="/crew-on-the-day-contact" component={ContactDetailReport} />
+            <SecureRoute path="/generate-results/crews/:id" component={CrewTimeEdit} />
+            <SecureRoute path="/generate-results/crews" component={CrewIndex} />
+            <SecureRoute path="/generate-results/race-times/:id" component={RaceTimeEdit} />
+            <SecureRoute path="/generate-results/race-times" component={RaceTimeIndex} />
+            <SecureRoute path="/generate-results/export" component={ExportData} />
+            <SecureRoute path="/generate-results" component={GenerateResults} />
+            <SecureRoute path="/settings/keys/new" component={EventKeyNew} />
+            <SecureRoute path="/settings/keys/:id" component={EventKeyEdit} />
+            <SecureRoute path="/settings/keys" component={EventKeys} />
+            <SecureRoute path="/settings/info" component={Info} />
+            <SecureRoute path="/settings/register" component={Register} />
+            <SecureRoute path="/settings" component={Settings} />
+            <SecureRoute path="/logistics/crew-draw-report" component={CrewDrawReport} />
+            <SecureRoute path="/logistics/crew-labels" component={CrewLabels} />
+            <SecureRoute path="/logistics/crew-on-the-day-contact" component={ContactDetailReport} />
+            <SecureRoute path="/logistics/start-order-by-number-location" component={CrewStartByNumberLocation} />
+            <SecureRoute path="/logistics" component={Logistics} />
+            <SecureRoute path="/generate-start-order/crew-start-order" component={CrewStartOrder} />
             <SecureRoute path="/generate-start-order" component={GenerateStartOrder} />
-            <SecureRoute path="/crew-start-order" component={CrewStartOrder} />
-            <SecureRoute path="/crew-start-order-by-host" component={CrewStartByNumberLocation} />
-            <SecureRoute path="/info" component={Info} />
-            <SecureRoute path="/register" component={Register} />
+            <SecureRoute path="/summary" component={Home} />
             <Route path="/login" component={Login} />
             <Route path="/" component={ResultIndex} />
           </Switch>

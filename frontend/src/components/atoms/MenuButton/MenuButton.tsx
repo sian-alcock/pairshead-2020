@@ -1,17 +1,22 @@
 import React from "react"
+import { Link } from 'react-router-dom'
 import "./menuButton.scss"
 
 type MenuButtonProps = {
-  title: string;
-  clickHandler: () => void;
-  isActive: boolean;
+  label: string;
+  pathName?: string;
 }
 
-export default function MenuButton({title, clickHandler, isActive}: MenuButtonProps) {
+export default function MenuButton({label, pathName}: MenuButtonProps) {
   return (
-    <button className={`menu-button ${isActive ? "menu-button--active" : ""}`} onClick={clickHandler}>
-      {title}
-    </button>
+    <Link
+      className="menu-button"
+      to={{
+        pathname: pathName
+      }}>
+      {label}
+    </Link>
   )
 }
+
 
