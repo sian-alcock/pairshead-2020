@@ -304,7 +304,6 @@ class BibDataExport(APIView):
             writer.writerow(
             [
                 crew.id,
-                crew.name,
                 crew.calculated_start_order,
             ])
 
