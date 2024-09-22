@@ -1,6 +1,6 @@
 import React from 'react'
 import axios from 'axios'
-import Header from '../organisms/Header/Header'
+import Header from '../../organisms/Header/Header'
 
 class ContactDetailReport extends React.Component {
   constructor() {

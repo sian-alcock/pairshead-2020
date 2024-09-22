@@ -11,17 +11,7 @@ class Home extends React.Component {
     this.state= {
       crews: []
     }
-
-    // this.getCrewsWithTimes = this.getCrewsWithTimes.bind(this)
-    // this.getCrewsWithoutTimes = this.getCrewsWithoutTimes.bind(this)
-    // this.getTotalCrews = this.getTotalCrews.bind(this)
-    // this.getScratchedCrewsWithTimes = this.getScratchedCrewsWithTimes.bind(this)
   }
-
-  // componentDidMount() {
-  //   axios.get('/api/crews')
-  //     .then(res => this.setState({ crews: res.data}))
-  // }
 
   componentDidMount() {
     axios.get('/api/crews')
@@ -37,16 +27,6 @@ class Home extends React.Component {
       })
       )
   }
-
-  // getCrewsWithTimes(){
-  //   const crewsWithTimes = this.state.crews.filter(crew => crew.status !== 'Scratched' && crew.times.length === 2)
-  //   return crewsWithTimes.length
-  // }
-
-  // getCrewsWithoutTimes(){
-  //   const crewsWithoutTimes = this.state.crews.filter(crew => crew.status !== 'Scratched' && crew.times.length !== 2)
-  //   return crewsWithoutTimes.length
-  // }
 
   render() {
 

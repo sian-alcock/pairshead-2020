@@ -28,7 +28,7 @@ export default function Breadcrumbs () {
     })
 
   return (
-    <div className="breadcrumbs">
+    <div className="breadcrumbs no-print">
       <div className="breadcrumbs__container">
         {Auth.isAuthenticated() && <Link to="/summary">Home</Link>}
         {!Auth.isAuthenticated() && <Link to="/">Home</Link>}

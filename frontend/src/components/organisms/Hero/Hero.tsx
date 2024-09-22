@@ -9,14 +9,15 @@ interface HeroProps {
 
 export default function Hero ({title}: HeroProps):ReactElement {
   return (
-    <section className="page-hero no-print">
-      <div className="page-hero__container">
-        <h1>{title}</h1>
-        <div className="page-hero__side">
-          <EventKeyHeader />
+    <>
+      <section className="page-hero no-print">
+        <div className="page-hero__container">
+          <h1>{title}</h1>
+          <div className="page-hero__side">
+            <EventKeyHeader />
+          </div>
         </div>
-      </div>
-      <Breadcrumbs />
-    </section>
+      </section><Breadcrumbs />
+    </>
   )
 }

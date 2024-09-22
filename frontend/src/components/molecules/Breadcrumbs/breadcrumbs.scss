@@ -1,19 +1,26 @@
 @import '../../../style.scss';
 
 .breadcrumbs {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+
   &__container {
     @include container;
   }
 
   &__divider {
     margin: 0 0.25rem;
+    color: $darkGrey;
+    @include body-small($bold);
   }
 
   a {
-    color: $white;
-    text-decoration: underline;
+    color: $darkGrey;
+    @include body-small($bold);
+    
      &:hover {
       color: $phLogoBlue;
+      text-decoration: underline;
      }
   }
 }

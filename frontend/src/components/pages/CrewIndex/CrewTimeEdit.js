@@ -1,11 +1,11 @@
 import React from 'react'
 import Select from 'react-select'
 import axios from 'axios'
-import Header from '../organisms/Header/Header'
+import Header from '../../organisms/Header/Header'
 
 // import CrewTimeCalculatedFieldsUpdate from '../common/UpdateCrewTimeCalculatedFields'
 
-import { formatTimes } from '../../lib/helpers'
+import { formatTimes } from '../../../lib/helpers'
 
 class CrewTimeEdit extends React.Component {
   constructor() {
