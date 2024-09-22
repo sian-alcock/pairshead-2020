@@ -1,12 +1,49 @@
 @import '../../../style.scss';
 
 .crew-draw-reports {
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+
+  &__title {
+    margin-bottom: 1.5rem;
+    @include h2;
+  }
+
   &__table-container {
-      overflow-x: auto;
+    overflow-x: auto;
   }
 
   &__table {
     max-width: 100%;
     margin-left: 0;
+  }
+
+  &__tabs {
+    display: flex;
+    margin-bottom: 1.5rem;
+  }
+
+  &__tab {
+    display: block;
+    padding: 1rem;
+    background-color: $bblBlue;
+    color: $white;
+    @include body-small($bold);
+
+    &:hover {
+      background-color: $phLogoBlue;
+      color: $bblBlue; 
+    }
+
+
+    &.active {
+      background-color: $phLogoBlue;
+      color: $bblBlue; 
+    }
   }
 }
