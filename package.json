@@ -5,7 +5,7 @@
   "types": "dist/index",
   "license": "MIT",
   "scripts": {
-    "build": "webpack --mode development",
+    "build": "webpack --mode production",
     "serve:backend": "python manage.py runserver 4000",
     "serve:frontend": "webpack-dev-server",
     "seed": "python manage.py loaddata results/fixtures.json",
