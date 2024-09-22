@@ -12,7 +12,7 @@ function BladeImageComponent({crew}:BladeImageProps) {
     srcList: [`${crew.club.blade_image}`, `${image}`],
   })
 
-  return <img src={src} width="40px"/>
+  return <img src={src} alt={"club blade"} width="40px"/>
 }
 
 export default function BladeImage({crew}:BladeImageProps):ReactElement {
