@@ -296,7 +296,7 @@ class BibDataExport(APIView):
         response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
 
         writer = csv.writer(response, delimiter=',')
-        writer.writerow(['Crew ID', 'Bib',])
+        writer.writerow(['Crew ID', 'Crew', 'Bib',])
 
 
         for crew in crews:
@@ -304,6 +304,7 @@ class BibDataExport(APIView):
             writer.writerow(
             [
                 crew.id,
+                crew.name,
                 crew.calculated_start_order,
             ])
 
