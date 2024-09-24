@@ -53,7 +53,7 @@ export default function CrewStartByNumberLocation () {
   }, []);
 
 
-    const numberLocations = Array.from(crews.map(host => host.number_location))
+    const numberLocations = Array.from(crews.map(host => host.number_location).sort())
     const uniqueNumberLocations = [...new Set(numberLocations)]
     console.log(uniqueNumberLocations)
 
@@ -68,7 +68,7 @@ export default function CrewStartByNumberLocation () {
           <div className="crew-start-by-number-location__title">Pairs Head {(new Date().getFullYear())} - Start order</div>
 
           {uniqueNumberLocations.map((host, i) => <div className='block' key={i}>
-            <div className="crew-start-by-number-location__location-title">{host}</div>
+            <div className="crew-start-by-number-location__location-title">{host} ({crews.filter(numberLocation => numberLocation.number_location === host).length} numbers)</div>
             <table className="table crew-start-by-number-location__table has-text-left">
               <thead>
                 <tr>{tableHeadings.map((heading, i) => <td key={i}>{heading}</td>
