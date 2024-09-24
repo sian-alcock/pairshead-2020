@@ -1,4 +1,5 @@
 export const tableHeadings = [
+  'Crew ID',
   'Crew',
   'Blade',
   'Bib',

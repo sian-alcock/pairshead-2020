@@ -47,7 +47,7 @@ export default function CrewStartByNumberLocation () {
     fetchData("/api/crews", {
         page_size: "500",
         page: 1,
-        order: 'start-score',
+        order: 'bib_number',
         status: 'Accepted'
     });
   }, []);
@@ -82,6 +82,7 @@ export default function CrewStartByNumberLocation () {
               </tfoot>
               <tbody>
                 {crews.filter(numberLocation => numberLocation.number_location === host).map(crew => <tr key={crew.id}>
+                  <td>{crew.id}</td>
                   <td>{!crew.competitor_names ? crew.name : crew.competitor_names}</td>
                   <td>
                     <BladeImage crew={crew} />
