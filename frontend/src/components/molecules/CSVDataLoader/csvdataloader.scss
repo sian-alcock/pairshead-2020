@@ -9,7 +9,10 @@
   }
 
   &__section {
-    @include section-with-lines;
+    @include section;
+    &--lines {
+      @include section-with-lines;
+    }
   }
   
   &__title {

@@ -78,3 +78,9 @@ export type KeyProps = {
   event_meeting_name: string;
   current_event_meeting: boolean;
 }
+
+export type NumberLocationProps = {
+  club: string;
+  number_location?: string;
+  id: number;
+}

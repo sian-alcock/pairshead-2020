@@ -70,7 +70,7 @@ class CSVDataLoader extends Component {
 
     return (
 
-      <section className="csv-data-loader__section">
+      <section className={`csv-data-loader__section ${this.props.lines ? 'csv-data-loader__section--lines' : ''}`}>
         <div className="csv-data-loader__text-wrapper">
           <h2 className="csv-data-loader__title">{this.props.title}</h2>
           <p className="csv-data-loader__description">{this.props.description}</p>

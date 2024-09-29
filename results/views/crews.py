@@ -10,11 +10,11 @@ from django.http import Http404, HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from rest_framework import filters, generics
+from rest_framework import filters, generics, serializers
 from django_filters.rest_framework import DjangoFilterBackend
 
 
-from ..serializers import CrewSerializer, PopulatedCrewSerializer, WriteCrewSerializer, CrewExportSerializer
+from ..serializers import ClubSerializer, CrewSerializer, PopulatedCrewSerializer, WriteCrewSerializer, CrewExportSerializer
 
 from ..models import Crew, RaceTime, OriginalEventCategory, EventMeetingKey
 
@@ -319,7 +319,7 @@ class StartOrderDataExport(APIView):
         response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
 
         writer = csv.writer(response, delimiter=',')
-        writer.writerow(['Crew No', 'Division', 'Category', 'Club', 'Club code', 'ComCode', 'Crew', 'Host club', 'Number location', ])
+        writer.writerow(['Crew No', 'Crew', 'Club', 'Blade', 'CompCode', 'Category', 'Host club', 'Number location', 'Marshalling division',])
 
 
         for crew in crews:
@@ -329,18 +329,26 @@ class StartOrderDataExport(APIView):
             else:
                 crew_name = crew.competitor_names
 
+            if crew.club.blade_image:
+                image = '=IMAGE("' + crew.club.blade_image + '")'
+
+            if crew.number_location is None:
+                number_location = '⚠️ Missing number location!'
+            else:
+                number_location = crew.number_location
+
 
             writer.writerow(
             [
-                crew.calculated_start_order,
-                crew.marshalling_division,
-                crew.event_band,
-                crew.club.name,
-                crew.club.index_code,
-                crew.composite_code,
+                crew.bib_number,
                 crew_name,
+                crew.club.name,
+                image,
+                crew.composite_code,
+                crew.event_band,
                 crew.host_club.name,
-                crew.number_location,
+                number_location,
+                crew.marshalling_division,
             ])
 
         return response
@@ -424,7 +432,7 @@ class CreateEventOrderTemplate(APIView):
 
         unique_event_bands = []
         for crew in crews:
-            print(crew.id)
+            # print(crew.id)
             crew.event_band=crew.calc_event_band()
             crew.save()
 
@@ -445,3 +453,20 @@ class CreateEventOrderTemplate(APIView):
             # print(event)
 
         return response
+    
+class CrewUniqueHostClub(generics.ListCreateAPIView):
+    def get(self, _request):
+        crews = Crew.objects.filter(status__exact='Accepted')
+        unique_host_clubs = []
+        data = []
+
+        for crew in crews:
+
+            if crew.host_club not in unique_host_clubs:
+                unique_host_clubs.append(crew.host_club)
+        
+        for club in unique_host_clubs:
+
+            data.append(ClubSerializer(club).data)
+
+        return Response(data)

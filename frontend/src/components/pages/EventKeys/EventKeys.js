@@ -38,6 +38,10 @@ const EventKeys = () => {
     setCurrentKey({'currentKey': e.target.id})
   }
 
+  const getHeadings = () => {
+    return headings.map((heading, i) => <td key={i}>{heading}</td>)
+  }
+
   const headings = ['Id', 'Event', 'Meeting Key', 'Select' ]
   return (
     <>
@@ -50,16 +54,16 @@ const EventKeys = () => {
           <form>
             <table className="table event-keys__table">
               <thead>
-                <tr>{headings.map((heading, i) => <td key={i}>{heading}</td>)}
+                <tr>{getHeadings()}
                 </tr>
               </thead>
               <tfoot>
-                <tr>{headings.map((heading, i) => <td key={i}>{heading}</td>)}
+                <tr>{getHeadings()}
                 </tr>
               </tfoot>
               <tbody>
                 {data && data['results'].map(key => <tr key={key.id}>
-                  <td><Link to={`/settings/keys/${key.id}`}>{key.id}</Link></td>
+                  <td><Link to={`/settings/keys/${key.id}/edit`}>{key.id}</Link></td>
                   <td>{key.event_meeting_name}</td>
                   <td>{'******' + key.event_meeting_key.slice(-5)}</td>
                   <td><label><input onClick={handleRadio} type="radio" id={key.id} name="meeting-key" defaultChecked={key.current_event_meeting}></input></label></td>
@@ -72,7 +76,7 @@ const EventKeys = () => {
                 <TextButton label={'Submit'} onClick={handleSubmit}/>
               </p>
               <p className="control">
-                <TextButton label={'Add new'} pathName={'/keys/new'}/>
+                <TextButton label={'Add new'} pathName={'/settings/keys/new'}/>
               </p>
             </div>
           </form>

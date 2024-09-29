@@ -34,7 +34,7 @@ const EventKeyEdit = () => {
   const handleDelete = (e) => {
     e.preventDefault()
     axios.delete(`/api/event-meeting-key-list/${routeParams.id}`)
-      .then(()=> history.push('/keys'))
+      .then(()=> history.push('/settings/keys'))
       .catch(err => console.log(err))
   }
 
@@ -44,7 +44,7 @@ const EventKeyEdit = () => {
     console.log(formData)
     
     axios.put(`/api/event-meeting-key-list/${routeParams.id}`, formData)
-      .then(()=> history.push('/keys'))
+      .then(()=> history.push('/settings/keys'))
       .catch(err => setErrors(err.response.data))
 
   }

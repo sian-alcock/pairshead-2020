@@ -49,12 +49,12 @@ export const menuProps: MenuProps = {
           authenticated: true
         },
         {
-          link: "generate-results/crews",
+          link: "/generate-results/crews",
           title: "All crews",
           authenticated: true
         },
         {
-          link: "generate-results/race-times",
+          link: "/generate-results/race-times",
           title: "Race times",
           authenticated: true
         },
@@ -64,7 +64,7 @@ export const menuProps: MenuProps = {
           authenticated: false
         },
         {
-          link: "generate-results/export",
+          link: "/generate-results/export",
           title: "Data exports",
           authenticated: true
         }
@@ -75,17 +75,17 @@ export const menuProps: MenuProps = {
       key: 3,
       items: [
         {
-          link: "settings/keys",
+          link: "/settings/keys",
           title: "Add or change event key",
           authenticated: true
         },
         {
-          link: "settings/register",
+          link: "/settings/register",
           title: "Register user",
           authenticated: true
         },
         {
-          link: "settings/info",
+          link: "/settings/info",
           title: "About this application",
           authenticated: true
         }

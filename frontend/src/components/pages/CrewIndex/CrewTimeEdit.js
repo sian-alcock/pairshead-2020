@@ -54,7 +54,7 @@ class CrewTimeEdit extends React.Component {
 
     
     axios.put(`/api/crews/${this.props.match.params.id}`, data)
-      .then(() => this.props.history.push('/crews'))
+      .then(() => this.props.history.push('/generate-results/crews'))
       .catch(err => this.setState({ errors: err.response.data }))
   }
 

@@ -327,7 +327,7 @@ export default function CrewIndex() {
                 crews.map((crew) => (
                   <tr key={crew.id}>
                     <td>
-                      <Link to={`/generate-results/crews/${crew.id}`}>{crew.id}</Link>
+                      <Link to={`/generate-results/crews/${crew.id}/edit`}>{crew.id}</Link>
                     </td>
                     <td>
                       {!crew.competitor_names

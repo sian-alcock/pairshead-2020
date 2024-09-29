@@ -26,6 +26,9 @@ import EventKeyNew from "./components/pages/EventKeys/EventKeyNew"
 import CrewLabels from "./components/pages/CrewLabels/CrewLabels"
 import Logistics from "./components/pages/Logistics/Logistics"
 import Settings from "./components/pages/PHSettings/Settings"
+import SetNumberLocations from "./components/pages/SetNumberLocations/SetNumberLocations"
+import NumberLocationNew from "./components/pages/SetNumberLocations/NumberLocationNew"
+import NumberLocationEdit from "./components/pages/SetNumberLocations/NumberLocationEdit"
 
 import "@fortawesome/fontawesome-free/js/all.js"
 import 'bulma'
@@ -40,14 +43,14 @@ export default class App extends React.Component {
       <div>
         <HashRouter>
           <Switch>
-            <SecureRoute path="/generate-results/crews/:id" component={CrewTimeEdit} />
+            <SecureRoute path="/generate-results/crews/:id/edit" component={CrewTimeEdit} />
             <SecureRoute path="/generate-results/crews" component={CrewIndex} />
-            <SecureRoute path="/generate-results/race-times/:id" component={RaceTimeEdit} />
+            <SecureRoute path="/generate-results/race-times/:id/edit" component={RaceTimeEdit} />
             <SecureRoute path="/generate-results/race-times" component={RaceTimeIndex} />
             <SecureRoute path="/generate-results/export" component={ExportData} />
             <SecureRoute path="/generate-results" component={GenerateResults} />
+            <SecureRoute path="/settings/keys/:id/edit" component={EventKeyEdit} />
             <SecureRoute path="/settings/keys/new" component={EventKeyNew} />
-            <SecureRoute path="/settings/keys/:id" component={EventKeyEdit} />
             <SecureRoute path="/settings/keys" component={EventKeys} />
             <SecureRoute path="/settings/info" component={Info} />
             <SecureRoute path="/settings/register" component={Register} />
@@ -58,6 +61,9 @@ export default class App extends React.Component {
             <SecureRoute path="/logistics/start-order-by-number-location" component={CrewStartByNumberLocation} />
             <SecureRoute path="/logistics" component={Logistics} />
             <SecureRoute path="/generate-start-order/crew-start-order" component={CrewStartOrder} />
+            <SecureRoute path="/generate-start-order/set-number-locations/:id/edit" component={NumberLocationEdit} />
+            <SecureRoute path="/generate-start-order/set-number-locations/new" component={NumberLocationNew} />
+            <SecureRoute path="/generate-start-order/set-number-locations" component={SetNumberLocations} />
             <SecureRoute path="/generate-start-order" component={GenerateStartOrder} />
             <SecureRoute path="/summary" component={Home} />
             <Route path="/login" component={Login} />

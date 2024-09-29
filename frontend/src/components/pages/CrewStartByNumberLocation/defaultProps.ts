@@ -5,6 +5,7 @@ export const tableHeadings = [
   'Bib',
   'Club',
   'Category',
+  'Host club',
   'Number location',
   ''
 ]

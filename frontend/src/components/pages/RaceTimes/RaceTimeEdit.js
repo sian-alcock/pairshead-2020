@@ -99,7 +99,7 @@ class RaceTimeEdit extends React.Component {
       }
     }
     
-    this.setState({ raceTimeFormData: updatedRaceTime}, () => this.props.history.push('/race-times'))
+    this.setState({ raceTimeFormData: updatedRaceTime}, () => this.props.history.push('/generate-results/race-times'))
   
   }
 

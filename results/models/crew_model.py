@@ -394,9 +394,11 @@ class Crew(models.Model):
     @property
     def number_location(self):
         club_name = self.host_club.name
-        if club_name == 'Unknown':
-            return Club.objects.get(id=289).name
-        return NumberLocation.objects.get(club__exact=club_name).number_location
+        try:
+            number_location = NumberLocation.objects.get(club__exact=club_name).number_location
+        except NumberLocation.DoesNotExist:
+            number_location = None
+        return number_location
 
 
 class RaceTime(models.Model):

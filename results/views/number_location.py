@@ -1,10 +1,21 @@
 import csv
+import datetime
 from .helpers import decode_utf8
+from django.http import Http404, HttpResponse
 from rest_framework.views import APIView
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, ParseError
-from ..serializers import ImportNumberLocationSerializer
+from ..serializers import NumberLocationSerializer
 from ..models import NumberLocation, Crew
+
+class NumberLocationListView(generics.ListCreateAPIView):
+    queryset = NumberLocation.objects.all()
+    serializer_class = NumberLocationSerializer
+
+class NumberLocationDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = NumberLocation.objects.all()
+    serializer_class = NumberLocationSerializer
 
 class NumberLocationImport(APIView):
     # This function imports the csv from frontend
@@ -24,15 +35,47 @@ class NumberLocationImport(APIView):
                     'club': row[0],
                     'number_location': row[1]
                 }
-                serializer = ImportNumberLocationSerializer(data=data)
+                serializer = NumberLocationSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
 
         number_locations = NumberLocation.objects.all()
 
-        serializer = ImportNumberLocationSerializer(number_locations, many=True)
+        serializer = NumberLocationSerializer(number_locations, many=True)
 
         return Response(serializer.data)
+    
+class CreateNumberLocationTemplate(APIView):
+    def get(self, _request):
+
+        filename = 'numberlocationtemplate - ' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M.csv")
+
+        crews = Crew.objects.filter(status__exact='Accepted')
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
+
+        writer = csv.writer(response, delimiter=',')
+        writer.writerow(['Host club', 'Number location' ])
+
+        unique_host_clubs = []
+
+        for crew in crews:
+
+            if crew.host_club not in unique_host_clubs:
+                unique_host_clubs.append(crew.host_club)
+
+        unique_host_clubs.sort(key=lambda x: x.name)
+
+        for club in unique_host_clubs:
+            writer.writerow(
+                [
+                    club.name,
+                    ''
+
+                ])
+
+        return response
+
 
 
 

@@ -6,11 +6,12 @@ import './textButton.scss';
 export interface TextButtonProps {
 
   label: string;
-  onClick?: () => void;
+  onClick?: (() => void) | ((e: React.MouseEvent<HTMLButtonElement>) => void);
   pathName?: string;
   isSubmit?: boolean;
   disabled?: boolean;
   loading?: boolean;
+  isCancel?: boolean;
 }
 
 export default function TextButton({

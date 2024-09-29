@@ -13,6 +13,7 @@ const EventKeyNew = () => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value})
     setErrors({ ...errors, [e.target.name]: ''})
+    console.log(formData)
   }
 
   const handleCheckbox = (e) => {
@@ -27,7 +28,7 @@ const EventKeyNew = () => {
     }
 
     axios.post('/api/event-meeting-key-list/', data)
-      .then(()=> history.push('/keys'))
+      .then(()=> history.push('/settings/keys'))
       .catch(err => setErrors(err.response.data))
   }
 

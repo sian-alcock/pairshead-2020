@@ -65,11 +65,11 @@ class ImportMarshallingDivisionSerializer(serializers.ModelSerializer):
         model = MarshallingDivision
         fields = ('name', 'bottom_range', 'top_range',)
 
-class ImportNumberLocationSerializer(serializers.ModelSerializer):
+class NumberLocationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NumberLocation
-        fields = ('club', 'number_location',)
+        fields = ('id', 'club', 'number_location',)
 
 
 class PopulatedCrewSerializer(serializers.ModelSerializer):
@@ -126,7 +126,7 @@ class WriteCrewSerializer(serializers.ModelSerializer):
         try:
             club = Club.objects.get(id = host_club)
         except Club.DoesNotExist:
-            club = Club.objects.create(id = host_club, name = 'Unknown club')
+            club = Club.objects.create(id = host_club, name = 'Unknown club' + ' - ' + host_club)
 
         new_crew = Crew.objects.create(host_club = club, **validated_data)
         return new_crew

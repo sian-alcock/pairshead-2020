@@ -12,9 +12,13 @@ class GenerateStartOrder extends React.Component {
     super()
 
     this.exportBibData = this.exportBibData.bind(this)
-    this.exportStartOrderData = this.exportStartOrderData.bind(this)
     this.exportEventOrderTemplate = this.exportEventOrderTemplate.bind(this)
     
+  }
+
+  exportNumberLocationTemplate(e) {
+    e.preventDefault
+    window.open('api/number-location-template/')
   }
 
   exportEventOrderTemplate(e){
@@ -27,12 +31,6 @@ class GenerateStartOrder extends React.Component {
     window.open('api/bib-data-export/')
   }
 
-  exportStartOrderData(e){
-    e.preventDefault
-    window.open('api/start-order-data-export/')
-  }
-
-
   render() {
 
     return (
@@ -41,7 +39,7 @@ class GenerateStartOrder extends React.Component {
       <Hero title="Generate start order" />
       <section className="section">
         <div className="container">
-            <BROELoader
+          <BROELoader
               importPersonalData={true} title={'Get data from British Rowing'} description={'Import data from BROE via the api'} />
 
           <section className="section-has-lines">
@@ -57,7 +55,7 @@ class GenerateStartOrder extends React.Component {
                 CSV with all events listed ready for admin to enter the order
               </div>
             </div>
-            </section>
+          </section>
 
             <CSVDataLoader
               url='/api/event-order-import/'
@@ -67,14 +65,19 @@ class GenerateStartOrder extends React.Component {
               description='Import event order from csv.'
             />
 
-              <CSVDataLoader
-                url='/api/marshalling-division-import/'
-                buttonText='Import marshalling division ranges'
-                class='double-height-button' 
-                title='Import marshalling division ranges from csv'
-                description='Marshalling division ranges from csv.'
-              />
-
+            <section className="section-has-lines">
+              <div className="text-container has-text-left">
+                <h2 className="generate-start-order__title">Create template for Number locations</h2>
+                <p className="left">Download a template for the number locations</p>
+              </div>
+              <div className="columns">
+                <div className="column is-one-quarter has-text-centered">
+                  <TextButton onClick={this.exportNumberLocationTemplate} label={'Number location template'}/>
+                </div>
+                <div className="column left">
+                  CSV with all host clubs ready for admin to enter the associated number location
+                </div>
+              </div>
               <CSVDataLoader
                 url='/api/number-location-import/'
                 buttonText='Import number locations'
@@ -83,10 +86,23 @@ class GenerateStartOrder extends React.Component {
                 description='Import number locations from csv.'
               />
 
-              <CalculateStartOrder
-                title='Calculate start order'
-                description='Use the CRI scores and event order to calculate the overall start order'
-              />
+              <TextButton label="Inspect number locations" pathName='/generate-start-order/set-number-locations' />
+
+            </section>
+
+            <CSVDataLoader
+              url='/api/marshalling-division-import/'
+              buttonText='Import marshalling division ranges'
+              class='double-height-button' 
+              title='Import marshalling division ranges from csv'
+              description='Marshalling division ranges from csv.'
+              lines='true'
+            />
+
+            <CalculateStartOrder
+              title='Calculate start order'
+              description='Use the CRI scores and event order to calculate the overall start order'
+            />
 
 
           <section className="section-has-lines">
@@ -109,11 +125,6 @@ class GenerateStartOrder extends React.Component {
             <div className="columns">
               <div className="column is-one-quarter">
                 <TextButton label="Export bib data" onClick={this.exportBibData} />
-              </div>
-            </div>
-            <div className="columns">
-              <div className="column is-one-quarter">
-                <TextButton label="Export start order data" onClick={this.exportStartOrderData} />
               </div>
             </div>
           </section>

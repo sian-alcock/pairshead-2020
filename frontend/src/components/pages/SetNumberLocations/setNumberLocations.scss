@@ -1,0 +1,15 @@
+@import '../../../style.scss';
+
+.set-number-location {
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+
+  &__table {
+    margin-left: 0; 
+  }
+}
