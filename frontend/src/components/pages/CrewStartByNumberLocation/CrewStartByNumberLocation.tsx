@@ -95,6 +95,7 @@ export default function CrewStartByNumberLocation () {
 
         {uniqueNumberLocations.filter(host => host === null) && uniqueNumberLocations.filter(host => host === null).map((host, i) => <div className='block' key={i}>
           <h3 className="crew-start-by-number-location__location-title">Crews with no host club / number locations ({crews.filter(numberLocation => numberLocation.number_location === host).length} numbers)</h3>
+          <div className="crew-start-by-number-location__table-container">
           <table className="table crew-start-by-number-location__table has-text-left">
             <thead>
               <tr>{getTableHeadings()}</tr>
@@ -119,12 +120,14 @@ export default function CrewStartByNumberLocation () {
               )}
             </tbody>
           </table>
+          </div>
           {i < uniqueNumberLocations.length - 1 ? <div className='page-break'></div> : ''}
 
         </div>
         )}
         {uniqueNumberLocations.filter(host => host !== null).map((host, i) => <div className='block' key={i}>
           <h3 className="crew-start-by-number-location__location-title">{host} ({crews.filter(numberLocation => numberLocation.number_location === host).length} numbers)</h3>
+          <div className="crew-start-by-number-location__table-container">
           <table className="table crew-start-by-number-location__table has-text-left">
             <thead>
               <tr>{getTableHeadings()}</tr>
@@ -149,6 +152,7 @@ export default function CrewStartByNumberLocation () {
               )}
             </tbody>
           </table>
+          </div>
           {i < uniqueNumberLocations.length - 1 ? <div className='page-break'></div> : ''}
 
         </div>

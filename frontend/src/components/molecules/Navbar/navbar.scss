@@ -6,7 +6,7 @@
   
   &__desktop {
     display: none;
-    @media (min-width: $md) {
+    @media (min-width: $lg) {
       display: block;
     }
   }
@@ -14,6 +14,12 @@
   &__login {
     margin-left: 0.5rem;
     color: $bblBlue;
+    @include font-size(14);
+
+    @media (min-width: $lg) {
+      @include font-size(16);
+    }
+    
     &:hover {
       text-decoration: underline;
     }

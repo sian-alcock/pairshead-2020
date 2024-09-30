@@ -27,7 +27,12 @@ $container-width: $width;
     }
 
     span {
-      margin-right: 1rem;
+      margin-right: 0.5rem;
+      @include font-size(14);
+
+      @media (min-width: $lg) {
+        @include font-size(16);
+      }
     }
   }
 

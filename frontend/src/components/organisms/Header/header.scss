@@ -5,7 +5,7 @@
   @include container;
 
   &__logo {
-    width: 200px;
+    width: 130px;
 
     img {
       width: 100%;
@@ -13,6 +13,10 @@
     }
 
     @media screen and (min-width: $md) {
+      width: 200px;
+    }
+
+    @media screen and (min-width: $lg) {
       width: 300px;
     }
   }
