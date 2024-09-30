@@ -164,6 +164,11 @@ class CrewDataImport(APIView):
 
             for crew in r.json()['crews']:
 
+                if crew['competitionNotes'] == 'TO':
+                    time_only = True
+                else:
+                    time_only = False
+
                 if personal > 0:
 
                     data = {
@@ -182,6 +187,7 @@ class CrewDataImport(APIView):
                         'otd_home_phone': crew['competitionContactHomePhone'],
                         'otd_mobile_phone': crew['competitionContactMobilePhone'],
                         'otd_work_phone': crew['competitionContactWorkPhone'],
+                        'time_only': time_only
                     }
 
                 else:
@@ -196,7 +202,8 @@ class CrewDataImport(APIView):
                         'status': crew['status'],
                         'bib_number': crew['customCrewNumber'],
                         'band': crew['bandId'],
-                        'host_club': crew['boatingPermissionsClubID'] or 999999
+                        'host_club': crew['boatingPermissionsClubID'] or 999999,
+                        'time_only': time_only
                     }
 
                 serializer = WriteCrewSerializer(data=data)
@@ -314,7 +321,7 @@ class StartOrderDataExport(APIView):
     def get(self, _request):
         filename = 'startorderdata - ' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M.csv")
 
-        crews = Crew.objects.filter(status__exact='Accepted').order_by('calculated_start_order')
+        crews = Crew.objects.filter(status__exact='Accepted').order_by('bib_number')
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
 
