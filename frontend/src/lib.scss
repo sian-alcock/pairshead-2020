@@ -46,9 +46,9 @@ $bold: 700;
   }
 }
 
-@mixin h2 {
+@mixin h2 ($colour: $bblBlue) {
   @include font-headline;
-  color: $bblBlue;
+  color: $colour;
 
   font-size: rem(28px);
   line-height: 1.1;
@@ -78,7 +78,7 @@ $bold: 700;
 }
 @mixin h5($weight: $normal) {
   @include font-headline($weight);
-
+  color: $black;
   font-size: rem(18px);
   line-height: 1.1;
 }

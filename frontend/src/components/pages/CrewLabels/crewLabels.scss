@@ -1,25 +1,25 @@
 @import '../../../style.scss';
 
 .crew-labels {
+  color: $black;
   &__grid {
     @include grid(2);
     gap: 0.2rem;
   }
 
   &__label {
-    border: 1px solid $bblGrey;
+    // border: 1px solid $bblGrey;
     height: 206px;
     padding: 1.5rem 1.5rem 1.5rem 2.5rem;
   }
 
   &__start-order {
-    color: $bblBlue;
-
-    @include h2;
+    @include h2($black);
   }
 
   &__crew-details,
   &__start-order {
+    color: $black;
     margin-bottom: 0.5rem;
   }
 

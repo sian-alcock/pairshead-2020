@@ -28,7 +28,7 @@ export default function CrewLabels() {
     fetchData("/api/crews", {
       page_size: "500",
       page: 1,
-      order: 'start-score',
+      order: 'bib_number',
       status: "Accepted"
     });
   }, []);
@@ -44,7 +44,7 @@ export default function CrewLabels() {
         <div className="crew-labels__page">
           <div className="crew-labels__grid">
             {crews.map((crew, idx) => <div key={crew.id} className="crew-labels__label">
-              <h1 className="crew-labels__start-order">{crew.calculated_start_order}</h1>
+              <h1 className="crew-labels__start-order">{crew.bib_number}</h1>
               <div className="crew-labels__crew-details">
                 <span className="crew-labels__names">{crew.competitor_names}</span>
                 <span> - </span>
