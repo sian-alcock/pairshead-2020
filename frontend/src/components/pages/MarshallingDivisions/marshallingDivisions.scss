@@ -1,0 +1,15 @@
+@import '../../../style.scss';
+
+.marshalling-divisions {
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+
+  &__table {
+    margin-left: 0; 
+  }
+}

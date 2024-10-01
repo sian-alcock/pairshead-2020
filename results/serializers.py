@@ -59,11 +59,11 @@ class ImportOriginalEventSerializer(serializers.ModelSerializer):
 
 
 
-class ImportMarshallingDivisionSerializer(serializers.ModelSerializer):
+class MarshallingDivisionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MarshallingDivision
-        fields = ('name', 'bottom_range', 'top_range',)
+        fields = ('id', 'name', 'bottom_range', 'top_range',)
 
 class NumberLocationSerializer(serializers.ModelSerializer):
 
@@ -118,7 +118,7 @@ class WriteCrewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Crew
-        fields = ('id', 'name', 'composite_code', 'club', 'rowing_CRI', 'sculling_CRI', 'event', 'status', 'band', 'bib_number', 'host_club', 'otd_contact', 'otd_home_phone', 'otd_mobile_phone', 'otd_work_phone', )
+        fields = ('id', 'name', 'composite_code', 'club', 'rowing_CRI', 'sculling_CRI', 'event', 'status', 'band', 'bib_number', 'host_club', 'otd_contact', 'otd_home_phone', 'otd_mobile_phone', 'otd_work_phone', 'time_only',)
     
     def create(self, validated_data):
         host_club = validated_data.pop('host_club')

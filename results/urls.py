@@ -50,6 +50,8 @@ path('masters-adjustments-import/', masters_adjustments.MastersAdjustmentsImport
 path('original-event-import/', original_event_category.OriginalEventCategoryImport.as_view()),
 path('event-order-import/', event_order.EventOrderImport.as_view()),
 path('marshalling-division-import/', marshalling_division.ImportMarshallingDivision.as_view()),
+path('marshalling-divisions/', marshalling_division.MarshallingDivisionListView.as_view()),
+path('marshalling-divisions/<int:pk>', marshalling_division.MarshallingDivisionDetailView.as_view()),
 path('number-location-template/', number_location.CreateNumberLocationTemplate.as_view()),
 path('number-location-import/', number_location.NumberLocationImport.as_view()),
 path('number-locations/', number_location.NumberLocationListView.as_view()),

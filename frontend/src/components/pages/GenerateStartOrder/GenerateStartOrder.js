@@ -90,20 +90,31 @@ class GenerateStartOrder extends React.Component {
 
             </section>
 
-            <CSVDataLoader
+            {/* <CSVDataLoader
               url='/api/marshalling-division-import/'
               buttonText='Import marshalling division ranges'
               class='double-height-button' 
               title='Import marshalling division ranges from csv'
               description='Marshalling division ranges from csv.'
               lines='true'
-            />
+            /> */}
 
-            <CalculateStartOrder
-              title='Calculate start order'
-              description='Use the CRI scores and event order to calculate the overall start order'
-            />
+          <section className="section-has-lines">
+            <div className="text-container has-text-left">
+              <h2 className="generate-start-order__title">Marshalling divisions</h2>
+              <p className="generate-start-order__description">Set up the marshalling divisions</p>
+            </div>
+            <div className="columns">
+              <div className="column is-one-quarter">
+              <TextButton label="Set marshalling divisions" pathName='/generate-start-order/marshalling-divisions' />
+              </div>
+            </div>
+          </section>
 
+          <CalculateStartOrder
+            title='Calculate start order'
+            description='Use the CRI scores and event order to calculate the overall start order'
+          />
 
           <section className="section-has-lines">
             <div className="text-container has-text-left">

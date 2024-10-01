@@ -29,6 +29,9 @@ import Settings from "./components/pages/PHSettings/Settings"
 import SetNumberLocations from "./components/pages/SetNumberLocations/SetNumberLocations"
 import NumberLocationNew from "./components/pages/SetNumberLocations/NumberLocationNew"
 import NumberLocationEdit from "./components/pages/SetNumberLocations/NumberLocationEdit"
+import MarshallingDivisions from "./components/pages/MarshallingDivisions/MarshallingDivisions"
+import MarshallingDivisionEdit from "./components/pages/MarshallingDivisions/MarshallingDivisionEdit"
+import MarshallingDivisionNew from "./components/pages/MarshallingDivisions/MarshallingDivisionNew"
 
 import "@fortawesome/fontawesome-free/js/all.js"
 import 'bulma'
@@ -64,6 +67,9 @@ export default class App extends React.Component {
             <SecureRoute path="/generate-start-order/set-number-locations/:id/edit" component={NumberLocationEdit} />
             <SecureRoute path="/generate-start-order/set-number-locations/new" component={NumberLocationNew} />
             <SecureRoute path="/generate-start-order/set-number-locations" component={SetNumberLocations} />
+            <SecureRoute path="/generate-start-order/marshalling-divisions/:id/edit" component={MarshallingDivisionEdit} />
+            <SecureRoute path="/generate-start-order/marshalling-divisions/new" component={MarshallingDivisionNew} />
+            <SecureRoute path="/generate-start-order/marshalling-divisions" component={MarshallingDivisions} />
             <SecureRoute path="/generate-start-order" component={GenerateStartOrder} />
             <SecureRoute path="/summary" component={Home} />
             <Route path="/login" component={Login} />

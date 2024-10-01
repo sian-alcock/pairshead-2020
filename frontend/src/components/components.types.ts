@@ -84,3 +84,10 @@ export type NumberLocationProps = {
   number_location?: string;
   id: number;
 }
+
+export type MarshallingDivisionProps = {
+  id: number;
+  name: string;
+  bottom_range: number;
+  top_range: number;
+}
