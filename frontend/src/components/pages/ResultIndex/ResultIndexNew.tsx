@@ -5,7 +5,7 @@ import { formatTimes } from "../../../lib/helpers"
 import { CrewProps } from "../../components.types"
 import { tableHeadings } from "./defaultProps"
 import BladeImage from "../../atoms/BladeImage/BladeImage"
-import CrewTimeCalculatedFieldsUpdate from "../../common/UpdateCrewTimeCalculatedFields";
+import CrewTimeCalculatedFieldsUpdate from "../../molecules/UpdateCrews/UpdateCrewTimeCalculatedFields";
 import PageTotals from "../../molecules/PageTotals/PageTotals";
 import { pagingOptions, genderOptions } from "./defaultProps"
 import TrophyImage from "../../atoms/Trophy/Trophy"

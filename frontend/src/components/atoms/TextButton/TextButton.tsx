@@ -24,7 +24,7 @@ export default function TextButton({
 }: TextButtonProps): ReactElement {
   return onClick || isSubmit ? (
     <button
-      className="text-button"
+      className={loading ? 'text-button text-button--loading' : 'text-button'}
       type={isSubmit ? 'submit' : 'button'}
       onClick={onClick}
       disabled={disabled}

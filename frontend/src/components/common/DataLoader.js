@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import axios from 'axios'
 import { formatTimeDate } from '../../lib/helpers'
+import TextButton from '../atoms/TextButton/TextButton'
+import { FeedbackModal } from '../molecules/FeedbackModal/FeedbackModal'
+import ProgressMessage from '../atoms/ProgressMessage/ProgressMessage'
 
 class DataLoader extends Component {
 
@@ -14,6 +17,7 @@ class DataLoader extends Component {
     }
 
     this.getData = this.getData.bind(this)
+    this.close = this.close.bind(this)
   }
 
   async getData() {
@@ -27,7 +31,7 @@ class DataLoader extends Component {
       })
       console.log(retrievedData.data)
 
-      this.setState({ updated: Date.now(), loading: false })
+      this.setState({ updated: Date.now() })
 
     } catch (err) {
       if (axios.isCancel(err)) {
@@ -44,19 +48,22 @@ class DataLoader extends Component {
     this.cancelTokenSource && this.cancelTokenSource.cancel()
   }
 
+  close () {
+    this.setState({ loading: false });
+    document.body.classList.remove('lock-scroll');
+  };
+
   render() {
     const { loading } = this.state
 
     return (
       <div>
-        <button className={`${this.props.class} button is-primary`} onClick={this.getData} disabled={loading}>
-
-          {loading && <span className="spinner"><i
-            className="fas fa-spinner fa-spin"
-          />Loading ...</span>}
-          {!loading && <span>{this.props.buttonText}</span>}
-        </button>
-
+        
+        <TextButton label={this.props.buttonText} onClick={this.getData} disabled={loading}/>
+        {loading && <FeedbackModal isOpen={true} closeModal={this.close}>
+          {!this.state.updated &&<ProgressMessage message={'Updating all calculations'} status={'loading'} />}
+          {this.state.updated &&<ProgressMessage message={'Updating all calculations'} status={'success'} />}
+        </FeedbackModal>}
         <p><small>{!this.state.updated ? '' : `Updated: ${formatTimeDate(this.state.updated)}`}</small></p>
       </div>
     )

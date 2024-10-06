@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import axios from 'axios'
-import { formatTimeDate } from '../../lib/helpers'
+import { formatTimeDate } from '../../../lib/helpers'
+import TextButton from '../../atoms/TextButton/TextButton'
+import { IconButton } from '../../atoms/IconButton/IconButton'
+import "./updateCrews.scss"
 
 class CrewTimeCalculatedFieldsUpdate extends Component {
   constructor() {
@@ -51,25 +54,18 @@ class CrewTimeCalculatedFieldsUpdate extends Component {
     const { loading } = this.state
 
     return (
-      <div className="columns is-vcentered">
-        <div className="column">
-          <span>❗️Crew rankings need to be updated.  Note:  This may take several minutes...  </span>
+      <div className="update-crews__container">
+        <div className="update-crews__message">
+          <span>❗️Crew rankings need to be updated.  Note:  This may take a minute...  </span>
         </div>
-        <div className="column">
-          <button className="button is-primary" onClick={this.getData} disabled={loading}>
-
-            {loading && <span className="spinner"><i
-              className="fas fa-spinner fa-spin"
-            /> Loading ...</span>}
-            {!loading && <span>Update now</span>}
-
-          </button>
+        <div className="update-crews__button">
+          <TextButton label={"Update now"} onClick={this.getData} disabled={loading}/>
           <p><small>{!this.state.crewDataUpdated ? '' : `Updated: ${formatTimeDate(this.state.crewDataUpdated)}`}</small></p>
         </div>
-        <div className="column has-text-right">
-          <span className={!this.state.crewDataUpdated ? 'icon icon-disabled' : 'icon icon-clickable'} onClick={() => this.props.refreshData()}>
-            <i className="far fa-times-circle fa-2x"></i>
-          </span>
+        <div className="update-crews__close">
+          <div className="">
+            <IconButton title={'Close'} icon={'cross'} onClick={() => this.props.refreshData()} disabled={!this.state.crewDataUpdated}/>
+          </div>
         </div>
       </div>
     )

@@ -9,7 +9,7 @@ import MastersCalculations from "./MastersCalculations"
 import { CrewProps } from "../../components.types";
 import Paginator from "../../molecules/Paginator/Paginator";
 import PageTotals from "../../molecules/PageTotals/PageTotals";
-import CrewTimeCalculatedFieldsUpdate from "../../common/UpdateCrewTimeCalculatedFields";
+import CrewTimeCalculatedFieldsUpdate from "../../molecules/UpdateCrews/UpdateCrewTimeCalculatedFields";
 
 import "./crewIndex.scss"
 import Header from "../../organisms/Header/Header";
@@ -95,6 +95,7 @@ export default function CrewIndex() {
       setMastersAdjustmentsApplied(responseData.num_crews_masters_adjusted),
       setMastersAdjustmentsRequired(responseData.num_crews_require_masters_adjusted)
       setUpdateRequired(responseData.requires_ranking_update)
+
     } catch (error) {
       console.error(error);
     }

@@ -20,9 +20,14 @@ class GenerateResults extends React.Component {
         <Hero title={"Generate results"} />
         <section className="section">
           <div className="container">
-            <BROELoader
-              importPersonalData={false} title={'Get data from British Rowing'} description={'Import data from BROE via the api'} />
-
+            <section className="c-data-loader__section">
+              <div className="text-container has-text-left">
+                <h2 className="c-data-loader__title">{this.props.title}</h2>
+                <p className="c-data-loader__description">{this.props.description}</p>
+              </div>
+                <BROELoader
+              importPersonalData={true} title={'Get data from British Rowing'} description={'Import data from BROE via the api'} location={'page'}/>
+              </section>
               <CSVDataLoader
                 url='/api/crew-race-times-import/'
                 buttonText='Import race times'
@@ -49,7 +54,7 @@ class GenerateResults extends React.Component {
 
           <section className="section-has-lines">
             <div className="text-container has-text-left">
-              <h2 className="title is-2">Update all calculations</h2>
+              <h2 className="generate-start-order__title">Update all calculations</h2>
               <p className="left">Refresh all calculations eg ranking etc - this may be needed after making changes such as adding penalties.</p>
             </div>
             <div className="columns">
@@ -58,9 +63,6 @@ class GenerateResults extends React.Component {
                   url='/api/crew-update-rankings/'
                   buttonText='Refresh calculations'
                   class='single-height-button' />
-              </div>
-              <div className="column left">
-                Initiates a calculation (or re-calculation) of rankings and masters adjustments.
               </div>
             </div>
           </section>
@@ -77,6 +79,11 @@ class GenerateResults extends React.Component {
             <div className="columns">
               <div className="column is-one-quarter">
                 <TextButton label="Race times" pathName='/generate-results/race-times' />
+              </div>
+            </div>
+            <div className="columns">
+              <div className="column is-one-quarter">
+                <TextButton label="Final results" pathName='/generate-results/results' />
               </div>
             </div>
             <div className="columns">

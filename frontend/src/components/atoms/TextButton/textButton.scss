@@ -1,7 +1,8 @@
 @import "../../../style.scss";
 
 .text-button {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   height: fit-content;
   padding: 0.5rem 1.5rem;
   border-radius: 1.5rem;
@@ -28,6 +29,15 @@
   &:disabled {
     opacity: 0.55;
     pointer-events: none;
+  }
+
+  &--loading {
+    background: none;
+    color: $bblBlue;
+  }
+
+  .icon__spinner {
+    margin-left: 0.5rem;
   }
 
   @media screen and (min-width: $lg) {

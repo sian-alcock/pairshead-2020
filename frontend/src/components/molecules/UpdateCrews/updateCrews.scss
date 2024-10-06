@@ -1,0 +1,13 @@
+@import '../../../style.scss';
+
+.update-crews {
+  &__container {
+    @include container;
+
+    @media screen and (min-width: $md) {
+      display: grid;
+      grid-template-columns: 8fr 3fr 1fr;
+      gap: 1rem;
+    }
+  }
+}

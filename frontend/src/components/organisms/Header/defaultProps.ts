@@ -5,6 +5,8 @@ export const menuProps: MenuProps = {
     {
       key: 0,
       parentItem: "Start order",
+      link: "/generate-start-order",
+      authenticated: true,
       items: [
         {
           link: "/generate-start-order",
@@ -16,6 +18,8 @@ export const menuProps: MenuProps = {
     {
       key: 1,
       parentItem: "Logistics",
+      link: "/logistics",
+      authenticated: true,
       items: [
         {
           link: "/logistics/crew-labels",
@@ -41,6 +45,8 @@ export const menuProps: MenuProps = {
     },
     {
       parentItem: "Results",
+      link: "/generate-results",
+      authenticated: true,
       key: 2,
       items: [
         {
@@ -59,7 +65,7 @@ export const menuProps: MenuProps = {
           authenticated: true
         },
         {
-          link: "/results",
+          link: "/generate-results/results",
           title: "Final results",
           authenticated: false
         },
@@ -72,6 +78,8 @@ export const menuProps: MenuProps = {
     },
     {
       parentItem: "Settings",
+      link: "/settings/keys",
+      authenticated: true,
       key: 3,
       items: [
         {

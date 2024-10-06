@@ -16,6 +16,8 @@ interface ChildMenuItem {
 
 interface MenuItem  {
   parentItem: string;
+  link: string;
+  authenticated: boolean;
   key: number | undefined;
   items: ChildMenuItem[];
 }
@@ -90,7 +92,7 @@ export default function Menu({menuItems}: MenuProps): ReactElement {
                       
                       <ul className='menu__container'>
                           {menuItems.map((item) => <li className='menu__item' key={item.key}>
-                            <h2 className="menu__item-header">{item.parentItem}</h2>
+                          {item.authenticated ? Auth.isAuthenticated() && <Link to={item.link}><h2 className="menu__item-header">{item.parentItem}</h2></Link> : <Link to={item.link}><h2 className="menu__item-header">{item.parentItem}</h2></Link>}
                             <ul>{item.items.map((item, idx) => <li key={idx}>
                               {item.authenticated ? Auth.isAuthenticated() && <Link to={item.link} className="menu__item-link">{item.title}</Link> : <Link to={item.link} className="menu__item-link">{item.title}</Link>}
                             </li>)}</ul>

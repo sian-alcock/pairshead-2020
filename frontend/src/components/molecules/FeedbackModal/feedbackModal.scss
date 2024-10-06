@@ -1,0 +1,79 @@
+@import '../../../style.scss';
+
+.feedback-modal {
+  width: 100%;
+  max-width: unset;
+//   height: 50%;
+  max-height: unset;
+  border: unset;
+
+  .trap {
+    width: 100%;
+    height: 100%;
+  }
+
+  &__outer-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  &__container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+
+    // Padding top and bottom should match the height of the Close wrapper
+    padding-top: 80px;
+    padding-bottom: 80px;
+  }
+
+  &__content {
+    z-index: 10;
+    width: 100%;
+    min-height: 30vh;
+
+    @media screen and (min-width: $lg) {
+      @include container;
+    }
+  }
+
+  &__close-wrapper {
+    position: absolute;
+    z-index: 20;
+    top: 0;
+    width: 100%;
+    height: 80px;
+  }
+
+  &__close {
+    position: relative;
+    top: 0;
+
+    @include container;
+
+    .icon-button {
+      position: absolute;
+      top: 0;
+      right: rem(24px);
+      width: rem(48px);
+      height: rem(48px);
+
+      @media screen and (min-width: $md) {
+        top: rem(12px);
+        right: 0;
+      }
+    }
+
+    svg {
+      width: rem(18px);
+      height: rem(18px);
+    }
+  }
+
+  @media screen and (min-width: $lg) {
+    width: 50%;
+  }
+}

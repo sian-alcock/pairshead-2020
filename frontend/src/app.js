@@ -48,6 +48,7 @@ export default class App extends React.Component {
             <SecureRoute path="/generate-results/race-times/:id/edit" component={RaceTimeEdit} />
             <SecureRoute path="/generate-results/race-times" component={RaceTimeIndex} />
             <SecureRoute path="/generate-results/export" component={ExportData} />
+            <SecureRoute path="/generate-results/results" component={ResultIndex} />
             <SecureRoute path="/generate-results" component={GenerateResults} />
             <SecureRoute path="/settings/keys/:id/edit" component={EventKeyEdit} />
             <SecureRoute path="/settings/keys/new" component={EventKeyNew} />
@@ -65,9 +66,8 @@ export default class App extends React.Component {
             <SecureRoute path="/generate-start-order/set-number-locations/new" component={NumberLocationNew} />
             <SecureRoute path="/generate-start-order/set-number-locations" component={SetNumberLocations} />
             <SecureRoute path="/generate-start-order" component={GenerateStartOrder} />
-            <SecureRoute path="/summary" component={Home} />
+            <SecureRoute path="/" component={Home} />
             <Route path="/login" component={Login} />
-            <Route path="/" component={ResultIndex} />
           </Switch>
           <Footer />
         </HashRouter>

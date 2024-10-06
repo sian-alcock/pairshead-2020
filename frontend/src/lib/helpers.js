@@ -15,7 +15,7 @@ export const formatTimes = function formatTimes(timeInMs){
 
 export const formatTimeDate = function formatTimeDate(timeInMs){
   const date = new Date(timeInMs)
-  return date.toDateString()
+  return date.toLocaleString()
 }
 
 export const getImage = function getImage(crew) {

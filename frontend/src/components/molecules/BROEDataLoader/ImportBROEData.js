@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import { formatTimeDate } from '../../../lib/helpers'
 import TextButton from '../../atoms/TextButton/TextButton'
-import Icon from '../../atoms/Icons/Icons'
+import { FeedbackModal } from '../FeedbackModal/FeedbackModal'
 import ProgressMessage from '../../atoms/ProgressMessage/ProgressMessage'
 import "./importBroeData.scss"
 
@@ -15,6 +15,7 @@ class BROELoader extends Component {
 
     this.state = {
       loading: false,
+      modalOpen: false,
       crewDataUpdated: '',
       clubEventImportSuccessMessage: '',
       bandImportSuccessMessage: '',
@@ -28,6 +29,7 @@ class BROELoader extends Component {
     console.log(this.state.crewApi)
 
     this.getData = this.getData.bind(this)
+    this.close = this.close.bind(this)
 
   }
 
@@ -80,8 +82,7 @@ class BROELoader extends Component {
       this.setState({
         eventBandsSuccessMessage: 'Updating event names in the crew table',
         eventBandsAreUpdating: false,
-        loading: false,
-        crewDataUpdated: Date.now()
+        crewDataUpdated: crews.data[0].updated
       })
 
     } catch (err) {
@@ -98,6 +99,11 @@ class BROELoader extends Component {
       this.cancelTokenSource = null
     }
   }
+
+  close () {
+    this.setState({ loading: false });
+    document.body.classList.remove('lock-scroll');
+  };
   
   componentWillUnmount() {
     this.cancelTokenSource && this.cancelTokenSource.cancel()
@@ -107,14 +113,10 @@ class BROELoader extends Component {
     const { loading } = this.state
 
     return (
-      <section className="c-data-loader__section">
-      <div className="text-container has-text-left">
-        <h2 className="c-data-loader__title">{this.props.title}</h2>
-        <p className="c-data-loader__description">{this.props.description}</p>
-      </div>
-      <div className="c-data-loader">
-          <TextButton label={'Get BROE data'} onClick={this.getData} disabled={loading}/>
-          <div className="c-data-loader__progress">
+
+    <div className="c-data-loader">
+      <TextButton label={'Get BROE data'} onClick={this.getData} disabled={loading}/>
+        {loading && <FeedbackModal isOpen={true} closeModal={this.close}>
             {this.state.clubsAndEventsAreLoading &&<ProgressMessage message={'Importing clubs and events from British Rowing'} status={'loading'} />}
             {this.state.clubEventImportSuccessMessage &&<ProgressMessage message={this.state.clubEventImportSuccessMessage} status={'success'} />}
             {this.state.bandsAreLoading &&<ProgressMessage message={'Importing event band data from British Rowing'} status={'loading'} />}
@@ -125,10 +127,9 @@ class BROELoader extends Component {
             {this.state.competitorImportSuccessMessage &&<ProgressMessage message={this.state.competitorImportSuccessMessage} status={'success'} />}
             {this.state.eventBandsAreUpdating &&<ProgressMessage message={'Updating event bands for all crews'} status={'loading'} />}
             {this.state.eventBandsSuccessMessage &&<ProgressMessage message={this.state.eventBandsSuccessMessage} status={'success'} />}
-            {this.state.crewDataUpdated && <ProgressMessage message={`All British Rowing data imported successfully: ${formatTimeDate(this.state.crewDataUpdated)}!`} status={'success'}/>}
-          </div>
-        </div>
-      </section>
+            {this.state.crewDataUpdated && <ProgressMessage message={`All British Rowing data imported successfully: ${formatTimeDate(this.state.crewDataUpdated)}`} status={'success'}/>}
+        </FeedbackModal>}
+      </div>
     )
   }
 }
