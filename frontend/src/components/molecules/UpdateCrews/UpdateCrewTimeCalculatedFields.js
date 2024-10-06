@@ -59,7 +59,7 @@ class CrewTimeCalculatedFieldsUpdate extends Component {
           <span>❗️Crew rankings need to be updated.  Note:  This may take a minute...  </span>
         </div>
         <div className="update-crews__button">
-          <TextButton label={"Update now"} onClick={this.getData} disabled={loading}/>
+          <TextButton label={"Update now"} onClick={this.getData} disabled={loading} loading={loading}/>
           <p><small>{!this.state.crewDataUpdated ? '' : `Updated: ${formatTimeDate(this.state.crewDataUpdated)}`}</small></p>
         </div>
         <div className="update-crews__close">

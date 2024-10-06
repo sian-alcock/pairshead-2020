@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import axios from 'axios'
 import { formatTimeDate } from '../../lib/helpers'
 import TextButton from '../atoms/TextButton/TextButton'
-import { FeedbackModal } from '../molecules/FeedbackModal/FeedbackModal'
-import ProgressMessage from '../atoms/ProgressMessage/ProgressMessage'
 
 class DataLoader extends Component {
 
@@ -31,7 +29,7 @@ class DataLoader extends Component {
       })
       console.log(retrievedData.data)
 
-      this.setState({ updated: Date.now() })
+      this.setState({ loading: false, updated: Date.now() })
 
     } catch (err) {
       if (axios.isCancel(err)) {
@@ -59,11 +57,7 @@ class DataLoader extends Component {
     return (
       <div>
         
-        <TextButton label={this.props.buttonText} onClick={this.getData} disabled={loading}/>
-        {loading && <FeedbackModal isOpen={true} closeModal={this.close}>
-          {!this.state.updated &&<ProgressMessage message={'Updating all calculations'} status={'loading'} />}
-          {this.state.updated &&<ProgressMessage message={'Updating all calculations'} status={'success'} />}
-        </FeedbackModal>}
+        <TextButton label={this.props.buttonText} onClick={this.getData} disabled={loading} loading={loading}/>
         <p><small>{!this.state.updated ? '' : `Updated: ${formatTimeDate(this.state.updated)}`}</small></p>
       </div>
     )
