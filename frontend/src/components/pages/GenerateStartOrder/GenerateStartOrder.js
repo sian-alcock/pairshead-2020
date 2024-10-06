@@ -39,9 +39,15 @@ class GenerateStartOrder extends React.Component {
       <Hero title="Generate start order" />
       <section className="section">
         <div className="container">
-          <BROELoader
-              importPersonalData={true} title={'Get data from British Rowing'} description={'Import data from BROE via the api'} />
-
+        <section className="c-data-loader__section">
+            <div className="text-container has-text-left">
+              <h2 className="c-data-loader__title">Get data from British Rowing</h2>
+              <p className="c-data-loader__description">Import data from BROE via the api</p>
+            </div>
+              <BROELoader
+            importPersonalData={true} title={'Get data from British Rowing'} description={'Import data from BROE via the api'} location={'page'}/>
+          </section>
+          
           <section className="section-has-lines">
             <div className="text-container has-text-left">
               <h2 className="generate-start-order__title">Create template for event order</h2>

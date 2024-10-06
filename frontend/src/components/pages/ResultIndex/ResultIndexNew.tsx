@@ -44,10 +44,7 @@ interface ResponseDataProps {
 }
 
 interface CategoryResponseDataProps {
-  name: string;
-  event: {
-    override_name: string;
-  }
+  override_name: string;
 }
 
 type SelectOption = {
@@ -140,10 +137,10 @@ export default function ResultIndex () {
     // Populate the category (event_band) pull down with all event_bands
     try {
     
-      const response: AxiosResponse = await axios.get('api/bands/');
+      const response: AxiosResponse = await axios.get('api/events/');
       
       const responseData: CategoryResponseDataProps[] = response.data;
-      let eventBands = responseData.map(band => band.event.override_name + ' ' + band.name)
+      let eventBands = responseData.map(event => event.override_name)
       eventBands = Array.from(new Set(eventBands)).sort()
       const options = eventBands.map(option => {
         return {label: option, value: option}

@@ -21,19 +21,20 @@ class GenerateResults extends React.Component {
         <section className="section">
           <div className="container">
             <section className="c-data-loader__section">
-              <div className="text-container has-text-left">
-                <h2 className="c-data-loader__title">{this.props.title}</h2>
-                <p className="c-data-loader__description">{this.props.description}</p>
-              </div>
-                <BROELoader
-              importPersonalData={true} title={'Get data from British Rowing'} description={'Import data from BROE via the api'} location={'page'}/>
-              </section>
+            <div className="text-container has-text-left">
+              <h2 className="c-data-loader__title">Get data from British Rowing</h2>
+              <p className="c-data-loader__description">Import data from BROE via the api</p>
+            </div>
+              <BROELoader
+            importPersonalData={true} title={'Get data from British Rowing'} description={'Import data from BROE via the api'} location={'page'}/>
+            </section>
               <CSVDataLoader
                 url='/api/crew-race-times-import/'
                 buttonText='Import race times'
                 class='single-height-button'
                 title='Import race times from csv'
-                description='Import webscorer race times from csv.' 
+                description='Import webscorer race times from csv.'
+                lines='true'
               />
 
               <CSVDataLoader
@@ -41,7 +42,8 @@ class GenerateResults extends React.Component {
                 buttonText='Import original event categories'
                 class='double-height-button' 
                 title='Import original event categories from csv'
-                description='Import event categories from csv.' 
+                description='Import event categories from csv.'
+                lines='true' 
                 />
 
               <CSVDataLoader
@@ -49,7 +51,8 @@ class GenerateResults extends React.Component {
                 buttonText='Import masters adjustments'
                 class='double-height-button'
                 title='Import masters adjustments from csv'
-                description='Import masters adjustments from csv.' 
+                description='Import masters adjustments from csv.'
+                lines='true'
               />
 
           <section className="section-has-lines">
