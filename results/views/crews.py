@@ -321,12 +321,12 @@ class StartOrderDataExport(APIView):
     def get(self, _request):
         filename = 'startorderdata - ' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M.csv")
 
-        crews = Crew.objects.filter(status__exact='Accepted').order_by('bib_number')
+        crews = Crew.objects.filter(status__in=['Accepted', 'Scratched']).order_by('bib_number')
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
 
         writer = csv.writer(response, delimiter=',')
-        writer.writerow(['Crew No', 'Crew', 'Club', 'Blade', 'CompCode', 'Category', 'Host club', 'Number location', 'Marshalling division',])
+        writer.writerow(['Status', 'Crew No', 'Crew', 'Club', 'Blade', 'CompCode', 'Category', 'Host club', 'Number location', 'Marshalling division', 'Time only',])
 
 
         for crew in crews:
@@ -344,9 +344,15 @@ class StartOrderDataExport(APIView):
             else:
                 number_location = crew.number_location
 
+            if crew.time_only:
+                time_only = 'TO'
+            else:
+                time_only  = ''
+
 
             writer.writerow(
             [
+                crew.status,
                 crew.bib_number,
                 crew_name,
                 crew.club.name,
@@ -356,6 +362,7 @@ class StartOrderDataExport(APIView):
                 crew.host_club.name,
                 number_location,
                 crew.marshalling_division,
+                time_only,
             ])
 
         return response

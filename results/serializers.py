@@ -118,7 +118,7 @@ class WriteCrewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Crew
-        fields = ('id', 'name', 'composite_code', 'club', 'rowing_CRI', 'sculling_CRI', 'event', 'status', 'band', 'bib_number', 'host_club', 'otd_contact', 'otd_home_phone', 'otd_mobile_phone', 'otd_work_phone', 'updated', )
+        fields = ('id', 'name', 'composite_code', 'club', 'rowing_CRI', 'sculling_CRI', 'event', 'status', 'band', 'bib_number', 'host_club', 'otd_contact', 'otd_home_phone', 'otd_mobile_phone', 'otd_work_phone', 'updated', 'time_only', )
     
     def create(self, validated_data):
         host_club = validated_data.pop('host_club')
