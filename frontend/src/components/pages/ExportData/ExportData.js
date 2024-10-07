@@ -1,5 +1,6 @@
 import React from 'react'
 import Header from '../../organisms/Header/Header'
+import TextButton from '../../atoms/TextButton/TextButton'
 
 
 class DrawMenu extends React.Component {
@@ -48,8 +49,8 @@ class DrawMenu extends React.Component {
         <div className="container">
 
           <div className="columns">
-            <div className="column is-one-quarter has-text-centered">
-              <button className="button is-primary" onClick={this.exportCompetitorData}>Export competitor data</button>
+            <div className="column is-one-quarter">
+              <TextButton onClick={this.exportCompetitorData} label={"Export competitor data"}/>
             </div>
             <div className="column left">
               CSV showing crewID alongside competitor names
@@ -57,8 +58,8 @@ class DrawMenu extends React.Component {
           </div>
 
           <div className="columns">
-            <div className="column is-one-quarter has-text-centered">
-              <button className="button is-primary" onClick={this.exportCrewData}>Export to BROE</button>
+            <div className="column is-one-quarter">
+              <TextButton onClick={this.exportCrewData} label={"Export to BROE"}/>
             </div>
             <div className="column left">
               CSV of crew data and results in correct format for import into British Rowing Website
@@ -67,8 +68,8 @@ class DrawMenu extends React.Component {
           </div>
 
           <div className="columns">
-            <div className="column is-one-quarter has-text-centered">
-              <button className="button is-primary" onClick={this.exportResultsData}>Export crew data</button>
+            <div className="column is-one-quarter">
+              <TextButton onClick={this.exportResultsData} label={"Export crew data"}/>
             </div>
             <div className="column left">
               CSV of results
@@ -77,8 +78,8 @@ class DrawMenu extends React.Component {
           </div>
 
           <div className="columns">
-            <div className="column is-one-quarter has-text-centered">
-              <button className="button is-primary double-height-button" onClick={this.exportStartData}>Export crew starting order data</button>
+            <div className="column is-one-quarter">
+              <TextButton onClick={this.exportStartData} label={"Export crew starting order data"}/>
             </div>
             <div className="column left">
               CSV of start order (contains bib number from BROE)
@@ -87,8 +88,8 @@ class DrawMenu extends React.Component {
           </div>
 
           <div className="columns">
-            <div className="column is-one-quarter has-text-centered">
-              <button className="button is-primary double-height-button" onClick={this.exportWebScorerData}>Export crew data for Webscorer</button>
+            <div className="column is-one-quarter">
+              <TextButton onClick={this.exportWebScorerData} label={"Export crew data for Webscorer"}/>
             </div>
             <div className="column left">
               CSV for import into Webscorer

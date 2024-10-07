@@ -55,7 +55,7 @@ class ResultDataExport(APIView):
 
     def get(self, _request):
 
-        filename = 'eventordertemplate - ' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M.csv")
+        filename = 'resultdataexport - ' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M.csv")
 
         crews = Crew.objects.filter(status__exact='Accepted', raw_time__gt=0,).order_by('overall_rank')
         fastest_female_scull = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time'))
