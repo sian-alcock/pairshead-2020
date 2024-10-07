@@ -1,5 +1,6 @@
 export const marshallHeadings = [
     "Crew No",
+    "Status",
     "Division",
     "Category",
     "Club",

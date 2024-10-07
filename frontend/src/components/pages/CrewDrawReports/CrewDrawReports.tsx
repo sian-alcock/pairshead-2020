@@ -105,6 +105,7 @@ export default function CrewDrawReports() {
                 crews.map((crew) => (
                   <tr key={crew.id}>
                     <td>{!crew.bib_number ? "" : crew.bib_number}</td>
+                    <td>{crew.status}</td>
                     <td>{crew.marshalling_division}</td>
                     <td>{crew.event_band}</td>
                     <td>{crew.club.name}</td>
