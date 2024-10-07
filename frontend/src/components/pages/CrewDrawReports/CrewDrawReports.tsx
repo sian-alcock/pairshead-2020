@@ -52,7 +52,7 @@ export default function CrewDrawReports() {
       page_size: "500",
       page: 1,
       order: "bib_number",
-      status: "Accepted"
+      status: ["Accepted", "Scratched"]
     });
   }, []);
 
