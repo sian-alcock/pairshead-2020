@@ -66,8 +66,8 @@ export default class App extends React.Component {
             <SecureRoute path="/generate-start-order/set-number-locations/new" component={NumberLocationNew} />
             <SecureRoute path="/generate-start-order/set-number-locations" component={SetNumberLocations} />
             <SecureRoute path="/generate-start-order" component={GenerateStartOrder} />
-            <SecureRoute path="/" component={Home} />
             <Route path="/login" component={Login} />
+            <SecureRoute path="/" component={Home} />
           </Switch>
           <Footer />
         </HashRouter>
