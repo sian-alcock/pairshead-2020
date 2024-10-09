@@ -16,4 +16,13 @@ export const timingHeadings = [
   "Club",
   "Category",
 ]
+
+export const lightweightHeadings = [
+  "Crew Id",
+  "Status",
+  "Category",
+  "Club",
+  "Crew",
+  "Weigh in (Yes/No/No show)"
+]
   

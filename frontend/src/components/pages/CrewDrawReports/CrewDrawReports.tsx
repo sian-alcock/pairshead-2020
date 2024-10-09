@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Hero from "../../organisms/Hero/Hero";
-import { marshallHeadings, timingHeadings } from "./defaultProps"
+import { lightweightHeadings, marshallHeadings, timingHeadings } from "./defaultProps"
 import { CrewProps } from "../../components.types";
 
 import "./crewDrawReports.scss"
@@ -27,7 +27,7 @@ interface ResponseDataProps {
 
 export default function CrewDrawReports() {
   const [crews, setCrews] = useState<CrewProps[]>([]);
-  const [view, setView] = useState("timing")
+  const [view, setView] = useState(sessionStorage.getItem('view') || 'marshall')
   const [totalCrews, setTotalCrews] = useState(0);
 
   const fetchData = async (url: string, params: ResponseParamsProps) => {
@@ -57,11 +57,18 @@ export default function CrewDrawReports() {
   }, []);
 
   const showMarshallsView = () => {
+    sessionStorage.setItem('view', 'marshall')
     setView("marshall")
   }
 
   const showTimingTeamView = () => {
+    sessionStorage.setItem('view', 'timing')
     setView("timing")
+  }
+
+  const showLightWeightView = () => {
+    sessionStorage.setItem('view', 'lightweight')
+    setView("lightweight")
   } 
 
   console.log(crews);
@@ -80,11 +87,16 @@ export default function CrewDrawReports() {
               <li onClick={showTimingTeamView}>
                 <a className={`crew-draw-reports__tab ${view !== 'timing' ? '' : 'active'}`}>Timing teams view</a>
               </li>
+              <li onClick={showLightWeightView}>
+                <a className={`crew-draw-reports__tab ${view !== 'lightweight' ? '' : 'active'}`}>Lightweight weigh-in</a>
+              </li>
             </ul>
           </div>
-          {view === "marshall" ? <h2 className="crew-draw-reports__title">Start order - Marshalls view</h2> : <h2 className="crew-draw-reports__title">Start order - Timing team view</h2>}
+          {view === "marshall" && <h2 className="crew-draw-reports__title">Start order - Marshalls view</h2>}
+          {view === "timing" && <h2 className="crew-draw-reports__title">Start order - Timing team view</h2>}
+          {view === "lightweight" && <h2 className="crew-draw-reports__title">Lightweight</h2>}
           <div className="crew-draw-reports__table-container">
-            {view === "marshall" ?
+            {view === "marshall" &&
             <table className="crew-draw-reports__table table">
               <thead>
                 <tr>
@@ -113,8 +125,8 @@ export default function CrewDrawReports() {
                   </tr>
                 ))}
               </tbody>
-            </table> : 
-            <table className="crew-draw-reports__table table">
+            </table>} 
+            {view === 'timing' && <table className="crew-draw-reports__table table">
               <thead>
                 <tr>
                   {timingHeadings.map((heading) => (
@@ -142,6 +154,35 @@ export default function CrewDrawReports() {
                     <td>{!crew.bib_number ? '' : crew.bib_number}</td>
                     <td>{crew.club.index_code}</td>
                     <td>{crew.event_band}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>}
+            {view === 'lightweight' && <table className="crew-draw-reports__table table">
+              <thead>
+                <tr>
+                  {lightweightHeadings.map((heading) => (
+                    <td key={heading}>{heading}</td>
+                  ))}
+                </tr>
+              </thead>
+              <tfoot>
+                <tr>
+                  {lightweightHeadings.map((heading) => (
+                    <td key={heading}>{heading}</td>
+                  ))}
+                </tr>
+              </tfoot>
+              <tbody>
+                {crews &&
+                crews.filter((crew) => crew.event_band?.includes('Lwt') ).map((crew) => (
+                  <tr key={crew.id}>
+                    <td>{crew.id}</td>
+                    <td>{crew.status}</td>
+                    <td>{crew.club.name}</td>
+                    <td>{!crew.competitor_names ? crew.name : crew.competitor_names}</td>
+                    <td>{crew.event_band}</td>
+                    <td></td>
                   </tr>
                 ))}
               </tbody>

@@ -28,7 +28,17 @@ export default function Logistics () {
           </div>
             <div className="columns">
               <div className="column is-one-quarter">
-                <TextButton label="Crew draw report" pathName='/logistics/crew-draw-reports' />
+                <TextButton label="Crew draw report - timing team" pathName='/logistics/crew-draw-reports' stateProps={ {view: 'timing'} } />
+              </div>
+            </div>
+            <div className="columns">
+              <div className="column is-one-quarter">
+                <TextButton label="Crew draw report - marshalls" pathName='/logistics/crew-draw-reports' stateProps={ {view: 'marshall'} } />
+              </div>
+            </div>
+            <div className="columns">
+              <div className="column is-one-quarter">
+                <TextButton label="Lightweight crews - weigh in check sheet" pathName='/logistics/crew-draw-reports' stateProps={ {view: 'lightweight'} } />
               </div>
             </div>
             <div className="columns">

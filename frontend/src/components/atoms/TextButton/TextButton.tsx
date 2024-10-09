@@ -12,6 +12,7 @@ export interface TextButtonProps {
   disabled?: boolean;
   loading?: boolean;
   isCancel?: boolean;
+  stateProps?: {};
 }
 
 export default function TextButton({
@@ -20,7 +21,8 @@ export default function TextButton({
   isSubmit = false,
   disabled = false,
   pathName,
-  loading
+  loading,
+  stateProps
 }: TextButtonProps): ReactElement {
   return onClick || isSubmit ? (
     <button
@@ -37,7 +39,8 @@ export default function TextButton({
     <Link
       className="text-button"
       to={{
-        pathname: pathName
+        pathname: pathName,
+        state: stateProps
       }}>
       {label}
     </Link>
