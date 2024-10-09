@@ -9,9 +9,23 @@
     @include container;
   }
 
+  &__report-intro {
+    margin-bottom: 2rem;
+  }
+
   &__title {
     margin-bottom: 1.5rem;
     @include h2;
+  }
+
+  &__subtitle {
+    margin-bottom: 0.5rem;
+    @include h5;
+  }
+
+  &__list {
+    margin-bottom: 0.5rem;
+    list-style-position: inside;
   }
 
   &__table-container {

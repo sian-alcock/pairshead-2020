@@ -94,7 +94,19 @@ export default function CrewDrawReports() {
           </div>
           {view === "marshall" && <h2 className="crew-draw-reports__title">Start order - Marshalls view</h2>}
           {view === "timing" && <h2 className="crew-draw-reports__title">Start order - Timing team view</h2>}
-          {view === "lightweight" && <h2 className="crew-draw-reports__title">Lightweight</h2>}
+          {view === "lightweight" && 
+          <div className="crew-draw-reports__report-intro">
+            <h2 className="crew-draw-reports__title">Lightweight weigh in - checklist</h2>
+            <h3 className="crew-draw-reports__subtitle">Instructions</h3>
+            <ol className="crew-draw-reports__list">
+              <li>Check correct crew with British rowing ID or other photo Id</li>
+              <li>Update Weigh in column: Yes = on or under weight; No = Did not make weight; NS = Did not turn up</li>
+              <li>When complete, please take photo and send to Sarah Powell</li>
+            </ol>
+            <h3 className="crew-draw-reports__subtitle">Open lightweight - 75kg</h3>
+            <h3 className="crew-draw-reports__subtitle">Womens lightweight - 61.5kg</h3>
+          </div>
+          }
           <div className="crew-draw-reports__table-container">
             {view === "marshall" &&
             <table className="crew-draw-reports__table table">

@@ -23,6 +23,6 @@ export const lightweightHeadings = [
   "Category",
   "Club",
   "Crew",
-  "Weigh in (Yes/No/No show)"
+  "Weigh in (Yes/No/NS)"
 ]
   
