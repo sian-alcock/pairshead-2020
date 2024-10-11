@@ -1,6 +1,6 @@
 @import '../../../style.scss';
 
-.crew-draw-reports {
+.race-times {
   &__section {
     @include section;
   }
@@ -9,32 +9,12 @@
     @include container;
   }
 
-  &__report-intro {
-    margin-bottom: 2rem;
-  }
-
-  &__title {
-    margin-bottom: 1.5rem;
-    @include h2;
-  }
-
-  &__subtitle {
-    margin-bottom: 0.5rem;
-    @include h5;
-  }
-
-  &__list {
-    margin-bottom: 0.5rem;
-    list-style-position: inside;
-  }
-
   &__table-container {
     overflow-x: auto;
   }
 
   &__table {
-    max-width: 100%;
-    margin-left: 0;
+    margin-bottom: 1.5rem;
   }
 
   &__tabs {
@@ -59,12 +39,6 @@
     &.active {
       background-color: $phLogoBlue;
       color: $bblBlue; 
-    }
-  }
-
-  &__row-Scratched {
-    td {
-      text-decoration: line-through;
     }
   }
 }

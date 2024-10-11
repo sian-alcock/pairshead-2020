@@ -6,6 +6,8 @@ import { formatTimes } from '../../../lib/helpers'
 import Paginator from '../../molecules/Paginator/Paginator'
 import PageTotals from '../../molecules/PageTotals/PageTotals'
 import Header from '../../organisms/Header/Header'
+import Hero from '../../organisms/Hero/Hero'
+import './raceTime.scss'
 
 class RaceTimeIndex extends React.Component {
   constructor() {
@@ -162,15 +164,20 @@ class RaceTimeIndex extends React.Component {
     const pagingOptions = [{label: '20 times', value: '20'}, {label: '50 times', value: '50'}, {label: '100 times', value: '100'}, {label: 'All times', value: '500'}]
 
     return (
-      <><Header /><section className="section">
-        <div className="container">
-          <div className="tabContainer no-print">
-            <div className="tabs is-toggle is-large is-centered">
-              <ul>
-                <li onClick={this.displayStartTimes}><a className={`startTab ${!this.state.startTab ? '' : 'active'}`}>Start times</a></li>
-                <li onClick={this.displayFinishTimes}><a className={`finishTab ${!this.state.finishTab ? '' : 'active'}`}>Finish times</a></li>
+      <>
+      <Header />
+      <Hero title={"Race times"} />
+      <section className="race-times__section">
+        <div className="race-times__container">
+          <div className="race-times__tabs-wrapper no-print">
+              <ul className="race-times__tabs">
+                <li onClick={this.displayStartTimes}>
+                  <a className={`race-times__tab ${!this.state.startTab ? '' : 'active'}`}>Start times</a>
+                  </li>
+                <li onClick={this.displayFinishTimes}>
+                  <a className={`race-times__tab ${!this.state.finishTab ? '' : 'active'}`}>Finish times</a>
+                  </li>
               </ul>
-            </div>
           </div>
 
           <div className="columns is-vcentered">
@@ -229,47 +236,48 @@ class RaceTimeIndex extends React.Component {
             entities='times'
             pageSize={this.state.pageSize}
             pageNumber={this.state.pageNumber} />
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Sequence</th>
-                <th>Tap</th>
-                <th>Start / Finish Tap</th>
-                <th>Bib number</th>
-                <th>Crew ID</th>
-                <th>Crew name</th>
-                <th>Competitors</th>
-                <th>Category</th>
-              </tr>
-            </thead>
-            <tfoot>
-              <tr>
-                <th>Sequence</th>
-                <th>Tap</th>
-                <th>Start / Finish Tap</th>
-                <th>Bib number</th>
-                <th>Crew ID</th>
-                <th>Crew name</th>
-                <th>Competitors</th>
-                <th>Category</th>
-              </tr>
-            </tfoot>
-            <tbody>
-              {this.state.raceTimes.map(raceTime => <tr key={raceTime.id}>
-                <td><Link to={`/generate-results/race-times/${raceTime.id}`}>{raceTime.sequence}</Link></td>
-                <td>{raceTime.tap}</td>
-                <td>{formatTimes(raceTime.time_tap)}</td>
-                <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.bib_number}</td>
-                <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.id}</td>
-                <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.times.length > 2 ? raceTime.crew.name + '❗️' : raceTime.crew.name}</td>
-                <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.competitor_names}</td>
-                <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.event_band}</td>
+          <div className="race-times__table-container">
+            <table className="race-times__table table">
+              <thead>
+                <tr>
+                  <th>Sequence</th>
+                  <th>Tap</th>
+                  <th>Start / Finish Tap</th>
+                  <th>Bib number</th>
+                  <th>Crew ID</th>
+                  <th>Crew name</th>
+                  <th>Competitors</th>
+                  <th>Category</th>
+                </tr>
+              </thead>
+              <tfoot>
+                <tr>
+                  <th>Sequence</th>
+                  <th>Tap</th>
+                  <th>Start / Finish Tap</th>
+                  <th>Bib number</th>
+                  <th>Crew ID</th>
+                  <th>Crew name</th>
+                  <th>Competitors</th>
+                  <th>Category</th>
+                </tr>
+              </tfoot>
+              <tbody>
+                {this.state.raceTimes.map(raceTime => <tr key={raceTime.id}>
+                  <td><Link to={`/generate-results/race-times/${raceTime.id}`}>{raceTime.sequence}</Link></td>
+                  <td>{raceTime.tap}</td>
+                  <td>{formatTimes(raceTime.time_tap)}</td>
+                  <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.bib_number}</td>
+                  <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.id}</td>
+                  <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.times.length > 2 ? raceTime.crew.name + '❗️' : raceTime.crew.name}</td>
+                  <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.competitor_names}</td>
+                  <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.event_band}</td>
 
-              </tr>
-              )}
-            </tbody>
-          </table>
-
+                </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
           <div className="no-print">
             <Paginator
               pageNumber={this.state.pageNumber}
