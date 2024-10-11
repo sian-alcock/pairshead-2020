@@ -1,14 +1,20 @@
 import React from 'react'
 import axios from 'axios'
 import Header from '../../organisms/Header/Header'
+import Hero from '../../organisms/Hero/Hero'
+import './contactDetailReport.scss'
 
 class ContactDetailReport extends React.Component {
   constructor() {
     super()
     this.state = {
       crews: [],
-      pageNumber: 1
+      pageNumber: 1,
+      sortTerm: 'bib_number',
     }
+
+    this.handleSortChange = this.handleSortChange.bind(this)
+
   }
 
   componentDidMount() {
@@ -27,6 +33,43 @@ class ContactDetailReport extends React.Component {
       )
   }
 
+  refreshData(queryString=null) {
+    if (typeof this._source !== typeof undefined) {
+      this._source.cancel('Operation cancelled due to new request')
+    }
+
+    // save the new request for cancellation
+    this._source = axios.CancelToken.source()
+
+    axios.get(`/api/crews?${queryString}`, {
+      // cancel token used by axios
+      cancelToken: this._source.token,
+
+      params: {
+        page_size: 500,
+        order: this.state.sortTerm,
+      }
+    })
+      .then(res => this.setState({
+        totalCrews: res.data['count'],
+        crews: res.data['results'],
+        loading: false
+      })
+      )
+      .catch((error) => {
+        if (axios.isCancel(error) || error) {
+          this.setState({
+            loading: false,
+            message: 'Failed to get data'
+          })
+        }
+      })
+  }
+
+  handleSortChange(e){
+    this.setState({ sortTerm: e.target.value }, () => this.refreshData())
+  }
+
   render() {
 
     !this.state.crews ? <h2>loading...</h2> : console.log(this.state.crews)
@@ -39,10 +82,32 @@ class ContactDetailReport extends React.Component {
 
 
     return (
-      <><Header /><section className="section">
+      <>
+      <Header />
+      <Hero title={"On the day contact details"} />
+      <section className="section">
         <div className="container">
-          <div className="title is-4">Pairs Head {(new Date().getFullYear())} - On the day contact details - all crews</div>
-          <table className="table">
+        <div className="columns">
+          <div className="column is-one-quarter">
+            <div className="field">
+              <label className="label has-text-left" htmlFor="selectSort">Sort by</label>
+              <div className="select control-full-width" id="selectSort">
+                <select className="control-full-width" onChange={this.handleSortChange}>
+                  <option value=""></option>
+                  <option value="crew">Crew A-Z</option>
+                  <option value="-crew">Crew Z-A</option>
+                  <option value="club__name">Club, asc</option>
+                  <option value="-club__name">Club, desc</option>
+                  <option value="bib_number">Bib, asc</option>
+                  <option value="-bib_number">Bib, desc</option>
+                </select>
+              </div>
+            </div>
+          </div>
+      </div>
+          <div className="contact-detail-report__title">Pairs Head {(new Date().getFullYear())} - On the day contact details - all crews</div>
+          <div className="contact-detail-report__table-container">
+          <table className="contact-detail-report__table table">
             <thead>
               <tr>
                 {tableHeadings.map((heading, i) => <td key={i}>{heading}</td>
@@ -83,7 +148,7 @@ class ContactDetailReport extends React.Component {
               )}
             </tbody>
           </table>
-
+          </div>
         </div>
       </section></>
     )
