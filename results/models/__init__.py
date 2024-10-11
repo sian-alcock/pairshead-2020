@@ -8,3 +8,4 @@ from .event_order_model import EventOrder
 from .marshalling_division_model import MarshallingDivision
 from .masters_adjustment_model import MastersAdjustment
 from .number_location_model import NumberLocation
+from .global_settings_model import GlobalSettings

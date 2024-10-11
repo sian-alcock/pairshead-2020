@@ -2,6 +2,8 @@ import re
 from django.db.models import Count
 
 from rest_framework import serializers
+
+from results.models.global_settings_model import GlobalSettings
 from .models import Club, Event, Band, Crew, RaceTime, Competitor, MastersAdjustment, OriginalEventCategory, EventOrder, MarshallingDivision, NumberLocation, EventMeetingKey
 
 
@@ -85,7 +87,7 @@ class PopulatedCrewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Crew
-        fields = ('id', 'name', 'composite_code', 'status', 'penalty', 'bib_number', 'times', 'raw_time', 'race_time', 'start_time', 'finish_time', 'start_sequence', 'finish_sequence', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds', 'masters_adjustment', 'masters_adjusted_time', 'event', 'club', 'band', 'competitors', 'competitor_names', 'event_band', 'time_only', 'published_time', 'category_position_time', 'did_not_start', 'did_not_finish', 'disqualified', 'overall_rank', 'gender_rank', 'category_position_time', 'category_rank', 'event_original', 'sculling_CRI', 'rowing_CRI', 'draw_start_score', 'calculated_start_order', 'event_order', 'host_club', 'marshalling_division', 'number_location', 'otd_contact', 'otd_home_phone', 'otd_work_phone', 'otd_mobile_phone', 'updated',)
+        fields = ('id', 'name', 'composite_code', 'status', 'penalty', 'bib_number', 'times', 'raw_time', 'race_time', 'start_time', 'finish_time', 'start_sequence', 'finish_sequence', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds', 'masters_adjustment', 'masters_adjusted_time', 'event', 'club', 'band', 'competitors', 'competitor_names', 'event_band', 'time_only', 'published_time', 'category_position_time', 'did_not_start', 'did_not_finish', 'disqualified', 'overall_rank', 'gender_rank', 'category_position_time', 'category_rank', 'event_original', 'sculling_CRI', 'rowing_CRI', 'draw_start_score', 'calculated_start_order', 'event_order', 'host_club', 'marshalling_division', 'number_location', 'otd_contact', 'otd_home_phone', 'otd_work_phone', 'otd_mobile_phone', 'updated', 'crew_timing_offset',)
 
 
 class CrewExportSerializer(serializers.ModelSerializer):
@@ -201,3 +203,8 @@ class EventMeetingKeySerializer(serializers.ModelSerializer):
         model = EventMeetingKey
         fields = ('id', 'event_meeting_key', 'event_meeting_name', 'current_event_meeting',)
 
+class GlobalSettingsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = GlobalSettings
+        fields = '__all__'

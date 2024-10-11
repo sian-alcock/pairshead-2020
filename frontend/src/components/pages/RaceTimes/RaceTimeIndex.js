@@ -7,6 +7,7 @@ import Paginator from '../../molecules/Paginator/Paginator'
 import PageTotals from '../../molecules/PageTotals/PageTotals'
 import Header from '../../organisms/Header/Header'
 import Hero from '../../organisms/Hero/Hero'
+import TextButton from '../../atoms/TextButton/TextButton'
 import './raceTime.scss'
 
 class RaceTimeIndex extends React.Component {
@@ -221,7 +222,10 @@ class RaceTimeIndex extends React.Component {
                 </label>
               </div>
             </div>
-
+            <div className="race-times__buttons column">
+              <TextButton label={"Crews"} pathName="/generate-results/crew-index" />
+              <TextButton label={"Add race offset"} pathName="/settings/race-info" />
+            </div>
           </div>
 
 

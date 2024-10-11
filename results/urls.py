@@ -12,6 +12,7 @@ from .views import event_order
 from .views import marshalling_division
 from .views import number_location
 from .views import event_meeting_key
+from .views import global_settings
 
 
 urlpatterns = [
@@ -56,5 +57,7 @@ path('number-locations/', number_location.NumberLocationListView.as_view()),
 path('number-locations/<int:pk>', number_location.NumberLocationDetailView.as_view(), name='number-location-detail'),
 path('event-meeting-key-list/', event_meeting_key.EventMeetingKeyListView.as_view()),
 path('event-meeting-key-list/<int:pk>', event_meeting_key.EventMeetingKeyDetailView.as_view(), name='event-meeting-key-detail'),
+path('global-settings-list/', global_settings.GlobalSettingsListView.as_view()),
+path('global-settings-list/<int:pk>', global_settings.GlobalSettingsDetailView.as_view(), name='global-settings-detail'),
 
 ]

@@ -46,8 +46,8 @@ export default function NumberLocationEdit () {
     axios.put(`/api/number-locations/${routeParams.id}`, formData)
       .then(()=> history.push('/generate-start-order/set-number-locations'))
       .catch(err => setErrors(err.response.data))
-
   }
+  
   return (
     <>
     <Header />

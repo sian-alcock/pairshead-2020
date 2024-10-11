@@ -25,6 +25,7 @@ export type EventProps = {
 }
   
 export type CrewProps = {
+  crew_timing_offset: number;
   category_position_time: number;
   id: string;
   name: string;
@@ -83,4 +84,15 @@ export type NumberLocationProps = {
   club: string;
   number_location?: string;
   id: number;
+}
+
+export type RaceInfoProps = {
+  id: number;
+  timing_offset_hours: number;
+  timing_offset_minutes: number;
+  timing_offset_seconds: number;
+  timing_offset_hundredths_seconds: number;
+  timing_offset_positive: boolean;
+  broe_data_last_update: string;
+  timing_offset: number;
 }

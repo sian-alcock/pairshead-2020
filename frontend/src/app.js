@@ -29,6 +29,9 @@ import Settings from "./components/pages/PHSettings/Settings"
 import SetNumberLocations from "./components/pages/SetNumberLocations/SetNumberLocations"
 import NumberLocationNew from "./components/pages/SetNumberLocations/NumberLocationNew"
 import NumberLocationEdit from "./components/pages/SetNumberLocations/NumberLocationEdit"
+import RaceInfo from "./components/pages/RaceInfo/RaceInfo"
+import RaceInfoEdit from "./components/pages/RaceInfo/RaceInfoEdit"
+import RaceInfoNew from "./components/pages/RaceInfo/RaceInfoNew"
 
 import "@fortawesome/fontawesome-free/js/all.js"
 import 'bulma'
@@ -55,6 +58,9 @@ export default class App extends React.Component {
             <SecureRoute path="/settings/keys" component={EventKeys} />
             <SecureRoute path="/settings/info" component={Info} />
             <SecureRoute path="/settings/register" component={Register} />
+            <SecureRoute path="/settings/race-info/:id/edit" component={RaceInfoEdit} />
+            <SecureRoute path="/settings/race-info/new" component={RaceInfoNew} />
+            <SecureRoute path="/settings/race-info" component={RaceInfo} />
             <SecureRoute path="/settings" component={Settings} />
             <SecureRoute path="/logistics/crew-draw-reports" component={CrewDrawReports} />
             <SecureRoute path="/logistics/crew-labels" component={CrewLabels} />
