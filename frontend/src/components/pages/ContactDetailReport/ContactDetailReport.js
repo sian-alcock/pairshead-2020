@@ -87,7 +87,7 @@ class ContactDetailReport extends React.Component {
       <Hero title={"On the day contact details"} />
       <section className="section">
         <div className="container">
-        <div className="columns">
+        <div className="columns no-print">
           <div className="column is-one-quarter">
             <div className="field">
               <label className="label has-text-left" htmlFor="selectSort">Sort by</label>
