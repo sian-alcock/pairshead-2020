@@ -1,5 +1,6 @@
 frontend/dist
 __pycache__
 db.sqlite3
-project-04/static/
+staticfiles/dbase-backups
 *.sqlite3
+results/csv

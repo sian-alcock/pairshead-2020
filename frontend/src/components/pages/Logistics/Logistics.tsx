@@ -33,7 +33,7 @@ export default function Logistics () {
             </div>
             <div className="columns">
               <div className="column is-one-quarter">
-                <TextButton label="Crew draw report - marshalls" pathName='/logistics/crew-draw-reports' stateProps={ {view: 'marshall'} } />
+                <TextButton label="Crew draw report - marshal view" pathName='/logistics/crew-draw-reports' stateProps={ {view: 'marshall'} } />
               </div>
             </div>
             <div className="columns">

@@ -1,10 +1,9 @@
 export const marshallHeadings = [
-    "Crew No",
+    "No",
     "Status",
     "Division",
     "Category",
     "Club",
-    "ComCode",
 ];
 
 export const timingHeadings = [

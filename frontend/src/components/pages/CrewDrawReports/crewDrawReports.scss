@@ -60,4 +60,10 @@
       color: $bblBlue; 
     }
   }
+
+  &__row-Scratched {
+    td {
+      text-decoration: line-through;
+    }
+  }
 }

@@ -69,9 +69,9 @@ export default function CrewDrawReports() {
   const showLightWeightView = () => {
     sessionStorage.setItem('view', 'lightweight')
     setView("lightweight")
-  } 
+  }
 
-  console.log(crews);
+  console.log(crews)
 
   return (
     <>
@@ -82,7 +82,7 @@ export default function CrewDrawReports() {
           <div className="crew-draw-reports__tabs-wrapper no-print">
             <ul className="crew-draw-reports__tabs">
               <li onClick={showMarshallsView}>
-                <a className={`crew-draw-reports__tab ${view !== 'marshall' ? '' : 'active'}`}>Marshalls view</a>
+                <a className={`crew-draw-reports__tab ${view !== 'marshall' ? '' : 'active'}`}>Marshal view</a>
                 </li>
               <li onClick={showTimingTeamView}>
                 <a className={`crew-draw-reports__tab ${view !== 'timing' ? '' : 'active'}`}>Timing teams view</a>
@@ -92,7 +92,7 @@ export default function CrewDrawReports() {
               </li>
             </ul>
           </div>
-          {view === "marshall" && <h2 className="crew-draw-reports__title">Start order - Marshalls view</h2>}
+          {view === "marshall" && <h2 className="crew-draw-reports__title">Start order - Marshal view</h2>}
           {view === "timing" && <h2 className="crew-draw-reports__title">Start order - Timing team view</h2>}
           {view === "lightweight" && 
           <div className="crew-draw-reports__report-intro">
@@ -109,7 +109,7 @@ export default function CrewDrawReports() {
           }
           <div className="crew-draw-reports__table-container">
             {view === "marshall" &&
-            <table className="crew-draw-reports__table table">
+            <table className="crew-draw-reports__table crew-draw-reports__table--marshall table">
               <thead>
                 <tr>
                   {marshallHeadings.map((heading) => (
@@ -126,19 +126,18 @@ export default function CrewDrawReports() {
               </tfoot>
               <tbody>
                 {crews &&
-                crews.map((crew) => (
-                  <tr key={crew.id}>
+                crews.filter(crew => crew.bib_number).map((crew) => (
+                  <tr className={`crew-draw-reports__row-${crew.status}`} key={crew.id}>
                     <td>{!crew.bib_number ? "" : crew.bib_number}</td>
                     <td>{crew.status}</td>
                     <td>{crew.marshalling_division}</td>
                     <td>{crew.event_band}</td>
                     <td>{crew.club.name}</td>
-                    <td>{crew.composite_code}</td>
                   </tr>
                 ))}
               </tbody>
             </table>} 
-            {view === 'timing' && <table className="crew-draw-reports__table table">
+            {view === 'timing' && <table className="crew-draw-reports__table crew-draw-reports__table--timing table">
               <thead>
                 <tr>
                   {timingHeadings.map((heading) => (
@@ -155,8 +154,8 @@ export default function CrewDrawReports() {
               </tfoot>
               <tbody>
                 {crews &&
-                crews.map((crew) => (
-                  <tr key={crew.id}>
+                crews.filter(crew => crew.bib_number).map((crew) => (
+                  <tr className={`crew-draw-reports__row-${crew.status.toLowerCase()}`} key={crew.id}>
                     <td><Link to={`/crews/${crew.id}`}>{crew.id}</Link></td>
                     <td>{!crew.competitor_names ? crew.name : crew.competitor_names}</td>
                     <td>{crew.status}</td>
@@ -170,7 +169,7 @@ export default function CrewDrawReports() {
                 ))}
               </tbody>
             </table>}
-            {view === 'lightweight' && <table className="crew-draw-reports__table table">
+            {view === 'lightweight' && <table className="crew-draw-reports__table crew-draw-reports__table--lightweight table">
               <thead>
                 <tr>
                   {lightweightHeadings.map((heading) => (
@@ -188,7 +187,7 @@ export default function CrewDrawReports() {
               <tbody>
                 {crews &&
                 crews.filter((crew) => crew.event_band?.includes('Lwt') ).map((crew) => (
-                  <tr key={crew.id}>
+                  <tr className={`crew-draw-reports__row-${crew.status.toLowerCase()}`} key={crew.id}>
                     <td>{crew.id}</td>
                     <td>{crew.status}</td>
                     <td>{crew.club.name}</td>
