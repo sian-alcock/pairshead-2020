@@ -77,20 +77,20 @@ class ResultDataExport(APIView):
                 rank = crew.overall_rank
 
             if crew.published_time > 0:
-                hundredths = int((crew.published_time / 10)%100)
+                tenths = int((crew.published_time / 100)%10)
                 seconds = int((crew.published_time / 1000)%60)
                 minutes = int((crew.published_time / (1000*60))%60)
 
-                published_time = str("%02d" % minutes)+':'+str("%02d" % seconds)+'.'+str("%02d" % hundredths)
+                published_time = str("%02d" % minutes)+':'+str("%02d" % seconds)+'.'+str("%01d" % tenths)
             else:
                 published_time = 0
 
             if crew.masters_adjusted_time > 0:
-                hundredths = int((crew.masters_adjusted_time / 10)%100)
+                tenths = int((crew.masters_adjusted_time / 100)%10)
                 seconds = int((crew.masters_adjusted_time / 1000)%60)
                 minutes = int((crew.masters_adjusted_time / (1000*60))%60)
 
-                masters_adjusted_time = str("%02d" % minutes)+':'+str("%02d" % seconds)+'.'+str("%02d" % hundredths)
+                masters_adjusted_time = str("%02d" % minutes)+':'+str("%02d" % seconds)+'.'+str("%01d" % tenths)
             else:
                 masters_adjusted_time = ''
 
