@@ -264,7 +264,7 @@ class RaceTimeIndex extends React.Component {
               </tfoot>
               <tbody>
                 {this.state.raceTimes.map(raceTime => <tr key={raceTime.id}>
-                  <td><Link to={`/generate-results/race-times/${raceTime.id}`}>{raceTime.sequence}</Link></td>
+                  <td><Link to={`/generate-results/race-times/${raceTime.id}/edit`}>{raceTime.sequence}</Link></td>
                   <td>{raceTime.tap}</td>
                   <td>{formatTimes(raceTime.time_tap)}</td>
                   <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.bib_number}</td>

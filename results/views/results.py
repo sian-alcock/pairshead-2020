@@ -57,7 +57,7 @@ class ResultDataExport(APIView):
 
         filename = 'resultdataexport - ' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M.csv")
 
-        crews = Crew.objects.filter(status__exact='Accepted', raw_time__gt=0,).order_by('overall_rank')
+        crews = Crew.objects.filter(status__exact='Accepted', published_time__gt=0,).order_by('overall_rank')
         fastest_female_scull = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time'))
         fastest_female_sweep = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time'))
         fastest_mixed_scull = Crew.objects.all().filter(event_band__startswith='Mx', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time'))
@@ -71,7 +71,7 @@ class ResultDataExport(APIView):
 
         for crew in crews:
 
-            if crew.raw_time == 0:
+            if crew.published_time == 0:
                 rank = 0
             else:
                 rank = crew.overall_rank
