@@ -24,8 +24,19 @@
 .masters-calculation {
 
   &__container {
+    margin-bottom: 1.5rem;
+
     @media (min-width: $lg) {
       @include grid;
+    }
+  }
+
+  &__details {
+    cursor: pointer;
+    background-color: $white;
+
+    @media (min-width: $lg) {
+      grid-column: 3 / span 8;
     }
   }
 
@@ -35,8 +46,9 @@
     align-items: center;
     justify-content: space-between;
     background-color: $phLogoBlue;
-    margin-bottom: 1.5rem;
-    padding: 0.5rem 1rem;
+    padding: 0 1rem;
+    color: $bblBlue;
+    @include body-small(bold);
 
     &::marker, /* Latest Chrome, Edge, Firefox */
     &::-webkit-details-marker /* Safari */ {
@@ -52,14 +64,10 @@
     }
   }
 
-  &__details {
-    cursor: pointer;
-    color: $bblBlue;
-    @include body-small(bold);
-    
-    @media (min-width: $lg) {
-      grid-column: 3 / span 8;
-    }
+  &__content {
+    padding: 0.5rem 1rem;
+    background-color: $white;
+    border: 1px solid $phLogoBlue;
   }
 
   &__icon {
