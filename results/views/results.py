@@ -116,7 +116,7 @@ class ResultDataExport(APIView):
                 pennant = ''
 
             if crew.overall_rank == 1 or crew.published_time == fastest_female_scull['raw_time__min'] or crew.published_time == fastest_female_sweep['raw_time__min'] or crew.published_time == fastest_mixed_scull['raw_time__min']:
-                trophy = '=IMAGE("http://www.bblrc.co.uk/wp-content/uploads/2021/09/trophy-ph80.png")'
+                trophy = '=IMAGE("https://www.bblrc.co.uk/wp-content/uploads/2023/10/trophy_PH-2.jpg")'
             else:
                 trophy = ''
 
