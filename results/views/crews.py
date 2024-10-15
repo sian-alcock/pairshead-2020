@@ -230,12 +230,17 @@ class CrewDataExport(APIView):
 
         for crew in crews:
 
-            if crew.raw_time == 0:
+            if crew.manual_override_time > 0:
+                raw_time = crew.manual_override_time
+            else:
+                raw_time = crew.raw_time
+
+            if raw_time == 0:
                 rank = 0
             else:
                 rank = crew.category_rank
 
-            if crew.raw_time > 0 and crew.time_only:
+            if raw_time > 0 and crew.time_only:
                 status = 'Time Only'
             elif crew.disqualified:
                 status = 'Disqualified'
@@ -243,9 +248,9 @@ class CrewDataExport(APIView):
                 status = 'Did not start'
             elif crew.did_not_finish:
                 status = 'Did not finish'
-            elif crew.raw_time == 0 or crew.raw_time is None:
+            elif raw_time == 0 or raw_time is None:
                 status = 'Did not start'
-            elif crew.raw_time > 0:
+            elif raw_time > 0:
                 status = 'Finished'
 
             if crew.band is None:
@@ -253,10 +258,10 @@ class CrewDataExport(APIView):
             else:
                 band = crew.band.name
 
-            if crew.raw_time > 0:
-                hundredths = int((crew.raw_time / 10)%100)
-                seconds = int((crew.raw_time / 1000)%60)
-                minutes = int((crew.raw_time / (1000*60))%60)
+            if raw_time > 0:
+                hundredths = int((raw_time / 10)%100)
+                seconds = int((raw_time / 1000)%60)
+                minutes = int((raw_time / (1000*60))%60)
 
                 raw_time = str("%02d" % minutes)+':'+str("%02d" % seconds)+'.'+str("%02d" % hundredths)
             else:
