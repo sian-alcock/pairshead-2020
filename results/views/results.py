@@ -30,7 +30,7 @@ class ResultsListView(generics.ListCreateAPIView):
     PageNumberPagination.page_size_query_param = 'page_size' or 10
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
     ordering_fields = ['overall_rank', 'gender_rank', 'category_rank', 'event_band', 'name',]
-    search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number', 'competitor_names',]
+    search_fields = ['name', 'club__name', 'event_band', 'bib_number', 'competitor_names',]
     filterset_fields = ['status', 'event_band', 'raw_time',]
 
     def get_queryset(self):
@@ -65,7 +65,7 @@ class ResultDataExport(APIView):
         response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
 
         writer = csv.writer(response, delimiter=',')
-        writer.writerow(['Overall pos', 'No', 'Time', 'Mas adj time','Blade(img)', 'Club', 'Crew', 'Com code', 'Category', 'Pos in Cat', 'Pennant', 'Trophy', 'Penalty', 'Time only',])
+        writer.writerow(['Id', 'Overall pos', 'No', 'Time', 'Mas adj time','Blade(img)', 'Club', 'Crew', 'Com code', 'Category', 'Pos in Cat', 'Pennant', 'Trophy', 'Penalty', 'Time only',])
 
 
 
@@ -125,6 +125,7 @@ class ResultDataExport(APIView):
 
             writer.writerow(
             [
+            crew.id,    
             rank,
             crew.bib_number,
             published_time,
