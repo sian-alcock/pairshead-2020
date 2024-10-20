@@ -3,7 +3,7 @@ export type TimeProps = {
   sequence: number;
   tap: 'Start' | 'Finish';
   time_tap: number;
-  crew: number;
+  crew: CrewProps;
 }
   
 export type ClubProps = {

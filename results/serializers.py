@@ -45,11 +45,18 @@ class RaceTimesSerializer(serializers.ModelSerializer):
         model = RaceTime
         fields = ('id', 'sequence', 'tap', 'time_tap', 'crew',)
 
+class CrewSerializerLimited(serializers.ModelSerializer):
+    times = RaceTimesSerializer(many=True)
+
+    class Meta:
+        model = Crew
+        fields = ('id', 'bib_number', 'competitor_names', 'times',)
+
 class CrewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Crew
-        fields = ('id', 'name', 'composite_code', 'status', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds', 'penalty', 'masters_adjustment', 'masters_adjusted_time', 'bib_number', 'time_only', 'did_not_start', 'did_not_finish', 'disqualified', 'band', 'overall_rank', 'gender_rank', 'requires_recalculation',)
+        fields = ('id', 'name', 'composite_code', 'status', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds', 'penalty', 'masters_adjustment', 'masters_adjusted_time', 'bib_number', 'time_only', 'did_not_start', 'did_not_finish', 'disqualified', 'band', 'overall_rank', 'gender_rank', 'requires_recalculation', 'competitor_names',)
 
 class ImportOriginalEventSerializer(serializers.ModelSerializer):
 

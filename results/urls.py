@@ -40,6 +40,7 @@ path('crew-start-order-data-export-after-broe-import/', crews.CrewStartOrderData
 path('crew-web-scorer-data/', crews.CrewWebScorerDataExport.as_view()),
 path('event-order-template-export/', crews.CreateEventOrderTemplate.as_view()),
 path('crew-host-clubs/', crews.CrewUniqueHostClub.as_view()),
+path('crew-list-select/', crews.CrewListOptionsForSelect.as_view()),
 path('competitor-data-export/', competitors.CompetitorDataExport.as_view()),
 path('competitor-data-import/', competitors.CompetitorDataImport.as_view()),
 path('race-times/', times.RaceTimeListView.as_view()),

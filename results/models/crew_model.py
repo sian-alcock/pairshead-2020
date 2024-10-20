@@ -43,6 +43,7 @@ class Crew(models.Model):
     otd_home_phone = models.CharField(max_length=20, blank=True, null=True)
     otd_mobile_phone = models.CharField(max_length=20, blank=True, null=True)
     otd_work_phone = models.CharField(max_length=20, blank=True, null=True)
+    submitting_administrator_email = models.CharField(max_length=50, blank=True, null=True)
 
 
     # Calculated fields
@@ -62,6 +63,7 @@ class Crew(models.Model):
     finish_sequence = models.IntegerField(blank=True, null=True)
     draw_start_score = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=4)
     calculated_start_order = models.IntegerField(blank=True, null=True)
+    competitor_names = models.CharField(max_length=60, blank=True, null=True)
 
 
     def __str__(self):
@@ -228,20 +230,26 @@ class Crew(models.Model):
             return sequence
         except RaceTime.DoesNotExist:
             return 0
+        
+    # Competitor names
+    def save(self, *args, **kwargs):
+        self.competitor_names = self.get_competitor_names()
+        super(Crew, self).save(*args, **kwargs)
 
-# Turn the three manual override fields into miliseconds
-    @property
-    def manual_override_time(self):
-        time = (self.manual_override_minutes*60*1000) + (self.manual_override_seconds*1000) + (self.manual_override_hundredths_seconds*10)
-        return time
-    @property
-    def competitor_names(self):
+    def get_competitor_names(self):
         if not self.competitors:
             return 0
 
         competitor_list = list(map(lambda competitor: competitor.last_name, self.competitors.all()))
         value = ' / '.join(competitor_list)
         return value
+
+# Turn the three manual override fields into miliseconds
+    @property
+    def manual_override_time(self):
+        time = (self.manual_override_minutes*60*1000) + (self.manual_override_seconds*1000) + (self.manual_override_hundredths_seconds*10)
+        return time
+
 
 # Calculate masters adjusted time - only applies to categories that have a mix of different masters categories
 # Denoted by a '/' in the event.override_name

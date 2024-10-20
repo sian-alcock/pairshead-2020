@@ -119,7 +119,7 @@ export default function ResultIndex () {
 
   useEffect(() => {
     refreshData(refreshDataQueryString);
-  }, [pageNumber, pageSize, gender, selectedCategory, firstAndSecondCrewsBoolean, closeFirstAndSecondCrewsBoolean]);
+  }, [pageNumber, pageSize, gender, selectedCategory, firstAndSecondCrewsBoolean, closeFirstAndSecondCrewsBoolean, searchTerm]);
 
    const getTopCrews = (event: string | undefined, crews:CrewProps[]) => {
     // returns true if the 1st and 2nd crew in a category have a time within 2 seconds
@@ -158,9 +158,16 @@ export default function ResultIndex () {
   }
 
   const handleSearchKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    sessionStorage.setItem("resultIndexSearch", e.target instanceof HTMLInputElement ? e.target.value : "");
-    setSearchTerm(e.target instanceof HTMLInputElement ? e.target.value : "");
+    const term = e.target
+    console.log(term)
+    sessionStorage.setItem("resultIndexSearch", term instanceof HTMLInputElement ? term.value : "");
+    setSearchTerm(term instanceof HTMLInputElement ? term.value : "");
     setPageNumber(1);
+    if(term) {
+      setRefreshDataQueryString(`search=${searchTerm}`)
+    } else {
+      setRefreshDataQueryString("")
+    }
   };
 
    const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -214,7 +221,7 @@ export default function ResultIndex () {
                 <span className="icon is-left">
                 <i className="fas fa-search"></i>
                 </span>
-                <input className="input" id="search" placeholder="Search" value={searchTerm} onKeyUp={handleSearchKeyUp} />
+                <input className="input" id="search" placeholder="Search" defaultValue={searchTerm} onKeyUp={handleSearchKeyUp} />
               </div>
             </div>
 

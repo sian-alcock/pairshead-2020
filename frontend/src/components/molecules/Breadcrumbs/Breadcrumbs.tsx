@@ -6,7 +6,7 @@ import './breadcrumbs.scss'
 export default function Breadcrumbs () {
   const location = useLocation()
 
-  console.log(location)
+  // console.log(location)
 
   let currentLink = ''
 

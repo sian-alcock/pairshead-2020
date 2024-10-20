@@ -14,7 +14,7 @@ from rest_framework import filters, generics, serializers
 from django_filters.rest_framework import DjangoFilterBackend
 
 
-from ..serializers import ClubSerializer, CrewSerializer, PopulatedCrewSerializer, WriteCrewSerializer, CrewExportSerializer
+from ..serializers import ClubSerializer, CrewSerializer, CrewSerializerLimited, PopulatedCrewSerializer, WriteCrewSerializer, CrewExportSerializer
 
 from ..models import Crew, RaceTime, OriginalEventCategory, EventMeetingKey
 
@@ -27,7 +27,7 @@ class CrewListView(generics.ListCreateAPIView):
     PageNumberPagination.page_size_query_param = 'page_size' or 10
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
     ordering_fields = '__all__'
-    search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number',]
+    search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number', 'competitor_names',]
     filterset_fields = ['status', 'event_band', 'start_time', 'finish_time', 'invalid_time',]
 
     def get_queryset(self):
@@ -56,17 +56,25 @@ class CrewListView(generics.ListCreateAPIView):
     def get_num_scratched_crews(self):
         return len(self.queryset.filter(status__exact='Scratched'))
     
+class CrewListOptionsForSelect(APIView):
+    def get(self, _request):
+        crews = Crew.objects.filter(status__exact='Accepted') # get all the Accepted crews
+        serializer = CrewSerializerLimited(crews, many=True)
+        return Response(serializer.data) # send the JSON to the client
+
+    
 class CrewGetEventBand(APIView):
     def get(self, _request):
         crews = Crew.objects.filter(status__exact='Accepted') # get all the Accepted crews
         serializer = CrewSerializer(crews, many=True)
-        self.get_event_band(crews)
+        self.get_event_and_names(crews)
         return Response(serializer.data) # send the JSON to the client
     
-    def get_event_band(self, crews):
+    def get_event_and_names(self, crews):
         # Get event band for all crews
         for crew in crews:
             crew.event_band = crew.calc_event_band()
+            crew.competitor_names = crew.get_competitor_names()
             crew.save()
 
 class CrewGetStartScore(APIView):
@@ -187,6 +195,7 @@ class CrewDataImport(APIView):
                         'otd_home_phone': crew['competitionContactHomePhone'],
                         'otd_mobile_phone': crew['competitionContactMobilePhone'],
                         'otd_work_phone': crew['competitionContactWorkPhone'],
+                        'submitting_administrator_email': crew['submittingAdministratorEmail'],
                         'time_only': time_only
                     }
 

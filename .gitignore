@@ -4,3 +4,4 @@ db.sqlite3
 staticfiles/dbase-backups
 *.sqlite3
 results/csv
+frontend/dist

@@ -130,9 +130,16 @@ export default function CrewIndex() {
   };
 
   const handleSearchKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    sessionStorage.setItem("resultIndexSearch", e.target instanceof HTMLInputElement ? e.target.value : "");
-    setSearchTerm(e.target instanceof HTMLInputElement ? e.target.value : "");
+    const term = e.target
+    console.log(term)
+    sessionStorage.setItem("crewIndexSearch", term instanceof HTMLInputElement ? term.value : "");
+    setSearchTerm(term instanceof HTMLInputElement ? term.value : "");
     setPageNumber(1);
+    if(term) {
+      setRefreshDataQueryString(`search=${searchTerm}`)
+    } else {
+      setRefreshDataQueryString("")
+    }
   };
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {

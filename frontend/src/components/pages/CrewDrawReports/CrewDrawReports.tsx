@@ -56,19 +56,9 @@ export default function CrewDrawReports() {
     });
   }, []);
 
-  const showMarshallsView = () => {
-    sessionStorage.setItem('view', 'marshall')
-    setView("marshall")
-  }
-
-  const showTimingTeamView = () => {
-    sessionStorage.setItem('view', 'timing')
-    setView("timing")
-  }
-
-  const showLightWeightView = () => {
-    sessionStorage.setItem('view', 'lightweight')
-    setView("lightweight")
+  const changeView = (view: string) => {
+    sessionStorage.setItem('view', view)
+    setView(view)
   }
 
   console.log(crews)
@@ -81,13 +71,13 @@ export default function CrewDrawReports() {
         <div className="crew-draw-reports__container">
           <div className="crew-draw-reports__tabs-wrapper no-print">
             <ul className="crew-draw-reports__tabs">
-              <li onClick={showMarshallsView}>
+              <li onClick={() => changeView('marshall')}>
                 <a className={`crew-draw-reports__tab ${view !== 'marshall' ? '' : 'active'}`}>Marshal view</a>
                 </li>
-              <li onClick={showTimingTeamView}>
+              <li onClick={() => changeView('timing')}>
                 <a className={`crew-draw-reports__tab ${view !== 'timing' ? '' : 'active'}`}>Timing teams view</a>
               </li>
-              <li onClick={showLightWeightView}>
+              <li onClick={() => changeView('lightweight')}>
                 <a className={`crew-draw-reports__tab ${view !== 'lightweight' ? '' : 'active'}`}>Lightweight weigh-in</a>
               </li>
             </ul>
