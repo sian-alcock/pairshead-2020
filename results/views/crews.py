@@ -147,7 +147,7 @@ class CrewUpdateRankings(APIView):
 
 class CrewDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Crew.objects.all()
-    serializer_class = CrewSerializer
+    serializer_class = PopulatedCrewSerializer
 
 class CrewDataImport(APIView):
 
