@@ -85,6 +85,17 @@ class BROELoader extends Component {
         crewDataUpdated: crews.data[0].updated
       })
 
+      const settingsTable = await axios.get('api/global-settings-list/')
+
+      const formData = new FormData()
+      formData.append( 'broe_data_last_update', crews.data[0].updated )
+
+      if (settingsTable.data.results.length > 0) {
+        axios.put(`/api/global-settings-list/${settingsTable.data.results[0].id}`, formData)
+      } else {
+        axios.post(`/api/global-settings-list/`, formData)
+      }
+
     } catch (err) {
       if (axios.isCancel(err)) {
         // ignore
@@ -101,7 +112,16 @@ class BROELoader extends Component {
   }
 
   close () {
-    this.setState({ loading: false });
+    this.setState({ loading: false,
+      clubEventImportSuccessMessage: '',
+      crewDataUpdated: '',
+      clubEventImportSuccessMessage: '',
+      bandImportSuccessMessage: '',
+      crewImportSuccessMessage: '',
+      competitorImportSuccessMessage: '',
+      eventBandsSuccessMessage: '',
+      errorMessage: ''
+    });
     document.body.classList.remove('lock-scroll');
   };
   

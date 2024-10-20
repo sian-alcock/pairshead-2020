@@ -17,6 +17,17 @@
     margin-bottom: 1.5rem;
   }
 
+  &__buttons {
+    .text-button {
+      margin-right: 0.5rem;
+      @media (min-width: $lg) {
+        display: inline-flex;
+        margin-right: 0;
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
+
   &__tabs {
     display: flex;
     margin-bottom: 1.5rem;

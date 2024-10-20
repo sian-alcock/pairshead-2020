@@ -127,6 +127,7 @@ class CrewUpdateRankings(APIView):
 
         for crew in crews:
             crew.event_band = crew.calc_event_band()
+            crew.crew_timing_offset = crew.calc_crew_timing_offset()
             crew.raw_time = crew.calc_raw_time()
             crew.race_time = crew.calc_race_time()
             crew.published_time = crew.calc_published_time()

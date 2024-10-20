@@ -8,6 +8,7 @@ from .masters_adjustment_model import MastersAdjustment
 from .event_order_model import EventOrder
 from .marshalling_division_model import MarshallingDivision
 from .number_location_model import NumberLocation
+from .global_settings_model import GlobalSettings
 
 class Crew(models.Model):
     created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
@@ -64,11 +65,33 @@ class Crew(models.Model):
     draw_start_score = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=4)
     calculated_start_order = models.IntegerField(blank=True, null=True)
     competitor_names = models.CharField(max_length=60, blank=True, null=True)
+    crew_timing_offset = models.IntegerField(blank=True, null=True, default=0)
 
 
     def __str__(self):
         return self.name
+    
+    # Get offset if there is one
+    def save(self, *args, **kwargs):
+        self.crew_timing_offset = self.calc_crew_timing_offset()
+        super(Crew, self).save(*args, **kwargs)
+    
+    def calc_crew_timing_offset(self):
+        settings = GlobalSettings.objects.all()
+        for setting in settings:
+            setting.save()
 
+        if GlobalSettings.objects.filter(timing_offset__gt=0).exists():
+            offset_record = GlobalSettings.objects.filter(timing_offset__gt=0)[0]
+            if offset_record.timing_offset_positive:
+                offset = offset_record.timing_offset
+            else:
+                offset = 0 - offset_record.timing_offset
+        else: 
+            offset = 0
+
+        return offset
+        
     # Event band
     def save(self, *args, **kwargs):
         self.event_band = self.calc_event_band()
@@ -84,6 +107,7 @@ class Crew(models.Model):
         super(Crew, self).save(*args, **kwargs)
 
     def calc_raw_time(self):
+
         try:
             if len(self.times.filter(tap='Start')) > 1 or len(self.times.filter(tap='Finish')) > 1:
                 return 0
@@ -93,6 +117,9 @@ class Crew(models.Model):
 
             start = self.times.get(tap='Start').time_tap
             end = self.times.get(tap='Finish').time_tap
+
+            if self.crew_timing_offset:
+                end = end + self.crew_timing_offset
 
             return end - start
         

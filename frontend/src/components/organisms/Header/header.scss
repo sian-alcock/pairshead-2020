@@ -12,6 +12,19 @@
       object-fit: cover;
     }
 
+    &--mobile {
+      @media screen and (min-width: $md) {
+        display: none;
+      }
+    }
+
+    &--desktop {
+      display: none;
+      @media screen and (min-width: $md) {
+        display: block;
+      }
+    }
+
     @media screen and (min-width: $md) {
       width: 200px;
     }

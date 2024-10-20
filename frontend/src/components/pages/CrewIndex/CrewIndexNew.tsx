@@ -13,6 +13,7 @@ import CrewTimeCalculatedFieldsUpdate from "../../molecules/UpdateCrews/UpdateCr
 
 import "./crewIndex.scss"
 import Header from "../../organisms/Header/Header";
+import TextButton from "../../atoms/TextButton/TextButton";
 
 interface ResponseParamsProps {
   page_size?: string;
@@ -295,6 +296,10 @@ export default function CrewIndex() {
                 </label>
               </div>
             </div>
+            <div className="crew-index__buttons column">
+              <TextButton label={"Race times"} pathName="/generate-results/race-times" />
+              <TextButton label={"Add race offset"} pathName="/settings/race-info" />
+            </div>
           </div>
           <MastersCalculations
             fastestMen2x={formatTimes(fastestMen2x)}
@@ -367,6 +372,7 @@ export default function CrewIndex() {
                               ? formatTimes(crew.raw_time)
                               : "⚠️"}
                     </td>
+                    <td>{crew.crew_timing_offset}</td>
                     <td>
                       {crew.disqualified
                         ? "Disqualified"

@@ -10,3 +10,4 @@ from .event_order import *
 from .marshalling_division import *
 from .number_location import *
 from .event_meeting_key import *
+from .global_settings import *

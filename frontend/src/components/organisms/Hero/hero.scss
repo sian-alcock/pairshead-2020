@@ -20,4 +20,8 @@
 
     @include h1;
   }
+
+  &__bar {
+    @include grid(2);
+  }
 }

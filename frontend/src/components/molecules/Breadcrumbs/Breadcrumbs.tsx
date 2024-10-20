@@ -20,10 +20,10 @@ export default function Breadcrumbs () {
       currentLink += `/${crumb}`
 
       return (
-        <>
+        <div key={idx}>
           <span className="breadcrumbs__divider">{">"}</span>
-          <Link className="breadcrumbs__crumb" key={idx} to={currentLink}>{createLabelFromLink(crumb)}</Link>
-        </>
+          <Link className="breadcrumbs__crumb" to={currentLink}>{createLabelFromLink(crumb)}</Link>
+        </div>
       )
     })
 
