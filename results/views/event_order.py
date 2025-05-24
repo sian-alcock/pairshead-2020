@@ -7,7 +7,6 @@ from ..serializers import WriteEventOrderSerializer
 from ..models import EventOrder
 
 class EventOrderImport(APIView):
-    # Start by deleting all existing event orders
 
     parser_classes = (FormParser, MultiPartParser)
 

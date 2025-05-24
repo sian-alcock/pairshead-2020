@@ -1,6 +1,7 @@
 import re
 from django.db.models import Count
-
+import csv
+import io
 from rest_framework import serializers
 
 from results.models.global_settings_model import GlobalSettings
@@ -215,3 +216,54 @@ class GlobalSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = GlobalSettings
         fields = '__all__'
+
+class CSVUpdateCrewSerializer(serializers.Serializer):
+    file = serializers.FileField()
+
+    def validate_file(self, value):
+        if not value.name.endswith('.csv'):
+            raise serializers.ValidationError("File must be a CSV file.")
+        return value
+
+    def save(self):
+        file = self.validated_data['file']
+        
+        # Read CSV file
+        file_data = file.read().decode('utf-8')
+        csv_data = csv.DictReader(io.StringIO(file_data))
+        
+        created_count = 0
+        updated_count = 0
+        errors = []
+
+        for row_num, row in enumerate(csv_data, start=2):  # Start from 2 (header is row 1)
+            try:
+                bib_number = row.get('bib_number', '').strip()
+                penalty = row.get('penalty', '').strip()
+
+                if not bib_number:
+                    errors.append(f"Row {row_num}: Bib number is required")
+                    continue
+
+                # Check penalty is number
+                try:
+                    penalty = float(penalty) if penalty else 0
+                except ValueError:
+                    errors.append(f"Row {row_num}: Invalid penalty format")
+                    continue
+
+                # Check if crew exists
+                crew = Crew.objects.get(bib_number=bib_number)
+                crew.penalty = penalty
+                crew.save()
+                updated_count += 1
+
+            except Exception as e:
+                errors.append(f"Row {row_num}: {str(e)}")
+
+        return {
+        'created_count': created_count,
+        'updated_count': updated_count,
+        'errors': errors,
+        'total_processed': created_count + updated_count
+        }

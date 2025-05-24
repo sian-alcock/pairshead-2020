@@ -38,6 +38,15 @@ class GenerateResults extends React.Component {
               />
 
               <CSVDataLoader
+                url='/api/crew-import-penalties/'
+                buttonText='Import penalties'
+                class='double-height-button' 
+                title='Import penalties from csv'
+                description='Import penalties from csv.'
+                lines='true' 
+                />
+
+              <CSVDataLoader
                 url='/api/original-event-import/'
                 buttonText='Import original event categories'
                 class='double-height-button' 

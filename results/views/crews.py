@@ -6,15 +6,19 @@ import requests
 import time
 # if this is where you store your django-rest-framework settings
 # from django.conf import settings
+from rest_framework import status
 from django.http import Http404, HttpResponse
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser
+
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import filters, generics, serializers
 from django_filters.rest_framework import DjangoFilterBackend
+from .helpers import decode_utf8
 
 
-from ..serializers import ClubSerializer, CrewSerializer, CrewSerializerLimited, PopulatedCrewSerializer, WriteCrewSerializer, CrewExportSerializer
+from ..serializers import ClubSerializer, CrewSerializer, CrewSerializerLimited, CSVUpdateCrewSerializer, PopulatedCrewSerializer, WriteCrewSerializer, CrewExportSerializer
 
 from ..models import Crew, RaceTime, OriginalEventCategory, EventMeetingKey
 
@@ -147,7 +151,7 @@ class CrewUpdateRankings(APIView):
 
 class CrewDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Crew.objects.all()
-    serializer_class = PopulatedCrewSerializer
+    serializer_class = CrewSerializer
 
 class CrewDataImport(APIView):
 
@@ -499,3 +503,47 @@ class CrewUniqueHostClub(generics.ListCreateAPIView):
             data.append(ClubSerializer(club).data)
 
         return Response(data)
+
+
+class CSVImportPenalties(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+    
+    def post(self, request):
+        """
+        Import CSV file that includes penalties based on bib number match
+        
+        Expected CSV format:
+        bib_number,penalty
+        1,5
+        8,10
+        """
+        serializer = CSVUpdateCrewSerializer(data=request.data)
+        
+        if serializer.is_valid():
+            try:
+                result = serializer.save()
+                
+                response_data = {
+                    'success': True,
+                    'message': 'CSV import completed',
+                    'results': result
+                }
+                
+                # Return different status codes based on whether there were errors
+                if result['errors']:
+                    response_data['success'] = False
+                    response_data['message'] = 'CSV import completed with errors'
+                    return Response(response_data, status=status.HTTP_206_PARTIAL_CONTENT)
+                
+                return Response(response_data, status=status.HTTP_200_OK)
+                
+            except Exception as e:
+                return Response({
+                    'success': False,
+                    'message': f'Import failed: {str(e)}'
+                }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+        return Response({
+            'success': False,
+            'errors': serializer.errors
+        }, status=status.HTTP_400_BAD_REQUEST)
