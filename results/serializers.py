@@ -240,6 +240,10 @@ class CSVUpdateCrewSerializer(serializers.Serializer):
             try:
                 bib_number = row.get('bib_number', '').strip()
                 penalty = row.get('penalty', '').strip()
+                time_only = row.get('time_only', '').strip()
+                did_not_start = row.get('did_not_start', '').strip()
+                did_not_finish = row.get('did_not_finish', '').strip()
+                disqualified = row.get('disqualified', '').strip()
 
                 if not bib_number:
                     errors.append(f"Row {row_num}: Bib number is required")
@@ -252,9 +256,24 @@ class CSVUpdateCrewSerializer(serializers.Serializer):
                     errors.append(f"Row {row_num}: Invalid penalty format")
                     continue
 
+                # Check booleans
+                try:
+                    time_only = True if time_only == 'true' else False
+                    did_not_start = True if did_not_start == 'true' else False
+                    did_not_finish = True if did_not_finish == 'true' else False
+                    disqualified = True if disqualified == 'true' else False
+                except ValueError:
+                    errors.append(f"Row {row_num}: Invalid value for time_only, did_not_start, did_not_finish or disqualified.  Must be true, false or blank")
+                    continue
+
                 # Check if crew exists
                 crew = Crew.objects.get(bib_number=bib_number)
                 crew.penalty = penalty
+                crew.time_only = time_only
+                crew.did_not_start = did_not_start
+                crew.did_not_finish = did_not_finish
+                crew.disqualified = disqualified
+                crew.requires_recalculation = True
                 crew.save()
                 updated_count += 1
 
