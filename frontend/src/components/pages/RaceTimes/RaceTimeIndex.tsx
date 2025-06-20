@@ -30,8 +30,6 @@ interface ResponseDataProps {
   results: TimeProps[];
   start_times_no_crew: number;
   finish_times_no_crew: number;
-  crews_invalid_times_finish: number;
-  crews_invalid_times_start: number;
 }
 
 export default function RaceTimeIndex() {
@@ -62,9 +60,7 @@ export default function RaceTimeIndex() {
       setRaceTimes(responseData.results);
       setTotalTimes(responseData.count);
       setStartTimesWithNoCrew(responseData.start_times_no_crew)
-      setStartTimesInvalid(responseData.crews_invalid_times_start)
       setFinishTimesWithNoCrew(responseData.finish_times_no_crew)
-      setFinishTimesInvalid(responseData.crews_invalid_times_finish)
 
       console.log(responseData)
 

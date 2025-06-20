@@ -23,7 +23,6 @@ class Home extends React.Component {
         scratchedCrewsWithTime: res.data['num_scratched_crews_with_time'],
         acceptedCrewsNoStart: res.data['num_accepted_crews_no_start_time'],
         acceptedCrewsNoFinish: res.data['num_accepted_crews_no_finish_time'],
-        crewsInvalidTimes: res.data['num_accepted_crews_invalid_time']
       })
       )
   }

@@ -10,7 +10,6 @@ class CrewPaginationWithAggregates(PageNumberPagination):
         self.num_accepted_crews_no_times = len(queryset.filter(status__exact='Accepted', times__isnull=True))
         self.num_accepted_crews_no_start_time = len(queryset.filter(status__exact='Accepted', start_time__exact=0))
         self.num_accepted_crews_no_finish_time = len(queryset.filter(status__exact='Accepted', finish_time__exact=0))
-        self.num_accepted_crews_invalid_time = len(queryset.filter(status__exact='Accepted', invalid_time__exact=1))
         self.num_crews_masters_adjusted = len(queryset.filter(status__exact='Accepted', masters_adjustment__gt=0))
         self.num_crews_require_masters_adjusted = len(queryset.filter(status__exact='Accepted', event_band__contains='/', raw_time__gt=0))
         self.requires_ranking_update = len(queryset.filter(status__exact='Accepted', requires_recalculation__exact=True))
@@ -29,7 +28,6 @@ class CrewPaginationWithAggregates(PageNumberPagination):
         paginated_response.data['num_accepted_crews_no_times'] = self.num_accepted_crews_no_times
         paginated_response.data['num_accepted_crews_no_start_time'] = self.num_accepted_crews_no_start_time
         paginated_response.data['num_accepted_crews_no_finish_time'] = self.num_accepted_crews_no_finish_time
-        paginated_response.data['num_accepted_crews_invalid_time'] = self.num_accepted_crews_invalid_time
         paginated_response.data['num_crews_masters_adjusted'] = self.num_crews_masters_adjusted
         paginated_response.data['num_crews_require_masters_adjusted'] = self.num_crews_require_masters_adjusted
         paginated_response.data['requires_ranking_update'] = self.requires_ranking_update
@@ -45,14 +43,10 @@ class RaceTimePaginationWithAggregates(PageNumberPagination):
     def paginate_queryset(self, queryset, request, view=None):
         self.start_times_no_crew = len(queryset.filter(tap__exact='Start', crew__isnull=True))
         self.finish_times_no_crew = len(queryset.filter(tap__exact='Finish', crew__isnull=True))
-        self.crews_invalid_times_start = len(queryset.filter(tap__exact='Start', crew__invalid_time=True))
-        self.crews_invalid_times_finish = len(queryset.filter(tap__exact='Finish', crew__invalid_time=True))
         return super(RaceTimePaginationWithAggregates, self).paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):
         paginated_response = super(RaceTimePaginationWithAggregates, self).get_paginated_response(data)
         paginated_response.data['start_times_no_crew'] = self.start_times_no_crew
         paginated_response.data['finish_times_no_crew'] = self.finish_times_no_crew
-        paginated_response.data['crews_invalid_times_start'] = self.crews_invalid_times_start
-        paginated_response.data['crews_invalid_times_finish'] = self.crews_invalid_times_finish
         return paginated_response

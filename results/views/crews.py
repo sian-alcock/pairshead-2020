@@ -32,7 +32,7 @@ class CrewListView(generics.ListCreateAPIView):
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
     ordering_fields = '__all__'
     search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number', 'competitor_names',]
-    filterset_fields = ['status', 'event_band', 'start_time', 'finish_time', 'invalid_time',]
+    filterset_fields = ['status', 'event_band', 'start_time', 'finish_time',]
 
     def get_queryset(self):
 
@@ -137,7 +137,6 @@ class CrewUpdateRankings(APIView):
             crew.published_time = crew.calc_published_time()
             crew.start_time = crew.calc_start_time()
             crew.finish_time = crew.calc_finish_time()
-            crew.invalid_time = crew.calc_invalid_time()
             crew.overall_rank = crew.calc_overall_rank()
             crew.gender_rank = crew.calc_gender_rank()
             crew.category_rank = crew.calc_category_rank()

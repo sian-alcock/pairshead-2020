@@ -51,11 +51,6 @@ class RaceTimeListView(generics.ListCreateAPIView):
             queryset = times.filter(tap__exact=tap, crew__isnull=True).order_by('sequence')
             return queryset
 
-        times_with_crew_invalid = self.request.query_params.get('crewInvalidTimes')
-        if times_with_crew_invalid == 'true':
-            queryset = times.filter(tap__exact=tap, crew__invalid_time=True).order_by('sequence')
-            return queryset
-
         return queryset
 
 
@@ -129,7 +124,6 @@ class ImportRaceTimes(APIView):
             crew.published_time = crew.calc_published_time()
             crew.start_time = crew.calc_start_time()
             crew.finish_time = crew.calc_finish_time()
-            crew.invalid_time = crew.calc_invalid_time()
             crew.overall_rank = crew.calc_overall_rank()
             crew.gender_rank = crew.calc_gender_rank()
             crew.category_position_time = crew.calc_category_position_time()
@@ -186,7 +180,6 @@ class ImportRaceTimesCSVFolder(APIView):
                 crew.published_time = crew.calc_published_time()
                 crew.start_time = crew.calc_start_time()
                 crew.finish_time = crew.calc_finish_time()
-                crew.invalid_time = crew.calc_invalid_time()
                 crew.overall_rank = crew.calc_overall_rank()
                 crew.gender_rank = crew.calc_gender_rank()
                 crew.category_position_time = crew.calc_category_position_time()

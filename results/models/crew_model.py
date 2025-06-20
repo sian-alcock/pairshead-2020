@@ -61,7 +61,6 @@ class Crew(models.Model):
     category_position_time = models.IntegerField(blank=True, null=True)
     category_rank = models.IntegerField(blank=True, null=True)
     masters_adjustment = models.IntegerField(blank=True, null=True)
-    invalid_time = models.IntegerField(blank=True, null=True)
     start_sequence = models.IntegerField(blank=True, null=True)
     finish_sequence = models.IntegerField(blank=True, null=True)
     draw_start_score = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=4)
@@ -72,24 +71,7 @@ class Crew(models.Model):
 
     def __str__(self):
         return self.name
-    
-    # Get offset if there is one
-    def calc_crew_timing_offset(self):
-        settings = GlobalSettings.objects.all()
-        for setting in settings:
-            setting.save()
 
-        if GlobalSettings.objects.filter(timing_offset__gt=0).exists():
-            offset_record = GlobalSettings.objects.filter(timing_offset__gt=0)[0]
-            if offset_record.timing_offset_positive:
-                offset = offset_record.timing_offset
-            else:
-                offset = 0 - offset_record.timing_offset
-        else: 
-            offset = 0
-
-        return offset
-        
     # Save calculated fields
     def save(self, *args, **kwargs):
         """
@@ -108,7 +90,6 @@ class Crew(models.Model):
         self.category_position_time = self.calc_category_position_time()
         self.category_rank = self.calc_category_rank()
         self.masters_adjustment = self.calc_masters_adjustment()
-        self.invalid_time = self.calc_invalid_time()
         self.start_sequence = self.calc_start_sequence()
         self.finish_sequence = self.calc_finish_sequence()
         self.competitor_names = self.get_competitor_names()
@@ -117,6 +98,23 @@ class Crew(models.Model):
     
         # Call the parent save method
         super(Crew, self).save(*args, **kwargs)
+    
+    # Get offset if there is one
+    def calc_crew_timing_offset(self):
+        settings = GlobalSettings.objects.all()
+        for setting in settings:
+            setting.save()
+
+        if GlobalSettings.objects.filter(timing_offset__gt=0).exists():
+            offset_record = GlobalSettings.objects.filter(timing_offset__gt=0)[0]
+            if offset_record.timing_offset_positive:
+                offset = offset_record.timing_offset
+            else:
+                offset = 0 - offset_record.timing_offset
+        else: 
+            offset = 0
+
+        return offset
     
     # Event band
     def calc_event_band(self):
@@ -172,11 +170,14 @@ class Crew(models.Model):
 
     # Start time
     def calc_start_time(self):
+        print('is the calc start time routine running??')
         race_default_start = Race.objects.get(default_start=True).race_id
 
         try:
             start = self.times.get(tap='Start', race=race_default_start).time_tap
-            return start
+            print(self.crew.id)
+            print(start)
+            # return start
         except RaceTime.DoesNotExist:
             return 0
     
@@ -215,13 +216,6 @@ class Crew(models.Model):
             return 0
 
         return len(crews) + 1
-    
-    # Invalid time
-    def calc_invalid_time(self):
-        if len(self.times.filter(tap='Start')) > 1:
-            return 1
-        if len(self.times.filter(tap='Finish')) > 1:
-            return 1
 
     # Start sequence
     def calc_start_sequence(self):

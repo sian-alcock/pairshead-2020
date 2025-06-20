@@ -33,7 +33,6 @@ interface ResponseDataProps {
   num_accepted_crews: number;
   num_accepted_crews_no_start_time: number;
   num_accepted_crews_no_finish_time: number;
-  num_accepted_crews_invalid_time: number;
   fastest_open_2x_time: {raw_time__min: number};
   fastest_female_2x_time: {raw_time__min: number};
   fastest_open_sweep_time: {raw_time__min: number};
@@ -87,7 +86,6 @@ export default function CrewIndex() {
       setScratchedCrews(responseData.num_scratched_crews);
       setAcceptedCrewsNoStart(responseData.num_accepted_crews_no_start_time)
       setAcceptedCrewsNoFinish(responseData.num_accepted_crews_no_finish_time)
-      setCrewsInvalidTimes(responseData.num_accepted_crews_invalid_time)
       setFastestMen2x(responseData.fastest_open_2x_time.raw_time__min),
       setFastestFemale2x(responseData.fastest_female_2x_time.raw_time__min),
       setFastestMenSweep(responseData.fastest_open_sweep_time.raw_time__min),
@@ -173,19 +171,6 @@ export default function CrewIndex() {
     setPageNumber(1)
     if(e.target.checked) {
       setRefreshDataQueryString("status=Accepted&finish_time=0")
-    } else {
-      setRefreshDataQueryString("")
-    }
-  }
-
-
-  const handleCrewsWithTooManyTimes = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCrewsWithTooManyTimesBoolean(e.target.checked)
-    setCrewsWithoutFinishTimeBoolean(false)
-    setCrewsWithoutStartTimeBoolean(false)
-    setSearchTerm("")
-    if(e.target.checked) {
-      setRefreshDataQueryString("status=Accepted&invalid_time=1")
     } else {
       setRefreshDataQueryString("")
     }
@@ -277,13 +262,6 @@ export default function CrewIndex() {
                 <label className="checkbox" htmlFor="crewsWithoutFinishTime" >
                   <input type="checkbox"  className="checkbox" id="crewsWithoutFinishTime"  onChange={handleCrewsWithoutFinishTime} checked={!!crewsWithoutFinishTimeBoolean} />
                   <small>⚠️ Accepted crews without finish time ({acceptedCrewsNoFinish})</small>
-                </label>
-              </div>
-
-              <div className="field">
-                <label className="checkbox" htmlFor="crewsWithMultipleTimes">
-                  <input type="checkbox"  className="checkbox" id="crewsWithMultipleTimes"  onChange={handleCrewsWithTooManyTimes} checked={!!crewsWithTooManyTimesBoolean} />
-                  <small>❗️ Crews with multiple times ({crewsInvalidTimes})</small>
                 </label>
               </div>
             </div>
