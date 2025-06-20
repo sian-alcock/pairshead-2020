@@ -170,26 +170,20 @@ class Crew(models.Model):
 
     # Start time
     def calc_start_time(self):
-        print('is the calc start time routine running??')
-        race_default_start = Race.objects.get(default_start=True).race_id
-
         try:
-            start = self.times.get(tap='Start', race=race_default_start).time_tap
-            print(self.crew.id)
-            print(start)
-            # return start
-        except RaceTime.DoesNotExist:
+            race_default_start = Race.objects.get(default_start=True)
+            start_time_record = self.times.get(tap='Start', race=race_default_start)
+            return start_time_record.time_tap
+        except (Race.DoesNotExist, RaceTime.DoesNotExist):
             return 0
     
     # Finish time
     def calc_finish_time(self):
-        race_default_finish = Race.objects.get(default_finish=True).race_id
-
         try:
-            finish = self.times.get(tap='Finish', race=race_default_finish).time_tap
-            return finish
-
-        except RaceTime.DoesNotExist:
+            race_default_finish = Race.objects.get(default_finish=True)
+            finish_time_record = self.times.get(tap='Finish', race=race_default_finish)
+            return finish_time_record.time_tap
+        except (Race.DoesNotExist, RaceTime.DoesNotExist):
             return 0
     
     # Overall rank
@@ -220,9 +214,9 @@ class Crew(models.Model):
     # Start sequence
     def calc_start_sequence(self):
         try:
-            if len(self.times.filter(tap='Start')) > 1:
-                return 0
-            sequence = self.times.get(tap='Start').sequence
+            race_default_start = Race.objects.get(default_start=True)
+            sequence_record = self.times.get(tap='Start', race=race_default_start)
+            sequence = sequence_record.sequence
             return sequence
         except RaceTime.DoesNotExist:
             return 0
@@ -230,9 +224,9 @@ class Crew(models.Model):
     # Finish sequence
     def calc_finish_sequence(self):
         try:
-            if len(self.times.filter(tap='Finish')) > 1:
-                return 0
-            sequence = self.times.get(tap='Finish').sequence
+            race_default_finish = Race.objects.get(default_finish=True)
+            sequence_record = self.times.get(tap='Finish', race=race_default_finish)
+            sequence = sequence_record.sequence
             return sequence
         except RaceTime.DoesNotExist:
             return 0
