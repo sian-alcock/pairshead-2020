@@ -88,6 +88,11 @@ export const menuProps: MenuProps = {
           authenticated: true
         },
         {
+          link: "/settings/race-info",
+          title: "Add racing offset",
+          authenticated: true
+        },
+        {
           link: "/settings/register",
           title: "Register user",
           authenticated: true

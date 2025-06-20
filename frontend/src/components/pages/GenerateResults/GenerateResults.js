@@ -5,6 +5,7 @@ import CSVDataLoader from '../../molecules/CSVDataLoader/CSVDataLoader'
 import Hero from '../../organisms/Hero/Hero'
 import Header from '../../organisms/Header/Header'
 import TextButton from '../../atoms/TextButton/TextButton'
+import RaceTimesManager from '../../organisms/RaceTimesManager/RaceTimesManager'
 
 class GenerateResults extends React.Component {
   constructor() {
@@ -28,6 +29,11 @@ class GenerateResults extends React.Component {
               <BROELoader
             importPersonalData={true} title={'Get data from British Rowing'} description={'Import data from BROE via the api'} location={'page'}/>
             </section>
+              <div className="csv-data-loader__text-wrapper">
+                <h2 className="csv-data-loader__title">Import data from Webscorer</h2>
+                <p className="csv-data-loader__description">Add races and import results from webscorer api</p>
+              </div>
+              <RaceTimesManager />
               <CSVDataLoader
                 url='/api/crew-race-times-import/'
                 buttonText='Import race times'

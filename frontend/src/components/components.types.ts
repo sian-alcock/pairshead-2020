@@ -4,6 +4,7 @@ export type TimeProps = {
   tap: 'Start' | 'Finish';
   time_tap: number;
   crew: CrewProps;
+  race: RaceProps;
 }
   
 export type ClubProps = {
@@ -95,4 +96,12 @@ export type RaceInfoProps = {
   timing_offset_positive: boolean;
   broe_data_last_update: string;
   timing_offset: number;
+}
+
+export type RaceProps = {
+  race_id: string;
+  id: string;
+  name: string;
+  default_start: boolean;
+  default_finish: boolean;
 }

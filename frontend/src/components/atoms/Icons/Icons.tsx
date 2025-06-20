@@ -16,7 +16,9 @@ export type IconType =
   | 'menu'
   | 'success'
   | 'clock-spinner'
-  | 'warning';
+  | 'warning'
+  | 'delete'
+  | 'refresh';
 
 export type IconProps = {
   icon: IconType;
@@ -268,7 +270,31 @@ export default function Icon({
           return (
             <svg className="icon__spinner" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,20a9,9,0,1,1,9-9A9,9,0,0,1,12,21Z"/><rect x="11" y="6" rx="1" width="2" height="7"><animateTransform attributeName="transform" type="rotate" dur="9s" values="0 12 12;360 12 12" repeatCount="indefinite"/></rect><rect x="11" y="11" rx="1" width="2" height="9"><animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/></rect></svg>
           )
-
+        case "delete":
+          return(
+            <svg
+              className="icon__delete"
+              aria-hidden={ariaHidden}
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px"
+              viewBox="0 -960 960 960"
+              width="24px"
+              fill="currentColor">
+                <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/>
+            </svg>
+          )
+          case "refresh":
+          return(
+            <svg               
+            className="icon__delete"
+              aria-hidden={ariaHidden}
+              xmlns="http://www.w3.org/2000/svg"
+              height="24px" viewBox="0 -960 960 960"
+              width="24px"
+              fill="currentColor">
+                <path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/>
+              </svg>
+          )
     default:
       return <></>;
   }

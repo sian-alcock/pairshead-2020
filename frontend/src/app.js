@@ -32,6 +32,7 @@ import RaceTimeEdit from "./components/pages/RaceTimes/RaceTimeEdit"
 import RaceInfo from "./components/pages/RaceInfo/RaceInfo"
 import RaceInfoEdit from "./components/pages/RaceInfo/RaceInfoEdit"
 import RaceInfoNew from "./components/pages/RaceInfo/RaceInfoNew"
+import RaceTimesManagerDetail from "./components/organisms/RaceTimesManager/RaceTimesManagerDetail"
 
 import "@fortawesome/fontawesome-free/js/all.js"
 import 'bulma'
@@ -61,6 +62,8 @@ export default class App extends React.Component {
             <SecureRoute path="/settings/race-info/:id/edit" component={RaceInfoEdit} />
             <SecureRoute path="/settings/race-info/new" component={RaceInfoNew} />
             <SecureRoute path="/settings/race-info" component={RaceInfo} />
+            <SecureRoute path="/settings/race-time-manager/races/:id/edit" component={RaceTimesManagerDetail} />
+            <SecureRoute path="/settings/race-time-manager/races/new" component={RaceTimesManagerDetail} />
             <SecureRoute path="/settings" component={Settings} />
             <SecureRoute path="/logistics/crew-draw-reports" component={CrewDrawReports} />
             <SecureRoute path="/logistics/crew-labels" component={CrewLabels} />

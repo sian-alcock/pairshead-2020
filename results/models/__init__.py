@@ -1,7 +1,7 @@
 from .band_model import Band
 from .club_model import Club
 from .competitor_model import Competitor
-from .crew_model import Crew, OriginalEventCategory, RaceTime
+from .crew_model import Crew, OriginalEventCategory, RaceTime, Race
 from .event_meeting_key_model import EventMeetingKey
 from .event_model import Event
 from .event_order_model import EventOrder

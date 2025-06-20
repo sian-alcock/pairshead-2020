@@ -13,6 +13,7 @@ from .views import marshalling_division
 from .views import number_location
 from .views import event_meeting_key
 from .views import global_settings
+from .views import race
 
 
 urlpatterns = [
@@ -49,6 +50,7 @@ path('race-times/', times.RaceTimeListView.as_view()),
 path('race-times/<int:pk>', times.RaceTimeDetailView.as_view()),
 path('crew-race-times-import/', times.ImportRaceTimes.as_view()),
 path('crew-race-times-import-folder/', times.ImportRaceTimesCSVFolder.as_view()),
+path('crew-race-times-import-webscorer/<int:id>', times.ImportTimesWebscorer.as_view()),
 path('masters-adjustments-import/', masters_adjustments.MastersAdjustmentsImport.as_view()),
 path('original-event-import/', original_event_category.OriginalEventCategoryImport.as_view()),
 path('event-order-import/', event_order.EventOrderImport.as_view()),
@@ -61,5 +63,7 @@ path('event-meeting-key-list/', event_meeting_key.EventMeetingKeyListView.as_vie
 path('event-meeting-key-list/<int:pk>', event_meeting_key.EventMeetingKeyDetailView.as_view(), name='event-meeting-key-detail'),
 path('global-settings-list/', global_settings.GlobalSettingsListView.as_view()),
 path('global-settings-list/<int:pk>', global_settings.GlobalSettingsDetailView.as_view(), name='global-settings-detail'),
+path('race/<int:pk>', race.RaceDetailView.as_view(), name='race-detail'),
+path('race-list/', race.RaceListView.as_view(), name='race-list'),
 
 ]

@@ -39,6 +39,15 @@
     height: rem(48px);
   }
 
+  &--small {
+    width: rem(28px);
+    height: rem(28px);
+
+    .icon-button__icon {
+      width: rem(16px);
+    }
+  }
+
   &:hover {
     background: $bblBlue;
     border: 2px solid $bblBlue;

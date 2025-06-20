@@ -10,6 +10,7 @@ import PageTotals from "../../molecules/PageTotals/PageTotals";
 
 import "./raceTime.scss"
 import Header from "../../organisms/Header/Header";
+import RaceTimesManager from "../../organisms/RaceTimesManager/RaceTimesManager";
 
 interface ResponseParamsProps {
   page_size?: string;
@@ -153,6 +154,7 @@ export default function RaceTimeIndex() {
     <Hero title={"Race times"} />
     <section className="race-times__section">
       <div className="race-times__container">
+        <RaceTimesManager title={"Race time manager goes here..."} />
         <div className="race-times__tabs-wrapper no-print">
             <ul className="race-times__tabs">
               <li onClick={() => displayView('Start')}>
@@ -254,6 +256,7 @@ export default function RaceTimeIndex() {
                 <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.times.length > 2 ? raceTime.crew.name + '❗️' : raceTime.crew.name}</td>
                 <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.competitor_names}</td>
                 <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.event_band}</td>
+                <td>{raceTime.race.id}</td>
 
               </tr>
               )}

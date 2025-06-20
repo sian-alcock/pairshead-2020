@@ -1,0 +1,22 @@
+.race-times-manager {
+  &__form {
+    margin-bottom: 1.5rem;
+  }
+  &__table {
+    margin-left: 0; 
+  }
+
+  .td-center {
+    text-align: center;
+
+    input[type='radio'] {
+      display: inline-block;
+      margin-top: .25rem;
+    }
+  }
+
+  .icon-button {
+    display: inline-flex;
+  }
+}
+

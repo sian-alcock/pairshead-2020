@@ -37,6 +37,8 @@ class Crew(models.Model):
     did_not_finish = models.BooleanField(default=False)
     disqualified = models.BooleanField(default=False)
     requires_recalculation = models.BooleanField(default=False)
+    race_id_start = models.IntegerField(default=0)
+    race_id_finish = models.IntegerField(default=0)
 
     # The following fields are only populated to run the On the day contact report
     # Importing for the results will set these to null
@@ -72,10 +74,6 @@ class Crew(models.Model):
         return self.name
     
     # Get offset if there is one
-    def save(self, *args, **kwargs):
-        self.crew_timing_offset = self.calc_crew_timing_offset()
-        super(Crew, self).save(*args, **kwargs)
-    
     def calc_crew_timing_offset(self):
         settings = GlobalSettings.objects.all()
         for setting in settings:
@@ -92,45 +90,72 @@ class Crew(models.Model):
 
         return offset
         
-    # Event band
+    # Save calculated fields
     def save(self, *args, **kwargs):
+        """
+        Combined save method that calculates all computed fields
+        """
+        # Calculate all the computed fields
+        self.crew_timing_offset = self.calc_crew_timing_offset()
         self.event_band = self.calc_event_band()
+        self.raw_time = self.calc_raw_time()
+        self.race_time = self.calc_race_time()
+        self.published_time = self.calc_published_time()
+        self.start_time = self.calc_start_time()
+        self.finish_time = self.calc_finish_time()
+        self.overall_rank = self.calc_overall_rank()
+        self.gender_rank = self.calc_gender_rank()
+        self.category_position_time = self.calc_category_position_time()
+        self.category_rank = self.calc_category_rank()
+        self.masters_adjustment = self.calc_masters_adjustment()
+        self.invalid_time = self.calc_invalid_time()
+        self.start_sequence = self.calc_start_sequence()
+        self.finish_sequence = self.calc_finish_sequence()
+        self.competitor_names = self.get_competitor_names()
+        self.draw_start_score = self.calc_draw_start_score()
+        self.calculated_start_order = self.calc_calculated_start_order()
+    
+        # Call the parent save method
         super(Crew, self).save(*args, **kwargs)
     
+    # Event band
     def calc_event_band(self):
         return str(self.event.override_name) + ' ' + str(self.band.name) if self.band else self.event.override_name
     
 
     # Raw time
-    def save(self, *args, **kwargs):
-        self.raw_time = self.calc_raw_time()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_raw_time(self):
 
         try:
-            if len(self.times.filter(tap='Start')) > 1 or len(self.times.filter(tap='Finish')) > 1:
-                return 0
+            # Get the default start and finish races
+            race_default_start = Race.objects.get(default_start=True)
+            race_default_finish = Race.objects.get(default_finish=True)
+        except Race.DoesNotExist:
+            # If no default races are set, return 0
+            return 0
 
+        try:
             if self.did_not_start or self.did_not_finish or self.disqualified:
                 return 0
 
-            start = self.times.get(tap='Start').time_tap
-            end = self.times.get(tap='Finish').time_tap
+            # Get start and finish times for this crew from the default races
+            start_time_record = self.times.get(tap='Start', race=race_default_start)
+            finish_time_record = self.times.get(tap='Finish', race=race_default_finish)
 
+            start = start_time_record.time_tap
+            end = finish_time_record.time_tap
+
+            # Apply timing offset if it exists
             if self.crew_timing_offset:
                 end = end + self.crew_timing_offset
 
             return end - start
         
         except RaceTime.DoesNotExist:
+            # Return 0 if start or finish time records don't exist
             return 0
     
     # Race time
-    def save(self, *args, **kwargs):
-        self.race_time = self.calc_race_time()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_race_time(self):
         try:
             # The race time can include the penalty as by default it is 0
@@ -139,10 +164,6 @@ class Crew(models.Model):
             return 0
     
     # Published time
-    def save(self, *args, **kwargs):
-        self.published_time = self.calc_published_time()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_published_time(self):
         # If overall time has been overriden - use the override time + penalty otherwise use race_time
         if self.manual_override_time > 0:
@@ -150,57 +171,37 @@ class Crew(models.Model):
         return self.race_time
 
     # Start time
-    def save(self, *args, **kwargs):
-        self.start_time = self.calc_start_time()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_start_time(self):
-        try:
-            if len(self.times.filter(tap='Start')) > 1:
-                return 0
+        race_default_start = Race.objects.get(default_start=True).race_id
 
-            start = self.times.get(tap='Start').time_tap
+        try:
+            start = self.times.get(tap='Start', race=race_default_start).time_tap
             return start
         except RaceTime.DoesNotExist:
             return 0
     
     # Finish time
-    def save(self, *args, **kwargs):
-        self.finish_time = self.calc_finish_time()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_finish_time(self):
+        race_default_finish = Race.objects.get(default_finish=True).race_id
+
         try:
-            if len(self.times.filter(tap='Finish')) > 1:
-                return 0
-            finish = self.times.get(tap='Finish').time_tap
+            finish = self.times.get(tap='Finish', race=race_default_finish).time_tap
             return finish
+
         except RaceTime.DoesNotExist:
             return 0
     
     # Overall rank
-    def save(self, *args, **kwargs):
-        self.overall_rank = self.calc_overall_rank()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_overall_rank(self):
         crews = Crew.objects.all().filter(status__exact='Accepted', published_time__gt=0, published_time__lt=self.published_time)
         return len(crews) + 1
 
     # Gender rank
-    def save(self, *args, **kwargs):
-        self.gender_rank = self.calc_gender_rank()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_gender_rank(self):
         crews = Crew.objects.all().filter(status__exact='Accepted', event__gender__exact=self.event.gender, published_time__gt=0, published_time__lt=self.published_time)
         return len(crews) + 1
 
     # Category position time
-    def save(self, *args, **kwargs):
-        self.category_position_time = self.calc_category_position_time()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_category_position_time(self):
         # This property created purely for use when calculating position in category ranking.  It uses the published time or masters adjusted time if one exists.
         if self.masters_adjusted_time is not None and self.masters_adjusted_time > 0:
@@ -208,10 +209,6 @@ class Crew(models.Model):
         return self.published_time
     
     # Category rank
-    def save(self, *args, **kwargs):
-        self.category_rank = self.calc_category_rank()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_category_rank(self):
         crews = Crew.objects.all().filter(status__exact='Accepted', time_only__exact=False, event_band__exact=self.event_band, published_time__gt=0, category_position_time__lt=self.category_position_time)
         if self.time_only:
@@ -220,10 +217,6 @@ class Crew(models.Model):
         return len(crews) + 1
     
     # Invalid time
-    def save(self, *args, **kwargs):
-        self.invalid_time = self.calc_invalid_time()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_invalid_time(self):
         if len(self.times.filter(tap='Start')) > 1:
             return 1
@@ -231,10 +224,6 @@ class Crew(models.Model):
             return 1
 
     # Start sequence
-    def save(self, *args, **kwargs):
-        self.start_sequence = self.calc_start_sequence()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_start_sequence(self):
         try:
             if len(self.times.filter(tap='Start')) > 1:
@@ -245,10 +234,6 @@ class Crew(models.Model):
             return 0
     
     # Finish sequence
-    def save(self, *args, **kwargs):
-        self.finish_sequence = self.calc_finish_sequence()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_finish_sequence(self):
         try:
             if len(self.times.filter(tap='Finish')) > 1:
@@ -259,10 +244,6 @@ class Crew(models.Model):
             return 0
         
     # Competitor names
-    def save(self, *args, **kwargs):
-        self.competitor_names = self.get_competitor_names()
-        super(Crew, self).save(*args, **kwargs)
-
     def get_competitor_names(self):
         if not self.competitors:
             return 0
@@ -284,10 +265,6 @@ class Crew(models.Model):
 # Need to calculate the fastest time in race type
     
     # Masters adjustment
-    def save(self, *args, **kwargs):
-        self.masters_adjustment = self.calc_masters_adjustment()
-        super(Crew, self).save(*args, **kwargs)
-        
     def calc_masters_adjustment(self):
 
         if not OriginalEventCategory.objects.filter(event_original='2x').exists():
@@ -360,10 +337,6 @@ class Crew(models.Model):
             return 0
         
 # Calculate the draw start score (event order plus rowing / sculling CRI as appropriate)
-
-    def save(self, *args, **kwargs):
-        self.draw_start_score = self.calc_draw_start_score()
-        super(Crew, self).save(*args, **kwargs)
     
     def calc_draw_start_score(self):
         if not EventOrder.objects.filter(event_order=1).exists():
@@ -384,10 +357,6 @@ class Crew(models.Model):
         return draw_start_score
     
 # Calculate the draw start order
-    def save(self, *args, **kwargs):
-        self.calculated_start_order = self.calc_calculated_start_order()
-        super(Crew, self).save(*args, **kwargs)
-    
     def calc_calculated_start_order(self):
         if not self.draw_start_score or self.draw_start_score == 0 or self.draw_start_score == None:
             return 9999999
@@ -435,6 +404,25 @@ class Crew(models.Model):
             number_location = None
         return number_location
 
+class Race(models.Model):
+    race_id = models.CharField(max_length=15, default='')
+    name = models.CharField(max_length=30)
+    default_start = models.BooleanField(default=False)
+    default_finish = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        # Handle default_start flag
+        if self.default_start:
+            with transaction.atomic():
+                Race.objects.filter(default_start=True).update(default_start=False)
+        
+        # Handle default_finish flag  
+        if self.default_finish:
+            with transaction.atomic():
+                Race.objects.filter(default_finish=True).update(default_finish=False)
+        
+        # Call the parent save method
+        super(Race, self).save(*args, **kwargs)
 
 class RaceTime(models.Model):
     sequence = models.IntegerField()
@@ -443,6 +431,7 @@ class RaceTime(models.Model):
     time_tap = models.BigIntegerField()
     crew = models.ForeignKey(Crew, related_name='times',
     on_delete=models.SET_NULL, blank=True, null=True,)
+    race = models.ForeignKey(Race, related_name='races', on_delete=models.SET_NULL, blank=True, null=True,)
 
 class OriginalEventCategory(models.Model):
     crew = models.ForeignKey(Crew, related_name='event_original',

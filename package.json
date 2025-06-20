@@ -7,7 +7,7 @@
   "scripts": {
     "build": "webpack --mode production",
     "serve:backend": "python manage.py runserver 4000",
-    "serve:frontend": "webpack-dev-server",
+    "serve:frontend": "webpack serve --mode development",
     "seed": "python manage.py loaddata results/fixtures.json",
     "postinstall": "yarn build"
   },

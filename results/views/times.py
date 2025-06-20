@@ -1,8 +1,14 @@
 import csv
 import os
+import requests
+import logging
+
+logger = logging.getLogger(__name__)
+
 from .helpers import decode_utf8
 from django.http import Http404
 from pprint import pprint
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
@@ -15,9 +21,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.parsers import MultiPartParser, FormParser, ParseError
 
 
+
+
+
+
 from ..serializers import WriteRaceTimesSerializer, RaceTimesSerializer, PopulatedRaceTimesSerializer
 
-from ..models import RaceTime, Crew
+from ..models import RaceTime, Crew, Race
 
 from ..pagination import RaceTimePaginationWithAggregates
 
@@ -186,6 +196,50 @@ class ImportRaceTimesCSVFolder(APIView):
                 crew.masters_adjustment = crew.calc_masters_adjustment()
                 crew.requires_recalculation = True
                 crew.save()
+
+
+class ImportTimesWebscorer(APIView):
+
+    def get(self, _request, id=None, delete_times=False):
+        if delete_times:
+            RaceTime.objects.all().delete()
+
+        apiid = os.getenv("WEBSCORERAPI")
+        race_id = Race.objects.get(id=id).race_id
+
+        url = 'https://www.webscorer.com/json/fasttaps' 
+        payload = {'raceid':race_id, 'apiid':apiid}
+        headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36',
+        }
+        r = requests.get(url, params=payload, headers=headers)
+
+        if r.status_code == 200:
+            for tap in r.json()['FastTaps']:
+
+                data = {
+                    'sequence': float(tap['Seq #']),
+                    'tap': tap['Tap'],
+                    'time_tap': tap['Time tap'],
+                    'crew': tap['Team name 2'],
+                    'race': id
+                }
+
+                serializer = WriteRaceTimesSerializer(data=data)
+                if serializer.is_valid(raise_exception=True):
+                    serializer.save()
+
+            race_times = RaceTime.objects.all()
+
+            serializer = RaceTimesSerializer(race_times, many=True)
+
+            # self.calculate_computed_properties()
+
+            return Response(serializer.data)
+
+        return Response(status=400)
+
+
 
 
 

@@ -6,7 +6,8 @@ export const headings = [
   "Crew ID",
   "Crew name",
   "Competitors",
-  "Category"
+  "Category",
+  "Race"
 ]
 
 export const pagingOptions = [

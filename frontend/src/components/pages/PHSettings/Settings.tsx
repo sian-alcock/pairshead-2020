@@ -26,6 +26,11 @@ export default function Settings () {
             </div>
             <div className="columns">
               <div className="column is-one-quarter">
+                <TextButton label="Racing offset" pathName='/settings/race-info' />
+              </div>
+            </div>
+            <div className="columns">
+              <div className="column is-one-quarter">
                 <TextButton label="Register a user" pathName='/settings/register' />
               </div>
             </div>

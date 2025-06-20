@@ -5,8 +5,7 @@ import io
 from rest_framework import serializers
 
 from results.models.global_settings_model import GlobalSettings
-from .models import Club, Event, Band, Crew, RaceTime, Competitor, MastersAdjustment, OriginalEventCategory, EventOrder, MarshallingDivision, NumberLocation, EventMeetingKey
-
+from .models import Club, Event, Band, Crew, RaceTime, Competitor, MastersAdjustment, OriginalEventCategory, EventOrder, MarshallingDivision, NumberLocation, EventMeetingKey, Race
 
 class EventSerializer(serializers.ModelSerializer):
     crews = Crew.objects.annotate(Count('event'))
@@ -46,7 +45,7 @@ class RaceTimesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RaceTime
-        fields = ('id', 'sequence', 'tap', 'time_tap', 'crew',)
+        fields = '__all__'
 
 class CrewSerializerLimited(serializers.ModelSerializer):
     times = RaceTimesSerializer(many=True)
@@ -147,7 +146,7 @@ class WriteRaceTimesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RaceTime
-        fields = ('id', 'sequence', 'bib_number', 'tap', 'time_tap', 'crew',)
+        fields = ('id', 'sequence', 'bib_number', 'tap', 'time_tap', 'crew', 'race',)
 
     def validate_time_tap(self, value):
 
@@ -168,14 +167,20 @@ class WriteRaceTimesSerializer(serializers.ModelSerializer):
 
         return value
 
+class RaceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Race
+        fields = '__all__'
 
 class PopulatedRaceTimesSerializer(serializers.ModelSerializer):
 
     crew = PopulatedCrewSerializer()
+    race = RaceSerializer()
 
     class Meta:
         model = RaceTime
-        fields = ('id', 'sequence', 'bib_number', 'tap', 'time_tap', 'crew',)
+        fields = '__all__'
 
 
 class WriteClubSerializer(serializers.ModelSerializer):
