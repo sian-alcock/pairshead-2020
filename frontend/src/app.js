@@ -8,6 +8,7 @@ import Info from "./components/pages/Info/Info"
 import Register from "./components/auth/Register"
 import Login from "./components/auth/Login"
 import CrewIndex from "./components/pages/CrewIndex/CrewIndexNew"
+import CrewTimeCompare from "./components/pages/CrewIndex/CrewTimeCompare"
 import CrewTimeEdit from "./components/pages/CrewIndex/CrewTimeEdit"
 import ResultIndex from "./components/pages/ResultIndex/ResultIndexNew"
 import GenerateResults from "./components/pages/GenerateResults/GenerateResults"
@@ -49,6 +50,7 @@ export default class App extends React.Component {
           <Switch>
             <SecureRoute path="/generate-results/crews/:id/edit" component={CrewTimeEdit} />
             <SecureRoute path="/generate-results/crews" component={CrewIndex} />
+            <SecureRoute path="/generate-results/crews-time-compare" component={CrewTimeCompare} />
             <SecureRoute path="/generate-results/race-times/:id/edit" component={RaceTimeEdit} />
             <SecureRoute path="/generate-results/race-times" component={RaceTimeIndex} />
             <SecureRoute path="/generate-results/export" component={ExportData} />

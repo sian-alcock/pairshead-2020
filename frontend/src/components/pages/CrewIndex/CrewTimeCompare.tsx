@@ -4,9 +4,8 @@ import Hero from "../../organisms/Hero/Hero";
 import { Link } from "react-router-dom";
 import { formatTimes } from "../../../lib/helpers";
 import BladeImage from "../../atoms/BladeImage/BladeImage";
-import { headings, pagingOptions, sortingOptions } from "./defaultProps"
-import MastersCalculations from "./MastersCalculations"
-import { CrewProps } from "../../components.types";
+import { pagingOptions, sortingOptions } from "./defaultProps"
+import { CrewProps, RaceProps } from "../../components.types";
 import Paginator from "../../molecules/Paginator/Paginator";
 import PageTotals from "../../molecules/PageTotals/PageTotals";
 import CrewTimeCalculatedFieldsUpdate from "../../molecules/UpdateCrews/UpdateCrewTimeCalculatedFields";
@@ -42,8 +41,13 @@ interface ResponseDataProps {
   num_crews_require_masters_adjusted: boolean;
 }
 
-export default function CrewIndex() {
+interface RaceResponseDataProps {
+  results: RaceProps[];
+}
+
+export default function CrewTimeCompare() {
   const [crews, setCrews] = useState<CrewProps[]>([]);
+  const [races, setRaces] = useState<RaceProps[]>([]);
   const [totalCrews, setTotalCrews] = useState(0);
   const [pageSize, setPageSize] = useState("20");
   const [pageNumber, setPageNumber] = useState(1);
@@ -54,13 +58,6 @@ export default function CrewIndex() {
   const [refreshDataQueryString, setRefreshDataQueryString] = useState<string | null>("")
   const [acceptedCrewsNoStart, setAcceptedCrewsNoStart] = useState(0)
   const [acceptedCrewsNoFinish, setAcceptedCrewsNoFinish] = useState(0)
-  const [fastestMen2x, setFastestMen2x] = useState(0)
-  const [fastestFemale2x, setFastestFemale2x] = useState(0)
-  const [fastestMenSweep, setFastestMenSweep] = useState(0)
-  const [fastestFemaleSweep, setFastestFemaleSweep] = useState(0)
-  const [fastestMixed2x, setFastestMixed2x] = useState(0)
-  const [mastersAdjustmentsApplied, setMastersAdjustmentsApplied] = useState(false)
-  const [mastersAdjustmentsRequired, setMastersAdjustmentsRequired] = useState(false)
   const [mastersAdjustmentsBoolean, setMastersAdjustmentsBoolean] = useState(false)
   const [updateRequired, setUpdateRequired] = useState(0)
 
@@ -85,14 +82,21 @@ export default function CrewIndex() {
       setScratchedCrews(responseData.num_scratched_crews);
       setAcceptedCrewsNoStart(responseData.num_accepted_crews_no_start_time)
       setAcceptedCrewsNoFinish(responseData.num_accepted_crews_no_finish_time)
-      setFastestMen2x(responseData.fastest_open_2x_time.raw_time__min),
-      setFastestFemale2x(responseData.fastest_female_2x_time.raw_time__min),
-      setFastestMenSweep(responseData.fastest_open_sweep_time.raw_time__min),
-      setFastestFemaleSweep(responseData.fastest_female_sweep_time.raw_time__min),
-      setFastestMixed2x(responseData.fastest_mixed_2x_time.raw_time__min),
-      setMastersAdjustmentsApplied(responseData.num_crews_masters_adjusted),
-      setMastersAdjustmentsRequired(responseData.num_crews_require_masters_adjusted)
       setUpdateRequired(responseData.requires_ranking_update)
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchRaceData = async (url: string) => {
+    console.log(url);
+    try {
+      const response: AxiosResponse = await axios.get(url);
+
+      const responseData: RaceResponseDataProps = response.data;
+
+      setRaces(responseData.results);
 
     } catch (error) {
       console.error(error);
@@ -106,6 +110,7 @@ export default function CrewIndex() {
       order: "bib_number",
       status: "Accepted"
     });
+    fetchRaceData("/api/race-list");
   }, []);
 
   const refreshData = async (refreshDataQueryString:string | null = null) => {
@@ -180,15 +185,28 @@ export default function CrewIndex() {
     setScratchedCrewsBoolean(e.target.checked)
   }
 
-  const handleMastersAdjustments = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setMastersAdjustmentsBoolean(e.target.checked)
-    setCrewsWithTooManyTimesBoolean(false)
-    setCrewsWithoutFinishTimeBoolean(false)
-    setCrewsWithoutStartTimeBoolean(false)
-    setSearchTerm("")
-  }
-
   console.log(crews);
+  console.log(races);
+
+  const defaultStart = races.filter((race) => race.default_start)[0]?.race_id
+  const defaultFinish = races.filter((race) => race.default_finish)[0]?.race_id
+  const otherStart = races.filter((race) => !race.default_start)[0]?.race_id
+  const otherFinish = races.filter((race) => !race.default_finish)[0]?.race_id
+
+  console.log(typeof defaultStart)
+
+  const headingsTimeCompare = [
+  "Id",
+  "Crew",
+  "Status",
+  "Bib",
+  "Club",
+  "Category",
+  `Start (default race) - ${defaultStart}`,
+  `Finish (default race) - ${defaultFinish}`,
+  `Start (other) - ${otherStart}`,
+  `Finish (other) - ${otherFinish}`,
+];
 
   const totalPages = Math.floor(totalCrews / Number(pageSize));
 
@@ -278,16 +296,6 @@ export default function CrewIndex() {
               <TextButton label={"Add race offset"} pathName="/settings/race-info" />
             </div>
           </div>
-          <MastersCalculations
-            fastestMen2x={formatTimes(fastestMen2x)}
-            fastestFemale2x={formatTimes(fastestFemale2x)}
-            fastestMenSweep={formatTimes(fastestMenSweep)}
-            fastestFemaleSweep={formatTimes(fastestFemaleSweep)}
-            fastestMixed2x={formatTimes(fastestMixed2x)}
-            mastersAdjustmentsApplied={mastersAdjustmentsApplied}
-            mastersAdjustmentsRequired={mastersAdjustmentsRequired}
-            handleMastersAdjustments={handleMastersAdjustments}
-          />
 
           <Paginator pageNumber={pageNumber} totalPages={totalPages} changePage={changePage} />
           <PageTotals
@@ -300,14 +308,14 @@ export default function CrewIndex() {
             <table className="crew-index__table table">
               <thead>
                 <tr>
-                  {headings.map((heading) => (
+                  {headingsTimeCompare.map((heading) => (
                     <td key={heading}>{heading}</td>
                   ))}
                 </tr>
               </thead>
               <tfoot>
                 <tr>
-                  {headings.map((heading) => (
+                  {headingsTimeCompare.map((heading) => (
                     <td key={heading}>{heading}</td>
                   ))}
                 </tr>
@@ -327,47 +335,13 @@ export default function CrewIndex() {
                           : crew.competitor_names}
                     </td>
                     <td>{crew.status}</td>
-                    <td>
-                      <BladeImage crew={crew} />
-                    </td>
                     <td>{!crew.bib_number ? "" : crew.bib_number}</td>
                     <td>{crew.club.index_code}</td>
                     <td>{crew.event_band}</td>
-                    <td>{crew.start_sequence ? crew.start_sequence : "⚠️"}</td>
-                    <td>{crew.finish_sequence ? crew.finish_sequence : "⚠️"}</td>
-                    <td>{crew.penalty}</td>
-                    <td>{crew.start_time ? formatTimes(crew.start_time) : "⚠️"}</td>
-                    <td>{crew.finish_time ? formatTimes(crew.finish_time) : "⚠️"}</td>
-                    <td>
-                      {crew.disqualified
-                        ? "❌"
-                        : crew.did_not_start
-                          ? "❌"
-                          : crew.did_not_finish
-                            ? "❌"
-                            : crew.raw_time
-                              ? formatTimes(crew.raw_time)
-                              : "⚠️"}
-                    </td>
-                    <td>{crew.crew_timing_offset}</td>
-                    <td>
-                      {crew.disqualified
-                        ? "Disqualified"
-                        : crew.did_not_start
-                          ? "Did not start"
-                          : crew.did_not_finish
-                            ? "Did not finish"
-                            : crew.raw_time
-                              ? formatTimes(crew.race_time)
-                              : "⚠️"}
-                    </td>
-                    <td>{crew.event.type === "Master" && crew.event_original && crew.event_original[0] ? crew.event_original[0].event_original : ""}</td>
-                    <td>{crew.event.type !== "Master" ? "" : formatTimes(crew.masters_adjustment)}</td>
-                    <td>{crew.event.type !== "Master" ? "" : formatTimes(crew.masters_adjusted_time)}</td>
-                    <td>{crew.manual_override_time ? formatTimes(crew.manual_override_time) : ""}</td>
-                    <td>{crew.time_only ? "TO" : ""}</td>
-                    <td>{!crew.overall_rank ? "" : crew.overall_rank}</td>
-                    <td>{!crew.category_rank ? "" : crew.category_rank}</td>
+                    <td>{formatTimes(crew.times.filter((time) => time.race.race_id === defaultStart)[0]?.time_tap)}</td>
+                    <td>{formatTimes(crew.times.filter((time) => time.race.race_id === defaultFinish)[0]?.time_tap)}</td>
+                    <td>{formatTimes(crew.times.filter((time) => time.race.race_id !== defaultStart)[0]?.time_tap)}</td>
+                    <td>{formatTimes(crew.times.filter((time) => time.race.race_id !== defaultFinish)[0]?.time_tap)}</td>
                   </tr>
                 ))}
               </tbody>
