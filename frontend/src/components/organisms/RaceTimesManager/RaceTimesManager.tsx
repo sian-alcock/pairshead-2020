@@ -1,11 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 import axios, {AxiosResponse} from 'axios'
-import EventKeyHeader from '../../atoms/EventKeyHeader/EventKeyHeader';
-import Breadcrumbs from '../../molecules/Breadcrumbs/Breadcrumbs';
-import Icon from '../../atoms/Icons/Icons';
 import { RaceProps } from '../../components.types';
 import './raceTimesManager.scss'
-import { formatTimeDate } from '../../../lib/helpers';
 import TextButton from '../../atoms/TextButton/TextButton';
 import { IconButton } from '../../atoms/IconButton/IconButton';
 import { Link } from 'react-router-dom';
@@ -39,8 +35,8 @@ export default function RaceTimesManager ({title}: RaceTimesManagerProps):ReactE
   };
 
   useEffect(() => {
-    fetchData("/api/race-list/");
-  }, []);
+    fetchData("/api/races/");
+  }, [raceTimes]);
 
   const handleRadio = (e: React.MouseEvent) => {
     console.log(e.target)
@@ -51,9 +47,28 @@ export default function RaceTimesManager ({title}: RaceTimesManagerProps):ReactE
     console.log('submit happened yo')
   }
 
+  const handleDelete = async (e:React.MouseEvent) => {
+    const clickedElement = e.target as Element
+    console.log('Delete happened yo')
+    const race = clickedElement.closest('tr')?.dataset.race
+    console.log(race)
+
+    try {
+      const response: AxiosResponse = await axios.delete(`api/races/${race}`);
+
+      const responseData: ResponseDataProps = response.data;
+
+      setRaceTimes(responseData.results);
+      console.log(responseData)
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const handleRefresh = async (e:React.MouseEvent) => {
     const clickedElement = e.target as Element
-    const race = clickedElement.closest('td')?.dataset.race
+    const race = clickedElement.closest('tr')?.dataset.race
 
     try {
       const response: AxiosResponse = await axios.get(`api/crew-race-times-import-webscorer/${race}`);
@@ -85,15 +100,15 @@ export default function RaceTimesManager ({title}: RaceTimesManagerProps):ReactE
             </tr>
           </tfoot>
           <tbody>
-              {raceDetails.map((detail, idx) => 
-            <tr key={detail.id}>
+            {raceDetails.map((detail, idx) => 
+            <tr key={detail.id} data-race={detail.id}>
               <td><Link to={`/settings/race-time-manager/races/${detail.id}/edit`}>{detail.id}</Link></td>
               <td>{detail.race_id}</td>
               <td>{detail.name}</td>
               <td className="td-center"><label><input onClick={handleRadio} type="radio" id={`${idx} - ${detail.id}`} name="default-start" defaultChecked={detail.default_start}></input></label></td>
               <td className="td-center"><label><input onClick={handleRadio} type="radio" id={`${idx} - ${detail.id}`} name="default-finish" defaultChecked={detail.default_finish}></input></label></td>
-              <td className="td-center" data-race={detail.id}><IconButton title={'Fetch data from webscorer'} icon={'refresh'} sitsInTable onClick={handleRefresh}/></td>
-              <td className="td-center"><IconButton title={'Delete data for race'} icon={'delete'} sitsInTable/></td>
+              <td className="td-center"><IconButton title={'Fetch data from webscorer'} icon={'refresh'} sitsInTable onClick={handleRefresh}/></td>
+              <td className="td-center"><IconButton title={'Delete data for race'} icon={'delete'} sitsInTable onClick={handleDelete}/></td>
             </tr>
               )}
           </tbody>

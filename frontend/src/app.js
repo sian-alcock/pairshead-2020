@@ -2,6 +2,8 @@ import React from "react"
 import { createRoot } from "react-dom/client"
 import { HashRouter, Route, Switch } from "react-router-dom"
 import SecureRoute from "./components/common/SecureRoute"
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import Home from "./components/pages/Home/Home"
 import Info from "./components/pages/Info/Info"
@@ -30,21 +32,32 @@ import NumberLocationNew from "./components/pages/SetNumberLocations/NumberLocat
 import NumberLocationEdit from "./components/pages/SetNumberLocations/NumberLocationEdit"
 import RaceTimeIndex from "./components/pages/RaceTimes/RaceTimeIndex"
 import RaceTimeEdit from "./components/pages/RaceTimes/RaceTimeEdit"
-import RaceInfo from "./components/pages/RaceInfo/RaceInfo"
-import RaceInfoEdit from "./components/pages/RaceInfo/RaceInfoEdit"
-import RaceInfoNew from "./components/pages/RaceInfo/RaceInfoNew"
 import RaceTimesManagerDetail from "./components/organisms/RaceTimesManager/RaceTimesManagerDetail"
+import TimingOffsetManagerDetail from "./components/organisms/TimingOffsetManager/TimingOffsetManagerDetail";
 
-import "@fortawesome/fontawesome-free/js/all.js"
 import 'bulma'
 import "./style.scss"
 
+// Create a client instance
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Global query options
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      cacheTime: 1000 * 60 * 30, // 30 minutes
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+    mutations: {
+      // Global mutation options
+      retry: 1,
+    },
+  },
+});
 
-export default class App extends React.Component {
-
-
-  render(){
-    return(
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
       <div>
         <HashRouter>
           <Switch>
@@ -61,11 +74,10 @@ export default class App extends React.Component {
             <SecureRoute path="/settings/keys" component={EventKeys} />
             <SecureRoute path="/settings/info" component={Info} />
             <SecureRoute path="/settings/register" component={Register} />
-            <SecureRoute path="/settings/race-info/:id/edit" component={RaceInfoEdit} />
-            <SecureRoute path="/settings/race-info/new" component={RaceInfoNew} />
-            <SecureRoute path="/settings/race-info" component={RaceInfo} />
             <SecureRoute path="/settings/race-time-manager/races/:id/edit" component={RaceTimesManagerDetail} />
             <SecureRoute path="/settings/race-time-manager/races/new" component={RaceTimesManagerDetail} />
+            <SecureRoute path="/settings/timing-offset-manager/race-time-syncs/:id/edit" component={TimingOffsetManagerDetail} />
+            <SecureRoute path="/settings/timing-offset-manager/race-time-syncs/new" component={TimingOffsetManagerDetail} />
             <SecureRoute path="/settings" component={Settings} />
             <SecureRoute path="/logistics/crew-draw-reports" component={CrewDrawReports} />
             <SecureRoute path="/logistics/crew-labels" component={CrewLabels} />
@@ -83,8 +95,10 @@ export default class App extends React.Component {
           <Footer />
         </HashRouter>
       </div>
-    )
-  }
+      {/* Add React Query DevTools in development */}
+      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
+    </QueryClientProvider>
+  );
 }
 
 const rootElement = document.getElementById("root")

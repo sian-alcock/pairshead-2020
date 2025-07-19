@@ -20,22 +20,7 @@ class CrewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Crew
-        fields = ('id', 'name', 'composite_code', 'status', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds', 'penalty', 'masters_adjustment', 'masters_adjusted_time', 'bib_number', 'time_only', 'did_not_start', 'did_not_finish', 'disqualified', 'band', 'overall_rank', 'gender_rank', 'requires_recalculation', 'competitor_names',)
-
-# class PopulatedCrewSerializer(serializers.ModelSerializer):
-
-#     club = ClubSerializer()
-#     event = EventSerializer()
-#     band = BandSerializer()
-#     host_club = ClubSerializer()
-#     competitors = CompetitorSerializer(many=True)
-#     times = serializers.SerializerMethodField()
-#     event_original = ImportOriginalEventSerializer(many=True)
-
-
-#     class Meta:
-#         model = Crew
-#         fields = ('id', 'name', 'composite_code', 'status', 'penalty', 'bib_number', 'times', 'raw_time', 'race_time', 'start_time', 'finish_time', 'start_sequence', 'finish_sequence', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds', 'masters_adjustment', 'masters_adjusted_time', 'event', 'club', 'band', 'competitors', 'competitor_names', 'event_band', 'time_only', 'published_time', 'category_position_time', 'did_not_start', 'did_not_finish', 'disqualified', 'overall_rank', 'gender_rank', 'category_position_time', 'category_rank', 'event_original', 'sculling_CRI', 'rowing_CRI', 'draw_start_score', 'calculated_start_order', 'event_order', 'host_club', 'marshalling_division', 'number_location', 'otd_contact', 'otd_home_phone', 'otd_work_phone', 'otd_mobile_phone', 'updated', 'crew_timing_offset',)
+        fields = ('id', 'name', 'composite_code', 'status', 'manual_override_time', 'manual_override_minutes', 'manual_override_seconds', 'manual_override_hundredths_seconds', 'penalty', 'masters_adjustment', 'masters_adjusted_time', 'bib_number', 'time_only', 'did_not_start', 'did_not_finish', 'disqualified', 'band', 'overall_rank', 'gender_rank', 'requires_recalculation', 'competitor_names', 'race_id_start_override', 'race_id_finish_override',)
 
 class PopulatedCrewSerializer(serializers.ModelSerializer):
     # Use SerializerMethodField for nested serializers to avoid circular imports
@@ -60,7 +45,7 @@ class PopulatedCrewSerializer(serializers.ModelSerializer):
             'category_rank', 'event_original', 'sculling_CRI', 'rowing_CRI', 'draw_start_score', 
             'calculated_start_order', 'event_order', 'host_club', 'marshalling_division', 
             'number_location', 'otd_contact', 'otd_home_phone', 'otd_work_phone', 'otd_mobile_phone', 
-            'updated', 'crew_timing_offset',
+            'updated', 'race_id_start_override', 'race_id_finish_override',
         )
     
     def get_club(self, obj):

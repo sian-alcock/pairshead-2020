@@ -1,21 +1,27 @@
 @import '../../../style.scss';
+.timing-offset-manager {
 
-.race-info {
   &__section {
+    margin-bottom: 1.5rem;
     @include section;
   }
 
   &__container {
     @include container;
+
   }
 
-  &__table-container {
-    overflow-x: auto;
+  &__form{
+    @include form;
+  }
+
+  &__field {
+    @include field;
   }
 
   &__table {
-    max-width: 100%;
-    margin-left: 0;
     margin-bottom: 1.5rem;
+    margin-left: 0; 
   }
 }
+

@@ -243,13 +243,13 @@ export default function RaceTimeIndex() {
               </tr>
             </tfoot>
             <tbody>
-              {raceTimes.map(raceTime => <tr key={raceTime.id}>
+              {raceTimes && raceTimes.map(raceTime => <tr key={raceTime.id}>
                 <td><Link to={`/generate-results/race-times/${raceTime.id}/edit`}>{raceTime.sequence}</Link></td>
                 <td>{raceTime.tap}</td>
                 <td>{formatTimes(raceTime.time_tap)}</td>
                 <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.bib_number}</td>
                 <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.id}</td>
-                <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.times.length > 2 ? raceTime.crew.name + '❗️' : raceTime.crew.name}</td>
+                <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.times && raceTime.crew.times.length > 2 ? raceTime.crew.name + '❗️' : raceTime.crew.name}</td>
                 <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.competitor_names}</td>
                 <td>{raceTime.crew === null ? '⚠️' : raceTime.crew.event_band}</td>
                 <td>{raceTime.race.id}</td>

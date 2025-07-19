@@ -12,3 +12,4 @@ from .number_location import *
 from .event_meeting_key import *
 from .global_settings import *
 from .race import *
+from .race_timing_sync import *

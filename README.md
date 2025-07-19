@@ -50,7 +50,7 @@ The original project brief:
 * SCSS, Bulma
 * Git, GitHub
 * Lodash
-* Google Fonts, FortAwesome
+* Google Fonts
 * Moment, Moment-duration-format
 
 ## Approach Taken

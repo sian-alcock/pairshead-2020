@@ -1,0 +1,69 @@
+@import '../../../style';
+
+.form-select {
+  &__select-wrapper {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in;
+  }
+
+  &__select {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: unset;
+    appearance: none;
+    background: none;
+    cursor: pointer;
+    font-weight: 700;
+    outline: none;
+    transition: all 0.2s ease-in;
+  }
+
+  &__icon {
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    right: 0.6rem;
+    width: 2rem;
+    height: 100%;
+    transform: translateY(-50%);
+
+    svg {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      height: 1rem;
+      transform: translateY(-50%);
+
+      path {
+        transition: transform 0.2s ease-in;
+      }
+    }
+  }
+
+  &__select-wrapper {
+    border: 2px solid $bblGrey;
+
+    &:focus-within {
+      border: 2px solid $bblBlue;
+      background: $white;
+      outline: 2px solid $phLogoBlue;
+
+      .form-select__select {
+        color: get-value(font-color);
+      }
+
+      .form-select__icon {
+        svg > path {
+          fill: get-value(icon-color);
+        }
+      }
+    }
+  }
+}

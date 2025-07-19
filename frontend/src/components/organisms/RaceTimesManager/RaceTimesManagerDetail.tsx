@@ -10,15 +10,6 @@ type RaceTimesManagerParams = {
   id: string;
 };
 
-// type OptionType = {
-//   value: string;
-//   label: string;
-// };
-
-// type AdditionalType = {
-//   page: number;
-// };
-
 export default function RaceTimesManagerDetail () {
   const [raceFormData, setRaceFormData] = useState<Partial<RaceProps>> ({})
   const [errors, setErrors] = useState({})
@@ -28,9 +19,10 @@ export default function RaceTimesManagerDetail () {
   const fetchData = async () => {
 
     try {
-      const raceResponse: AxiosResponse = await axios.get(`/api/race/${routeParams.id}/`);
+      const raceResponse: AxiosResponse = await axios.get(`/api/races/${routeParams.id}/`);
       const raceResponseData = raceResponse.data;
       setRaceFormData(raceResponseData)
+      console.log(raceResponseData)
 
     } catch (error) {
       console.error(error);
@@ -54,11 +46,11 @@ export default function RaceTimesManagerDetail () {
     console.log(data)
 
     if(routeParams.id === undefined) {
-    axios.post(`/api/race-list/`, data)
+    axios.post(`/api/races/`, data)
       .then(()=> history.push('/generate-results/race-times'))
       .catch(err => setErrors(err.response.data))
     } else {
-    axios.put(`/api/race/${routeParams.id}/`, data)
+    axios.put(`/api/races/${routeParams.id}/`, data)
       .then(()=> history.push('/generate-results/race-times'))
       .catch(err => setErrors(err.response.data))
     }
@@ -73,7 +65,7 @@ export default function RaceTimesManagerDetail () {
   const handleDelete = () => {
     console.log(raceFormData)
     
-    axios.delete(`/api/race/${routeParams.id}`)
+    axios.delete(`/api/races/${routeParams.id}`)
       .then(()=> history.push('/generate-results/race-times'))
       .catch(err => setErrors(err.response.data))
     
@@ -81,7 +73,11 @@ export default function RaceTimesManagerDetail () {
   }
 
   const handleCheckbox = (e:React.ChangeEvent<HTMLInputElement>):void => {
-    setRaceFormData({ ...raceFormData, [e.target.name]: e.target.checked})
+    if (e.target.name === "is_timing_reference") {
+      setRaceFormData({ ...raceFormData, [e.target.name]: e.target.checked})
+    } else {
+      setRaceFormData({ ...raceFormData, [e.target.name]: e.target.checked})
+    }
   }
  
 
@@ -121,7 +117,7 @@ export default function RaceTimesManagerDetail () {
                   type="checkbox"
                   name="default_start"
                   checked={!!raceFormData.default_start}
-                  onChange={handleCheckbox} /> Set as data to use for start times
+                  onChange={handleCheckbox} /> Set as default race data to use for start times
               </label>
             </div>
             <div className="field">
@@ -131,7 +127,17 @@ export default function RaceTimesManagerDetail () {
                   type="checkbox"
                   name="default_finish"
                   checked={!!raceFormData.default_finish}
-                  onChange={handleCheckbox} /> Set as data to use for finish times
+                  onChange={handleCheckbox} /> Set as default race data to use for finish times
+              </label>
+            </div>
+            <div className="field">
+              <label className="checkbox" htmlFor="is_timing_reference">
+                <input
+                  className="checkbox"
+                  type="checkbox"
+                  name="is_timing_reference"
+                  checked={!!raceFormData.is_timing_reference}
+                  onChange={handleCheckbox} /> Use this race as the time source (ie offset = 0)
               </label>
             </div>
 
@@ -139,7 +145,7 @@ export default function RaceTimesManagerDetail () {
               <TextButton label={"Submit"} isSubmit={true}/>
             </div>
             <div className="field">
-              <TextButton label={"Delete key"} onClick={handleDelete} isCancel/>
+              <TextButton label={"Delete race"} onClick={handleDelete} isCancel/>
             </div>
           </form>
         }

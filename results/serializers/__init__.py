@@ -28,6 +28,7 @@ from .race_serializers import (
     RaceTimesWithRaceSerializer,
     PopulatedRaceTimesSerializer,
     WriteRaceTimesSerializer,
+    RaceTimingSyncSerializer,
 )
 
 from .crew_serializers import (

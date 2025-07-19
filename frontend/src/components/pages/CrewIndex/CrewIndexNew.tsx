@@ -349,7 +349,6 @@ export default function CrewIndex() {
                               ? formatTimes(crew.raw_time)
                               : "⚠️"}
                     </td>
-                    <td>{crew.crew_timing_offset}</td>
                     <td>
                       {crew.disqualified
                         ? "Disqualified"

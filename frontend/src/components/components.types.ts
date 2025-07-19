@@ -1,4 +1,6 @@
 export type TimeProps = {
+  finish_time?: number | null;
+  start_time?: number | null;
   id: number;
   sequence: number;
   tap: 'Start' | 'Finish';
@@ -24,9 +26,14 @@ export type EventProps = {
   override_name: string;
   type: string;
 }
+
+export type BandProps = {
+    id: number;
+    name: string;
+    event: EventProps;
+}
   
 export type CrewProps = {
-  crew_timing_offset: number;
   category_position_time: number;
   id: string;
   name: string;
@@ -43,6 +50,9 @@ export type CrewProps = {
   raw_time?: number | null;
   race_time?: number | null;
   published_time?: number | null;
+  manual_override_minutes: number;
+  manual_override_seconds: number;
+  manual_override_hundredths_seconds: number;
   manual_override_time?: number | null;
   disqualified?: boolean;
   did_not_start?: boolean;
@@ -51,6 +61,7 @@ export type CrewProps = {
   overall_rank: number;
   category_rank: number;
   gender_rank: number;
+  band: BandProps;
   event: EventProps;
   masters_adjustment?: number;
   masters_adjusted_time?: number;
@@ -87,18 +98,21 @@ export type NumberLocationProps = {
   id: number;
 }
 
+export type TimingOffsetProps = {
+  id?: number;
+  reference_race: number;
+  target_race: number;
+  timing_offset_ms: number;
+}
+
 export type RaceInfoProps = {
   id: number;
-  timing_offset_hours: number;
-  timing_offset_minutes: number;
-  timing_offset_seconds: number;
-  timing_offset_hundredths_seconds: number;
-  timing_offset_positive: boolean;
   broe_data_last_update: string;
-  timing_offset: number;
+  pre_race_mode: boolean;
 }
 
 export type RaceProps = {
+  is_timing_reference: any;
   race_id: string;
   id: string;
   name: string;

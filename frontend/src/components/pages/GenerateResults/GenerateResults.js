@@ -6,6 +6,7 @@ import Hero from '../../organisms/Hero/Hero'
 import Header from '../../organisms/Header/Header'
 import TextButton from '../../atoms/TextButton/TextButton'
 import RaceTimesManager from '../../organisms/RaceTimesManager/RaceTimesManager'
+import TimingOffsetEntry from '../../organisms/TimingOffsetManager/TimingOffsetManager'
 
 class GenerateResults extends React.Component {
   constructor() {
@@ -34,6 +35,7 @@ class GenerateResults extends React.Component {
                 <p className="csv-data-loader__description">Add races and import results from webscorer api</p>
               </div>
               <RaceTimesManager />
+              <TimingOffsetEntry />
               <CSVDataLoader
                 url='/api/crew-race-times-import/'
                 buttonText='Import race times'

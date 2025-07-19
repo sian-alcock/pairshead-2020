@@ -28,7 +28,9 @@ $navbar-item-hover-color: white;
 $navbar-height: 1 rem;
 
 
-
+.sr-only {
+  @include sr-only;
+}
 
 
 .startTab.active, .finishTab.active {
@@ -63,10 +65,6 @@ table {
 
 .padding {
   padding: 1em;
-}
-
-.container {
-  align-content: center;
 }
 
 .column.left, div.list-totals {

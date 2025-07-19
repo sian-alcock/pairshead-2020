@@ -1,5 +1,7 @@
-from django.db import models
-from django.db.models import Min
+from django.db import models, transaction
+from django.db.models.signals import post_save, post_delete
+from django.db.models import Min, Avg
+from django.dispatch import receiver
 
 from .club_model import Club
 from .band_model import Band
@@ -9,6 +11,7 @@ from .event_order_model import EventOrder
 from .marshalling_division_model import MarshallingDivision
 from .number_location_model import NumberLocation
 from .global_settings_model import GlobalSettings
+from .race_model import Race
 
 class Crew(models.Model):
     created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
@@ -37,8 +40,10 @@ class Crew(models.Model):
     did_not_finish = models.BooleanField(default=False)
     disqualified = models.BooleanField(default=False)
     requires_recalculation = models.BooleanField(default=False)
-    race_id_start = models.IntegerField(default=0)
-    race_id_finish = models.IntegerField(default=0)
+    race_id_start_override = models.ForeignKey(Race, related_name='crew_override_start',
+    on_delete=models.SET_NULL, blank=True, null=True)
+    race_id_finish_override = models.ForeignKey(Race, related_name='crew_override_finish',
+    on_delete=models.SET_NULL, blank=True, null=True)
 
     # The following fields are only populated to run the On the day contact report
     # Importing for the results will set these to null
@@ -66,8 +71,6 @@ class Crew(models.Model):
     draw_start_score = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=4)
     calculated_start_order = models.IntegerField(blank=True, null=True)
     competitor_names = models.CharField(max_length=60, blank=True, null=True)
-    crew_timing_offset = models.IntegerField(blank=True, null=True, default=0)
-
 
     def __str__(self):
         return self.name
@@ -78,52 +81,37 @@ class Crew(models.Model):
         Combined save method that calculates all computed fields
         """
         # Calculate all the computed fields
-        self.crew_timing_offset = self.calc_crew_timing_offset()
         self.event_band = self.calc_event_band()
-        self.raw_time = self.calc_raw_time()
-        self.race_time = self.calc_race_time()
-        self.published_time = self.calc_published_time()
-        self.start_time = self.calc_start_time()
-        self.finish_time = self.calc_finish_time()
-        self.overall_rank = self.calc_overall_rank()
-        self.gender_rank = self.calc_gender_rank()
-        self.category_position_time = self.calc_category_position_time()
-        self.category_rank = self.calc_category_rank()
-        self.masters_adjustment = self.calc_masters_adjustment()
-        self.start_sequence = self.calc_start_sequence()
-        self.finish_sequence = self.calc_finish_sequence()
-        self.competitor_names = self.get_competitor_names()
-        self.draw_start_score = self.calc_draw_start_score()
-        self.calculated_start_order = self.calc_calculated_start_order()
+        # self.raw_time = self.calc_raw_time()
+        # self.race_time = self.calc_race_time()
+        # self.published_time = self.calc_published_time()
+        # self.start_time = self.calc_start_time()
+        # self.finish_time = self.calc_finish_time()
+        # self.overall_rank = self.calc_overall_rank()
+        # self.gender_rank = self.calc_gender_rank()
+        # self.category_position_time = self.calc_category_position_time()
+        # self.category_rank = self.calc_category_rank()
+        # self.masters_adjustment = self.calc_masters_adjustment()
+        # self.start_sequence = self.calc_start_sequence()
+        # self.finish_sequence = self.calc_finish_sequence()
+        # self.competitor_names = self.get_competitor_names()
+        # self.draw_start_score = self.calc_draw_start_score()
+        # self.calculated_start_order = self.calc_calculated_start_order()
     
         # Call the parent save method
         super(Crew, self).save(*args, **kwargs)
-    
-    # Get offset if there is one
-    def calc_crew_timing_offset(self):
-        settings = GlobalSettings.objects.all()
-        for setting in settings:
-            setting.save()
 
-        if GlobalSettings.objects.filter(timing_offset__gt=0).exists():
-            offset_record = GlobalSettings.objects.filter(timing_offset__gt=0)[0]
-            if offset_record.timing_offset_positive:
-                offset = offset_record.timing_offset
-            else:
-                offset = 0 - offset_record.timing_offset
-        else: 
-            offset = 0
-
-        return offset
     
     # Event band
     def calc_event_band(self):
         return str(self.event.override_name) + ' ' + str(self.band.name) if self.band else self.event.override_name
     
 
-    # Raw time
     def calc_raw_time(self):
-
+        """
+        Calculate raw time (finish - start) with proper timing synchronization.
+        Returns time in milliseconds.
+        """
         try:
             # Get the default start and finish races
             race_default_start = Race.objects.get(default_start=True)
@@ -136,24 +124,60 @@ class Crew(models.Model):
             if self.did_not_start or self.did_not_finish or self.disqualified:
                 return 0
 
-            # Get start and finish times for this crew from the default races
-            start_time_record = self.times.get(tap='Start', race=race_default_start)
-            finish_time_record = self.times.get(tap='Finish', race=race_default_finish)
+            # Get start and finish times for this crew from the appropriate races
+            if self.race_id_start_override:
+                start_time_record = self.times.get(tap="Start", race=self.race_id_start_override)
+            else:
+                start_time_record = self.times.get(tap='Start', race=race_default_start)
 
-            start = start_time_record.time_tap
-            end = finish_time_record.time_tap
+            if self.race_id_finish_override:
+                finish_time_record = self.times.get(tap="Finish", race=self.race_id_finish_override)
+            else:
+                finish_time_record = self.times.get(tap='Finish', race=race_default_finish)
 
-            # Apply timing offset if it exists
-            if self.crew_timing_offset:
-                end = end + self.crew_timing_offset
+            # Get the races for timing synchronization
+            start_race = start_time_record.race
+            finish_race = finish_time_record.race
 
-            return end - start
+            # Get synchronized times
+            synchronized_start = self._get_synchronized_time(start_time_record.time_tap, start_race)
+            synchronized_finish = self._get_synchronized_time(finish_time_record.time_tap, finish_race)
+
+            # Debug logging
+            if start_race.id == finish_race.id:
+                print(f"Same race used for start and finish: {start_race.name}")
+            else:
+                print(f"Different races - Start: {start_race.name}, Finish: {finish_race.name}")
+                print(f"Raw start: {start_time_record.time_tap}, Synchronized: {synchronized_start}")
+                print(f"Raw finish: {finish_time_record.time_tap}, Synchronized: {synchronized_finish}")
+
+            return synchronized_finish - synchronized_start
         
         except RaceTime.DoesNotExist:
             # Return 0 if start or finish time records don't exist
             return 0
-    
-    # Race time
+
+    def _get_synchronized_time(self, raw_time_ms, source_race):
+        """
+        Helper method to get synchronized time for a given race.
+        If the race is the timing reference, return the raw time.
+        Otherwise, apply the timing offset.
+        """
+        # If this race is the timing reference, no adjustment needed
+        if source_race.is_timing_reference:
+            return raw_time_ms
+        
+        try:
+            # Look for a sync record where this race is the target
+            sync_record = RaceTimingSync.objects.get(target_race=source_race)
+            synchronized_time = raw_time_ms + sync_record.timing_offset_ms
+            return synchronized_time
+        except RaceTimingSync.DoesNotExist:
+            # If no sync record exists, treat this race as already synchronized
+            # This handles the case where races are already in sync or no sync is needed
+            return raw_time_ms
+        
+        # Race time
     def calc_race_time(self):
         try:
             # The race time can include the penalty as by default it is 0
@@ -392,25 +416,6 @@ class Crew(models.Model):
             number_location = None
         return number_location
 
-class Race(models.Model):
-    race_id = models.CharField(max_length=15, default='')
-    name = models.CharField(max_length=30)
-    default_start = models.BooleanField(default=False)
-    default_finish = models.BooleanField(default=False)
-
-    def save(self, *args, **kwargs):
-        # Handle default_start flag
-        if self.default_start:
-            with transaction.atomic():
-                Race.objects.filter(default_start=True).update(default_start=False)
-        
-        # Handle default_finish flag  
-        if self.default_finish:
-            with transaction.atomic():
-                Race.objects.filter(default_finish=True).update(default_finish=False)
-        
-        # Call the parent save method
-        super(Race, self).save(*args, **kwargs)
 
 class RaceTime(models.Model):
     sequence = models.IntegerField()
@@ -419,7 +424,16 @@ class RaceTime(models.Model):
     time_tap = models.BigIntegerField()
     crew = models.ForeignKey(Crew, related_name='times',
     on_delete=models.SET_NULL, blank=True, null=True,)
-    race = models.ForeignKey(Race, related_name='races', on_delete=models.SET_NULL, blank=True, null=True,)
+    race = models.ForeignKey(Race, related_name='race_times', on_delete=models.CASCADE, blank=True, null=True,)
+    
+    @property
+    def synchronized_time(self):
+        """
+        Get the time synchronized to the reference timing system.
+        """
+        if self.race:
+            return self.race.get_synchronized_time(self.time_tap)
+        return self.time_tap
 
 class OriginalEventCategory(models.Model):
     crew = models.ForeignKey(Crew, related_name='event_original',

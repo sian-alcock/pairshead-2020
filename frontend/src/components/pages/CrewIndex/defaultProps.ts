@@ -12,7 +12,6 @@ export const headings = [
   "Start time",
   "Finish time",
   "Raw time",
-  "Timing offset",
   "Race time",
   "Mas cat",
   "Mas adjust",

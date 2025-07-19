@@ -4,7 +4,14 @@ Race and RaceTime related serializers.
 
 import re
 from rest_framework import serializers
-from ..models import Race, RaceTime
+from ..models import Race, RaceTime, RaceTimingSync
+from ..utils import parse_time_to_milliseconds
+
+class RaceTimingSyncSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = RaceTimingSync
+        fields = '__all__'
 
 class RaceTimesSerializer(serializers.ModelSerializer):
 
@@ -35,23 +42,13 @@ class WriteRaceTimesSerializer(serializers.ModelSerializer):
         fields = ('id', 'sequence', 'bib_number', 'tap', 'time_tap', 'crew', 'race',)
 
     def validate_time_tap(self, value):
-
-        # if time tap format is mm:ss.SS (eg 58:13.04), then add 0: at front
-        if re.match(r'^[0-9]{2}:[0-9]{2}.[0-9]{2}', value):
-            value = f'0:{value}'
-
-        # if time tap format is not h:mm:ss.SS (eg 2:58:13.04), then generate an error
-        if not re.match(r'^[0-9]{1}:[0-9]{2}:[0-9]{2}.[0-9]{2}', value):
-            raise serializers.ValidationError({'time_tap': 'Problem with time tap format'})
-
-        hrs, mins, secs = value.split(':')
-
-        secs, hdths = secs.split('.')
-
-        # convert to miliseconds
-        value = int(hrs)*60*60*1000 + int(mins)*60*1000 + int(secs)*1000 + int(hdths) * 10
-
-        return value
+        try:
+            return parse_time_to_milliseconds(value)
+        except ValueError as e:
+            raise serializers.ValidationError({
+                'time_tap': str(e)
+            })
+        
 
 class PopulatedRaceTimesSerializer(serializers.ModelSerializer):
     """RaceTime serializer with basic crew info and race info."""

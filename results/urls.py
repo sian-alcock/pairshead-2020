@@ -14,6 +14,7 @@ from .views import number_location
 from .views import event_meeting_key
 from .views import global_settings
 from .views import race
+from .views import race_timing_sync
 
 
 urlpatterns = [
@@ -63,7 +64,9 @@ path('event-meeting-key-list/', event_meeting_key.EventMeetingKeyListView.as_vie
 path('event-meeting-key-list/<int:pk>', event_meeting_key.EventMeetingKeyDetailView.as_view(), name='event-meeting-key-detail'),
 path('global-settings-list/', global_settings.GlobalSettingsListView.as_view()),
 path('global-settings-list/<int:pk>', global_settings.GlobalSettingsDetailView.as_view(), name='global-settings-detail'),
-path('race/<int:pk>', race.RaceDetailView.as_view(), name='race-detail'),
-path('race-list/', race.RaceListView.as_view(), name='race-list'),
+path('races/', race.RaceListView.as_view(), name='race-list'),
+path('races/<int:pk>/', race.RaceDetailView.as_view(), name='race-detail'),
+path('race-time-sync/', race_timing_sync.RaceTimingSyncListView.as_view(), name='race-timing-sync-list'),
+path('race-time-sync/<int:pk>/', race_timing_sync.RaceTimingSyncDetailView.as_view(), name='race-timing-sync-detail'),
 
 ]

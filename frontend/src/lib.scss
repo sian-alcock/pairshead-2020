@@ -153,6 +153,23 @@ $cols: 12;
   }
 }
 
+@mixin form() {
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  @media screen and (min-width: $md) {
+    width: 75%
+  }
+  @media screen and (min-width: $lg) {
+    width: 50%;
+  }
+}
+
+@mixin field() {
+  padding: 1.5rem 0;
+}
+
 @mixin grid($cols: $cols, $size: 1fr) {
   display: grid;
   gap: rem(24px);

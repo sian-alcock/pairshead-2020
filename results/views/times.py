@@ -20,11 +20,6 @@ from rest_framework import filters, generics
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.parsers import MultiPartParser, FormParser, ParseError
 
-
-
-
-
-
 from ..serializers import WriteRaceTimesSerializer, RaceTimesSerializer, PopulatedRaceTimesSerializer
 
 from ..models import RaceTime, Crew, Race
@@ -171,34 +166,35 @@ class ImportRaceTimesCSVFolder(APIView):
 
             return Response(serializer.data)
         
-        
     def calculate_computed_properties(self):
 
-            for crew in Crew.objects.all():
-                crew.raw_time = crew.calc_raw_time()
-                crew.race_time = crew.calc_race_time()
-                crew.published_time = crew.calc_published_time()
-                crew.start_time = crew.calc_start_time()
-                crew.finish_time = crew.calc_finish_time()
-                crew.overall_rank = crew.calc_overall_rank()
-                crew.gender_rank = crew.calc_gender_rank()
-                crew.category_position_time = crew.calc_category_position_time()
-                crew.category_rank = crew.calc_category_rank()
-                crew.start_sequence = crew.calc_start_sequence()
-                crew.finish_sequence = crew.calc_finish_sequence()
-                crew.masters_adjustment = crew.calc_masters_adjustment()
-                crew.requires_recalculation = True
-                crew.save()
+        for crew in Crew.objects.all():
+            crew.raw_time = crew.calc_raw_time()
+            crew.race_time = crew.calc_race_time()
+            crew.published_time = crew.calc_published_time()
+            crew.start_time = crew.calc_start_time()
+            crew.finish_time = crew.calc_finish_time()
+            crew.overall_rank = crew.calc_overall_rank()
+            crew.gender_rank = crew.calc_gender_rank()
+            crew.category_position_time = crew.calc_category_position_time()
+            crew.category_rank = crew.calc_category_rank()
+            crew.start_sequence = crew.calc_start_sequence()
+            crew.finish_sequence = crew.calc_finish_sequence()
+            crew.masters_adjustment = crew.calc_masters_adjustment()
+            crew.requires_recalculation = True
+            crew.save()
 
 
 class ImportTimesWebscorer(APIView):
 
-    def get(self, _request, id=None, delete_times=False):
-        if delete_times:
-            RaceTime.objects.all().delete()
+    def get(self, _request, id=None, delete_times=True):
 
         apiid = os.getenv("WEBSCORERAPI")
         race_id = Race.objects.get(id=id).race_id
+
+        if delete_times:
+            race_times_to_delete = RaceTime.objects.filter(race_id=id)
+            race_times_to_delete.delete()
 
         url = 'https://www.webscorer.com/json/fasttaps' 
         payload = {'raceid':race_id, 'apiid':apiid}
@@ -215,6 +211,7 @@ class ImportTimesWebscorer(APIView):
                     'tap': tap['Tap'],
                     'time_tap': tap['Time tap'],
                     'crew': tap['Team name 2'],
+                    'time_of_day': tap['Time tap (time of day)'],
                     'race': id
                 }
 
@@ -226,11 +223,29 @@ class ImportTimesWebscorer(APIView):
 
             serializer = RaceTimesSerializer(race_times, many=True)
 
-            # self.calculate_computed_properties()
+            self.calculate_computed_properties()
 
             return Response(serializer.data)
-
+        
         return Response(status=400)
+
+    def calculate_computed_properties(self):
+
+        for crew in Crew.objects.all():
+            crew.raw_time = crew.calc_raw_time()
+            crew.race_time = crew.calc_race_time()
+            crew.published_time = crew.calc_published_time()
+            crew.start_time = crew.calc_start_time()
+            crew.finish_time = crew.calc_finish_time()
+            crew.overall_rank = crew.calc_overall_rank()
+            crew.gender_rank = crew.calc_gender_rank()
+            crew.category_position_time = crew.calc_category_position_time()
+            crew.category_rank = crew.calc_category_rank()
+            crew.start_sequence = crew.calc_start_sequence()
+            crew.finish_sequence = crew.calc_finish_sequence()
+            crew.masters_adjustment = crew.calc_masters_adjustment()
+            # crew.requires_recalculation = True
+            crew.save()
 
 
 
