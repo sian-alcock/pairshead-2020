@@ -90,8 +90,8 @@ class BROELoader extends Component {
       const formData = new FormData()
       formData.append( 'broe_data_last_update', crews.data[0].updated )
 
-      if (settingsTable.data.results.length > 0) {
-        axios.put(`/api/global-settings-list/${settingsTable.data.results[0].id}`, formData)
+      if (settingsTable.data.length > 0) {
+        axios.put(`/api/global-settings-list/${settingsTable.data[0].id}`, formData)
       } else {
         axios.post(`/api/global-settings-list/`, formData)
       }

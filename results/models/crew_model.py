@@ -11,7 +11,7 @@ from .event_order_model import EventOrder
 from .marshalling_division_model import MarshallingDivision
 from .number_location_model import NumberLocation
 from .global_settings_model import GlobalSettings
-from .race_model import Race
+from .race_model import Race, RaceTimingSync
 
 class Crew(models.Model):
     created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
@@ -101,6 +101,30 @@ class Crew(models.Model):
         # Call the parent save method
         super(Crew, self).save(*args, **kwargs)
 
+    def update_computed_properties(self, save=True):
+        """Update all computed properties for this crew."""
+        self.raw_time = self.calc_raw_time()
+        self.race_time = self.calc_race_time()
+        self.published_time = self.calc_published_time()
+        self.start_time = self.calc_start_time()
+        self.finish_time = self.calc_finish_time()
+        self.overall_rank = self.calc_overall_rank()
+        self.gender_rank = self.calc_gender_rank()
+        self.category_position_time = self.calc_category_position_time()
+        self.category_rank = self.calc_category_rank()
+        self.start_sequence = self.calc_start_sequence()
+        self.finish_sequence = self.calc_finish_sequence()
+        self.masters_adjustment = self.calc_masters_adjustment()
+        
+        if save:
+            self.save()
+    
+    @classmethod
+    def update_all_computed_properties(cls):
+        """Update computed properties for all crews."""
+        for crew in cls.objects.all():
+            crew.update_computed_properties()
+
     
     # Event band
     def calc_event_band(self):
@@ -142,14 +166,6 @@ class Crew(models.Model):
             # Get synchronized times
             synchronized_start = self._get_synchronized_time(start_time_record.time_tap, start_race)
             synchronized_finish = self._get_synchronized_time(finish_time_record.time_tap, finish_race)
-
-            # Debug logging
-            if start_race.id == finish_race.id:
-                print(f"Same race used for start and finish: {start_race.name}")
-            else:
-                print(f"Different races - Start: {start_race.name}, Finish: {finish_race.name}")
-                print(f"Raw start: {start_time_record.time_tap}, Synchronized: {synchronized_start}")
-                print(f"Raw finish: {finish_time_record.time_tap}, Synchronized: {synchronized_finish}")
 
             return synchronized_finish - synchronized_start
         

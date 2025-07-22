@@ -44,11 +44,11 @@ export default function CrewStartOrder() {
         params: params
       });
 
-      const responseData: ResponseDataProps = response.data;
+      const responseData: CrewProps[] = response.data;
 
-      setCrews(responseData.results);
-      setTotalCrews(responseData.count);
-      setScratchedCrews(responseData.num_scratched_crews);
+      setCrews(responseData);
+      // setTotalCrews(responseData.count);
+      // setScratchedCrews(responseData.num_scratched_crews);
     } catch (error) {
       console.error(error);
     }

@@ -91,9 +91,9 @@ export default function RaceTimeEdit () {
 
     // If more than one...get the one that is not the current one and update it to remove the crewID
 
-    if(otherTimesForSelectedCrew.results.length > 1) {
+    if(otherTimesForSelectedCrew.length > 1) {
       // get the ID of the one that isn't this one
-      const raceTimesToRemove = otherTimesForSelectedCrew.results.filter((time: TimeProps) => time.id !== raceTimeFormData.id)
+      const raceTimesToRemove = otherTimesForSelectedCrew.filter((time: TimeProps) => time.id !== raceTimeFormData.id)
       for(let i = 0; i < raceTimesToRemove.length; i++) {
         const raceTimeToRemovePromise = await axios.get(`/api/race-times/${raceTimesToRemove[i].id}`)
         const raceTimeToRemoveFormData = raceTimeToRemovePromise.data

@@ -7,29 +7,18 @@ import { NumberLocationProps } from "../../components.types"
 import TextButton from "../../atoms/TextButton/TextButton"
 import { Link } from "react-router-dom"
 
-interface ResponseParamsProps {
-
-}
-
-interface ResponseDataProps {
-  results: NumberLocationProps[];
-}
-
 export default function SetNumberLocations () {
   const [hosts, setHosts] = useState<NumberLocationProps[]>()
 
-  const fetchData = async (url: string, params: ResponseParamsProps) => {
+  const fetchData = async (url: string) => {
     console.log(url)
-    console.log(params)
     try {
     
-      const response: AxiosResponse = await axios.get(url, {
-        params: params
-      });
+      const response: AxiosResponse = await axios.get(url);
       
-      const responseData: ResponseDataProps = response.data;
+      const responseData: NumberLocationProps[] = response.data;
       console.log(responseData)
-      setHosts(responseData.results)
+      setHosts(responseData)
 
     } catch (error) {
     
@@ -39,9 +28,7 @@ export default function SetNumberLocations () {
   };
 
   useEffect(() => {
-    fetchData("/api/number-locations/", {
-      page_size: "50",
-    })
+    fetchData("/api/number-locations/")
   },[])
 
   return (

@@ -80,16 +80,16 @@ export default function ResultIndex () {
         params: params
       });
       
-      const responseData: ResponseDataProps = response.data;
+      const responseData: CrewProps[] = response.data;
       console.log(responseData)
-      setTotalCrews(responseData.count)
-      setResults(responseData.results)
-      setUpdateRequired(responseData.requires_ranking_update)
-      setFastestMen2x(responseData.fastest_open_2x_time.raw_time__min)
-      setFastestFemale2x(responseData.fastest_female_2x_time.raw_time__min)
-      setFastestMenSweep(responseData.fastest_open_sweep_time.raw_time__min)
-      setFastestFemaleSweep(responseData.fastest_female_sweep_time.raw_time__min)
-      setFastestMixed2x(responseData.fastest_mixed_2x_time.raw_time__min)
+      // setTotalCrews(responseData.count)
+      setResults(responseData)
+      // setUpdateRequired(responseData.requires_ranking_update)
+      // setFastestMen2x(responseData.fastest_open_2x_time.raw_time__min)
+      // setFastestFemale2x(responseData.fastest_female_2x_time.raw_time__min)
+      // setFastestMenSweep(responseData.fastest_open_sweep_time.raw_time__min)
+      // setFastestFemaleSweep(responseData.fastest_female_sweep_time.raw_time__min)
+      // setFastestMixed2x(responseData.fastest_mixed_2x_time.raw_time__min)
     } catch (error) {
     
       console.error(error)

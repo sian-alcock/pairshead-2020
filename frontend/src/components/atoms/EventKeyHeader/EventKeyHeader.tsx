@@ -16,9 +16,9 @@ export default function EventKeyHeader ():ReactElement {
     try {
       const response: AxiosResponse = await axios.get(url);
 
-      const responseData: ResponseDataProps = response.data;
+      const responseData: KeyProps[] = response.data;
 
-      setKeys(responseData.results);
+      setKeys(responseData);
 
     } catch (error) {
       console.error(error);

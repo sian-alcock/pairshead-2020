@@ -24,29 +24,30 @@ from ..serializers import WriteRaceTimesSerializer, RaceTimesSerializer, Populat
 
 from ..models import RaceTime, Crew, Race
 
-from ..pagination import RaceTimePaginationWithAggregates
+# from ..pagination import RaceTimePaginationWithAggregates
 
 
 class RaceTimeListView(generics.ListCreateAPIView):
     serializer_class = PopulatedRaceTimesSerializer
-    pagination_class = RaceTimePaginationWithAggregates
-    PageNumberPagination.page_size_query_param = 'page_size' or 10
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
-    ordering_fields = ['sequence']
-    search_fields = ['sequence', 'bib_number', 'tap', 'crew__id', 'crew__name', 'crew__competitor_names',]
-    filterset_fields = ['tap', 'crew__id',]
+    queryset = RaceTime.objects.all()
+    # pagination_class = RaceTimePaginationWithAggregates
+    # PageNumberPagination.page_size_query_param = 'page_size' or 10
+    # filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
+    # ordering_fields = ['sequence']
+    # search_fields = ['sequence', 'bib_number', 'tap', 'crew__id', 'crew__name', 'crew__competitor_names',]
+    # filterset_fields = ['tap', 'crew__id',]
 
-    def get_queryset(self):
-        times = RaceTime.objects.all()
-        tap = self.request.query_params.get('tap')
-        queryset = times.filter(tap__exact=tap).order_by('sequence')
+    # def get_queryset(self):
+    #     times = RaceTime.objects.all()
+    #     tap = self.request.query_params.get('tap')
+    #     queryset = times.filter(tap__exact=tap).order_by('sequence')
 
-        times_without_crew = self.request.query_params.get('noCrew')
-        if times_without_crew == 'true':
-            queryset = times.filter(tap__exact=tap, crew__isnull=True).order_by('sequence')
-            return queryset
+    #     times_without_crew = self.request.query_params.get('noCrew')
+    #     if times_without_crew == 'true':
+    #         queryset = times.filter(tap__exact=tap, crew__isnull=True).order_by('sequence')
+    #         return queryset
 
-        return queryset
+    #     return queryset
 
 
 class RaceTimeDetailView(APIView):
@@ -223,31 +224,8 @@ class ImportTimesWebscorer(APIView):
 
             serializer = RaceTimesSerializer(race_times, many=True)
 
-            self.calculate_computed_properties()
+            Crew.update_all_computed_properties()
 
             return Response(serializer.data)
         
         return Response(status=400)
-
-    def calculate_computed_properties(self):
-
-        for crew in Crew.objects.all():
-            crew.raw_time = crew.calc_raw_time()
-            crew.race_time = crew.calc_race_time()
-            crew.published_time = crew.calc_published_time()
-            crew.start_time = crew.calc_start_time()
-            crew.finish_time = crew.calc_finish_time()
-            crew.overall_rank = crew.calc_overall_rank()
-            crew.gender_rank = crew.calc_gender_rank()
-            crew.category_position_time = crew.calc_category_position_time()
-            crew.category_rank = crew.calc_category_rank()
-            crew.start_sequence = crew.calc_start_sequence()
-            crew.finish_sequence = crew.calc_finish_sequence()
-            crew.masters_adjustment = crew.calc_masters_adjustment()
-            # crew.requires_recalculation = True
-            crew.save()
-
-
-
-
-

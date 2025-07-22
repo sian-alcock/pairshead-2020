@@ -21,35 +21,35 @@ from ..serializers import PopulatedCrewSerializer
 
 from ..models import Crew
 
-from ..pagination import CrewPaginationWithAggregates
+# from ..pagination import CrewPaginationWithAggregates
 
 
 class ResultsListView(generics.ListCreateAPIView):
     serializer_class = PopulatedCrewSerializer
-    pagination_class = CrewPaginationWithAggregates
-    PageNumberPagination.page_size_query_param = 'page_size' or 10
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
-    ordering_fields = ['overall_rank', 'gender_rank', 'category_rank', 'event_band', 'name',]
-    search_fields = ['name', 'club__name', 'event_band', 'bib_number', 'competitor_names',]
-    filterset_fields = ['status', 'event_band', 'raw_time',]
+    # pagination_class = CrewPaginationWithAggregates
+    # PageNumberPagination.page_size_query_param = 'page_size' or 10
+    # filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
+    # ordering_fields = ['overall_rank', 'gender_rank', 'category_rank', 'event_band', 'name',]
+    # search_fields = ['name', 'club__name', 'event_band', 'bib_number', 'competitor_names',]
+    # filterset_fields = ['status', 'event_band', 'raw_time',]
 
-    def get_queryset(self):
+    # def get_queryset(self):
 
-        queryset = Crew.objects.filter(status__exact='Accepted', published_time__gt=0,).order_by('name',)
+    #     queryset = Crew.objects.filter(status__exact='Accepted', published_time__gt=0,).order_by('name',)
 
-        gender = self.request.query_params.get('gender')
-        print(gender)
-        if gender != 'all':
-            queryset = queryset.filter(event__gender=gender).order_by('overall_rank')
-            return queryset
+    #     gender = self.request.query_params.get('gender')
+    #     print(gender)
+    #     if gender != 'all':
+    #         queryset = queryset.filter(event__gender=gender).order_by('overall_rank')
+    #         return queryset
 
-        first_and_second_crews = self.request.query_params.get('categoryRank')
-        print(first_and_second_crews)
-        if first_and_second_crews != 'all':
-            queryset = queryset.filter(category_rank__lt=3).order_by('event_band', 'category_rank',)
-            return queryset
+    #     first_and_second_crews = self.request.query_params.get('categoryRank')
+    #     print(first_and_second_crews)
+    #     if first_and_second_crews != 'all':
+    #         queryset = queryset.filter(category_rank__lt=3).order_by('event_band', 'category_rank',)
+    #         return queryset
 
-        return queryset.order_by('overall_rank')
+    #     return queryset.order_by('overall_rank')
 
 class ResultDataExport(APIView):
 

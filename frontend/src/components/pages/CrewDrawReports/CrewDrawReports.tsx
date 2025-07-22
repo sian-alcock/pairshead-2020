@@ -28,32 +28,23 @@ interface ResponseDataProps {
 export default function CrewDrawReports() {
   const [crews, setCrews] = useState<CrewProps[]>([]);
   const [view, setView] = useState(sessionStorage.getItem('view') || 'marshall')
-  const [totalCrews, setTotalCrews] = useState(0);
+  // const [totalCrews, setTotalCrews] = useState(0);
 
-  const fetchData = async (url: string, params: ResponseParamsProps) => {
-    console.log(url);
-    console.log(params);
+  const fetchData = async (url: string) => {
     try {
-      const response: AxiosResponse = await axios.get(url, {
-        params: params
-      });
+      const response: AxiosResponse = await axios.get(url);
 
-      const responseData: ResponseDataProps = response.data;
+      const responseData: CrewProps[] = response.data;
 
-      setCrews(responseData.results);
-      setTotalCrews(responseData.count);
+      setCrews(responseData);
+      // setTotalCrews(responseData.count);
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    fetchData("/api/crews", {
-      page_size: "500",
-      page: 1,
-      order: "bib_number",
-      status: ["Accepted", "Scratched"]
-    });
+    fetchData("/api/crews");
   }, []);
 
   const changeView = (view: string) => {

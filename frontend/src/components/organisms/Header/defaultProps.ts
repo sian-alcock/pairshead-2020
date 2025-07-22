@@ -65,6 +65,11 @@ export const menuProps: MenuProps = {
           authenticated: true
         },
         {
+          link: "/generate-results/crews-time-compare",
+          title: "Compare race times",
+          authenticated: true
+        },
+        {
           link: "/generate-results/results",
           title: "Final results",
           authenticated: false

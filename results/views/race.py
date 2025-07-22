@@ -16,12 +16,14 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from ..serializers import RaceSerializer
 
-from ..models import Race
+from ..models import Race, Crew
 
 class RaceListView(generics.ListCreateAPIView):
     queryset = Race.objects.all()
     serializer_class = RaceSerializer
+    Crew.update_all_computed_properties()
 
 class RaceDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Race.objects.all()
     serializer_class = RaceSerializer
+    Crew.update_all_computed_properties()

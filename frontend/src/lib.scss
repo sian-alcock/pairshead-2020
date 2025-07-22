@@ -203,3 +203,13 @@ $html-font-size: 16px;
 @function rem($pxValue) {
   @return #{math.div(strip-unit($pxValue), strip-unit($html-font-size))}rem;
 }
+
+@mixin table {
+  th, td {
+    padding: 0.5rem 1rem;
+  }
+
+  tr {
+    border-bottom: 1px solid $bblGrey;
+  }
+}

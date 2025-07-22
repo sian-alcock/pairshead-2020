@@ -34,6 +34,8 @@ export type BandProps = {
 }
   
 export type CrewProps = {
+  race_id_start_override: number | null;
+  race_id_finish_override: number | null;
   category_position_time: number;
   id: string;
   name: string;

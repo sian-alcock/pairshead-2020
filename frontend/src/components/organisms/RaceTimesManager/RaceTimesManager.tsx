@@ -11,22 +11,24 @@ interface RaceTimesManagerProps {
   title: string;
 }
 
-interface ResponseDataProps {
-  results: RaceProps[];
+interface RadioSelection {
+  raceId: string;
+  type: 'default-start' | 'default-finish';
 }
 
 export default function RaceTimesManager ({title}: RaceTimesManagerProps):ReactElement {
 
   const [raceDetails, setRaceDetails] = useState<RaceProps[]>([]);
   const [raceTimes, setRaceTimes] = useState<RaceProps[]>([]);
+  const [radioSelections, setRadioSelections] = useState<RadioSelection[]>([]);
 
   const fetchData = async (url: string) => {
     try {
       const response: AxiosResponse = await axios.get(url);
 
-      const responseData: ResponseDataProps = response.data;
+      const responseData: RaceProps[] = response.data;
 
-      setRaceDetails(responseData.results);
+      setRaceDetails(responseData);
       console.log(responseData)
 
     } catch (error) {
@@ -39,26 +41,68 @@ export default function RaceTimesManager ({title}: RaceTimesManagerProps):ReactE
   }, [raceTimes]);
 
   const handleRadio = (e: React.MouseEvent) => {
-    console.log(e.target)
-    // setCurrentKey({'currentKey': e.target.id})
+    const clickedElement = e.target as HTMLInputElement;
+    const race = clickedElement.closest('tr')?.dataset.race;
+    const radioName = clickedElement.name; // This gets 'default-start' or 'default-finish'
+    
+    if (race && radioName) {
+      // Remove any existing selection for this race and radio type
+      setRadioSelections(prev => 
+        prev.filter(selection => 
+          !(selection.raceId === race && selection.type === radioName as 'default-start' | 'default-finish')
+        )
+      );
+      
+      // Add the new selection if the radio is checked
+      if (clickedElement.checked) {
+        setRadioSelections(prev => [...prev, {
+          raceId: race,
+          type: radioName as 'default-start' | 'default-finish'
+        }]);
+      }
+      
+      console.log(`Radio selected: ${radioName} for race ${race}`);
+    }
   }
 
-  const handleSubmit = () => {
-    console.log('submit happened yo')
+  const handleSubmit = async () => {
+    try {
+      // Process each radio selection
+      for (const selection of radioSelections) {
+        const updateData = {
+          [selection.type.replace('-', '_')]: true // Convert 'default-start' to 'default_start'
+        };
+        
+        const response: AxiosResponse = await axios.patch(
+          `api/races/${selection.raceId}/`, 
+          updateData
+        );
+        
+        console.log(`Updated race ${selection.raceId}:`, response.data);
+      }
+      
+      // Clear selections after successful submission
+      setRadioSelections([]);
+      
+      // Refresh the data to show updated values
+      fetchData("/api/races/");
+      
+      console.log('All updates completed successfully');
+    } catch (error) {
+      console.error('Error updating races:', error);
+    }
   }
 
   const handleDelete = async (e:React.MouseEvent) => {
     const clickedElement = e.target as Element
-    console.log('Delete happened yo')
     const race = clickedElement.closest('tr')?.dataset.race
-    console.log(race)
 
     try {
       const response: AxiosResponse = await axios.delete(`api/races/${race}`);
 
-      const responseData: ResponseDataProps = response.data;
+      const responseData: RaceProps[] = response.data;
 
-      setRaceTimes(responseData.results);
+      setRaceTimes(responseData);
       console.log(responseData)
 
     } catch (error) {
@@ -73,9 +117,9 @@ export default function RaceTimesManager ({title}: RaceTimesManagerProps):ReactE
     try {
       const response: AxiosResponse = await axios.get(`api/crew-race-times-import-webscorer/${race}`);
 
-      const responseData: ResponseDataProps = response.data;
+      const responseData: RaceProps[] = response.data;
 
-      setRaceTimes(responseData.results);
+      setRaceTimes(responseData);
       console.log(responseData)
 
     } catch (error) {

@@ -6,10 +6,6 @@ import "./timingOffsetManager.scss"
 import TextButton from "../../atoms/TextButton/TextButton";
 import { IconButton } from "../../atoms/IconButton/IconButton";
 
-interface ResponseDataProps {
-  results: TimingOffsetProps[];
-}
-
 export default function TimingOffsetManager() {
   const [timingOffsets, setTimingOffsets] = useState<TimingOffsetProps[]>([]);
   const [races, setRaces] = useState<RaceProps[] | undefined>()
@@ -18,13 +14,13 @@ export default function TimingOffsetManager() {
     try {
       const response: AxiosResponse = await axios.get(url);
 
-      const responseData: ResponseDataProps = response.data;
+      const responseData: TimingOffsetProps[] = response.data;
 
-      setTimingOffsets(responseData.results);
+      setTimingOffsets(responseData);
 
       const raceResponse: AxiosResponse = await axios.get('api/races')
       console.log(raceResponse)
-      setRaces(raceResponse.data.results)
+      setRaces(raceResponse.data)
 
     } catch (error) {
       console.error(error);
@@ -42,9 +38,9 @@ export default function TimingOffsetManager() {
     try {
       const response: AxiosResponse = await axios.delete(`api/race-time-sync/${timingOffset}`);
 
-      const responseData: ResponseDataProps = response.data;
+      const responseData: TimingOffsetProps[] = response.data;
 
-      setTimingOffsets(responseData.results);
+      setTimingOffsets(responseData);
 
     } catch (error) {
       console.error(error);

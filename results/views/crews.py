@@ -6,6 +6,7 @@ import requests
 import time
 # if this is where you store your django-rest-framework settings
 # from django.conf import settings
+from django.db import transaction
 from rest_framework import status
 from django.http import Http404, HttpResponse
 from rest_framework.views import APIView
@@ -20,45 +21,41 @@ from .helpers import decode_utf8
 
 from ..serializers import ClubSerializer, CrewSerializer, CrewSerializerLimited, CSVUpdateCrewSerializer, PopulatedCrewSerializer, WriteCrewSerializer, CrewExportSerializer
 
-from ..models import Crew, RaceTime, OriginalEventCategory, EventMeetingKey
+from ..models import Crew, Race, RaceTime, OriginalEventCategory, EventMeetingKey
 
-from ..pagination import CrewPaginationWithAggregates
+# from ..pagination import CrewPaginationWithAggregates
+
 
 class CrewListView(generics.ListCreateAPIView):
     queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted', 'Submitted'))
     serializer_class = PopulatedCrewSerializer
-    pagination_class = CrewPaginationWithAggregates
-    PageNumberPagination.page_size_query_param = 'page_size' or 10
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
-    ordering_fields = '__all__'
-    search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number', 'competitor_names',]
-    filterset_fields = ['status', 'event_band', 'start_time', 'finish_time',]
+    # pagination_class = CrewPaginationWithAggregates
+    # PageNumberPagination.page_size_query_param = 'page_size' or 10
+    # filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
+    # ordering_fields = '__all__'
+    # search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number', 'competitor_names',]
+    # filterset_fields = ['status', 'event_band', 'start_time', 'finish_time',]
 
-    def get_queryset(self):
+    # def get_queryset(self):
 
-        queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted', 'Submitted'))
+    #     queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted', 'Submitted'))
 
-        masters = self.request.query_params.get('masters')
-        # print(masters)
-        if masters == 'true':
-            queryset = queryset.filter(status__exact='Accepted', masters_adjustment__gt=0).order_by('event_band')
-            return queryset
+    #     masters = self.request.query_params.get('masters')
+    #     if masters == 'true':
+    #         queryset = queryset.filter(status__exact='Accepted', masters_adjustment__gt=0).order_by('event_band')
+    #         return queryset
 
-        order = self.request.query_params.get('order', None)
-        if order == 'start-score':
-            return queryset.order_by('draw_start_score')
-        if order == 'club':
-            return queryset.order_by('club__name', 'name',)
-        # if order == 'crew':
-        #     return queryset.order_by('competitor_names', 'name',)
-        # if order == '-crew':
-        #     return queryset.order_by('-competitor_names', '-name',)
-        if order is not None:
-            return queryset.order_by(order)
-        return queryset.order_by('bib_number')
+    #     order = self.request.query_params.get('order', None)
+    #     if order == 'start-score':
+    #         return queryset.order_by('draw_start_score')
+    #     if order == 'club':
+    #         return queryset.order_by('club__name', 'name',)
+    #     if order is not None:
+    #         return queryset.order_by(order)
+    #     return queryset.order_by('bib_number')
 
-    def get_num_scratched_crews(self):
-        return len(self.queryset.filter(status__exact='Scratched'))
+    # def get_num_scratched_crews(self):
+    #     return len(self.queryset.filter(status__exact='Scratched'))
     
 class CrewListOptionsForSelect(APIView):
     def get(self, _request):
@@ -545,3 +542,32 @@ class CSVImportPenalties(APIView):
             'success': False,
             'errors': serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
+
+class CrewBulkUpdateOverridesView(APIView):
+    def patch(self, request):
+        updates = request.data.get('updates', [])
+        if not updates:
+            return Response({'error': 'No updates provided'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            with transaction.atomic():
+                updated_crews = []
+                for update in updates:
+                    crew_id = update.get('crew_id')
+                    if not crew_id:
+                        continue
+                    try:
+                        crew = Crew.objects.get(id=crew_id)
+                        if 'race_id_start_override' in update:
+                            race_id = update['race_id_start_override']
+                            crew.race_id_start_override_id = race_id if race_id else None
+                        if 'race_id_finish_override' in update:
+                            race_id = update['race_id_finish_override']
+                            crew.race_id_finish_override_id = race_id if race_id else None
+                        crew.save()
+                        updated_crews.append(crew_id)
+                    except Crew.DoesNotExist:
+                        return Response({'error': f'Crew with id {crew_id} not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'success': True, 'updated_count': len(updated_crews), 'updated_crew_ids': updated_crews})
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

@@ -39,9 +39,9 @@ export default function CrewStartByNumberLocation () {
         params: params
       });
 
-      const responseData: ResponseDataProps = response.data;
+      const responseData: CrewProps[] = response.data;
 
-      setCrews(responseData.results);
+      setCrews(responseData);
       setIsLoading(false)
 
     //   setTotalCrews(responseData.count);

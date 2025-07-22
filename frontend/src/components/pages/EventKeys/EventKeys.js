@@ -18,7 +18,7 @@ const EventKeys = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
 
-    const keyToBeUpdated = data.results.find(item => item.id === Number(currentKey.currentKey))
+    const keyToBeUpdated = data.find(item => item.id === Number(currentKey.currentKey))
 
     const formData = 		{
       'id': keyToBeUpdated.id,
@@ -62,7 +62,7 @@ const EventKeys = () => {
                 </tr>
               </tfoot>
               <tbody>
-                {data && data['results'].map(key => <tr key={key.id}>
+                {data.map(key => <tr key={key.id}>
                   <td><Link to={`/settings/keys/${key.id}/edit`}>{key.id}</Link></td>
                   <td>{key.event_meeting_name}</td>
                   <td>{'******' + key.event_meeting_key.slice(-5)}</td>

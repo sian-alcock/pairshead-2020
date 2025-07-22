@@ -23,24 +23,24 @@ interface ResponseParamsProps {
   masters?: boolean;
 }
 
-interface ResponseDataProps {
-  count: number;
-  requires_ranking_update: number;
-  next: number | null;
-  previous: number | null;
-  results: CrewProps[];
-  num_scratched_crews: number;
-  num_accepted_crews: number;
-  num_accepted_crews_no_start_time: number;
-  num_accepted_crews_no_finish_time: number;
-  fastest_open_2x_time: {raw_time__min: number};
-  fastest_female_2x_time: {raw_time__min: number};
-  fastest_open_sweep_time: {raw_time__min: number};
-  fastest_female_sweep_time: {raw_time__min: number};
-  fastest_mixed_2x_time:{raw_time__min: number};
-  num_crews_masters_adjusted: boolean;
-  num_crews_require_masters_adjusted: boolean;
-}
+// interface ResponseDataProps {
+//   count: number;
+//   requires_ranking_update: number;
+//   next: number | null;
+//   previous: number | null;
+//   results: CrewProps[];
+//   num_scratched_crews: number;
+//   num_accepted_crews: number;
+//   num_accepted_crews_no_start_time: number;
+//   num_accepted_crews_no_finish_time: number;
+//   fastest_open_2x_time: {raw_time__min: number};
+//   fastest_female_2x_time: {raw_time__min: number};
+//   fastest_open_sweep_time: {raw_time__min: number};
+//   fastest_female_sweep_time: {raw_time__min: number};
+//   fastest_mixed_2x_time:{raw_time__min: number};
+//   num_crews_masters_adjusted: boolean;
+//   num_crews_require_masters_adjusted: boolean;
+// }
 
 export default function CrewIndex() {
   const [crews, setCrews] = useState<CrewProps[]>([]);
@@ -78,21 +78,21 @@ export default function CrewIndex() {
         params: params
       });
 
-      const responseData: ResponseDataProps = response.data;
+      const responseData: CrewProps[] = response.data;
 
-      setCrews(responseData.results);
-      setTotalCrews(responseData.count);
-      setScratchedCrews(responseData.num_scratched_crews);
-      setAcceptedCrewsNoStart(responseData.num_accepted_crews_no_start_time)
-      setAcceptedCrewsNoFinish(responseData.num_accepted_crews_no_finish_time)
-      setFastestMen2x(responseData.fastest_open_2x_time.raw_time__min),
-      setFastestFemale2x(responseData.fastest_female_2x_time.raw_time__min),
-      setFastestMenSweep(responseData.fastest_open_sweep_time.raw_time__min),
-      setFastestFemaleSweep(responseData.fastest_female_sweep_time.raw_time__min),
-      setFastestMixed2x(responseData.fastest_mixed_2x_time.raw_time__min),
-      setMastersAdjustmentsApplied(responseData.num_crews_masters_adjusted),
-      setMastersAdjustmentsRequired(responseData.num_crews_require_masters_adjusted)
-      setUpdateRequired(responseData.requires_ranking_update)
+      setCrews(responseData);
+      // setTotalCrews(responseData.count);
+      // setScratchedCrews(responseData.num_scratched_crews);
+      // setAcceptedCrewsNoStart(responseData.num_accepted_crews_no_start_time)
+      // setAcceptedCrewsNoFinish(responseData.num_accepted_crews_no_finish_time)
+      // setFastestMen2x(responseData.fastest_open_2x_time.raw_time__min),
+      // setFastestFemale2x(responseData.fastest_female_2x_time.raw_time__min),
+      // setFastestMenSweep(responseData.fastest_open_sweep_time.raw_time__min),
+      // setFastestFemaleSweep(responseData.fastest_female_sweep_time.raw_time__min),
+      // setFastestMixed2x(responseData.fastest_mixed_2x_time.raw_time__min),
+      // setMastersAdjustmentsApplied(responseData.num_crews_masters_adjusted),
+      // setMastersAdjustmentsRequired(responseData.num_crews_require_masters_adjusted)
+      // setUpdateRequired(responseData.requires_ranking_update)
 
     } catch (error) {
       console.error(error);

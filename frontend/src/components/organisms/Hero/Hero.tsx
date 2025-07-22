@@ -12,10 +12,6 @@ interface HeroProps {
   title: string;
 }
 
-interface ResponseDataProps {
-  results: RaceInfoProps[];
-}
-
 export default function Hero ({title}: HeroProps):ReactElement {
 
   const [settings, setSettings] = useState<RaceInfoProps[]>([]);
@@ -24,9 +20,9 @@ export default function Hero ({title}: HeroProps):ReactElement {
     try {
       const response: AxiosResponse = await axios.get(url);
 
-      const responseData: ResponseDataProps = response.data;
+      const responseData: RaceInfoProps[] = response.data;
 
-      setSettings(responseData.results);
+      setSettings(responseData);
 
     } catch (error) {
       console.error(error);

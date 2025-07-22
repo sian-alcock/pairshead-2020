@@ -39,11 +39,11 @@ export default function TimingOffsetManagerDetail () {
 
       const raceResponse: AxiosResponse = await axios.get(`/api/races/`);
       const raceResponseData = raceResponse.data;
-      const races = raceResponseData.results
+      const races = raceResponseData
       if(races) {
         setRaces(races)
       }
-      const referenceRace = raceResponseData.results?.find((race: { is_timing_reference: boolean }) => race.is_timing_reference);
+      const referenceRace = raceResponseData?.find((race: { is_timing_reference: boolean }) => race.is_timing_reference);
       if (referenceRace) {
         setReferenceRaceId(referenceRace.id);
       }

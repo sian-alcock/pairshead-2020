@@ -55,12 +55,12 @@ export default function RaceTimeIndex() {
         params: params
       });
 
-      const responseData: ResponseDataProps = response.data;
+      const responseData: TimeProps[] = response.data;
 
-      setRaceTimes(responseData.results);
-      setTotalTimes(responseData.count);
-      setStartTimesWithNoCrew(responseData.start_times_no_crew)
-      setFinishTimesWithNoCrew(responseData.finish_times_no_crew)
+      setRaceTimes(responseData);
+      // setTotalTimes(responseData.count);
+      // setStartTimesWithNoCrew(responseData.start_times_no_crew)
+      // setFinishTimesWithNoCrew(responseData.finish_times_no_crew)
 
       console.log(responseData)
 
