@@ -150,7 +150,6 @@ export default function RaceTimeIndex() {
     <Hero title={"Race times"} />
     <section className="race-times__section">
       <div className="race-times__container">
-        <RaceTimesManager title={"Race time manager goes here..."} />
         <div className="race-times__tabs-wrapper no-print">
             <ul className="race-times__tabs">
               <li onClick={() => displayView('Start')}>
@@ -163,17 +162,6 @@ export default function RaceTimeIndex() {
         </div>
 
         <div className="columns is-vcentered">
-
-          {/* <div className="column">
-            <label className="label has-text-left" htmlFor="raceTimeSearch">Search</label>
-
-            <div className="search field control control-full-width has-icons-left no-print">
-              <span className="icon is-left">
-                <i className="fas fa-search"></i>
-              </span>
-              <input id="raceTimeSearch" className="input control-full-width" placeholder="search" defaultValue={searchTerm} onKeyUp={handleSearchKeyUp} />
-            </div>
-          </div> */}
 
           <div className="column">
             <div className="field">

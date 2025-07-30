@@ -17,16 +17,6 @@
       border: 2px solid $bblBlue;
       background: $white;
       outline: 2px solid $phLogoBlue;
-
-      .form-select__select {
-        color: get-value(font-color);
-      }
-
-      .form-select__icon {
-        svg > path {
-          fill: get-value(icon-color);
-        }
-      }
     }
   }
 }

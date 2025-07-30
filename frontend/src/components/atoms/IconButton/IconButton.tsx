@@ -13,7 +13,7 @@ export interface IconButtonProps {
   ariaExpanded?: boolean;
   isSubmit?: boolean;
   disabled?: boolean;
-  sitsInTable?: boolean;
+  smaller?: boolean;
 }
 
 type Ref = HTMLButtonElement | null;
@@ -30,13 +30,13 @@ export const IconButton = forwardRef<Ref, IconButtonProps>(
       isSubmit = false,
       disabled = false,
       ariaExpanded,
-      sitsInTable = false
+      smaller = false,
     },
     ref
   ): ReactElement =>
     onClick || isSubmit ? (
       <button
-        className={sitsInTable ? "icon-button icon-button--small" : "icon-button"}
+        className={smaller ? "icon-button icon-button--small" : "icon-button"}
         disabled={disabled}
         onClick={onClick}
         aria-controls={ariaControls}
@@ -51,7 +51,7 @@ export const IconButton = forwardRef<Ref, IconButtonProps>(
       </button>
     ) : (
       <a
-        className={sitsInTable ? "icon-button icon-button--small" : "icon-button"}
+        className={smaller ? "icon-button icon-button--small" : "icon-button"}
         href={url}
         target={externalLink ? '_blank' : '_self'}
         rel={externalLink ? 'noopener noreferrer' : ''}

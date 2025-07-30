@@ -1,0 +1,57 @@
+@import '../../../style.scss';
+@import '../../../lib.scss';
+
+.crew-manager {
+
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+
+  &__tabs {
+    display: flex;
+    margin: 1.5rem 0;
+    border-bottom: 2px solid $phLogoBlue;
+  }
+
+  &__tab {
+    display: block;
+    padding: 1rem;
+    background-color: $bblBlue;
+    border: 2px solid $phLogoBlue;
+    a {
+      color: $white;
+      @include body-small($bold);
+    }
+
+
+    &:hover {
+      background-color: $phLogoBlue;
+      a {
+        color: $bblBlue;
+      }
+    }
+
+
+    &.is-active {
+      background-color: $phLogoBlue;
+      a {
+        color: $bblBlue; 
+      }
+    }
+  }
+
+  &__tag {
+    display:inline-block;
+    background-color: $white;
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+    margin-left: 0.5rem;
+    color: $bblBlue;
+    min-width: 2.8rem;
+    text-align: center;
+  }
+}

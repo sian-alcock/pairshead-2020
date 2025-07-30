@@ -10,7 +10,7 @@ import Info from "./components/pages/Info/Info"
 import Register from "./components/auth/Register"
 import Login from "./components/auth/Login"
 import CrewIndex from "./components/pages/CrewIndex/CrewIndexNew"
-import CrewTimeCompare from "./components/pages/CrewTimeCompare/CrewTimeCompare"
+import CrewManagementDashboard from "./components/pages/CrewManagementDashboard/CrewManagementDashboard"
 import CrewTimeEdit from "./components/pages/CrewIndex/CrewTimeEdit"
 import ResultIndex from "./components/pages/ResultIndex/ResultIndexNew"
 import GenerateResults from "./components/pages/GenerateResults/GenerateResults"
@@ -32,8 +32,9 @@ import NumberLocationNew from "./components/pages/SetNumberLocations/NumberLocat
 import NumberLocationEdit from "./components/pages/SetNumberLocations/NumberLocationEdit"
 import RaceTimeIndex from "./components/pages/RaceTimes/RaceTimeIndex"
 import RaceTimeEdit from "./components/pages/RaceTimes/RaceTimeEdit"
-import RaceTimesManagerDetail from "./components/organisms/RaceTimesManager/RaceTimesManagerDetail"
+import RaceTimesManagerDetail from "./components/organisms/RaceTimesManagerDetail/RaceTimesManagerDetail"
 import TimingOffsetManagerDetail from "./components/organisms/TimingOffsetManager/TimingOffsetManagerDetail";
+import MarshallingDivisions from "./components/pages/MarshallingDivisions/MarshallingDivisions";
 
 import 'bulma'
 import "./style.scss"
@@ -63,7 +64,7 @@ function App() {
           <Switch>
             <SecureRoute path="/generate-results/crews/:id/edit" component={CrewTimeEdit} />
             <SecureRoute path="/generate-results/crews" component={CrewIndex} />
-            <SecureRoute path="/generate-results/crews-time-compare" component={CrewTimeCompare} />
+            <SecureRoute path="/generate-results/crew-management-dashboard" component={CrewManagementDashboard} />
             <SecureRoute path="/generate-results/race-times/:id/edit" component={RaceTimeEdit} />
             <SecureRoute path="/generate-results/race-times" component={RaceTimeIndex} />
             <SecureRoute path="/generate-results/export" component={ExportData} />
@@ -88,6 +89,7 @@ function App() {
             <SecureRoute path="/generate-start-order/set-number-locations/:id/edit" component={NumberLocationEdit} />
             <SecureRoute path="/generate-start-order/set-number-locations/new" component={NumberLocationNew} />
             <SecureRoute path="/generate-start-order/set-number-locations" component={SetNumberLocations} />
+            <SecureRoute path="/generate-start-order/marshalling-divisions" component={MarshallingDivisions} />
             <SecureRoute path="/generate-start-order" component={GenerateStartOrder} />
             <Route path="/login" component={Login} />
             <SecureRoute path="/" component={Home} />

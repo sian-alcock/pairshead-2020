@@ -1,6 +1,13 @@
 import React, { ReactElement } from "react";
 
 export type IconType =
+  | 'add'
+  | 'sort'
+  | 'sort-asc'
+  | 'sort-desc'
+  | 'file'
+  | 'upload'
+  | 'download'
   | 'chevron-down'
   | 'chevron-right'
   | 'arrow-right'
@@ -31,16 +38,108 @@ export default function Icon({
   ariaHidden = false
 }: IconProps): ReactElement {
   switch (icon) {
+    case "add":
+      return (
+        <svg
+          className="icon__plus"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px" viewBox="0 -960 960 960"
+          width="24px" fill="currentColor"
+        >
+          <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/>
+        </svg>
+      )
+    case "sort":
+      return (
+        <svg 
+          className="icon__sort"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor">
+          <path d="M440-80v-168l-64 64-56-56 160-160 160 160-56 56-64-64v168h-80ZM160-440v-80h640v80H160Zm320-120L320-720l56-56 64 64v-168h80v168l64-64 56 56-160 160Z"/>
+        </svg>
+      )
+    case "sort-asc":
+      return (
+        <svg
+        className="icon__sort-asc"
+        aria-hidden={ariaHidden}
+        xmlns="http://www.w3.org/2000/svg"
+        height="24px"
+        viewBox="0 -960 960 960"
+        width="24px"
+        fill="currentColor">
+          <path d="M440-240v-368L296-464l-56-56 240-240 240 240-56 56-144-144v368h-80Z"/>
+          </svg>
+      )
+    case "sort-desc":
+      return (
+        <svg
+          className="icon__sort-desc"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px" 
+          fill="currentColor"
+        >
+            <path d="M480-240 240-480l56-56 144 144v-368h80v368l144-144 56 56-240 240Z"/>
+        </svg>
+      )
+    case "file":
+      return (
+        <svg 
+        className="icon__file"
+        aria-hidden={ariaHidden}
+        xmlns="http://www.w3.org/2000/svg"
+        height="24px"
+        viewBox="0 -960 960 960"
+        width="24px"
+        fill="currentColor">
+          <path d="M320-240h320v-80H320v80Zm0-160h320v-80H320v80ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z"/>
+          </svg>
+      )
+    case "upload":
+      return (
+        <svg 
+          className="icon__upload"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor">
+            <path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
+            </svg>
+      )
+    case "download":
+      return (
+        <svg
+          className="icon__download"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg" 
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="#currentColor"
+        >
+          <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/>
+        </svg>
+      )
     case "chevron-down":
       return (
         <svg
           className="icon__chevron-down"
+          aria-hidden={ariaHidden}
           width="24"
           height="24"
           viewBox="0 0 48 48"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          aria-hidden={ariaHidden}
         >
           <path d="M36 18L24 30L12 18" stroke="currentColor" strokeWidth="2" />
         </svg>
@@ -72,7 +171,7 @@ export default function Icon({
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden={ariaHidden}
         >
-          <path d="M0.999999 1L9 9L1 17" stroke="black" strokeWidth="1.5" />
+          <path d="M0.999999 1L9 9L1 17" stroke="currentColor" strokeWidth="1.5" />
         </svg>
       );
     case "hamburger":
@@ -117,6 +216,7 @@ export default function Icon({
       return (
         <svg
           className="icon__arrow-left"
+          aria-hidden={ariaHidden}
           width="14"
           height="12"
           viewBox="0 0 14 12"
@@ -130,20 +230,14 @@ export default function Icon({
     case "search":
       return (
         <svg
-          className="icon__search"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+          className="icon__arrow-left"
           aria-hidden={ariaHidden}
-        >
-          <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M12 16.5C9.51472 16.5 7.5 14.4853 7.5 12C7.5 9.51472 9.51472 7.5 12 7.5C14.4853 7.5 16.5 9.51472 16.5 12C16.5 14.4853 14.4853 16.5 12 16.5ZM12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 13.3865 17.5297 14.6632 16.7399 15.6792L18.5303 17.4696L17.4697 18.5303L15.6792 16.7399C14.6632 17.5297 13.3865 18 12 18Z"
-            fill="currentColor"
-          />
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor">
+            <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z"/>
         </svg>
       );
     case "arrow-down":

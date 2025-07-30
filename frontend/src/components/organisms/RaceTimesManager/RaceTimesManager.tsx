@@ -1,14 +1,25 @@
-import React, { ReactElement, useEffect, useState } from 'react'
-import axios, {AxiosResponse} from 'axios'
-import { RaceProps } from '../../components.types';
+import React, { ReactElement, useState } from 'react'
+import axios, { AxiosResponse } from 'axios'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  getExpandedRowModel,
+  ExpandedState,
+} from '@tanstack/react-table'
+import { RaceProps } from '../../components.types'
 import './raceTimesManager.scss'
-import TextButton from '../../atoms/TextButton/TextButton';
-import { IconButton } from '../../atoms/IconButton/IconButton';
-import { Link } from 'react-router-dom';
-
+import TextButton from '../../atoms/TextButton/TextButton'
+import { IconButton } from '../../atoms/IconButton/IconButton'
+import { Link } from 'react-router-dom'
+import Icon from '../../atoms/Icons/Icons'
+import CSVDataLoader from '../../molecules/CSVDataLoader/CSVDataLoader'
 
 interface RaceTimesManagerProps {
   title: string;
+  onDataChanged: () => void;
 }
 
 interface RadioSelection {
@@ -16,53 +27,87 @@ interface RadioSelection {
   type: 'default-start' | 'default-finish';
 }
 
-export default function RaceTimesManager ({title}: RaceTimesManagerProps):ReactElement {
+// API functions
+const fetchRaces = async (): Promise<RaceProps[]> => {
+  const response: AxiosResponse = await axios.get('/api/races/')
+  return response.data
+}
 
-  const [raceDetails, setRaceDetails] = useState<RaceProps[]>([]);
-  const [raceTimes, setRaceTimes] = useState<RaceProps[]>([]);
-  const [radioSelections, setRadioSelections] = useState<RadioSelection[]>([]);
+const updateRace = async ({ raceId, updateData }: { raceId: string; updateData: any }) => {
+  const response: AxiosResponse = await axios.patch(`/api/races/${raceId}/`, updateData)
+  return response.data
+}
 
-  const fetchData = async (url: string) => {
-    try {
-      const response: AxiosResponse = await axios.get(url);
+const deleteRace = async (raceId: string) => {
+  const response: AxiosResponse = await axios.delete(`/api/races/${raceId}`)
+  return response.data
+}
 
-      const responseData: RaceProps[] = response.data;
+const refreshRaceData = async (raceId: string) => {
+  const response: AxiosResponse = await axios.get(`/api/crew-race-times-import-webscorer/${raceId}`)
+  return response.data
+}
 
-      setRaceDetails(responseData);
-      console.log(responseData)
+const columnHelper = createColumnHelper<RaceProps>()
 
-    } catch (error) {
-      console.error(error);
-    }
-  };
+export default function RaceTimesManager({ title, onDataChanged }: RaceTimesManagerProps): ReactElement {
+  const [radioSelections, setRadioSelections] = useState<RadioSelection[]>([])
+  const [expanded, setExpanded] = useState<ExpandedState>({})
+  
+  const queryClient = useQueryClient()
 
-  useEffect(() => {
-    fetchData("/api/races/");
-  }, [raceTimes]);
+  // React Query for data fetching
+  const { data: raceDetails = [], isLoading, error } = useQuery({
+    queryKey: ['races'],
+    queryFn: fetchRaces,
+  })
 
-  const handleRadio = (e: React.MouseEvent) => {
-    const clickedElement = e.target as HTMLInputElement;
-    const race = clickedElement.closest('tr')?.dataset.race;
-    const radioName = clickedElement.name; // This gets 'default-start' or 'default-finish'
-    
-    if (race && radioName) {
+  // Mutations
+  const updateRaceMutation = useMutation({
+    mutationFn: updateRace,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['races'] })
+      onDataChanged()
+    },
+  })
+
+  const deleteRaceMutation = useMutation({
+    mutationFn: deleteRace,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['races'] })
+      onDataChanged()
+    },
+  })
+
+  const refreshRaceMutation = useMutation({
+    mutationFn: refreshRaceData,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['races'] })
+      onDataChanged()
+    },
+  })
+
+  const handleRadio = (raceId: string, type: 'default-start' | 'default-finish', checked: boolean) => {
+    if (checked) {
       // Remove any existing selection for this race and radio type
       setRadioSelections(prev => 
         prev.filter(selection => 
-          !(selection.raceId === race && selection.type === radioName as 'default-start' | 'default-finish')
+          !(selection.raceId === raceId && selection.type === type)
         )
-      );
+      )
       
-      // Add the new selection if the radio is checked
-      if (clickedElement.checked) {
-        setRadioSelections(prev => [...prev, {
-          raceId: race,
-          type: radioName as 'default-start' | 'default-finish'
-        }]);
-      }
-      
-      console.log(`Radio selected: ${radioName} for race ${race}`);
+      // Add the new selection
+      setRadioSelections(prev => [...prev, { raceId, type }])
+    } else {
+      // Remove the selection
+      setRadioSelections(prev => 
+        prev.filter(selection => 
+          !(selection.raceId === raceId && selection.type === type)
+        )
+      )
     }
+    
+    console.log(`Radio selected: ${type} for race ${raceId}`)
   }
 
   const handleSubmit = async () => {
@@ -71,102 +116,234 @@ export default function RaceTimesManager ({title}: RaceTimesManagerProps):ReactE
       for (const selection of radioSelections) {
         const updateData = {
           [selection.type.replace('-', '_')]: true // Convert 'default-start' to 'default_start'
-        };
+        }
         
-        const response: AxiosResponse = await axios.patch(
-          `api/races/${selection.raceId}/`, 
+        await updateRaceMutation.mutateAsync({
+          raceId: selection.raceId,
           updateData
-        );
-        
-        console.log(`Updated race ${selection.raceId}:`, response.data);
+        })
       }
       
       // Clear selections after successful submission
-      setRadioSelections([]);
-      
-      // Refresh the data to show updated values
-      fetchData("/api/races/");
-      
-      console.log('All updates completed successfully');
+      setRadioSelections([])
+      console.log('All updates completed successfully')
     } catch (error) {
-      console.error('Error updating races:', error);
+      console.error('Error updating races:', error)
     }
   }
 
-  const handleDelete = async (e:React.MouseEvent) => {
-    const clickedElement = e.target as Element
-    const race = clickedElement.closest('tr')?.dataset.race
-
+  const handleDelete = async (raceId: string) => {
     try {
-      const response: AxiosResponse = await axios.delete(`api/races/${race}`);
-
-      const responseData: RaceProps[] = response.data;
-
-      setRaceTimes(responseData);
-      console.log(responseData)
-
+      await deleteRaceMutation.mutateAsync(raceId)
     } catch (error) {
-      console.error(error);
+      console.error('Error deleting race:', error)
     }
   }
 
-  const handleRefresh = async (e:React.MouseEvent) => {
-    const clickedElement = e.target as Element
-    const race = clickedElement.closest('tr')?.dataset.race
-
+  const handleRefresh = async (raceId: string) => {
     try {
-      const response: AxiosResponse = await axios.get(`api/crew-race-times-import-webscorer/${race}`);
-
-      const responseData: RaceProps[] = response.data;
-
-      setRaceTimes(responseData);
-      console.log(responseData)
-
+      await refreshRaceMutation.mutateAsync(raceId)
     } catch (error) {
-      console.error(error);
+      console.error('Error refreshing race data:', error)
     }
-  } 
+  }
 
-  const headings =['Id', 'Race id', 'Name', 'Default start', 'Default finish', 'Fetch data', 'Delete']
+  // Table columns definition
+  const columns = [
+    columnHelper.display({
+      id: 'expander',
+      header: '',
+      cell: ({ row }) => (
+        <button
+          onClick={() => row.toggleExpanded()}
+          className={row.getIsExpanded() ? 'race-times-manager__expand open' : 'race-times-manager__expand'}
+        >
+          <Icon icon={'chevron-right'} />
+        </button>
+      ),
+    }),
+    columnHelper.accessor('id', {
+      header: 'Id',
+      cell: (info) => (
+        <Link to={`/settings/race-time-manager/races/${info.getValue()}/edit`}>
+          {info.getValue()}
+        </Link>
+      ),
+    }),
+    columnHelper.accessor('race_id', {
+      header: 'Race id',
+    }),
+    columnHelper.accessor('name', {
+      header: 'Name',
+    }),
+    columnHelper.accessor('default_start', {
+      header: 'Default start',
+      cell: ({ row }) => (
+        <div className="td-center">
+          <label>
+            <input
+              type="radio"
+              name={`default-start-${row.original.id}`}
+              defaultChecked={row.original.default_start}
+              onChange={(e) => handleRadio(row.original.id, 'default-start', e.target.checked)}
+            />
+          </label>
+        </div>
+      ),
+    }),
+    columnHelper.accessor('default_finish', {
+      header: 'Default finish',
+      cell: ({ row }) => (
+        <div className="td-center">
+          <label>
+            <input
+              type="radio"
+              name={`default-finish-${row.original.id}`}
+              defaultChecked={row.original.default_finish}
+              onChange={(e) => handleRadio(row.original.id, 'default-finish', e.target.checked)}
+            />
+          </label>
+        </div>
+      ),
+    }),
+    columnHelper.display({
+      id: 'upload',
+      header: 'Upload CSV',
+      cell: ({ row }) => (
+        <div className="td-center">
+          <IconButton
+            title={'Upload from CSV'}
+            icon={'upload'}
+            smaller
+            onClick={() => row.toggleExpanded()}
+          />
+        </div>
+      ),
+    }),
+    columnHelper.display({
+      id: 'fetch',
+      header: 'Fetch data',
+      cell: ({ row }) => (
+        <div className="td-center">
+          <IconButton
+            title={'Fetch data from webscorer'}
+            icon={'refresh'}
+            smaller
+            onClick={() => handleRefresh(row.original.id)}
+            disabled={refreshRaceMutation.isPending}
+          />
+        </div>
+      ),
+    }),
+    columnHelper.display({
+      id: 'delete',
+      header: 'Delete',
+      cell: ({ row }) => (
+        <div className="td-center">
+          <IconButton
+            title={'Delete data for race'}
+            icon={'delete'}
+            smaller
+            onClick={() => handleDelete(row.original.id)}
+            disabled={deleteRaceMutation.isPending}
+          />
+        </div>
+      ),
+    }),
+  ]
+
+  const table = useReactTable({
+    data: raceDetails,
+    columns,
+    state: {
+      expanded,
+    },
+    onExpandedChange: setExpanded,
+    getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getRowCanExpand: () => true,
+  })
+
+  if (isLoading) return <div>Loading races...</div>
+  if (error) return <div>Error loading races: {error.message}</div>
+
   return (
     <section className="race-times-manager no-print">
       <h1>{title}</h1>
       <form className="race-times-manager__form">
         <table className="race-times-manager__table table">
           <thead>
-            <tr>
-              {headings.map((heading, idx) => <th key={idx}>{heading}</th> )}
-            </tr>
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
+                  <th key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </th>
+                ))}
+              </tr>
+            ))}
           </thead>
-          <tfoot>
-            <tr>
-              {headings.map((heading, idx) => <th key={idx}>{heading}</th> )}
-            </tr>
-          </tfoot>
           <tbody>
-            {raceDetails.map((detail, idx) => 
-            <tr key={detail.id} data-race={detail.id}>
-              <td><Link to={`/settings/race-time-manager/races/${detail.id}/edit`}>{detail.id}</Link></td>
-              <td>{detail.race_id}</td>
-              <td>{detail.name}</td>
-              <td className="td-center"><label><input onClick={handleRadio} type="radio" id={`${idx} - ${detail.id}`} name="default-start" defaultChecked={detail.default_start}></input></label></td>
-              <td className="td-center"><label><input onClick={handleRadio} type="radio" id={`${idx} - ${detail.id}`} name="default-finish" defaultChecked={detail.default_finish}></input></label></td>
-              <td className="td-center"><IconButton title={'Fetch data from webscorer'} icon={'refresh'} sitsInTable onClick={handleRefresh}/></td>
-              <td className="td-center"><IconButton title={'Delete data for race'} icon={'delete'} sitsInTable onClick={handleDelete}/></td>
-            </tr>
-              )}
+            {table.getRowModel().rows.map(row => (
+              <React.Fragment key={row.id}>
+                <tr data-race={row.original.id}>
+                  {row.getVisibleCells().map(cell => (
+                    <td key={cell.id}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
+                </tr>
+                {row.getIsExpanded() && (
+                  <tr>
+                    <td colSpan={columns.length}>
+                      <CSVDataLoader 
+                        url={'/api/crew-race-times-import/'} 
+                        queryParams={{id: `${row.original.id}`}}
+                      />
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            ))}
           </tbody>
+          <tfoot>
+            {table.getFooterGroups().map(footerGroup => (
+              <tr key={footerGroup.id}>
+                {footerGroup.headers.map(header => (
+                  <th key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.footer,
+                          header.getContext()
+                        )}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </tfoot>
         </table>
         <div className="field is-grouped">
           <p className="control">
-            <TextButton label={'Submit'} onClick={handleSubmit}/>
+            <TextButton 
+              label={'Submit'} 
+              onClick={handleSubmit}
+              disabled={updateRaceMutation.isPending || radioSelections.length === 0}
+            />
           </p>
           <p className="control">
-            <TextButton label={'Add new'} pathName={'/settings/race-time-manager/races/new'}/>
+            <TextButton 
+              label={'Add new'} 
+              pathName={'/settings/race-time-manager/races/new'}
+            />
           </p>
         </div>
       </form>
     </section>
-
   )
 }

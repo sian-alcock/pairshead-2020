@@ -16,7 +16,7 @@ export interface FormSelectProps {
   ariaControls?: string;
   autoFocus?: boolean;
   selectOptions: SelectOptionsProps[];
-  defaultValue: string | undefined;
+  value: string | undefined;
   hiddenLabel?: boolean;
   label?: string;
 }
@@ -24,7 +24,7 @@ export interface FormSelectProps {
 export const FormSelect = ({
   fieldName,
   selectOptions,
-  defaultValue = 'all',
+  value = 'all',
   hiddenLabel = false,
   title,
   label,
@@ -39,7 +39,7 @@ export const FormSelect = ({
     <div className="form-select__select-wrapper">
       <select
         className="form-select__select"
-        defaultValue={defaultValue}
+        value={value}
         id={fieldName}
         name={fieldName}
         onChange={onChange}

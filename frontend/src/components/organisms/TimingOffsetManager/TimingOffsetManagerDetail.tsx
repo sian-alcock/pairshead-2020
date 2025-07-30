@@ -188,7 +188,7 @@ export default function TimingOffsetManagerDetail () {
                 title={'Select reference race'}
                 label={'Reference race (Timing origin)'}
                 selectOptions={referenceRaceOptions}
-                defaultValue={raceTimingSyncFormData?.reference_race?.toString()}
+                value={raceTimingSyncFormData?.reference_race?.toString()}
                 onChange={(e) => setReferenceRaceId(e.target.value ? parseInt(e.target.value) : '')}
                 />
             </div>
@@ -199,7 +199,7 @@ export default function TimingOffsetManagerDetail () {
                 title={'Select target race'}
                 label={'Target race (to be synchronised)'}
                 selectOptions={targetRaceOptions}
-                defaultValue={raceTimingSyncFormData?.target_race?.toString()}
+                value={raceTimingSyncFormData?.target_race?.toString()}
                 onChange={(e) => setTargetRaceId(e.target.value ? parseInt(e.target.value) : '')}
               />
             </div>

@@ -4,7 +4,6 @@ from .competitors import *
 from .crews import *
 from .events import *
 from .times import *
-from .results import *
 from .masters_adjustments import *
 from .event_order import *
 from .marshalling_division import *
@@ -13,3 +12,4 @@ from .event_meeting_key import *
 from .global_settings import *
 from .race import *
 from .race_timing_sync import *
+from .time_compare import *

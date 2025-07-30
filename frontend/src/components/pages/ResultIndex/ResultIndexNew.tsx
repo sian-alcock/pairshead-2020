@@ -1,198 +1,254 @@
-import React, { useState, useEffect } from "react"
-import axios, { AxiosResponse } from "axios"
+import React, { useState, useMemo } from "react"
+import { useQuery } from "@tanstack/react-query"
+import {
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  flexRender,
+  createColumnHelper,
+  SortingState,
+  ColumnFiltersState,
+} from "@tanstack/react-table"
+import axios from "axios"
 import Hero from "../../organisms/Hero/Hero"
 import { formatTimes } from "../../../lib/helpers"
 import { CrewProps } from "../../components.types"
-import { tableHeadings } from "./defaultProps"
 import BladeImage from "../../atoms/BladeImage/BladeImage"
-import CrewTimeCalculatedFieldsUpdate from "../../molecules/UpdateCrews/UpdateCrewTimeCalculatedFields";
-import PageTotals from "../../molecules/PageTotals/PageTotals";
-import { pagingOptions, genderOptions } from "./defaultProps"
+import CrewTimeCalculatedFieldsUpdate from "../../molecules/UpdateCrews/UpdateCrewTimeCalculatedFields"
+import { genderOptions } from "./defaultProps"
 import TrophyImage from "../../atoms/Trophy/Trophy"
 import PennantImage from "../../atoms/Pennant/Pennant"
-
-
-import "./resultIndex.scss"
-import Paginator from "../../molecules/Paginator/Paginator"
 import Header from "../../organisms/Header/Header"
 
-interface ResponseParamsProps {
-  page_size?: string;
-  page?: number;
-  order?: string;
-  status?: string | string[];
-  masters?: boolean;
-  gender?: string;
-  categoryRank?: string;
-  categoryRankClose?: string;
-}
-
-interface ResponseDataProps {
-  count: number;
-  next: number | null;
-  previous: number | null;
-  results: CrewProps[];
-  num_scratched_crews: number;
-  num_accepted_crews: number;
-  requires_ranking_update: number;
-  fastest_open_2x_time: {raw_time__min: number};
-  fastest_female_2x_time: {raw_time__min: number};
-  fastest_open_sweep_time: {raw_time__min: number};
-  fastest_female_sweep_time: {raw_time__min: number};
-  fastest_mixed_2x_time:{raw_time__min: number};
-
-}
+import "./resultIndex.scss"
 
 interface CategoryResponseDataProps {
-  override_name: string;
+  override_name: string
 }
 
 type SelectOption = {
-  label: string | undefined;
-  value: string | undefined;
+  label: string | undefined
+  value: string | undefined
 }
 
-export default function ResultIndex () {
-  const [results, setResults] = useState<CrewProps[]>([])
-  const [totalCrews, setTotalCrews] = useState(0);
-  const [pageSize, setPageSize] = useState("20")
-  const [pageNumber, setPageNumber] = useState(1)
-  const [refreshDataQueryString, setRefreshDataQueryString] = useState<string | null>("")
-  const [searchTerm, setSearchTerm] = useState(sessionStorage.getItem("resultIndexSearch") || "")
-  const [categories, setCategories] = useState<SelectOption[] | null | undefined>([])
+const columnHelper = createColumnHelper<CrewProps>()
+
+export default function ResultIndex() {
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'rank', desc: false }])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [globalFilter, setGlobalFilter] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("")
   const [gender, setGender] = useState("all")
-  const [fastestMen2x, setFastestMen2x] = useState(0)
-  const [fastestFemale2x, setFastestFemale2x] = useState(0)
-  const [fastestMenSweep, setFastestMenSweep] = useState(0)
-  const [fastestFemaleSweep, setFastestFemaleSweep] = useState(0)
-  const [fastestMixed2x, setFastestMixed2x] = useState(0)
   const [firstAndSecondCrewsBoolean, setFirstAndSecondCrewsBoolean] = useState(false)
   const [closeFirstAndSecondCrewsBoolean, setCloseFirstAndSecondCrewsBoolean] = useState(false)
-  const [updateRequired, setUpdateRequired] = useState(0)
 
-  const fetchData = async (url: string, params: ResponseParamsProps) => {
-    console.log(url)
-    console.log(params)
-    try {
-    
-      const response: AxiosResponse = await axios.get(url, {
-        params: params
-      });
-      
-      const responseData: CrewProps[] = response.data;
-      console.log(responseData)
-      // setTotalCrews(responseData.count)
-      setResults(responseData)
-      // setUpdateRequired(responseData.requires_ranking_update)
-      // setFastestMen2x(responseData.fastest_open_2x_time.raw_time__min)
-      // setFastestFemale2x(responseData.fastest_female_2x_time.raw_time__min)
-      // setFastestMenSweep(responseData.fastest_open_sweep_time.raw_time__min)
-      // setFastestFemaleSweep(responseData.fastest_female_sweep_time.raw_time__min)
-      // setFastestMixed2x(responseData.fastest_mixed_2x_time.raw_time__min)
-    } catch (error) {
-    
-      console.error(error)
-      
-    }
-  };
+  // Fetch results data
+  const {
+    data: resultsData,
+    isLoading: resultsLoading,
+    error: resultsError,
+    refetch: refetchResults,
+  } = useQuery({
+    queryKey: ["results"],
+    queryFn: async (): Promise<CrewProps[]> => {
+      const response = await axios.get("/api/crews/")
+      return response.data
+    },
+  })
 
-  useEffect(() => {
-    fetchData("/api/results", {
-      page_size: "20",
-      gender: "all",
-      page: 1,
-      categoryRank: "all"
-    })
-    getCategories()
-  },[])
-
-  const refreshData = async (refreshDataQueryString:string | null = null) => {
-    fetchData(`/api/results?${refreshDataQueryString}`, {
-      page_size: pageSize,
-      gender: gender,
-      page: pageNumber,
-      categoryRank: firstAndSecondCrewsBoolean ? 'topTwo' : 'all',
-      categoryRankClose: closeFirstAndSecondCrewsBoolean ? 'topTwoClose' : 'all'
-    });
-  };
-
-  useEffect(() => {
-    refreshData(refreshDataQueryString);
-  }, [pageNumber, pageSize, gender, selectedCategory, firstAndSecondCrewsBoolean, closeFirstAndSecondCrewsBoolean, searchTerm]);
-
-   const getTopCrews = (event: string | undefined, crews:CrewProps[]) => {
-    // returns true if the 1st and 2nd crew in a category have a time within 2 seconds
-    console.log(crews.length)
-    const timeDifference = 2000
-    const crewsInCategory = crews.filter(crew => crew.event_band === event && !crew.time_only && crew.category_rank <= 2)
-    const raceTimes = crewsInCategory.map(crew => crew.category_position_time)
-    const sorted = raceTimes.slice().sort((a,b) => a - b)
-    const flagForReview = Math.abs(sorted[0]-sorted[1]) <= timeDifference ? true : false
-    // console.log(flagForReview)
-    return flagForReview
-  }
-
-  const getCategories = async () => {
-    // Populate the category (event_band) pull down with all event_bands
-    try {
-    
-      const response: AxiosResponse = await axios.get('api/events/');
-      
-      const responseData: CategoryResponseDataProps[] = response.data;
-      let eventBands = responseData.map(event => event.override_name)
+  // Fetch categories data
+  const { data: categoriesData } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async (): Promise<SelectOption[]> => {
+      const response = await axios.get("/api/events/")
+      const responseData: CategoryResponseDataProps[] = response.data
+      let eventBands = responseData.map((event) => event.override_name)
       eventBands = Array.from(new Set(eventBands)).sort()
-      const options = eventBands.map(option => {
-        return {label: option, value: option}
-      })
-      setCategories([{label: 'All cats', value: ''}, ...options]) 
+      const options = eventBands.map((option) => ({
+        label: option,
+        value: option,
+      }))
+      return [{ label: "All cats", value: "" }, ...options]
+    },
+  })
 
-    } catch (error) {
-      console.error(error)
+  // Calculate fastest times for trophy display
+  const fastestTimes = useMemo(() => {
+    if (!resultsData) return {}
+    
+    const results = resultsData
+    return {
+      fastestMen2x: Math.min(...results.filter(c => c.event_band?.includes("Men") && c.event_band?.includes("2x")).map(c => c.published_time || Infinity)),
+      fastestFemale2x: Math.min(...results.filter(c => c.event_band?.includes("Women") && c.event_band?.includes("2x")).map(c => c.published_time || Infinity)),
+      fastestMenSweep: Math.min(...results.filter(c => c.event_band?.includes("Men") && !c.event_band?.includes("2x")).map(c => c.published_time || Infinity)),
+      fastestFemaleSweep: Math.min(...results.filter(c => c.event_band?.includes("Women") && !c.event_band?.includes("2x")).map(c => c.published_time || Infinity)),
+      fastestMixed2x: Math.min(...results.filter(c => c.event_band?.includes("Mixed")).map(c => c.published_time || Infinity)),
     }
+  }, [resultsData])
+
+  // Helper function to check if crews are close
+  const getTopCrews = (eventBand: string | undefined, crews: CrewProps[]) => {
+    const timeDifference = 2000
+    const crewsInCategory = crews.filter(
+      (crew) => crew.event_band === eventBand && !crew.time_only && crew.category_rank <= 2
+    )
+    const raceTimes = crewsInCategory.map((crew) => crew.category_position_time)
+    const sorted = raceTimes.slice().sort((a, b) => a - b)
+    return Math.abs(sorted[0] - sorted[1]) <= timeDifference
   }
 
-  const handlePagingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPageSize(e.target.value)
-    setPageNumber(1)
+  // Define columns
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor(
+        (row) => (!gender || gender === "all" ? row.overall_rank : row.gender_rank),
+        {
+          id: "rank",
+          header: "Rank",
+          cell: (info) => info.getValue(),
+        }
+      ),
+      columnHelper.accessor("bib_number", {
+        header: "Bib",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("published_time", {
+        header: "Time",
+        cell: (info) => formatTimes(info.getValue()),
+      }),
+      columnHelper.accessor("masters_adjusted_time", {
+        header: "Masters Time",
+        cell: (info) => (info.getValue() ? formatTimes(info.getValue()) : ""),
+      }),
+      columnHelper.display({
+        id: "blade",
+        header: "Blade",
+        cell: (info) => <BladeImage crew={info.row.original} />,
+      }),
+      columnHelper.accessor("club.name", {
+        header: "Club",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor(
+        (row) => (!row.competitor_names ? row.name : row.competitor_names),
+        {
+          id: "crew_name",
+          header: "Crew",
+          cell: (info) => info.getValue(),
+        }
+      ),
+      columnHelper.accessor("composite_code", {
+        header: "Code",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("event_band", {
+        header: "Event",
+        cell: (info) => info.getValue(),
+      }),
+      columnHelper.accessor("category_rank", {
+        header: "Cat Rank",
+        cell: (info) => info.getValue() || "",
+      }),
+      columnHelper.display({
+        id: "pennant",
+        header: "Pennant",
+        cell: (info) => (info.row.original.category_rank === 1 ? <PennantImage /> : ""),
+      }),
+      columnHelper.display({
+        id: "trophy",
+        header: "Trophy",
+        cell: (info) => {
+          const crew = info.row.original
+          const isFastest =
+            crew.overall_rank === 1 ||
+            crew.published_time === fastestTimes.fastestFemale2x ||
+            crew.published_time === fastestTimes.fastestFemaleSweep ||
+            crew.published_time === fastestTimes.fastestMixed2x
+          return isFastest ? <TrophyImage /> : ""
+        },
+      }),
+      columnHelper.display({
+        id: "close_crews",
+        header: "Close",
+        cell: (info) => {
+          const crew = info.row.original
+          return getTopCrews(crew.event_band, resultsData || []) &&
+            closeFirstAndSecondCrewsBoolean
+            ? "❓"
+            : ""
+        },
+      }),
+      columnHelper.accessor("penalty", {
+        header: "Penalty",
+        cell: (info) => (info.getValue() ? "P" : ""),
+      }),
+      columnHelper.accessor("time_only", {
+        header: "Time Only",
+        cell: (info) => (info.getValue() ? "TO" : ""),
+      }),
+    ],
+    [gender, fastestTimes, closeFirstAndSecondCrewsBoolean, resultsData]
+  )
+
+  // Filter data based on filters
+  const filteredData = useMemo(() => {
+    if (!resultsData) return []
+
+    let filtered = resultsData
+
+    // Status filter - only show accepted crews
+    filtered = filtered.filter((crew) => crew.status === 'Accepted' && crew.published_time && crew.published_time > 0)
+
+    // Category filter
+    if (selectedCategory) {
+      filtered = filtered.filter((crew) => crew.event_band === selectedCategory)
+    }
+
+    // Gender filter (assuming you have gender field on crew)
+    if (gender && gender !== "all") {
+      // You may need to adjust this based on your data structure
+      filtered = filtered.filter((crew) => crew.gender === gender)
+    }
+
+    // First and second crews filter
+    if (firstAndSecondCrewsBoolean) {
+      filtered = filtered.filter((crew) => crew.category_rank <= 2)
+    }
+
+    return filtered
+  }, [resultsData, selectedCategory, gender, firstAndSecondCrewsBoolean])
+
+  const table = useReactTable({
+    data: filteredData,
+    columns,
+    state: {
+      sorting,
+      columnFilters,
+      globalFilter,
+    },
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    globalFilterFn: "includesString",
+  })
+
+  const refreshData = () => {
+    refetchResults()
   }
 
-  const handleSearchKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    const term = e.target
-    console.log(term)
-    sessionStorage.setItem("resultIndexSearch", term instanceof HTMLInputElement ? term.value : "");
-    setSearchTerm(term instanceof HTMLInputElement ? term.value : "");
-    setPageNumber(1);
-    if(term) {
-      setRefreshDataQueryString(`search=${searchTerm}`)
-    } else {
-      setRefreshDataQueryString("")
-    }
-  };
-
-   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCategory(e.target.value)
-    setGender("all")
-    setSearchTerm("")
-    setPageNumber(1)
-    if(e.target.value) {
-      setRefreshDataQueryString(`event_band=${e.target.value}`)
-    } else {
-      setRefreshDataQueryString("")
-    }
   }
 
   const handleGenderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setGender(e.target.value)
-    setPageNumber(1)
   }
 
-  const changePage = (pageNumber: number, totalPages: number) => {
-    if (pageNumber > totalPages || pageNumber < 0) return null;
-    setPageNumber(pageNumber);
-  };
-
-  const handleFirstAndSecondCrews = (e: React.ChangeEvent<HTMLInputElement>) =>{
+  const handleFirstAndSecondCrews = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFirstAndSecondCrewsBoolean(e.target.checked)
   }
 
@@ -200,70 +256,112 @@ export default function ResultIndex () {
     setCloseFirstAndSecondCrewsBoolean(e.target.checked)
   }
 
-  const totalPages = Math.floor(totalCrews / Number(pageSize));
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setGlobalFilter(e.target.value)
+  }
+
+  if (resultsLoading) {
+    return (
+      <>
+        <Header />
+        <Hero title={"Results"} />
+        <section className="section">
+          <div className="container">
+            <div className="has-text-centered">Loading...</div>
+          </div>
+        </section>
+      </>
+    )
+  }
+
+  if (resultsError) {
+    return (
+      <>
+        <Header />
+        <Hero title={"Results"} />
+        <section className="section">
+          <div className="container">
+            <div className="has-text-centered">Error loading results</div>
+          </div>
+        </section>
+      </>
+    )
+  }
+
+  console.log(resultsData)
 
   return (
     <>
       <Header />
       <Hero title={"Results"} />
-      {(updateRequired && updateRequired > 0) ? 
+      {/* {resultsData?.requires_ranking_update && resultsData.requires_ranking_update > 0 ? (
         <div className="box">
-          <CrewTimeCalculatedFieldsUpdate refreshData={refreshData} updateRequired={updateRequired}/>
-        </div> : ''}
+          <CrewTimeCalculatedFieldsUpdate
+            refreshData={refreshData}
+            updateRequired={resultsData.requires_ranking_update}
+          />
+        </div>
+      ) : (
+        ""
+      )} */}
       <section className="section">
         <div className="container">
-
           <div className="columns no-print is-vtop">
-
             <div className="column">
-              <label className="label has-text-left" htmlFor="searchResultsControl">Search</label>
+              <label className="label has-text-left" htmlFor="searchResultsControl">
+                Search
+              </label>
               <div className="field control has-icons-left" id="searchResultsControl">
                 <span className="icon is-left">
-                <i className="fas fa-search"></i>
+                  <i className="fas fa-search"></i>
                 </span>
-                <input className="input" id="search" placeholder="Search" defaultValue={searchTerm} onKeyUp={handleSearchKeyUp} />
+                <input
+                  className="input"
+                  id="search"
+                  placeholder="Search across all columns"
+                  value={globalFilter}
+                  onChange={handleSearchChange}
+                />
               </div>
             </div>
 
             <div className="column">
               <div className="field">
-                <label className="label has-text-left" htmlFor="category">Select category</label>
-                  <div className="select control-full-width">
-
-                    <select className="control-full-width" onChange={handleCategoryChange}>
-                      <option value=""></option>
-                      {categories && categories.map((option) =>
-                        <option key={option.value} value={option.value}>{option.label}</option>
-                      )}
-                    </select>
-                  </div>
-              </div>
-            </div>
-
-            <div className="column">
-              <div className="field">
-                <label className="label has-text-left" htmlFor="paging">Page size</label>
+                <label className="label has-text-left" htmlFor="category">
+                  Select category
+                </label>
                 <div className="select control-full-width">
-                  <select className="control-full-width" onChange={handlePagingChange}>
-                    <option value=""></option>
-                    {pagingOptions.map((option) =>
-                      <option key={option.value} value={option.value}>{option.label}</option>
-                    )}
+                  <select
+                    className="control-full-width"
+                    value={selectedCategory}
+                    onChange={handleCategoryChange}
+                  >
+                    {categoriesData?.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
             </div>
 
             <div className="column">
-
               <div className="field">
-                <label className="label has-text-left" htmlFor="gender">Select gender</label>
+                <label className="label has-text-left" htmlFor="gender">
+                  Select gender
+                </label>
                 <div className="select control-full-width">
-                  <select className="control-full-width" onChange={handleGenderChange}>
-                    <option value=""></option>
-                    {genderOptions.map((option) =>
-                      <option key={option.value} value={option.value}>{option.label}</option>
-                    )}
+                  <select
+                    className="control-full-width"
+                    value={gender}
+                    onChange={handleGenderChange}
+                  >
+                    {genderOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -271,71 +369,79 @@ export default function ResultIndex () {
 
             <div className="column has-text-left">
               <div className="field">
-                <label className="checkbox" >
-                  <input type="checkbox"  className="checkbox" value="" onChange={handleFirstAndSecondCrews} />
+                <label className="checkbox">
+                  <input
+                    type="checkbox"
+                    className="checkbox"
+                    checked={firstAndSecondCrewsBoolean}
+                    onChange={handleFirstAndSecondCrews}
+                  />
                   <small>Crews in 1st and 2nd place</small>
                 </label>
               </div>
 
               <div className="field">
-                <label className="checkbox" >
-                  <input type="checkbox"  className="checkbox" value="highlightCloseCrews" onChange={handleCloseCrews}/>
+                <label className="checkbox">
+                  <input
+                    type="checkbox"
+                    className="checkbox"
+                    checked={closeFirstAndSecondCrewsBoolean}
+                    onChange={handleCloseCrews}
+                  />
                   <small>Highlight 1st/2nd crews within 2s&nbsp;❓</small>
                 </label>
               </div>
             </div>
-
           </div>
 
-        <Paginator pageNumber={pageNumber} totalPages={totalPages} changePage={changePage} />
+          <div className="mb-4">
+            <p className="has-text-grey">
+              Showing {table.getRowModel().rows.length} of {filteredData.length} crews
+            </p>
+          </div>
 
-        <PageTotals
-          totalCount={totalCrews}
-          entities='crews'
-          pageSize={pageSize}
-          pageNumber={pageNumber}  
-          />
           <div className="result-index__table-container">
             <table className="result-index__table table">
               <thead>
-                <tr>
-                  {tableHeadings.map(heading =>
-                    <td key={heading.name} colSpan={heading.colSpan}>{heading.name}</td>
-                  )}
-                </tr>
-              </thead>
-              <tfoot className="no-print">
-                <tr>
-                  {tableHeadings.map(heading =>
-                    <td key={heading.name} colSpan={heading.colSpan}>{heading.name}</td>
-                  )}
-                </tr>
-              </tfoot>
-              <tbody>
-                {results.map((crew) =>
-                  <tr key={crew.id}>
-                    <td>{!gender || gender === "all" ? crew.overall_rank : crew.gender_rank}</td>
-                    <td>{crew.bib_number}</td>
-                    <td>{formatTimes(crew.published_time)}</td>
-                    <td>{!crew.masters_adjusted_time ? "" : formatTimes(crew.masters_adjusted_time)}</td>
-                    <td><BladeImage crew={crew} /></td>
-                    <td>{crew.club.name}</td>
-                    <td>{!crew.competitor_names ? crew.name : crew.competitor_names }</td>
-                    <td>{crew.composite_code}</td>
-                    <td>{crew.event_band}</td>
-                    <td>{!crew.category_rank ? "" : crew.category_rank} </td>
-                    <td>{crew.category_rank === 1 ? <PennantImage />  : ""} </td>
-                    <td>{crew.overall_rank === 1 || crew.published_time === fastestFemale2x || crew.published_time === fastestFemaleSweep || crew.published_time === fastestMixed2x ? <TrophyImage />  : ""} </td>
-                    <td>{getTopCrews(crew.event_band, results) && closeFirstAndSecondCrewsBoolean ? '❓' : ''}</td>
-                    <td>{crew.penalty ? "P" : ""}</td>
-                    <td>{crew.time_only ? "TO" : ""}</td>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <th
+                        key={header.id}
+                        className={header.column.getCanSort() ? "cursor-pointer select-none" : ""}
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(header.column.columnDef.header, header.getContext())}
+                        {{
+                          asc: " 🔼",
+                          desc: " 🔽",
+                        }[header.column.getIsSorted() as string] ?? null}
+                      </th>
+                    ))}
                   </tr>
-                )}
+                ))}
+              </thead>
+              <tbody>
+                {table.getRowModel().rows.map((row) => (
+                  <tr key={row.id}>
+                    {row.getVisibleCells().map((cell) => (
+                      <td key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
-
-          <Paginator pageNumber={pageNumber} totalPages={totalPages} changePage={changePage} />
+          
+          {table.getRowModel().rows.length === 0 && (
+            <div className="has-text-centered mt-4">
+              <p>No results found matching your filters.</p>
+            </div>
+          )}
         </div>
       </section>
     </>

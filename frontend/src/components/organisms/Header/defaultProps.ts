@@ -27,6 +27,11 @@ export const menuProps: MenuProps = {
           authenticated: true
         },
         {
+          link: "/generate-start-order/marshalling-divisions",
+          title: "Marshalling divisions",
+          authenticated: true
+        },
+        {
           link: "/logistics/start-order-by-number-location",
           title: "Start order by number location",
           authenticated: true
@@ -65,8 +70,8 @@ export const menuProps: MenuProps = {
           authenticated: true
         },
         {
-          link: "/generate-results/crews-time-compare",
-          title: "Compare race times",
+          link: "/generate-results/crew-management-dashboard",
+          title: "Crew time management dashboard",
           authenticated: true
         },
         {

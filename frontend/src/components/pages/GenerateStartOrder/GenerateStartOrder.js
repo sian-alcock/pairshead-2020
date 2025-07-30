@@ -97,7 +97,7 @@ class GenerateStartOrder extends React.Component {
             </section>
 
             <CSVDataLoader
-              url='/api/marshalling-division-import/'
+              url='/api/marshalling-divisions/import/'
               buttonText='Import marshalling division ranges'
               class='double-height-button' 
               title='Import marshalling division ranges from csv'

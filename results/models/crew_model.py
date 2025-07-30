@@ -82,21 +82,6 @@ class Crew(models.Model):
         """
         # Calculate all the computed fields
         self.event_band = self.calc_event_band()
-        # self.raw_time = self.calc_raw_time()
-        # self.race_time = self.calc_race_time()
-        # self.published_time = self.calc_published_time()
-        # self.start_time = self.calc_start_time()
-        # self.finish_time = self.calc_finish_time()
-        # self.overall_rank = self.calc_overall_rank()
-        # self.gender_rank = self.calc_gender_rank()
-        # self.category_position_time = self.calc_category_position_time()
-        # self.category_rank = self.calc_category_rank()
-        # self.masters_adjustment = self.calc_masters_adjustment()
-        # self.start_sequence = self.calc_start_sequence()
-        # self.finish_sequence = self.calc_finish_sequence()
-        # self.competitor_names = self.get_competitor_names()
-        # self.draw_start_score = self.calc_draw_start_score()
-        # self.calculated_start_order = self.calc_calculated_start_order()
     
         # Call the parent save method
         super(Crew, self).save(*args, **kwargs)

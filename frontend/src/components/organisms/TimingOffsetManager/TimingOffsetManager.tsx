@@ -75,7 +75,7 @@ export default function TimingOffsetManager() {
                     <td>{races?.find((race) => race.id.toString() === detail.reference_race.toString())?.name}</td>
                     <td>{races?.find((race) => race.id.toString() === detail.target_race.toString())?.name}</td>
                     <td>{detail.timing_offset_ms}</td>
-                    <td className="td-center"><IconButton title={'Delete data for race'} icon={'delete'} sitsInTable onClick={handleDelete}/></td>
+                    <td className="td-center"><IconButton title={'Delete data for race'} icon={'delete'} smaller onClick={handleDelete}/></td>
                   </tr>
                     )}
                 </tbody>

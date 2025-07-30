@@ -18,7 +18,7 @@
   h1 {
     color: $white;
 
-    @include h1;
+    @include h3;
   }
 
   &__bar {

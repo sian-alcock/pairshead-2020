@@ -30,21 +30,6 @@ class GenerateResults extends React.Component {
               <BROELoader
             importPersonalData={true} title={'Get data from British Rowing'} description={'Import data from BROE via the api'} location={'page'}/>
             </section>
-              <div className="csv-data-loader__text-wrapper">
-                <h2 className="csv-data-loader__title">Import data from Webscorer</h2>
-                <p className="csv-data-loader__description">Add races and import results from webscorer api</p>
-              </div>
-              <RaceTimesManager />
-              <TimingOffsetEntry />
-              <CSVDataLoader
-                url='/api/crew-race-times-import/'
-                buttonText='Import race times'
-                class='single-height-button'
-                title='Import race times from csv'
-                description='Import webscorer race times from csv.'
-                lines='true'
-              />
-
               <CSVDataLoader
                 url='/api/crew-import-penalties/'
                 buttonText='Import penalties'

@@ -1,20 +1,17 @@
 @import '../../../style.scss';
 
 .csv-data-loader {
-  &__file-name {
-    display: inline-block;
-    @media (min-width: $lg) {
-      min-width: 420px;
-    }
+  width: 100%;
+  
+  &--lines {
+    border-top: 1px solid $bblBlue;
+    padding-top: 1rem;
   }
 
-  &__section {
-    @include section;
-    &--lines {
-      @include section-with-lines;
-    }
+  &__header {
+    margin-bottom: 1.5rem;
   }
-  
+
   &__title {
     margin-bottom: 1rem;
     color: $bblBlue;
@@ -24,5 +21,30 @@
   &__description {
     margin-bottom: 1rem;
     @include body;
+  }
+
+  &__upload-area {
+    margin-bottom: 1rem;
+  }
+
+  &__drag-drop {
+    // Additional styles specific to the drag drop within this component
+    border-radius: 6px;
+  }
+
+  &__status {
+    margin-top: 1rem;
+  }
+
+  &__updated {
+    color: #28a745;
+    margin: 0.5rem 0;
+    font-size: 0.875rem;
+  }
+
+  &__error {
+    color: #dc3545;
+    margin: 0.5rem 0;
+    font-size: 0.875rem;
   }
 }

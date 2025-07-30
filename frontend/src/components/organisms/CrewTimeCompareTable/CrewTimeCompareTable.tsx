@@ -1,5 +1,6 @@
+// CrewTimeCompareTable.tsx
 import React, { useState, useMemo } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   useReactTable,
   getCoreRowModel,
@@ -8,18 +9,19 @@ import {
   getFilteredRowModel,
   flexRender,
   ColumnDef,
-  SortingState,
   PaginationState,
   createColumnHelper,
 } from "@tanstack/react-table";
 import axios, { AxiosResponse } from "axios";
-import Hero from "../../organisms/Hero/Hero";
 import { Link } from "react-router-dom";
-import { formatTimes } from "../../../lib/helpers";
+import { formatTimes, formatVarianceTime } from "../../../lib/helpers";
 import { CrewProps, RaceProps } from "../../components.types";
-import "././crewTimeCompare.scss";
-import Header from "../../organisms/Header/Header";
-import TablePagination from "../../molecules/TablePagination/TablePagination"; // Import the new component
+import { TableHeader } from "../../molecules/TableHeader/TableHeader";
+import { TableBody } from "../../molecules/TableBody/TableBody";
+import TablePagination from "../../molecules/TablePagination/TablePagination";
+import SearchInput from "../../molecules/SearchInput/SearchInput";
+import TextButton from "../../atoms/TextButton/TextButton";
+import './crewTimeCompareTable.scss'
 
 interface CrewOverrideUpdate {
   crew_id: string;
@@ -27,17 +29,15 @@ interface CrewOverrideUpdate {
   race_id_finish_override?: string;
 }
 
-// API functions
-const fetchCrews = async (): Promise<CrewProps[]> => {
-  const response: AxiosResponse = await axios.get("/api/crews/");
-  return response.data;
-};
+interface CrewTimeCompareTableProps {
+  crews: CrewProps[];
+  races: RaceProps[];
+  isLoading: boolean;
+  error: boolean;
+  onDataChanged: () => void; 
+}
 
-const fetchRaces = async (): Promise<RaceProps[]> => {
-  const response: AxiosResponse = await axios.get("/api/races/");
-  return response.data;
-};
-
+// API function for updating overrides
 const updateCrewOverrides = async (updates: CrewOverrideUpdate[]): Promise<any> => {
   const response: AxiosResponse = await axios.patch("/api/crews/bulk-update-overrides/", {
     updates
@@ -45,55 +45,66 @@ const updateCrewOverrides = async (updates: CrewOverrideUpdate[]): Promise<any> 
   return response.data;
 };
 
-export default function CrewTimeCompare() {
+// Custom filter function for time values
+const timeFilterFn = (row: any, columnId: string, filterValue: string) => {
+  const cellValue = row.getValue(columnId);
+  if (cellValue === null || cellValue === undefined) return false;
+  
+  // Convert milliseconds to formatted time string for filtering
+  const formattedTime = formatTimes(cellValue);
+  return formattedTime.toLowerCase().includes(filterValue.toLowerCase());
+};
+
+// Custom global filter function
+const globalFilterFn = (row: any, columnId: string, filterValue: string) => {
+  const cellValue = row.getValue(columnId);
+  
+  if (cellValue === null || cellValue === undefined) return false;
+  
+  // Handle different data types
+  if (typeof cellValue === 'number') {
+    // For time values (milliseconds), convert to formatted time
+    if (columnId.includes('time') || columnId.includes('raw_time')) {
+      const formattedTime = formatTimes(cellValue);
+      return formattedTime.toLowerCase().includes(filterValue.toLowerCase());
+    }
+    // For other numbers, convert to string
+    return cellValue.toString().toLowerCase().includes(filterValue.toLowerCase());
+  }
+  
+  if (typeof cellValue === 'string') {
+    return cellValue.toLowerCase().includes(filterValue.toLowerCase());
+  }
+  
+  // Handle objects (like club)
+  if (typeof cellValue === 'object') {
+    return JSON.stringify(cellValue).toLowerCase().includes(filterValue.toLowerCase());
+  }
+  
+  return false;
+};
+
+export default function CrewTimeCompareTable({ 
+  crews, 
+  races, 
+  isLoading, 
+  error,
+  onDataChanged
+}: CrewTimeCompareTableProps) {
   const queryClient = useQueryClient();
   const columnHelper = createColumnHelper<CrewProps>();
 
   // State for tracking override changes
   const [pendingOverrides, setPendingOverrides] = useState<Map<string, CrewOverrideUpdate>>(new Map());
-  const [pagination, setPagination] = React.useState<PaginationState>({
+  const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 25,
-  })
-
-  // Queries
-  const {
-    data: crewsData,
-    isLoading: crewsLoading,
-    error: crewsError,
-  } = useQuery({
-    queryKey: ["crews"],
-    queryFn: () => {
-      console.log("Fetching crews with params:");
-      const startTime = Date.now();
-      return fetchCrews().then(result => {
-        console.log(`Crews fetch took ${Date.now() - startTime}ms`);
-        return result;
-      });
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
   });
+  const [globalFilter, setGlobalFilter] = useState<string>('');
 
-  const {
-    data: racesData,
-    isLoading: racesLoading,
-    error: racesError,
-  } = useQuery({
-    queryKey: ["races"],
-    queryFn: () => {
-      console.log("Fetching races...");
-      const startTime = Date.now();
-      return fetchRaces().then(result => {
-        console.log(`Races fetch took ${Date.now() - startTime}ms`);
-        return result;
-      });
-    },
-    staleTime: 10 * 60 * 1000, // 10 minutes - races change less frequently
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-  });
+  // Get race data
+  const defaultStartRace = races.find((race) => race.default_start);
+  const defaultFinishRace = races.find((race) => race.default_finish);
 
   // Mutation for updating overrides
   const updateOverridesMutation = useMutation({
@@ -101,16 +112,12 @@ export default function CrewTimeCompare() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["crews"] });
       setPendingOverrides(new Map());
+      onDataChanged()
     },
     onError: (error) => {
       console.error("Failed to update overrides:", error);
     },
   });
-
-  // Get race data
-  const races = racesData || [];
-  const defaultStartRace = races.find((race) => race.default_start);
-  const defaultFinishRace = races.find((race) => race.default_finish);
 
   // Handle radio button changes
   const handleOverrideChange = (crewId: string, type: 'start' | 'finish', raceId: string) => {
@@ -143,7 +150,6 @@ export default function CrewTimeCompare() {
 
     // Return existing override or default
     if (type === 'start') {
-      // Use the Django PK id, not race_id
       return crew.race_id_start_override?.toString() || defaultStartRace?.id?.toString() || '';
     } else {
       return crew.race_id_finish_override?.toString() || defaultFinishRace?.id?.toString() || '';
@@ -173,17 +179,45 @@ export default function CrewTimeCompare() {
   };
 
   // Helper function to format variance display
-  const formatVariance = (variance: number | null): { display: string; isHighVariance: boolean } => {
+  const formatVariance = (variance: number | null): { 
+    display: string; 
+    isHighVariance: boolean; 
+    colorClass: 'green' | 'amber' | 'red' | 'neutral' 
+  } => {
     if (variance === null) {
-      return { display: '--', isHighVariance: false };
+      return { display: '--', isHighVariance: false, colorClass: 'neutral' };
     }
 
-    const isHighVariance = Math.abs(variance) > 5000; // 5 seconds
-    const formattedTime = formatTimes(Math.abs(variance));
+    const absVariance = Math.abs(variance);
+    const isHighVariance = absVariance > 5000; // Keep your existing logic
+    const formattedTime = formatVarianceTime(variance); // Use the new function
     const sign = variance >= 0 ? '+' : '-';
     const display = `${sign}${formattedTime}`;
 
-    return { display, isHighVariance };
+    // Determine color based on absolute variance
+    let colorClass: 'green' | 'amber' | 'red' | 'neutral';
+    if (absVariance < 1000) { // Under 1 second
+      colorClass = 'green';
+    } else if (absVariance <= 5000) { // 1-5 seconds
+      colorClass = 'amber';
+    } else { // Over 5 seconds
+      colorClass = 'red';
+    }
+
+    return { display, isHighVariance, colorClass };
+  };
+
+  // Custom sorting function for time columns
+  const timeSortingFn = (rowA: any, rowB: any, columnId: string) => {
+    const a = rowA.getValue(columnId) as number | null;
+    const b = rowB.getValue(columnId) as number | null;
+    
+    // Handle null values - put them at the end
+    if (a === null && b === null) return 0;
+    if (a === null) return 1;
+    if (b === null) return -1;
+    
+    return a - b;
   };
 
   // Table columns
@@ -196,6 +230,8 @@ export default function CrewTimeCompare() {
             {info.getValue()}
           </Link>
         ),
+        enableSorting: true,
+        filterFn: 'includesString',
       }),
       columnHelper.accessor("competitor_names", {
         header: "Crew",
@@ -204,17 +240,25 @@ export default function CrewTimeCompare() {
           if (!crew.competitor_names) return crew.name;
           return crew.competitor_names;
         },
+        enableSorting: true,
+        filterFn: 'includesString',
       }),
       columnHelper.accessor("bib_number", {
         header: "Bib",
         cell: (info) => info.getValue() || "",
+        enableSorting: true,
+        filterFn: 'includesString',
       }),
       columnHelper.accessor((row) => row.club.index_code, {
         id: "club",
         header: "Club",
+        enableSorting: true,
+        filterFn: 'includesString',
       }),
       columnHelper.accessor("event_band", {
         header: "Category",
+        enableSorting: true,
+        filterFn: 'includesString',
       }),
     ];
 
@@ -223,17 +267,22 @@ export default function CrewTimeCompare() {
     
     races.forEach((race, idx) => {
       // Start time column
-      raceColumns.push(columnHelper.display({
-        id: `race_${race.race_id}_start`,
-        header: "Start",
-        cell: (info) => {
-          const crew = info.row.original;
-          const time = crew.times.find(
+      raceColumns.push(columnHelper.accessor(
+        (row) => {
+          const time = row.times.find(
             (time) => time.tap === 'Start' && time.race.race_id === race.race_id
           );
-          return formatTimes(time?.time_tap);
+          return time?.time_tap || null;
         },
-      }));
+        {
+          id: `race_${race.race_id}_start`,
+          header: "Start",
+          cell: (info) => formatTimes(info.getValue()),
+          enableSorting: true,
+          sortingFn: timeSortingFn,
+          filterFn: timeFilterFn,
+        }
+      ));
 
       // Start use radio button column
       raceColumns.push(columnHelper.display({
@@ -251,20 +300,27 @@ export default function CrewTimeCompare() {
             />
           );
         },
+        enableSorting: false,
+        enableGlobalFilter: false,
       }));
 
       // Finish time column
-      raceColumns.push(columnHelper.display({
-        id: `race_${race.race_id}_finish`,
-        header: "Finish",
-        cell: (info) => {
-          const crew = info.row.original;
-          const time = crew.times.find(
+      raceColumns.push(columnHelper.accessor(
+        (row) => {
+          const time = row.times.find(
             (time) => time.tap === 'Finish' && time.race.race_id === race.race_id
           );
-          return formatTimes(time?.time_tap);
+          return time?.time_tap || null;
         },
-      }));
+        {
+          id: `race_${race.race_id}_finish`,
+          header: "Finish",
+          cell: (info) => formatTimes(info.getValue()),
+          enableSorting: true,
+          sortingFn: timeSortingFn,
+          filterFn: timeFilterFn,
+        }
+      ));
 
       // Finish use radio button column
       raceColumns.push(columnHelper.display({
@@ -282,17 +338,22 @@ export default function CrewTimeCompare() {
             />
           );
         },
+        enableSorting: false,
+        enableGlobalFilter: false,
       }));
 
       // Calculated time column
-      raceColumns.push(columnHelper.display({
-        id: `race_${race.race_id}_time`,
-        header: `Raw time ${race.name}`,
-        cell: (info) => {
-          const crew = info.row.original;
-          return formatTimes(calculateRawTime(crew, race));
-        },
-      }));
+      raceColumns.push(columnHelper.accessor(
+        (row) => calculateRawTime(row, race),
+        {
+          id: `race_${race.race_id}_time`,
+          header: `Raw time ${race.name}`,
+          cell: (info) => formatTimes(info.getValue()),
+          enableSorting: true,
+          sortingFn: timeSortingFn,
+          filterFn: timeFilterFn,
+        }
+      ));
 
       // Variance column - only add for races after the first one
       if (idx > 0) {
@@ -317,54 +378,36 @@ export default function CrewTimeCompare() {
             id: `race_${race.race_id}_variance`,
             header: `Variance to ${races[0]?.name || 'Race 1'}`,
             enableSorting: true,
+            sortingFn: timeSortingFn,
             cell: (info) => {
               const variance = info.getValue() as number | null;
-              const { display, isHighVariance } = formatVariance(variance);
+              const { display, colorClass } = formatVariance(variance);
               
-              if (isHighVariance) {
-                return (
-                  <span 
-                    style={{
-                      color: '#e74c3c',
-                      fontWeight: 'bold',
-                      backgroundColor: '#fdf2f2',
-                      padding: '2px 4px',
-                      borderRadius: '3px'
-                    }}
-                  >
-                    {display}
-                  </span>
-                );
-              }
-              
-              return <span>{display}</span>;
+              return (
+                <span className={`crew-time-compare__tag crew-time-compare__tag--${colorClass}`}>
+                  {display}
+                </span>
+              );
             },
-            sortingFn: (rowA, rowB, columnId) => {
-              const a = rowA.getValue(columnId) as number | null;
-              const b = rowB.getValue(columnId) as number | null;
-              
-              // Handle null values - put them at the end
-              if (a === null && b === null) return 0;
-              if (a === null) return 1;
-              if (b === null) return -1;
-              
-              // Sort by actual variance value (not absolute)
-              // This will sort from most negative to most positive
-              return a - b;
-            }
+            filterFn: (row, columnId, filterValue) => {
+              const variance = row.getValue(columnId) as number | null;
+              if (variance === null) return false;
+              const { display } = formatVariance(variance);
+              return display.toLowerCase().includes(filterValue.toLowerCase());
+            },
           }
         ));
       }
     });
 
     const finalColumns = [
-      columnHelper.display({
+      columnHelper.accessor("raw_time", {
         id: "final_raw_time",
         header: "Raw Time (based on use)",
-        cell: (info) => {
-          const crew = info.row.original;
-          return formatTimes(crew.raw_time);
-        },
+        cell: (info) => formatTimes(info.getValue()),
+        enableSorting: true,
+        sortingFn: timeSortingFn,
+        filterFn: timeFilterFn,
       }),
     ];
 
@@ -413,107 +456,104 @@ export default function CrewTimeCompare() {
 
   // Table instance
   const table = useReactTable({
-    data: crewsData || [],
+    data: crews,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: setPagination,
     getFilteredRowModel: getFilteredRowModel(),
+    onPaginationChange: setPagination,
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: globalFilterFn,
     manualPagination: false,
     manualSorting: false,
     state: {
       pagination,
+      globalFilter,
+    },
+    initialState: {
+      pagination: {
+        pageSize: 25,
+      },
     },
   });
-  
-  console.log(crewsData)
-  
-  if (crewsLoading || racesLoading) return <div>Loading...</div>;
-  if (crewsError || racesError) return <div>Error loading data</div>;
+
+  if (isLoading) {
+    return (
+      <div className="has-text-centered" style={{ padding: '2rem' }}>
+        <div className="loader is-loading" style={{ width: '3rem', height: '3rem' }}></div>
+        <p>Loading crew data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="notification is-danger">
+        <p>Error loading data. Please try refreshing the page.</p>
+      </div>
+    );
+  }
 
   return (
     <>
-      <Header />
-      <Hero title={"All crews"} />
-      <section className="section">
-        <div className="container">
-          {/* Save Changes Button */}
-          {
-            <div className="save-controls" style={{ marginBottom: '20px' }}>
-              <button
-                className="button is-primary"
-                onClick={handleSaveChanges}
-                disabled={updateOverridesMutation.isPending}
-              >
-                {updateOverridesMutation.isPending ? 'Saving...' : `Save Changes (${pendingOverrides.size} crews)`}
-              </button>
-            </div>
-          }
-
-          <div className="crew-index__table-container">
-            <table className="crew-index__table">
-              <thead>
-                {/* Grouped Headers */}
-                <tr>
-                  {columnGroups.map((group, index) => (
-                    <th key={index} colSpan={group.columns.length} className="grouped-header">
-                      {group.columns.length > 1 ? group.header : ''}
-                    </th>
-                  ))}
-                </tr>
-                {/* Regular Headers */}
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <th key={header.id}>
-                        {header.isPlaceholder ? null : (
-                          <div
-                            className={
-                              header.column.getCanSort()
-                                ? "cursor-pointer select-none"
-                                : ""
-                            }
-                            onClick={header.column.getToggleSortingHandler()}
-                          >
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                            {{
-                              asc: " 🔼",
-                              desc: " 🔽",
-                            }[header.column.getIsSorted() as string] ?? null}
-                          </div>
-                        )}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody>
-                {table.getRowModel().rows.map((row) => (
-                  <tr key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {/* Search and Save Controls */}
+      <div className="crew-time-compare__control-wrapper">
+        <div className="">
+          <div className="">
+            <SearchInput
+              value={globalFilter}
+              onChange={setGlobalFilter}
+              placeholder="Search all columns..."
+            />
           </div>
-
-          {/* Pagination Component - Much cleaner! */}
-          <TablePagination 
-            table={table}
-            className="mt-4"
-            showRowInfo={true}
-            showPageSizeSelector={true}
-          />
         </div>
-      </section>
+        <div className="">
+          <div className="">
+            <TextButton
+              onClick={handleSaveChanges}
+              disabled={updateOverridesMutation.isPending}
+              label=              {updateOverridesMutation.isPending 
+                ? 'Saving...' 
+                : `Save changes (${pendingOverrides.size} crews)`
+              }
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="crew-time-compare__table-container">
+        <table className="crew-time-compare__table">
+            <TableHeader 
+              headerGroups={table.getHeaderGroups()}
+              columnGroups={columnGroups}
+            />
+            <TableBody 
+              rows={table.getRowModel().rows}
+            />
+          </table>
+      </div>
+
+      {/* Results Info and Pagination */}
+      <div className="level mt-4">
+        <div className="level-left">
+          <div className="level-item">
+            <p className="has-text-grey">
+              Showing {table.getRowModel().rows.length} of {crews.length} crews
+              {globalFilter && (
+                <span> (filtered from {crews.length} total)</span>
+              )}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <TablePagination 
+        table={table}
+        className="mt-4"
+        showRowInfo={true}
+        showPageSizeSelector={true}
+      />
     </>
   );
 }

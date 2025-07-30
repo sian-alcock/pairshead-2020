@@ -13,8 +13,18 @@
   border: 1px solid $phLogoBlue;
 
   &:disabled {
-    opacity: 0.15;
-    pointer-events: none;
+    background-color: $white;
+    border: 1px solid $bblGrey;
+    pointer-events: none; 
+
+    .icon-button__icon {
+      svg {
+        path {
+          fill: $bblGrey;
+          stroke: $bblGrey;
+        }
+      }
+    }
   }
 
   &__icon {

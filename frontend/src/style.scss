@@ -5,6 +5,7 @@
 @import './lib.scss';
 
 $family-primary: 'Open Sans', sans-serif;
+// colours
 $bblBlue: #341499;
 $phLogoBlue: #00B4FC;
 $phLogoRiver: #1E099C;
@@ -14,6 +15,15 @@ $darkGrey: #666666;
 $white: #fff;
 $black: #000;
 $primary: $bblBlue;
+$green: #00C950;
+$green-tint: #EFFDF4;
+$red: #FA2C37;
+$red-tint: #FEF2F2;
+$amber: #FF6900;
+$amber-tint: #FEFBEA;
+$blue-tint: #EEF6FF;
+$grey-tint: #F9FAFB;
+
 $section-padding: 1.5rem 1.5rem;
 // $tabs-link-hover-color: $phLogoBlue;
 $tabs-boxed-link-hover-background-color: $phLogoBlue;

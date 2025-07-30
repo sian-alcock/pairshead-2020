@@ -81,13 +81,24 @@ class RaceTimeDetailView(APIView):
         return Response(status=204)
 
 
-# Attempt to read in the RaceTimes CSV from the front end
+# Import CSV via frontend
 
 class ImportRaceTimes(APIView):
     parser_classes = (FormParser, MultiPartParser)
 
-    def post(self, request):
-        RaceTime.objects.all().delete()
+    def post(self, request, delete_times=True):
+        id = request.GET.get('id')
+        if not id:
+            return Response({'error': 'ID parameter is required'}, status=400)
+        
+        try:
+            race_id = Race.objects.get(id=id).race_id
+        except Race.DoesNotExist:
+            return Response({'error': 'Race not found'}, status=404)
+
+        if delete_times:
+            race_times_to_delete = RaceTime.objects.filter(race_id=id)
+            race_times_to_delete.delete()
 
         reader = csv.reader(decode_utf8(request.FILES['file']))
         next(reader) # skips the first row
@@ -98,92 +109,20 @@ class ImportRaceTimes(APIView):
                     'sequence': row[0],
                     'tap': row[3] or 'Finish',
                     'time_tap': row[4],
-                    'crew':row[8] or None
+                    'crew':row[8] or None,
+                    'race': id
                 }
                 serializer = WriteRaceTimesSerializer(data=data)
                 if serializer.is_valid():
                     serializer.save()
 
-        event_categories = RaceTime.objects.all()
+        race_times = RaceTime.objects.all()
 
-        serializer = WriteRaceTimesSerializer(event_categories, many=True)
+        serializer = WriteRaceTimesSerializer(race_times, many=True)
 
-        self.calculate_computed_properties()
+        Crew.update_all_computed_properties()
 
         return Response(serializer.data)
-    
-    def calculate_computed_properties(self):
-
-        for crew in Crew.objects.all():
-            crew.raw_time = crew.calc_raw_time()
-            crew.race_time = crew.calc_race_time()
-            crew.published_time = crew.calc_published_time()
-            crew.start_time = crew.calc_start_time()
-            crew.finish_time = crew.calc_finish_time()
-            crew.overall_rank = crew.calc_overall_rank()
-            crew.gender_rank = crew.calc_gender_rank()
-            crew.category_position_time = crew.calc_category_position_time()
-            crew.category_rank = crew.calc_category_rank()
-            crew.start_sequence = crew.calc_start_sequence()
-            crew.finish_sequence = crew.calc_finish_sequence()
-            crew.masters_adjustment = crew.calc_masters_adjustment()
-            crew.requires_recalculation = True
-            crew.save()
-
-    
-class ImportRaceTimesCSVFolder(APIView):
-    # This function imports the csv from the projects folder
-    # Ideally replace with one imported via the frontend (from others that are working)
-    # Start by deleting all existing race times
-
-    def get(self, _request):
-        RaceTime.objects.all().delete()
-        script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
-        rel_path = "../csv/race_times.csv"
-        abs_file_path = os.path.join(script_dir, rel_path)
-
-        with open(abs_file_path, newline='') as f:
-            reader = csv.reader(f)
-            next(reader) # skips the first row
-            
-            for row in reader:
-
-                data = {
-                    'sequence': row[0],
-                    'tap': row[3] or 'Finish',
-                    'time_tap': row[4],
-                    'crew':row[8] or None
-                }
-                serializer = WriteRaceTimesSerializer(data=data)
-                if serializer.is_valid(raise_exception=True):
-                    serializer.save()
-
-            race_times = RaceTime.objects.all()
-
-            serializer = RaceTimesSerializer(race_times, many=True)
-
-            self.calculate_computed_properties()
-
-
-            return Response(serializer.data)
-        
-    def calculate_computed_properties(self):
-
-        for crew in Crew.objects.all():
-            crew.raw_time = crew.calc_raw_time()
-            crew.race_time = crew.calc_race_time()
-            crew.published_time = crew.calc_published_time()
-            crew.start_time = crew.calc_start_time()
-            crew.finish_time = crew.calc_finish_time()
-            crew.overall_rank = crew.calc_overall_rank()
-            crew.gender_rank = crew.calc_gender_rank()
-            crew.category_position_time = crew.calc_category_position_time()
-            crew.category_rank = crew.calc_category_rank()
-            crew.start_sequence = crew.calc_start_sequence()
-            crew.finish_sequence = crew.calc_finish_sequence()
-            crew.masters_adjustment = crew.calc_masters_adjustment()
-            crew.requires_recalculation = True
-            crew.save()
 
 
 class ImportTimesWebscorer(APIView):
@@ -212,7 +151,6 @@ class ImportTimesWebscorer(APIView):
                     'tap': tap['Tap'],
                     'time_tap': tap['Time tap'],
                     'crew': tap['Team name 2'],
-                    'time_of_day': tap['Time tap (time of day)'],
                     'race': id
                 }
 

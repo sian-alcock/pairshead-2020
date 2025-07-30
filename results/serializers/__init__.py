@@ -47,6 +47,10 @@ from .import_serializers import (
     CSVUpdateCrewSerializer,
 )
 
+from .marshalling_division_serializers import (
+    MarshallingDivisionSerializer
+)
+
 from .settings_serializers import (
     GlobalSettingsSerializer,
     EventMeetingKeySerializer,

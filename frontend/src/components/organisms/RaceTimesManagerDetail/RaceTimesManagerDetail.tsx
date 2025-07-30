@@ -5,6 +5,7 @@ import { RaceProps } from '../../components.types'
 import TextButton from '../../atoms/TextButton/TextButton'
 import { useHistory, useParams } from 'react-router-dom'
 import Hero from '../Hero/Hero'
+import './RaceTimesManagerDetail.scss'
 
 type RaceTimesManagerParams = {
   id: string;
@@ -47,14 +48,13 @@ export default function RaceTimesManagerDetail () {
 
     if(routeParams.id === undefined) {
     axios.post(`/api/races/`, data)
-      .then(()=> history.push('/generate-results/race-times'))
+      .then(()=> history.push('/generate-results/crew-management-dashboard'))
       .catch(err => setErrors(err.response.data))
     } else {
     axios.put(`/api/races/${routeParams.id}/`, data)
-      .then(()=> history.push('/generate-results/race-times'))
+      .then(()=> history.push('/generate-results/crew-management-dashboard'))
       .catch(err => setErrors(err.response.data))
     }
-    // history.push('/generate-results/race-times')  
   }
 
   const handleChange = (e:React.ChangeEvent<HTMLInputElement>):void => {
@@ -66,11 +66,9 @@ export default function RaceTimesManagerDetail () {
     console.log(raceFormData)
     
     axios.delete(`/api/races/${routeParams.id}`)
-      .then(()=> history.push('/generate-results/race-times'))
+      .then(()=> history.push('/generate-results/crew-management-dashboard'))
       .catch(err => setErrors(err.response.data))
-    
-    history.push('/generate-results/race-times')  
-  }
+    }
 
   const handleCheckbox = (e:React.ChangeEvent<HTMLInputElement>):void => {
     if (e.target.name === "is_timing_reference") {
@@ -85,10 +83,10 @@ export default function RaceTimesManagerDetail () {
     <>
       <Header />
       <Hero title={'Add / edit race'} />
-      <section className="section">
-      <div className="container">
+      <section className="race-times-manager-detail__section">
+      <div className="race-times-manager-detail__container">
         {
-          <form onSubmit={handleSubmit} className="has-text-centered">
+          <form onSubmit={handleSubmit} className="race-times-manager-detail__form">
 
             <div className="field">
               <label className="label" htmlFor="raceName">Race name (eg Results A)</label>

@@ -34,6 +34,7 @@ export type BandProps = {
 }
   
 export type CrewProps = {
+  gender: string;
   race_id_start_override: number | null;
   race_id_finish_override: number | null;
   category_position_time: number;
@@ -80,6 +81,7 @@ export type CrewProps = {
   }
   number_location?: string;
   marshalling_division?: string;
+  requires_ranking_update: boolean;
 }
 
 export type EventOriginalProps = {
