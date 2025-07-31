@@ -36,7 +36,7 @@ import RaceTimesManagerDetail from "./components/organisms/RaceTimesManagerDetai
 import TimingOffsetManagerDetail from "./components/organisms/TimingOffsetManager/TimingOffsetManagerDetail";
 import MarshallingDivisions from "./components/pages/MarshallingDivisions/MarshallingDivisions";
 
-import 'bulma'
+// import 'bulma'
 import "./style.scss"
 
 // Create a client instance

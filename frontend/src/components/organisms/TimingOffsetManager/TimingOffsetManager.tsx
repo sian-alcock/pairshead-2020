@@ -50,10 +50,9 @@ export default function TimingOffsetManager() {
   const headings = ['Timing sync id', 'Reference race', 'Target race', 'Offset in ms', 'Delete']
   return (
     <>
-      <section className="timing-offset-manager__section">
-        <div className="timing-offset-manager__container">
+      <section className="timing-offset-manager">
           <div className="timing-offset-manager__table-container">
-            <table className="timing-offset-manager__table table">
+            <table className="timing-offset-manager__table">
               <thead>
                 <tr>
                   {headings.map((heading, idx) =>
@@ -86,7 +85,6 @@ export default function TimingOffsetManager() {
               <TextButton label={'Add new'} pathName={'/settings/timing-offset-manager/race-time-syncs/new'}/>
             </p>
             </div>
-        </div>
       </section>
     </>
   );

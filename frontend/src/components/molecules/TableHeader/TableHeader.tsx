@@ -1,5 +1,6 @@
 import React from 'react';
 import { flexRender, HeaderGroup, Row, Cell } from '@tanstack/react-table';
+import './tableHeader.scss'
 
 // Reusable Table Header Component
 interface TableHeaderProps<T = any> {

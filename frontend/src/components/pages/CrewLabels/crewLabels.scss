@@ -3,8 +3,8 @@
 .crew-labels {
   color: $black;
   &__grid {
-    @include grid(2);
     gap: 0.2rem;
+    @include grid(2);
   }
 
   &__label {
@@ -24,8 +24,8 @@
   }
 
   &__host {
-    @include h5;
     font-weight: $bold;
+    @include h5;
   }
 }
 

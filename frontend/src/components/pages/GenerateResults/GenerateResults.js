@@ -5,8 +5,7 @@ import CSVDataLoader from '../../molecules/CSVDataLoader/CSVDataLoader'
 import Hero from '../../organisms/Hero/Hero'
 import Header from '../../organisms/Header/Header'
 import TextButton from '../../atoms/TextButton/TextButton'
-import RaceTimesManager from '../../organisms/RaceTimesManager/RaceTimesManager'
-import TimingOffsetEntry from '../../organisms/TimingOffsetManager/TimingOffsetManager'
+import './generateResults.scss'
 
 class GenerateResults extends React.Component {
   constructor() {
@@ -20,8 +19,8 @@ class GenerateResults extends React.Component {
       <>
         <Header />
         <Hero title={"Generate results"} />
-        <section className="section">
-          <div className="container">
+        <section className="generate-results__section">
+          <div className="generate-results__container">
             <section className="c-data-loader__section">
             <div className="text-container has-text-left">
               <h2 className="c-data-loader__title">Get data from British Rowing</h2>

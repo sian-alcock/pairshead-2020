@@ -2,6 +2,7 @@
 .timing-offset-manager {
 
   &__section {
+    margin-top: 1.5rem;
     margin-bottom: 1.5rem;
     @include section;
   }
@@ -21,7 +22,9 @@
 
   &__table {
     margin-bottom: 1.5rem;
-    margin-left: 0; 
+    margin-left: 0;
+
+    @include table;
   }
 }
 

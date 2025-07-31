@@ -155,7 +155,7 @@ $cols: 12;
 
 @mixin form() {
   width: 100%;
-  margin: 0 auto;
+  margin: 1.5rem auto;
   padding: 1.5rem;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   @media screen and (min-width: $md) {
@@ -207,6 +207,12 @@ $html-font-size: 16px;
 @mixin table {
   th, td {
     padding: 0.5rem 1rem;
+    text-align: left;
+    @include body-small;
+  }
+
+  th {
+    @include body-small(bold);
   }
 
   tr {

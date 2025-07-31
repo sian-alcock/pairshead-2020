@@ -4,7 +4,7 @@
     margin-bottom: 1.5rem;
   }
   &__table {
-    margin-left: 0; 
+    @include table;
   }
 
   &__expand {
@@ -23,6 +23,11 @@
       display: block;
       transform: rotate(90deg);
     }
+  }
+
+  &__button-wrapper {
+    display: flex;
+    gap: 0.75rem;
   }
 
   .td-center {

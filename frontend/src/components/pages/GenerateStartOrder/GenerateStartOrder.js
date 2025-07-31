@@ -37,28 +37,23 @@ class GenerateStartOrder extends React.Component {
       <>
       <Header />
       <Hero title="Generate start order" />
-      <section className="section">
-        <div className="container">
-        <section className="c-data-loader__section">
-            <div className="text-container has-text-left">
-              <h2 className="c-data-loader__title">Get data from British Rowing</h2>
-              <p className="c-data-loader__description">Import data from BROE via the api</p>
-            </div>
-              <BROELoader
+      <section className="generate-start-order__section">
+        <div className="generate-start-order__container">
+          <section className="generate-start-order__sub-section">
+            <h2 className="generate-start-order__title">Get data from British Rowing</h2>
+            <p className="generate-start-order__description">Import data from BROE via the api</p>
+            <BROELoader
             importPersonalData={true} title={'Get data from British Rowing'} description={'Import data from BROE via the api'} location={'page'}/>
           </section>
           
-          <section className="section-has-lines">
-            <div className="text-container has-text-left">
+          <section className="generate-start-order__sub-section">
+            <div className="">
               <h2 className="generate-start-order__title">Create template for event order</h2>
-              <p className="left">Download a template for the event order</p>
+              <p className="generate-start-order__description">Download a template for the event order</p>
             </div>
             <div className="columns">
               <div className="column is-one-quarter has-text-centered">
                 <TextButton onClick={this.exportEventOrderTemplate} label={'Export event order template'}/>
-              </div>
-              <div className="column left">
-                CSV with all events listed ready for admin to enter the order
               </div>
             </div>
           </section>
@@ -71,19 +66,10 @@ class GenerateStartOrder extends React.Component {
               description='Import event order from csv.'
             />
 
-            <section className="section-has-lines">
-              <div className="text-container has-text-left">
-                <h2 className="generate-start-order__title">Create template for Number locations</h2>
-                <p className="left">Download a template for the number locations</p>
-              </div>
-              <div className="columns">
-                <div className="column is-one-quarter has-text-centered">
-                  <TextButton onClick={this.exportNumberLocationTemplate} label={'Number location template'}/>
-                </div>
-                <div className="column left">
-                  CSV with all host clubs ready for admin to enter the associated number location
-                </div>
-              </div>
+            <section className="generate-start-order__sub-section">
+              <h2 className="generate-start-order__title">Create template for Number locations</h2>
+              <p className="generate-start-order__description">Download a template for the number locations</p>
+              <TextButton onClick={this.exportNumberLocationTemplate} label={'Number location template'}/>
               <CSVDataLoader
                 url='/api/number-location-import/'
                 buttonText='Import number locations'
@@ -111,7 +97,7 @@ class GenerateStartOrder extends React.Component {
             />
 
 
-          <section className="section-has-lines">
+          <section className="generate-start-order__sub-section">
             <div className="text-container has-text-left">
               <h2 className="generate-start-order__title">Inspect calculated start order</h2>
               <p className="generate-start-order__description">Report showing crews with calculated start order for inspection</p>
@@ -123,7 +109,7 @@ class GenerateStartOrder extends React.Component {
             </div>
           </section>
 
-          <section className="section-has-lines">
+          <section className="generate-start-order__sub-section">
             <div className="text-container has-text-left">
               <h2 className="generate-start-order__title">Export start order data</h2>
               <p className="generate-start-order__description">Export start order data for import to BROE and for reports/admin</p>

@@ -5,13 +5,16 @@ export interface FormInputProps {
   fieldName: string;
   label: string;
   hiddenLabel?: boolean;
-  defaultValue?: string;
+  value?: string;
   placeholder?: string;
   required?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   type: 'text' | 'number',
   min?: string;
   max?: string;
+  disabled?: boolean;
+  readOnly?: boolean;
 }
 
 /**
@@ -21,16 +24,19 @@ export const FormInput = ({
   fieldName,
   hiddenLabel = false,
   label,
-  defaultValue,
+  value,
   placeholder,
   required = false,
   onChange,
+  onBlur,
   type = 'text',
   min,
-  max
+  max,
+  disabled=false,
+  readOnly=false
 }: FormInputProps): ReactElement => (
   <div className={'form-input'}>
-    <label htmlFor={fieldName} className={hiddenLabel ? 'form-select__label sr-only' : 'form-select__label'}>
+    <label htmlFor={fieldName} className={hiddenLabel ? 'form-input__label sr-only' : 'form-input__label'}>
       {label}
     </label>
     <input
@@ -39,11 +45,14 @@ export const FormInput = ({
       name={fieldName}
       type={type}
       required={required}
-      defaultValue={defaultValue}
+      value={value}
       placeholder={placeholder}
       onChange={onChange}
+      onBlur={onBlur}
       min={min}
       max={max}
+      disabled={disabled}
+      readOnly={readOnly}
     />
   </div>
 );

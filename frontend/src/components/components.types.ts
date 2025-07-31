@@ -76,7 +76,7 @@ export type CrewProps = {
   rowing_CRI?: number;
   draw_start_score?: number;
   calculated_start_order?: number;
-  host_club: {
+  host_club?: {
     name: string;
   }
   number_location?: string;

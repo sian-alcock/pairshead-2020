@@ -3,6 +3,8 @@
 .nav-bar {
   display: flex;
   align-items: center;
+
+  @include body;
   
   &__desktop {
     display: none;

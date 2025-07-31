@@ -12,10 +12,11 @@
   background: $bblBlue;
   color: $white;
   text-align: center;
+  cursor: pointer;
   @include body-small(bold);
 
   &:hover {
-    background: none;
+    background: $phLogoBlue;
     color: $bblBlue;
   }
 
@@ -29,11 +30,21 @@
   &:disabled {
     opacity: 0.55;
     pointer-events: none;
+    cursor: not-allowed;
   }
 
   &--loading {
     background: none;
     color: $bblBlue;
+  }
+
+  &--secondary {
+    background: $white;
+    color: $bblBlue;
+
+    &:hover {
+      background: $phLogoBlue;
+    }
   }
 
   .icon__spinner {

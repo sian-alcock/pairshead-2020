@@ -167,7 +167,7 @@ export default function CrewStartOrder() {
                 <td>{crew.rowing_CRI}</td>
                 <td>{crew.draw_start_score}</td>
                 <td>{crew.calculated_start_order}</td>
-                <td>{crew.host_club.name === 'Unknown club' ? `⚠️ ${crew.host_club.name}` : crew.host_club.name}</td>
+                <td>{crew.host_club?.name === 'Unknown club' ? `⚠️ ${crew.host_club.name}` : crew.host_club?.name}</td>
                 <td>{crew.number_location}</td>
                 <td>{crew.marshalling_division}</td>
               </tr>

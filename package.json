@@ -8,7 +8,10 @@
     "build": "webpack --mode production",
     "serve:backend": "python manage.py runserver 4000",
     "serve:frontend": "webpack serve --mode development",
-    "seed": "python manage.py loaddata results/fixtures.json"
+    "seed": "python manage.py loaddata results/fixtures.json",
+    "build:stats": "webpack --mode production --profile --json --silent > webpack-stats.json",
+    "analyze": "yarn build:stats && npx webpack-bundle-analyzer webpack-stats.json",
+    "analyze:plugin": "webpack --mode production --env analyze"
   },
   "dependencies": {
     "@babel/core": "^7.5.5",
@@ -23,17 +26,15 @@
     "axios": "^0.19.0",
     "babel-loader": "^8.0.6",
     "buffer": "^6.0.3",
-    "bulma": "^1.0.2",
     "copy-webpack-plugin": "^12.0.2",
     "crypto-browserify": "^3.12.0",
     "css-loader": "^7.1.2",
+    "date-fns": "^4.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "file-loader": "^6.2.0",
     "framer-motion": "^11.3.30",
     "html-webpack-plugin": "^5.3.2",
     "jsonwebtoken": "^9.0.2",
-    "moment": "^2.24.0",
-    "moment-duration-format": "^2.3.2",
     "prettier": "^3.3.3",
     "process": "^0.11.10",
     "react": "^18.3.1",
@@ -65,6 +66,7 @@
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
+    "webpack-bundle-analyzer": "^4.10.2",
     "webpack-dev-server": "^5.0.4"
   },
   "engines": {

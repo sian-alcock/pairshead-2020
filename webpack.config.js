@@ -1,20 +1,22 @@
 const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 module.exports = (env, argv) => {
-  // Detect if we're in development mode
   const isDevelopment = argv.mode === 'development' || process.env.NODE_ENV === 'development'
+  const shouldAnalyze = env && env.analyze // Check for --env analyze flag
   
   return {
     mode: isDevelopment ? 'development' : 'production',
     entry: './src/app.js',
     context: path.resolve(__dirname, 'frontend'),
     output: {
-      filename: isDevelopment ? 'bundle.js' : 'bundle.[contenthash].js',
+      filename: isDevelopment ? '[name].js' : '[name].[contenthash].js',
+      chunkFilename: isDevelopment ? '[name].chunk.js' : '[name].[contenthash].chunk.js',
       path: path.resolve(__dirname, 'frontend/dist'),
       publicPath: '/',
-      clean: true // Clean output directory before each build
+      clean: true
     },
     resolve: {
       extensions: ['.tsx', '.ts', '.js', '.jsx'],
@@ -53,22 +55,21 @@ module.exports = (env, argv) => {
         },
         { 
           test: /\.woff2?$/, 
-          type: 'asset/resource' // Modern webpack 5 way
+          type: 'asset/resource'
         },
         { 
           test: /\.(jpg|png|gif|svg)$/, 
-          type: 'asset/resource' // Modern webpack 5 way
+          type: 'asset/resource'
         }
       ]
     },
-    // Only include devServer config in development
     ...(isDevelopment && {
       devServer: {
         static: 'src',
         open: true,
         port: 8000,
         historyApiFallback: true,
-        hot: true, // Enable HMR
+        hot: true,
         proxy: [
           {
             context: ['/api'],
@@ -80,7 +81,6 @@ module.exports = (env, argv) => {
       }
     }),
     plugins: [
-      // Only include HMR plugin in development
       ...(isDevelopment ? [new webpack.HotModuleReplacementPlugin()] : []),
       
       new HtmlWebpackPlugin({
@@ -94,37 +94,100 @@ module.exports = (env, argv) => {
         }
       }),
       new webpack.ProvidePlugin({
-        process: 'process/browser'
-      }),
-      new webpack.ProvidePlugin({
+        process: 'process/browser',
         Buffer: ['buffer', 'Buffer']
       }),
       
-      // Add environment variable definitions
       new webpack.DefinePlugin({
         'process.env.NODE_ENV': JSON.stringify(isDevelopment ? 'development' : 'production'),
         'process.env.DEBUG': JSON.stringify(isDevelopment)
-      })
+      }),
+
+      // ADD BUNDLE ANALYZER PLUGIN
+      ...(shouldAnalyze ? [
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'server', // Opens in browser automatically
+          analyzerHost: 'localhost',
+          analyzerPort: 8888,
+          openAnalyzer: true,
+          generateStatsFile: true,
+          statsFilename: 'bundle-stats.json',
+          reportFilename: 'bundle-report.html'
+        })
+      ] : [])
     ],
     
-    // Optimization settings
     optimization: {
       minimize: !isDevelopment,
-      splitChunks: isDevelopment ? false : {
+      splitChunks: {
         chunks: 'all',
+        minSize: 20000,
+        maxSize: 244000,
         cacheGroups: {
+          // React core
+          react: {
+            test: /[\\/]node_modules[\\/](react|react-dom|react-router)[\\/]/,
+            name: 'react-vendor',
+            priority: 10,
+          },
+          
+          // Data & State Management
+          dataLibs: {
+            test: /[\\/]node_modules[\\/](@tanstack\/react-query|@tanstack\/react-table)[\\/]/,
+            name: 'data-libs',
+            priority: 9,
+          },
+          
+          // UI & Animation Libraries
+          uiLibs: {
+            test: /[\\/]node_modules[\\/](framer-motion|react-select|react-toastify|bulma)[\\/]/,
+            name: 'ui-libs',
+            priority: 8,
+          },
+          
+          // Utilities (including potential lodash)
+          utils: {
+            test: /[\\/]node_modules[\\/](lodash|moment|axios|classnames)[\\/]/,
+            name: 'utils',
+            priority: 7,
+          },
+          
+          // Node.js polyfills
+          polyfills: {
+            test: /[\\/]node_modules[\\/](buffer|crypto-browserify|stream-browserify|util|vm-browserify|process)[\\/]/,
+            name: 'polyfills',
+            priority: 6,
+          },
+          
+          // Everything else
           vendor: {
             test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
+            name: 'vendor',
+            priority: 5,
+          },
+          
+          // Common code
+          common: {
+            name: 'common',
+            minChunks: 2,
             chunks: 'all',
+            priority: 4,
+            enforce: true,
           },
         },
       },
+      concatenateModules: !isDevelopment,
+      removeEmptyChunks: true,
+      mergeDuplicateChunks: true,
+      runtimeChunk: {
+        name: 'runtime'
+      }
     },
     
-    // Performance hints only in production
     performance: {
-      hints: isDevelopment ? false : 'warning'
+      hints: isDevelopment ? false : 'warning',
+      maxEntrypointSize: 250000,
+      maxAssetSize: 250000
     }
   }
 }

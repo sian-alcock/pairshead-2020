@@ -269,9 +269,8 @@ export default function RaceTimesManager({ title, onDataChanged }: RaceTimesMana
 
   return (
     <section className="race-times-manager no-print">
-      <h1>{title}</h1>
       <form className="race-times-manager__form">
-        <table className="race-times-manager__table table">
+        <table className="race-times-manager__table">
           <thead>
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id}>
@@ -328,7 +327,7 @@ export default function RaceTimesManager({ title, onDataChanged }: RaceTimesMana
             ))}
           </tfoot>
         </table>
-        <div className="field is-grouped">
+        <div className="race-times-manager__button-wrapper">
           <p className="control">
             <TextButton 
               label={'Submit'} 

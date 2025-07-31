@@ -9,6 +9,9 @@ import {
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Icon from '../../atoms/Icons/Icons';
 import './marshallingDivisionsTable.scss'
+import TextButton from '../../atoms/TextButton/TextButton';
+import { FormInput } from '../../atoms/FormInput/FormInput';
+import { IconButton } from '../../atoms/IconButton/IconButton';
 
 // Types
 interface MarshallingDivision {
@@ -57,22 +60,27 @@ const EditableCell: React.FC<{
   if (column.id === 'bottom_range') {
     // Bottom range is calculated automatically, so make it read-only
     return (
-      <input
-        className="marshalling-table__input marshalling-table__input--readonly"
+      <FormInput
         value={value}
         readOnly
+        fieldName={column.id}
+        label={'Bottom of range'}
+        type={'number'}
+        hiddenLabel={true}
       />
     );
   }
 
   return (
-    <input
-      className="marshalling-table__input"
+    <FormInput
       value={value}
       onChange={(e) => setValue(e.target.value)}
       onBlur={onBlur}
       type={column.id === 'top_range' ? 'number' : 'text'}
-      min={column.id === 'top_range' ? 1 : undefined}
+      min={column.id === 'top_range' ? '1' : undefined}
+      fieldName={column.id}
+      label={column.id === 'name' ? 'Name' : 'Top of range'}
+      hiddenLabel={true}
     />
   );
 };
@@ -207,28 +215,24 @@ const MarshallingDivisionsTable: React.FC = () => {
   
   const columns = useMemo(() => [
     columnHelper.accessor('name', {
-      header: 'Division Name',
+      header: 'Division name',
       cell: EditableCell,
     }),
     columnHelper.accessor('bottom_range', {
-      header: 'Bottom Range',
+      header: 'Bottom range',
       cell: EditableCell,
     }),
     columnHelper.accessor('top_range', {
-      header: 'Top Range',
+      header: 'Top range',
       cell: EditableCell,
     }),
     columnHelper.display({
       id: 'actions',
-      header: 'Actions',
+      header: 'Delete range',
       cell: ({ row }) => (
-        <button
-          className="marshalling-table__button marshalling-table__button--danger"
-          onClick={() => removeDivision(row.index)}
-          title="Remove division"
-        >
-          <Icon icon={'delete'} />
-        </button>
+        <div style={{display:"flex", justifyContent:"center"}}>
+          <IconButton title={'Remove division'} icon={'delete'} onClick={() => removeDivision(row.index)} smaller/>
+        </div>
       ),
     }),
   ], []);
@@ -251,37 +255,25 @@ const MarshallingDivisionsTable: React.FC = () => {
     <div className="marshalling-table">
       <div className="marshalling-table__header">
         <h2 className="marshalling-table__title">Marshalling divisions</h2>
+        <p className="marshalling-table__description">Bottom ranges are calculated to be sequential. Each division starts where the previous one ends + 1.</p>
         <div className="marshalling-table__actions">
-          <button
-            className="marshalling-table__button marshalling-table__button--primary"
-            onClick={addDivision}
-          >
-            <Icon icon={'add'} />
-            Add Division
-          </button>
+          <TextButton onClick={addDivision} label={'Add division'}/>
           {hasChanges && (
             <>
-              <button
-                className="marshalling-table__button marshalling-table__button--success"
+              <TextButton
                 onClick={saveChanges}
                 disabled={updateMutation.isPending}
-              >
-                {/* <Save size={16} /> */}
-                {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
-              </button>
-              <button
-                className="marshalling-table__button marshalling-table__button--secondary"
+                loading={updateMutation.isPending}
+                label={updateMutation.isPending ? 'Saving...' : 'Save changes'}
+              />
+              <TextButton
                 onClick={resetChanges}
-              >
-                Reset
-              </button>
+                label={'Reset'}
+                style={'secondary'}
+              />
             </>
           )}
         </div>
-      </div>
-
-      <div className="marshalling-table__info">
-        <p>Bottom ranges are calculated to be sequential. Each division starts where the previous one ends + 1.</p>
       </div>
 
       <table className="marshalling-table__table">
@@ -313,7 +305,7 @@ const MarshallingDivisionsTable: React.FC = () => {
 
       {data.length === 0 && (
         <div className="marshalling-table__empty">
-          No divisions found. Click "Add Division" to create one.
+          No divisions found. Click "Add division" to create one.
         </div>
       )}
     </div>

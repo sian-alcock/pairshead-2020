@@ -14,8 +14,7 @@
   }
 
   &__table {
-    margin-left: 0;
-    max-width: 100%;
+    @include table;
   }
 
   &__title {

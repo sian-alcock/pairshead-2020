@@ -239,7 +239,7 @@ export default function TimingOffsetManagerDetail () {
                   type={'number'}
                   min="0"
                   max="59"
-                  defaultValue={minutes.toString()}
+                  value={minutes.toString()}
                   onChange={(e) => setMinutes(parseInt(e.target.value) || 0)}
                 />
               </div>
@@ -251,7 +251,7 @@ export default function TimingOffsetManagerDetail () {
                   type={'number'}
                   min="0"
                   max="59"
-                  defaultValue={seconds.toString()}
+                  value={seconds.toString()}
                   onChange={(e) => setSeconds(parseInt(e.target.value) || 0)}
                 />
               </div>
@@ -263,7 +263,7 @@ export default function TimingOffsetManagerDetail () {
                   type={'number'}
                   min="0"
                   max="99"
-                  defaultValue={hundredths.toString()}
+                  value={hundredths.toString()}
                   onChange={(e) => setHundredths(parseInt(e.target.value) || 0)}
                 />
               </div>

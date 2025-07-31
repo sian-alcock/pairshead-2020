@@ -162,7 +162,7 @@ const ResultsComparison: React.FC = () => {
   return (
     <div className="results-comparison">
       <div className="results-comparison__header">
-        <h2 className="results-comparison__title">Results Comparison</h2>
+        <h2 className="results-comparison__title">Results comparison</h2>
         <p className="results-comparison__description">
           Compare winners and runners-up between different start/finish race combinations
         </p>
@@ -177,7 +177,7 @@ const ResultsComparison: React.FC = () => {
             value={comparison1.start_race_id || ''}
             onChange={(e) => setComparison1(prev => ({ ...prev, start_race_id: e.target.value }))} 
             fieldName={'start_race_1'}
-            title={''}
+            title={'Start race 1'}
             />
           <FormSelect
             label="Finish race"
@@ -185,7 +185,7 @@ const ResultsComparison: React.FC = () => {
             value={comparison1.finish_race_id || ''}
             onChange={(e) => setComparison1(prev => ({ ...prev, finish_race_id: e.target.value }))}
             fieldName={'finish_race_1'}
-            title={''}
+            title={'Finish race 1'}
             />
         </div>
 
@@ -197,7 +197,7 @@ const ResultsComparison: React.FC = () => {
             value={comparison2.start_race_id || ''}
             onChange={(e) => setComparison2(prev => ({ ...prev, start_race_id: e.target.value }))}
             fieldName={'start_race_2'}
-            title={''}
+            title={'Start Race 2'}
             />
           <FormSelect
             label="Finish race"
@@ -205,7 +205,7 @@ const ResultsComparison: React.FC = () => {
             value={comparison2.finish_race_id || ''}
             onChange={(e) => setComparison2(prev => ({ ...prev, finish_race_id: e.target.value }))}
             fieldName={'finish_race_2'}
-            title={''}
+            title={'Finish race 2'}
             />
         </div>
       </div>
