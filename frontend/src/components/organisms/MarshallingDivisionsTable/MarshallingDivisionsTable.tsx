@@ -7,7 +7,6 @@ import {
   CellContext,
 } from '@tanstack/react-table';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import Icon from '../../atoms/Icons/Icons';
 import './marshallingDivisionsTable.scss'
 import TextButton from '../../atoms/TextButton/TextButton';
 import { FormInput } from '../../atoms/FormInput/FormInput';
