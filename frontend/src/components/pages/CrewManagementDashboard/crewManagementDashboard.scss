@@ -1,6 +1,7 @@
 @import '../../../style.scss';
 @import '../../../lib.scss';
 
+
 .crew-manager {
 
   &__section {
@@ -19,26 +20,28 @@
 
   &__tab {
     display: block;
-    padding: 1rem;
-    background-color: $bblBlue;
-    border: 2px solid $phLogoBlue;
-    a {
-      color: $white;
+    border: 1px solid $bblGrey;
+    border-bottom: unset;
+    border-radius: 4px 4px 0 0;
+    margin-right: 4px;
+    button {
+      color: $bblBlue;
+      padding: 1rem;
       @include body-small($bold);
     }
 
 
     &:hover {
       background-color: $phLogoBlue;
-      a {
+      button {
         color: $bblBlue;
       }
     }
 
 
-    &.is-active {
+    &--active {
       background-color: $phLogoBlue;
-      a {
+      button {
         color: $bblBlue; 
       }
     }

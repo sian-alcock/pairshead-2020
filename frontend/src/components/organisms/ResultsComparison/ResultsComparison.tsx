@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, ReactNode } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import {
   useReactTable,
@@ -7,10 +7,18 @@ import {
   createColumnHelper,
   ColumnDef,
 } from '@tanstack/react-table';
+
+// Extend the ColumnMeta type to include className
+declare module '@tanstack/react-table' {
+  interface ColumnMeta<TData, TValue> {
+    className?: string;
+  }
+}
 import { RaceProps, CrewProps } from '../../components.types';
 import './resultsComparison.scss'
 import { FormSelect } from '../../atoms/FormSelect/FormSelect';
 import TextButton from '../../atoms/TextButton/TextButton';
+import Icon from '../../atoms/Icons/Icons';
 
 // Types
 
@@ -245,6 +253,8 @@ interface TableRow {
   comp2_winner: CrewResult | null;
   comp2_runner_up: CrewResult | null;
   comp2_total: number;
+  matching_winner: string | null;
+  matching_runner_up: string | null;
 }
 
 const ComparisonResults: React.FC<ComparisonResultsProps> = ({ data }) => {
@@ -259,6 +269,25 @@ const ComparisonResults: React.FC<ComparisonResultsProps> = ({ data }) => {
       const comp1Result = data.comparison1.results[category];
       const comp2Result = data.comparison2.results[category];
 
+      let matchWinner = '';
+      let matchRunnerUp = '';
+
+      if (!comp1Result?.winner?.crew_id || !comp2Result?.winner?.crew_id) {
+        matchWinner = 'missing'
+      } else if (comp1Result?.winner?.crew_id === comp2Result?.winner?.crew_id) {
+        matchWinner = 'match'
+      } else {
+        matchWinner = 'not match'
+      }
+
+      if (!comp1Result?.runner_up?.crew_id  || !comp2Result?.runner_up?.crew_id) {
+        matchRunnerUp = 'missing'
+      } else if (comp1Result?.runner_up?.crew_id === comp2Result?.runner_up?.crew_id) {
+        matchRunnerUp = 'match'
+      } else {
+        matchRunnerUp = 'not match'
+      }
+
       return {
         category,
         comp1_winner: comp1Result?.winner || null,
@@ -267,6 +296,8 @@ const ComparisonResults: React.FC<ComparisonResultsProps> = ({ data }) => {
         comp2_winner: comp2Result?.winner || null,
         comp2_runner_up: comp2Result?.runner_up || null,
         comp2_total: comp2Result?.total_crews || 0,
+        matching_winner: matchWinner,
+        matching_runner_up: matchRunnerUp,
       };
     });
   }, [data]);
@@ -279,42 +310,85 @@ const ComparisonResults: React.FC<ComparisonResultsProps> = ({ data }) => {
       cell: (info) => (
         <div className="results-table__category">{info.getValue()}</div>
       ),
+      meta: {
+        className: 'results-table__cell--neutral',
+      },
+    }),
+    columnHelper.accessor('matching_winner', {
+      header: 'Winner match',
+      cell: (info) => (<MatchCell match={info.getValue()}/>
+      ),
+      meta: {
+        className: 'results-table__cell--neutral',
+      },
+    }),
+    columnHelper.accessor('matching_runner_up', {
+      header: 'Runner up match',
+      cell: (info) => (<MatchCell match={info.getValue()}/>
+      ),
+      meta: {
+        className: 'results-table__cell--neutral',
+      },
     }),
     columnHelper.group({
-      header: `${data.comparison1.start_race} → ${data.comparison1.finish_race}`,
+      header: `Start: ${data.comparison1.start_race} - Finish: ${data.comparison1.finish_race}`,
+      meta: {
+        className: 'results-table__header--comparison1',
+      },
       columns: [
         columnHelper.accessor('comp1_winner', {
           header: 'Winner',
           cell: (info) => <CrewResultCell crew={info.getValue()} />,
+          meta: {
+            className: 'results-table__cell--comparison1',
+          },
         }),
         columnHelper.accessor('comp1_runner_up', {
           header: 'Runner-up',
           cell: (info) => <CrewResultCell crew={info.getValue()} />,
+          meta: {
+            className: 'results-table__cell--comparison1',
+          },
         }),
         columnHelper.accessor('comp1_total', {
           header: 'Total',
           cell: (info) => (
             <div className="results-table__total">{info.getValue()}</div>
           ),
+          meta: {
+            className: 'results-table__cell--comparison1',
+          },
         }),
       ],
     }),
     columnHelper.group({
-      header: `${data.comparison2.start_race} → ${data.comparison2.finish_race}`,
+      header: `Start: ${data.comparison2.start_race} - Finish: ${data.comparison2.finish_race}`,
+      meta: {
+        className: 'results-table__header--comparison2',
+      },
       columns: [
         columnHelper.accessor('comp2_winner', {
           header: 'Winner',
           cell: (info) => <CrewResultCell crew={info.getValue()} />,
+          meta: {
+            className: 'results-table__cell--comparison2',
+          },
         }),
         columnHelper.accessor('comp2_runner_up', {
           header: 'Runner-up',
           cell: (info) => <CrewResultCell crew={info.getValue()} />,
+          meta: {
+            className: 'results-table__cell--comparison2',
+          },
         }),
         columnHelper.accessor('comp2_total', {
           header: 'Total',
           cell: (info) => (
             <div className="results-table__total">{info.getValue()}</div>
           ),
+          meta: {
+            className: 'results-table__cell--comparison2',
+          },
         }),
       ],
     }),
@@ -326,6 +400,8 @@ const ComparisonResults: React.FC<ComparisonResultsProps> = ({ data }) => {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  console.log(tableData)
+
   return (
     <div className="results-comparison__results">
       <h3 className="results-comparison__results-title">Comparison Results</h3>
@@ -334,27 +410,47 @@ const ComparisonResults: React.FC<ComparisonResultsProps> = ({ data }) => {
           <thead className="results-table__head">
             {table.getHeaderGroups().map(headerGroup => (
               <tr key={headerGroup.id} className="results-table__header-row">
-                {headerGroup.headers.map(header => (
-                  <th key={header.id} className="results-table__header">
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </th>
-                ))}
+                {headerGroup.headers.map(header => {
+                  // Determine header class based on column meta or parent group
+                  let headerClass = "results-table__header";
+                  
+                  // Check if this header has a meta className (for group headers)
+                  if (header.column.columnDef.meta?.className) {
+                    headerClass += ` ${header.column.columnDef.meta.className}`;
+                  }
+                  // Check if this is a child column of a group (for sub-headers)
+                  else if (header.column.parent?.columnDef.meta?.className) {
+                    headerClass += ` ${header.column.parent.columnDef.meta.className}`;
+                  }
+
+                  return (
+                    <th key={header.id} colSpan={header.colSpan} className={headerClass}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </th>
+                  );
+                })}
               </tr>
             ))}
           </thead>
           <tbody className="results-table__body">
             {table.getRowModel().rows.map(row => (
               <tr key={row.id} className="results-table__row">
-                {row.getVisibleCells().map(cell => (
-                  <td key={cell.id} className="results-table__cell">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+                {row.getVisibleCells().map(cell => {
+                  const baseClass = `${cell.id} results-table__cell`;
+                  const cellClass = cell.column.columnDef.meta?.className;
+                  const finalClass = cellClass ? `${baseClass} ${cellClass}` : baseClass;
+                  
+                  return (
+                    <td key={cell.id} className={finalClass}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
@@ -376,17 +472,22 @@ const CrewResultCell: React.FC<CrewResultCellProps> = ({ crew }) => {
 
   return (
     <div className="crew-result">
-      <div className="crew-result__name">{crew.crew_name}</div>
-      <div className="crew-result__club">{crew.club_name}</div>
-      <div className="crew-result__time">{crew.formatted_time}</div>
-      {crew.bib_number && (
-        <div className="crew-result__bib">#{crew.bib_number}</div>
-      )}
-      {crew.penalty > 0 && (
-        <div className="crew-result__penalty">+{crew.penalty}s</div>
-      )}
+      <div className="crew-result__name">{`${crew.crew_name} (#${crew.bib_number})`}</div>
     </div>
   );
 };
+
+interface MatchCellProps {
+  match: string | null;
+}
+
+const MatchCell: React.FC<MatchCellProps> =({match}) => {
+  if (match === 'match') {
+    return <i className="results-comparison__icon results-comparison__icon--success"><Icon icon={'success-tick'}/></i>
+  } else if (match === 'missing') {
+    return <i className="results-comparison__icon results-comparison__icon--fail"><Icon icon={'fail-cross'}/></i>
+  }
+  return <i className="results-comparison__icon results-comparison__icon--fail"><Icon icon={'fail-cross'}/></i>
+}
 
 export default ResultsComparison;

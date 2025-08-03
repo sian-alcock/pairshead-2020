@@ -4,11 +4,17 @@
 .results-comparison {
 
   &__title {
+    margin-bottom: 1.5rem;
+
     @include h2;
   }
 
   &__description {
     @include body;
+  }
+
+  &__actions {
+    margin-bottom: 1.5rem;
   }
 
   &__loading,
@@ -36,12 +42,43 @@
   }
 
   &__comparison-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
     @include form;
+  }
+
+  &__icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+    width: 2rem;
+    height: 2rem;
+
+    &--success {
+      background-color: $green-mid;
+    }
+
+    &--fail {
+      background-color: $red-mid;
+    }
   }
 }
 
 .results-table {
   &__table {
     @include table;
+  }
+
+  &__cell--comparison1,
+  &__header--comparison1 {
+    background-color: $blue-tint;
+  }
+
+  &__cell--comparison2,
+  &__header--comparison2 {
+    background-color: $green-tint;
   }
 }

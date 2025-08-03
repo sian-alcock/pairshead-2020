@@ -1,6 +1,9 @@
 import React, { ReactElement } from "react";
 
 export type IconType =
+  | 'warning-mark'
+  | 'fail-cross'
+  | 'success-tick'
   | 'save'
   | 'edit'
   | 'add'
@@ -40,6 +43,45 @@ export default function Icon({
   ariaHidden = false
 }: IconProps): ReactElement {
   switch (icon) {
+    case "warning-mark":
+      return (
+        <svg 
+          className="icon__warning-mark"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor">
+            <path d="M440-400v-360h80v360h-80Zm0 200v-80h80v80h-80Z"/>
+        </svg>
+      )
+    case "fail-cross":
+      return (
+        <svg 
+          className="icon__fail-cross"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor">
+            <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/>
+        </svg>
+      )
+    case "success-tick":
+    return (
+      <svg
+        className="icon__success-tick"
+        aria-hidden={ariaHidden}
+        xmlns="http://www.w3.org/2000/svg"
+        height="24px"
+        viewBox="0 -960 960 960"
+        width="24px"
+        fill="currentColor">
+          <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"/>
+      </svg>
+    )
     case "save":
       return (
         <svg 
