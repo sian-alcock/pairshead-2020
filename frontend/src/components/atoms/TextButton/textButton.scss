@@ -28,7 +28,8 @@
   }
 
   &:disabled {
-    opacity: 0.55;
+    background: $bblGrey;
+    color: $darkGrey;
     pointer-events: none;
     cursor: not-allowed;
   }

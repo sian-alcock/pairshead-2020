@@ -237,8 +237,8 @@ export default function TimingOffsetManagerDetail () {
                   fieldName={'timing_offset_minutes'}
                   label={'Minutes'}
                   type={'number'}
-                  min="0"
-                  max="59"
+                  min={0}
+                  max={59}
                   value={minutes.toString()}
                   onChange={(e) => setMinutes(parseInt(e.target.value) || 0)}
                 />
@@ -249,8 +249,8 @@ export default function TimingOffsetManagerDetail () {
                   fieldName={'timing_offset_seconds'}
                   label={'Seconds'}
                   type={'number'}
-                  min="0"
-                  max="59"
+                  min={0}
+                  max={59}
                   value={seconds.toString()}
                   onChange={(e) => setSeconds(parseInt(e.target.value) || 0)}
                 />
@@ -261,8 +261,8 @@ export default function TimingOffsetManagerDetail () {
                   fieldName={'timing_offset_hundredths_seconds'}
                   label={'Hundredths of second'}
                   type={'number'}
-                  min="0"
-                  max="99"
+                  min={0}
+                  max={99}
                   value={hundredths.toString()}
                   onChange={(e) => setHundredths(parseInt(e.target.value) || 0)}
                 />

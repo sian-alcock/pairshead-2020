@@ -289,16 +289,7 @@ class Crew(models.Model):
             fastest_female_scull = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
             fastest_female_sweep = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time')) or 0
             fastest_mixed_scull = Crew.objects.all().filter(event_band__startswith='Mx', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
-            # print('Fastest men scull')
-            # print(fastest_men_scull)
-            # print('Fastest men sweep')
-            # print(fastest_men_sweep)
-            # print('Fastest female scull')
-            # print(fastest_female_scull)
-            # print('Fastest female sweep')
-            # print(fastest_female_sweep)
-            # print('Fastest mixed scull')
-            # print(fastest_mixed_scull)
+ 
 
             # Mens 2x (scull)
             if fastest_men_scull['raw_time__min'] is not None and self.event.gender == 'Open' and '2x' in self.event_original.first().event_original:

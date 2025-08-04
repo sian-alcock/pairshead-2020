@@ -76,7 +76,7 @@ const EditableCell: React.FC<{
       onChange={(e) => setValue(e.target.value)}
       onBlur={onBlur}
       type={column.id === 'top_range' ? 'number' : 'text'}
-      min={column.id === 'top_range' ? '1' : undefined}
+      min={column.id === 'top_range' ? 1 : undefined}
       fieldName={column.id}
       label={column.id === 'name' ? 'Name' : 'Top of range'}
       hiddenLabel={true}

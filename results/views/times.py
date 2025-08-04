@@ -29,25 +29,18 @@ from ..models import RaceTime, Crew, Race
 
 class RaceTimeListView(generics.ListCreateAPIView):
     serializer_class = PopulatedRaceTimesSerializer
-    queryset = RaceTime.objects.all()
-    # pagination_class = RaceTimePaginationWithAggregates
-    # PageNumberPagination.page_size_query_param = 'page_size' or 10
-    # filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
-    # ordering_fields = ['sequence']
-    # search_fields = ['sequence', 'bib_number', 'tap', 'crew__id', 'crew__name', 'crew__competitor_names',]
-    # filterset_fields = ['tap', 'crew__id',]
-
-    # def get_queryset(self):
-    #     times = RaceTime.objects.all()
-    #     tap = self.request.query_params.get('tap')
-    #     queryset = times.filter(tap__exact=tap).order_by('sequence')
-
-    #     times_without_crew = self.request.query_params.get('noCrew')
-    #     if times_without_crew == 'true':
-    #         queryset = times.filter(tap__exact=tap, crew__isnull=True).order_by('sequence')
-    #         return queryset
-
-    #     return queryset
+    
+    def get_queryset(self):
+        queryset = RaceTime.objects.all()
+        race_id = self.request.query_params.get('race_id', None)
+        tap = self.request.query_params.get('tap', None)
+        
+        if race_id is not None:
+            queryset = queryset.filter(race_id=race_id)
+        if tap is not None:
+            queryset = queryset.filter(tap=tap)
+            
+        return queryset.select_related('race', 'crew')
 
 
 class RaceTimeDetailView(APIView):

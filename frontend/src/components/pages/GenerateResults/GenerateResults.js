@@ -5,14 +5,14 @@ import CSVDataLoader from '../../molecules/CSVDataLoader/CSVDataLoader'
 import Hero from '../../organisms/Hero/Hero'
 import Header from '../../organisms/Header/Header'
 import TextButton from '../../atoms/TextButton/TextButton'
+import RaceTimesManager from '../../organisms/RaceTimesManager/RaceTimesManager'
+import TimingOffsetManager from '../../organisms/TimingOffsetManager/TimingOffsetManager'
 import './generateResults.scss'
 
 class GenerateResults extends React.Component {
   constructor() {
     super()
   }
-
-
   render() {
 
     return (
@@ -29,6 +29,8 @@ class GenerateResults extends React.Component {
               <BROELoader
             importPersonalData={true} title={'Get data from British Rowing'} description={'Import data from BROE via the api'} location={'page'}/>
             </section>
+              <RaceTimesManager />
+              <TimingOffsetManager />
               <CSVDataLoader
                 url='/api/crew-import-penalties/'
                 buttonText='Import penalties'

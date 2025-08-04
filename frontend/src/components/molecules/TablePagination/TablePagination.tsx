@@ -1,6 +1,9 @@
 import React from 'react';
 import { Table } from '@tanstack/react-table';
 import './tablePagination.scss'
+import TextButton from '../../atoms/TextButton/TextButton';
+import { FormInput } from '../../atoms/FormInput/FormInput';
+import { FormSelect } from '../../atoms/FormSelect/FormSelect';
 
 interface TablePaginationProps<T> {
   table: Table<T>;
@@ -17,89 +20,56 @@ export default function TablePagination<T>({
   showPageSizeSelector = true,
   pageSizeOptions = [25, 50, 100, 500]
 }: TablePaginationProps<T>) {
+
+  const options = pageSizeOptions.map((option) => ({
+    label: `Show ${option} rows`,
+    value: option,
+  }))
+
+  const handlePageInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const page = e.target.value ? Number(e.target.value) - 1 : 0;
+    table.setPageIndex(page);
+  };
+
+  const handlePageSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    table.setPageSize(Number(e.target.value));
+  };
+
   return (
     <div className={`table-pagination ${className}`}>
-      {/* Navigation Controls */}
       <div className="table-pagination__wrapper">
-        <button
-          className="table-pagination__button-first"
-          onClick={() => table.firstPage()}
-          disabled={!table.getCanPreviousPage()}
-          title="First page"
-        >
-          {'First'}
-        </button>
-        <button
-          className="table-pagination__button-previous"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-          title="Previous page"
-        >
-          {'Previous'}
-        </button>
-        <button
-          className="table-pagination__button-next"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-          title="Next page"
-        >
-          {'Next'}
-        </button>
-        <button
-          className="table-pagination__button-last"
-          onClick={() => table.lastPage()}
-          disabled={!table.getCanNextPage()}
-          title="Last page"
-        >
-          {'Last'}
-        </button>
+        <TextButton label={'First page'} disabled={!table.getCanPreviousPage()} onClick={() => table.firstPage()}/>
+        <TextButton label={'Previous page'} disabled={!table.getCanPreviousPage()} onClick={() => table.previousPage()}/>
+        <TextButton label={'Next page'} disabled={!table.getCanNextPage()} onClick={() => table.nextPage()}/>
+        <TextButton label={'Last page'} disabled={!table.getCanNextPage()} onClick={() => table.lastPage()}/>
 
-        {/* Page Info */}
-        <span className="table-pagination__page-info">
-          <div>Page</div>
-          <strong>
-            {table.getState().pagination.pageIndex + 1} of{' '}
-            {table.getPageCount().toLocaleString()}
-          </strong>
-        </span>
 
-        {/* Go to Page Input */}
+        Page {table.getState().pagination.pageIndex + 1} of{' '}
+        {table.getPageCount().toLocaleString()}
         <span className="table-pagination__page-input">
-          | Go to page:
-          <input
-            type="number"
-            min="1"
+          <FormInput
+            fieldName={'page'}
+            label={'Go to page'}
+            type={'number'}
+            min={1}
             max={table.getPageCount()}
-            defaultValue={table.getState().pagination.pageIndex + 1}
-            onChange={e => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0
-              table.setPageIndex(page)
-            }}
-            className=""
-            title="Go to specific page"
+            value={table.getState().pagination.pageIndex + 1}
+            onChange={handlePageInputChange}
           />
         </span>
 
-        {/* Page Size Selector */}
         {showPageSizeSelector && (
-          <select
-            value={table.getState().pagination.pageSize}
-            onChange={e => {
-              table.setPageSize(Number(e.target.value))
-            }}
-            className="table-pagination__select"
-            title="Select page size"
-          >
-            {pageSizeOptions.map(pageSize => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
-              </option>
-            ))}
-          </select>
+          <FormSelect
+            label={'Rows'}
+            value={table.getState().pagination.pageSize.toString()}
+            fieldName={'select_page'}
+            title={'Page'}
+            selectOptions={options}
+            onChange={handlePageSizeChange}
+          />
         )}
       </div>
 
-      {/* Row Info */}
       {showRowInfo && (
         <div className="table-pagination__row-info">
           Showing {table.getRowModel().rows.length.toLocaleString()} of{' '}

@@ -7,6 +7,7 @@
 $sm: 320px;
 $md: 768px;
 $lg: 1248px;
+$xl: 1920px;
 /*************************
 ** Typography **
 *************************/
@@ -15,6 +16,24 @@ $font-headline: 'Open sans', 'Times New Roman', 'Times', serif;
 $font-body: 'Open sans', 'Arial', sans-serif;
 $normal: 400;
 $bold: 700;
+
+@mixin tablet {
+  @media only screen and (min-width: $md) {
+    @content;
+  }
+}
+
+@mixin laptop {
+  @media only screen and (min-width: $lg) {
+    @content;
+  }
+}
+
+@mixin wide {
+  @media only screen and (min-width: $xl) {
+    @content;
+  }
+}
 
 @mixin font-headline($weight: $normal) {
   font-family: $font-headline;
@@ -86,10 +105,10 @@ $bold: 700;
 @mixin body($weight: $normal) {
   @include font-body($weight);
 
-  font-size: rem(16px);
+  font-size: rem(14px);
   line-height: 1.1;
   @media screen and (min-width: $lg) {
-    font-size: rem(18px);
+    font-size: rem(16px);
   }
 
   // Prevent body from scrolling when nav is open
@@ -112,10 +131,10 @@ $bold: 700;
 @mixin body-small($weight: $normal) {
   @include font-body($weight);
 
-  font-size: rem(14px);
+  font-size: rem(12px);
   line-height: rem(19.6px);
   @media screen and (min-width: $lg) {
-    font-size: rem(16px);
+    font-size: rem(14px);
     line-height: rem(22.4px);
   }
 }

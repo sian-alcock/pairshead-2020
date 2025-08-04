@@ -9,6 +9,10 @@ import "./crewManagementDashboard.scss";
 import CrewTimeCompareTable from "../../organisms/CrewTimeCompareTable/CrewTimeCompareTable";
 import ResultsComparison from "../../organisms/ResultsComparison/ResultsComparison";
 import RaceTimesTable from "../../organisms/RaceTimesTable/RaceTimesTable";
+import SequenceComparisonTable from "../../organisms/SequenceComparisonTable/SequenceComparisonTable";
+import MissingTimesTable from "../../organisms/MissingTimesTable/MissingTimesTable";
+import MastersCrewsTable from "../../organisms/MastersCrewsTable/MastersCrewsTable";
+
 
 // Types
 interface RaceTimeProps {
@@ -26,7 +30,7 @@ interface TabConfig {
   key: string;
   label: string;
   count?: number;
-  component: 'crew-table' | 'compare-winners' | 'race-times';
+  component: 'crew-table' | 'compare-winners' | 'race-times' | 'sequence-comparison' | 'missing-times' | 'masters-crews';
   needsCrews?: boolean;
   needsRaces?: boolean;
   raceId?: string;
@@ -94,6 +98,28 @@ export default function CrewManagementDashboard() {
         component: "compare-winners",
         needsCrews: false,
         needsRaces: true,
+      },
+      {
+        key: "sequence-comparison-start",
+        label: "Sequence Compare - Start",
+        component: "sequence-comparison",
+        tap: "Start",
+      },
+      {
+        key: "sequence-comparison-finish", 
+        label: "Sequence Compare - Finish",
+        component: "sequence-comparison",
+        tap: "Finish",
+      },
+      {
+        key: "missing-times",
+        label: "Missing Times",
+        component: "missing-times",
+      },
+      {
+        key: "masters-crews",
+        label: "Masters",
+        component: "masters-crews",
       },
     ];
 
@@ -180,6 +206,32 @@ export default function CrewManagementDashboard() {
       case "compare-winners":
         return <ResultsComparison />;
 
+      case "sequence-comparison":
+        if (!currentTab.tap) {
+          return <div className="crew-manager__error">Invalid sequence comparison configuration</div>;
+        }
+        
+        return (
+          <SequenceComparisonTable
+            tap={currentTab.tap}
+            onDataChanged={handleRaceDataChanged}
+          />
+        );
+
+      case "missing-times":
+        return (
+          <MissingTimesTable
+            onDataChanged={handleCrewDataChanged}
+          />
+        );
+
+      case "masters-crews":
+        return (
+          <MastersCrewsTable
+            onDataChanged={handleCrewDataChanged}
+          />
+        );
+
       case "race-times":
         if (!currentTab.raceId || !currentTab.tap) {
           return <div className="crew-manager__error">Invalid race configuration</div>;
@@ -223,9 +275,6 @@ export default function CrewManagementDashboard() {
                     onClick={() => handleTabChange(tab.key)}
                   >
                     <span className="crew-manager__tab-label">{tab.label}</span>
-                    {tab.count !== undefined && (
-                      <span className="crew-manager__tab-count">{tab.count}</span>
-                    )}
                   </button>
                 </li>
               ))}

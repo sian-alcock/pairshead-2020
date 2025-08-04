@@ -1,0 +1,7 @@
+@import '../../../style.scss';
+
+.masters-crews {
+  &__table {
+    @include table;
+  }
+}

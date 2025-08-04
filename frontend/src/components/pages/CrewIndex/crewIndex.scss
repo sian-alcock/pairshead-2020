@@ -1,77 +1,24 @@
 @import '../../../style.scss';
 
 .crew-index {
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+
+  &__column-options {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
   &__table-container {
-      overflow-x: auto;
+    overflow-x: auto;
   }
 
   &__table {
-    max-width: 100%;
-    margin-left: 0;
-  }
-
-  &__buttons {
-    .text-button {
-      margin-right: 0.5rem;
-      @media (min-width: $lg) {
-        display: inline-flex;
-        margin-right: 0;
-        margin-bottom: 0.5rem;
-      }
-    }
-  }
-}
-
-.masters-calculation {
-
-  &__container {
-    margin-bottom: 1.5rem;
-
-    @media (min-width: $lg) {
-      @include grid;
-    }
-  }
-
-  &__details {
-    cursor: pointer;
-    background-color: $white;
-
-    @media (min-width: $lg) {
-      grid-column: 3 / span 8;
-    }
-  }
-
-  &__summary {
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: $phLogoBlue;
-    padding: 0 1rem;
-    color: $bblBlue;
-    @include body-small(bold);
-
-    &::marker, /* Latest Chrome, Edge, Firefox */
-    &::-webkit-details-marker /* Safari */ {
-      display: none;
-      content: '';
-    }
-  }
-
-  &[open] > summary {
-    .masters-calculation__icon {
-      transform: rotate(180deg);
-      transition: filter 0.3s ease-in;
-    }
-  }
-
-  &__content {
-    padding: 0.5rem 1rem;
-    background-color: $white;
-    border: 1px solid $phLogoBlue;
-  }
-
-  &__icon {
-    margin-top: 0.5rem;
+    @include table;
   }
 }

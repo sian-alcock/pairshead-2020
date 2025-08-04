@@ -15,6 +15,9 @@ from .views import global_settings
 from .views import race
 from .views import race_timing_sync
 from .views import time_compare
+from .views import sequence_compare
+from .views import missing_times
+from .views import masters_crews
 
 
 urlpatterns = [
@@ -59,6 +62,7 @@ path('event-order-import/', event_order.EventOrderImport.as_view()),
 path('marshalling-division-import/', marshalling_division.ImportMarshallingDivision.as_view()),
 path('number-location-template/', number_location.CreateNumberLocationTemplate.as_view()),
 path('number-location-import/', number_location.NumberLocationImport.as_view()),
+path('number-location-bulk-update/', number_location.NumberLocationBulkUpdate.as_view()),
 path('number-locations/', number_location.NumberLocationListView.as_view()),
 path('number-locations/<int:pk>', number_location.NumberLocationDetailView.as_view(), name='number-location-detail'),
 path('event-meeting-key-list/', event_meeting_key.EventMeetingKeyListView.as_view()),
@@ -70,6 +74,9 @@ path('races/<int:pk>/', race.RaceDetailView.as_view(), name='race-detail'),
 path('race-time-sync/', race_timing_sync.RaceTimingSyncListView.as_view(), name='race-timing-sync-list'),
 path('race-time-sync/<int:pk>/', race_timing_sync.RaceTimingSyncDetailView.as_view(), name='race-timing-sync-detail'),
 path('results-comparison/', time_compare.ResultsComparisonView.as_view(), name='results-comparison'),
+path('race-sequence-comparison/', sequence_compare.SequenceComparisonView.as_view(), name='sequence-comparison'),
+path('crews/missing-times/', missing_times.MissingTimesView.as_view(), name='missing-times'),
+path('crews/masters/', masters_crews.MastersCrewsView.as_view(), name='masters-crews'),
 
 
 ]

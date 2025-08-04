@@ -17,11 +17,6 @@ import { Link } from 'react-router-dom'
 import Icon from '../../atoms/Icons/Icons'
 import CSVDataLoader from '../../molecules/CSVDataLoader/CSVDataLoader'
 
-interface RaceTimesManagerProps {
-  title: string;
-  onDataChanged: () => void;
-}
-
 interface RadioSelection {
   raceId: string;
   type: 'default-start' | 'default-finish';
@@ -45,14 +40,16 @@ const deleteRace = async (raceId: string) => {
 
 const refreshRaceData = async (raceId: string) => {
   const response: AxiosResponse = await axios.get(`/api/crew-race-times-import-webscorer/${raceId}`)
+  console.log(response.data)
   return response.data
 }
 
 const columnHelper = createColumnHelper<RaceProps>()
 
-export default function RaceTimesManager({ title, onDataChanged }: RaceTimesManagerProps): ReactElement {
+export default function RaceTimesManager(): ReactElement {
   const [radioSelections, setRadioSelections] = useState<RadioSelection[]>([])
   const [expanded, setExpanded] = useState<ExpandedState>({})
+  const [refreshingRaceId, setRefreshingRaceId] = useState<string | null>(null)
   
   const queryClient = useQueryClient()
 
@@ -67,7 +64,6 @@ export default function RaceTimesManager({ title, onDataChanged }: RaceTimesMana
     mutationFn: updateRace,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['races'] })
-      onDataChanged()
     },
   })
 
@@ -75,40 +71,22 @@ export default function RaceTimesManager({ title, onDataChanged }: RaceTimesMana
     mutationFn: deleteRace,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['races'] })
-      onDataChanged()
     },
   })
 
   const refreshRaceMutation = useMutation({
     mutationFn: refreshRaceData,
+    onMutate: (raceId: string) => {
+      setRefreshingRaceId(raceId)
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['races'] })
-      onDataChanged()
+      setRefreshingRaceId(null)
+    },
+    onError: () => {
+      setRefreshingRaceId(null)
     },
   })
-
-  const handleRadio = (raceId: string, type: 'default-start' | 'default-finish', checked: boolean) => {
-    if (checked) {
-      // Remove any existing selection for this race and radio type
-      setRadioSelections(prev => 
-        prev.filter(selection => 
-          !(selection.raceId === raceId && selection.type === type)
-        )
-      )
-      
-      // Add the new selection
-      setRadioSelections(prev => [...prev, { raceId, type }])
-    } else {
-      // Remove the selection
-      setRadioSelections(prev => 
-        prev.filter(selection => 
-          !(selection.raceId === raceId && selection.type === type)
-        )
-      )
-    }
-    
-    console.log(`Radio selected: ${type} for race ${raceId}`)
-  }
 
   const handleSubmit = async () => {
     try {
@@ -140,13 +118,13 @@ export default function RaceTimesManager({ title, onDataChanged }: RaceTimesMana
     }
   }
 
-  const handleRefresh = async (raceId: string) => {
-    try {
-      await refreshRaceMutation.mutateAsync(raceId)
-    } catch (error) {
-      console.error('Error refreshing race data:', error)
-    }
+const handleRefresh = async (raceId: string) => {
+  try {
+    await refreshRaceMutation.mutateAsync(raceId)
+  } catch (error) {
+    console.error('Error refreshing race data:', error)
   }
+}
 
   // Table columns definition
   const columns = [
@@ -178,33 +156,64 @@ export default function RaceTimesManager({ title, onDataChanged }: RaceTimesMana
     }),
     columnHelper.accessor('default_start', {
       header: 'Default start',
-      cell: ({ row }) => (
-        <div className="td-center">
-          <label>
-            <input
-              type="radio"
-              name={`default-start-${row.original.id}`}
-              defaultChecked={row.original.default_start}
-              onChange={(e) => handleRadio(row.original.id, 'default-start', e.target.checked)}
-            />
-          </label>
-        </div>
-      ),
+      cell: ({ row }) => {
+        // Check if this race is selected for default-start
+        const isSelected = radioSelections.some(
+          selection => selection.raceId === row.original.id && selection.type === 'default-start'
+        ) || (!radioSelections.some(s => s.type === 'default-start') && row.original.default_start)
+        
+        return (
+          <div className="td-center">
+            <label>
+              <input
+                type="radio"
+                name="default-start" // Same name for all default-start radios
+                checked={isSelected}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    // Remove any existing default-start selection and add new one
+                    setRadioSelections(prev => [
+                      ...prev.filter(s => s.type !== 'default-start'),
+                      { raceId: row.original.id, type: 'default-start' }
+                    ])
+                  }
+                }}
+              />
+            </label>
+          </div>
+        )
+      },
     }),
+
     columnHelper.accessor('default_finish', {
       header: 'Default finish',
-      cell: ({ row }) => (
-        <div className="td-center">
-          <label>
-            <input
-              type="radio"
-              name={`default-finish-${row.original.id}`}
-              defaultChecked={row.original.default_finish}
-              onChange={(e) => handleRadio(row.original.id, 'default-finish', e.target.checked)}
-            />
-          </label>
-        </div>
-      ),
+      cell: ({ row }) => {
+        // Check if this race is selected for default-finish
+        const isSelected = radioSelections.some(
+          selection => selection.raceId === row.original.id && selection.type === 'default-finish'
+        ) || (!radioSelections.some(s => s.type === 'default-finish') && row.original.default_finish)
+        
+        return (
+          <div className="td-center">
+            <label>
+              <input
+                type="radio"
+                name="default-finish" // Same name for all default-finish radios
+                checked={isSelected}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    // Remove any existing default-finish selection and add new one
+                    setRadioSelections(prev => [
+                      ...prev.filter(s => s.type !== 'default-finish'),
+                      { raceId: row.original.id, type: 'default-finish' }
+                    ])
+                  }
+                }}
+              />
+            </label>
+          </div>
+        )
+      },
     }),
     columnHelper.display({
       id: 'upload',
@@ -223,17 +232,21 @@ export default function RaceTimesManager({ title, onDataChanged }: RaceTimesMana
     columnHelper.display({
       id: 'fetch',
       header: 'Fetch data',
-      cell: ({ row }) => (
-        <div className="td-center">
-          <IconButton
-            title={'Fetch data from webscorer'}
-            icon={'refresh'}
-            smaller
-            onClick={() => handleRefresh(row.original.id)}
-            disabled={refreshRaceMutation.isPending}
-          />
-        </div>
-      ),
+      cell: ({ row }) => {
+        const isRefreshing = refreshingRaceId === row.original.id
+        
+        return (
+          <div className="td-center">
+            <IconButton
+              title={'Fetch data from webscorer'}
+              icon={isRefreshing ? 'clock-spinner' : 'refresh'}
+              smaller
+              onClick={() => handleRefresh(row.original.id)}
+              disabled={isRefreshing}
+            />
+          </div>
+        )
+      },
     }),
     columnHelper.display({
       id: 'delete',
@@ -311,14 +324,14 @@ export default function RaceTimesManager({ title, onDataChanged }: RaceTimesMana
             ))}
           </tbody>
           <tfoot>
-            {table.getFooterGroups().map(footerGroup => (
-              <tr key={footerGroup.id}>
-                {footerGroup.headers.map(header => (
+            {table.getHeaderGroups().map(headerGroup => (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map(header => (
                   <th key={header.id}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.footer,
+                          header.column.columnDef.header,
                           header.getContext()
                         )}
                   </th>

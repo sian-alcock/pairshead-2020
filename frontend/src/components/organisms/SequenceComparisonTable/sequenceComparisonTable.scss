@@ -1,0 +1,45 @@
+@import '../../../style.scss';
+
+.sequence-comparison {
+  &__title {
+    margin-bottom: 1.5rem;
+    @include h3;
+  }
+
+  &__table {
+    width: 100%;
+    
+    @include table;
+  }
+
+  &__stats {
+    margin-bottom: 1.5rem;
+        @include laptop {
+      grid-column: 1 / span 2;
+    }
+  }
+
+  &__stat {
+    padding: 1rem;
+    border-radius: $border-radius-small;
+    box-shadow: $standard-box-shadow;
+  }
+
+  &__controls,
+  &__race-list {
+    @include tablet {
+      @include grid(2);
+    }
+
+    @include laptop {
+      @include grid(4);
+    }
+  }
+
+  &__race-info,
+  &__race-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}

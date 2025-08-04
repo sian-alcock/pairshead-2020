@@ -16,14 +16,21 @@ $black: #000;
 $primary: $bblBlue;
 $green: #00C950;
 $green-tint: #EFFDF4;
+$green-mid: #7AF2A8;
 $red: #FA2C37;
 $red-tint: #FEF2F2;
+$red-mid: #FFA1A3;
 $amber: #FF6900;
 $amber-tint: #FEFBEA;
+$amber-mid: #FFD230;
 $blue-tint: #EEF6FF;
 $grey-tint: #F9FAFB;
 
 $standard-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+$border-radius-small: 0.25rem;
+$border-radius-medium: 1rem;
+$border-radius-large: 4rem;
 
 $section-padding: 1.5rem 1.5rem;
 $tabs-boxed-link-hover-background-color: $phLogoBlue;

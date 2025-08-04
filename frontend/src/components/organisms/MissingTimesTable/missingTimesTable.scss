@@ -1,0 +1,7 @@
+@import '../../../style.scss';
+.missing-times {
+  &__table {
+    @include table;
+  }
+}
+

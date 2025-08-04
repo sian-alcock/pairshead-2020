@@ -14,6 +14,7 @@
 
   &__tabs {
     display: flex;
+    flex-wrap: wrap;
     margin: 1.5rem 0;
     border-bottom: 2px solid $phLogoBlue;
   }
@@ -24,10 +25,11 @@
     border-bottom: unset;
     border-radius: 4px 4px 0 0;
     margin-right: 4px;
+    max-width: 120px;
     button {
       color: $bblBlue;
-      padding: 1rem;
-      @include body-small($bold);
+      padding: 0.5rem 1rem;
+      @include body-small;
     }
 
 
@@ -45,16 +47,5 @@
         color: $bblBlue; 
       }
     }
-  }
-
-  &__tag {
-    display:inline-block;
-    background-color: $white;
-    border-radius: 0.5rem;
-    padding: 0.25rem;
-    margin-left: 0.5rem;
-    color: $bblBlue;
-    min-width: 2.8rem;
-    text-align: center;
   }
 }

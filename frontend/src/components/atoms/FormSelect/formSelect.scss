@@ -4,11 +4,10 @@
 
   &__label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
 
     @include body-small(bold);
   }
-
 
   &__select-wrapper {
     position: relative;
@@ -26,14 +25,15 @@
 
   &__select {
     width: 100%;
-    padding: 1rem 0.75rem;
+    padding: 0.5rem 0.75rem;
     border: unset;
     appearance: none;
     background: none;
     cursor: pointer;
-    font-weight: 700;
     outline: none;
     transition: all 0.2s ease-in;
+
+    @include body-small;
   }
 
   &__icon {

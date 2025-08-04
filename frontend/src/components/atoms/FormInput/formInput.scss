@@ -4,6 +4,8 @@
   &__label {
     display: block;
     margin-bottom: 0.25rem;
+
+    @include body-small(bold);
   }
 
   &__input {
