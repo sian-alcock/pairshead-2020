@@ -64,13 +64,14 @@ class RaceTimeDetailView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)
-
+        Crew.update_all_computed_properties()
         return Response(serializer.errors, status=422)
 
     def delete(self, _request, pk):
         race_time = self.get_race_time(pk)
         race_time = RaceTime.objects.get(pk=pk)
         race_time.delete()
+        Crew.update_all_computed_properties()
         return Response(status=204)
 
 

@@ -21,6 +21,7 @@ import { TableBody } from "../../molecules/TableBody/TableBody";
 import TablePagination from "../../molecules/TablePagination/TablePagination";
 import SearchInput from "../../molecules/SearchInput/SearchInput";
 import "./missingTimesTable.scss";
+import { FormSelect } from "../../atoms/FormSelect/FormSelect";
 
 // Types
 interface CrewMissingTimes {
@@ -353,16 +354,18 @@ export default function MissingTimesTable({ onDataChanged }: MissingTimesTablePr
         
         <div className="missing-times__controls">
           <div className="missing-times__filter-group">
-            <select 
-              className="missing-times__type-filter"
+            <FormSelect
               value={missingTypeFilter}
               onChange={(e) => handleMissingTypeFilterChange(e.target.value)}
-            >
-              <option value="all">All Missing</option>
-              <option value="start_only">Missing Start Only</option>
-              <option value="finish_only">Missing Finish Only</option>
-              <option value="both">Missing Both</option>
-            </select>
+              fieldName={""}
+              title={""}
+              selectOptions={[
+                {label: 'All missing', value: 'all'},
+                {label: 'Start only', value: 'start_only'},
+                {label: 'Finish only', value: 'finish_only'},
+                {label: 'Both', value: 'both'},
+              ]} 
+            />
           </div>
           
           <div className="missing-times__search-wrapper">
@@ -373,23 +376,7 @@ export default function MissingTimesTable({ onDataChanged }: MissingTimesTablePr
               className="missing-times__search"
             />
           </div>
-          
-          <button 
-            className="missing-times__refresh-button"
-            onClick={handleRefreshData}
-            title="Refresh data"
-          >
-            ↻ Refresh
-          </button>
         </div>
-      </div>
-
-      {/* Summary Info */}
-      <div className="missing-times__summary">
-        <p>
-          Checked {missingTimesData.summary.total_crews_checked} crews • 
-          Found {missingTimesData.summary.total_crews_missing_times} with missing times
-        </p>
       </div>
 
       {/* Table */}

@@ -21,6 +21,7 @@ import { TableBody } from "../../molecules/TableBody/TableBody";
 import TablePagination from "../../molecules/TablePagination/TablePagination";
 import SearchInput from "../../molecules/SearchInput/SearchInput";
 import "./mastersCrewsTable.scss";
+import { FormSelect } from "../../atoms/FormSelect/FormSelect";
 
 // Types
 interface AdjustmentDetails {
@@ -387,17 +388,17 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
         
         <div className="masters-crews__controls">
           <div className="masters-crews__filter-group">
-            <select 
-              className="masters-crews__adjustment-filter"
-              value={adjustmentFilter}
+            <FormSelect fieldName={"masters-select"}
+              title={"Select"}
+              selectOptions={[
+                {label: 'All Masters', value: 'all'},
+                {label: 'With adjustments', value: 'with_adjustments'},
+                {label: 'No adjustments', value: 'without_adjustments'},
+                {label: 'With times', value: 'with_times'},
+                {label: 'No times', value: 'without_times'},
+              ]}
               onChange={(e) => handleAdjustmentFilterChange(e.target.value)}
-            >
-              <option value="all">All Masters</option>
-              <option value="with_adjustment">With Adjustments</option>
-              <option value="without_adjustment">No Adjustments</option>
-              <option value="with_times">With Times</option>
-              <option value="without_times">No Times</option>
-            </select>
+            />
           </div>
           
           <div className="masters-crews__search-wrapper">
@@ -408,14 +409,6 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
               className="masters-crews__search"
             />
           </div>
-          
-          <button 
-            className="masters-crews__refresh-button"
-            onClick={handleRefreshData}
-            title="Refresh data"
-          >
-            ↻ Refresh
-          </button>
         </div>
       </div>
 

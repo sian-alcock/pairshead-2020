@@ -238,23 +238,21 @@ class Crew(models.Model):
 
     # Start sequence
     def calc_start_sequence(self):
-        try:
-            race_default_start = Race.objects.get(default_start=True)
-            sequence_record = self.times.get(tap='Start', race=race_default_start)
-            sequence = sequence_record.sequence
-            return sequence
-        except RaceTime.DoesNotExist:
+        race_default_start = Race.objects.filter(default_start=True).first()
+        if not race_default_start:
             return 0
+        
+        sequence_record = self.times.filter(tap='Start', race=race_default_start).first()
+        return sequence_record.sequence if sequence_record else 0
     
     # Finish sequence
     def calc_finish_sequence(self):
-        try:
-            race_default_finish = Race.objects.get(default_finish=True)
-            sequence_record = self.times.get(tap='Finish', race=race_default_finish)
-            sequence = sequence_record.sequence
-            return sequence
-        except RaceTime.DoesNotExist:
+        race_default_finish = Race.objects.filter(default_finish=True).first()
+        if not race_default_finish:
             return 0
+        
+        sequence_record = self.times.filter(tap='Finish', race=race_default_finish).first()
+        return sequence_record.sequence if sequence_record else 0
         
     # Competitor names
     def get_competitor_names(self):

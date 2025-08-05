@@ -1,7 +1,47 @@
 @import '../../../style.scss';
 .missing-times {
+  &__title {
+    margin-bottom: 1.5rem;
+    @include h3;
+  }
+
+  &__title-section {
+    @include laptop {
+      @include grid(2);
+    }
+  }
+
+  &__table-container {
+    overflow-x: auto;
+  }
+
   &__table {
+    width: 100%;
+    
     @include table;
+  }
+
+  &__stats {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  &__stat {
+    padding: 1rem;
+    border-radius: $border-radius-small;
+    box-shadow: $standard-box-shadow;
+  }
+
+    &__controls {
+    @include tablet {
+      @include grid(2);
+    }
+
+    @include laptop {
+      @include grid(4);
+    }
   }
 }
 
