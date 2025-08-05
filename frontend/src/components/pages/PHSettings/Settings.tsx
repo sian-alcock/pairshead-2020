@@ -16,12 +16,7 @@ export default function Settings () {
             </div>
             <div className="columns">
               <div className="column is-one-quarter">
-                <TextButton label="Add new event key" pathName='/settings/keys/new' />
-              </div>
-            </div>
-            <div className="columns">
-              <div className="column is-one-quarter">
-                <TextButton label="View all event keys" pathName='/settings/keys' />
+                <TextButton label="Manage event meeting keys" pathName='/settings/keys' />
               </div>
             </div>
             <div className="columns">

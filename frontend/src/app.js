@@ -22,8 +22,6 @@ import CrewStartByNumberLocation from "./components/pages/CrewStartByNumberLocat
 import ContactDetailReport from "./components/pages/ContactDetailReport/ContactDetailReport"
 import Footer from "./components/organisms/Footer/Footer"
 import EventKeys from "./components/pages/EventKeys/EventKeys"
-import EventKeyEdit from "./components/pages/EventKeys/EventKeyEdit"
-import EventKeyNew from "./components/pages/EventKeys/EventKeyNew"
 import CrewLabels from "./components/pages/CrewLabels/CrewLabels"
 import Logistics from "./components/pages/Logistics/Logistics"
 import Settings from "./components/pages/PHSettings/Settings"
@@ -70,8 +68,6 @@ function App() {
             <SecureRoute path="/generate-results/export" component={ExportData} />
             <SecureRoute path="/generate-results/results" component={ResultIndex} />
             <SecureRoute path="/generate-results" component={GenerateResults} />
-            <SecureRoute path="/settings/keys/:id/edit" component={EventKeyEdit} />
-            <SecureRoute path="/settings/keys/new" component={EventKeyNew} />
             <SecureRoute path="/settings/keys" component={EventKeys} />
             <SecureRoute path="/settings/info" component={Info} />
             <SecureRoute path="/settings/register" component={Register} />

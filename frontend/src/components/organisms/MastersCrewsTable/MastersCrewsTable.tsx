@@ -413,7 +413,7 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
       </div>
 
       {/* Fastest Times Reference */}
-      <div className="masters-crews__fastest-times">
+      {mastersData.fastest_times.length && mastersData.fastest_times.length > 0 &&  <div className="masters-crews__fastest-times">
         <h4>Reference Fastest Times:</h4>
         <div className="masters-crews__fastest-times-grid">
           {Object.entries(mastersData.fastest_times).map(([category, time]) => (
@@ -427,7 +427,7 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
             </div>
           ))}
         </div>
-      </div>
+      </div>}
 
       {/* Table */}
       <div className="masters-crews__table-container">
