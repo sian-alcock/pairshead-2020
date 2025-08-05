@@ -11,24 +11,18 @@ export default function Settings () {
     <Hero title="Settings" />
       <section className="settings__section">
         <div className="settings__container">
-            <div className="text-container has-text-left">
-              <h2 className="settings__title">System settings</h2>
-            </div>
-            <div className="columns">
-              <div className="column is-one-quarter">
-                <TextButton label="Manage event meeting keys" pathName='/settings/keys' />
-              </div>
-            </div>
-            <div className="columns">
-              <div className="column is-one-quarter">
-                <TextButton label="Register a user" pathName='/settings/register' />
-              </div>
-            </div>
-            <div className="columns">
-              <div className="column is-one-quarter">
-                <TextButton label="About this application" pathName='/settings/info' />
-              </div>
-            </div>
+          <h2 className="settings__title">System settings</h2>
+          <div className="settings__menu-button-container">
+          <div className="settings__menu-button">
+            <TextButton label="Manage event meeting keys" pathName='/settings/keys' />
+          </div>
+          <div className="settings__menu-button">
+            <TextButton label="Register a user" pathName='/settings/register' />
+          </div>
+          <div className="settings__menu-button">
+            <TextButton label="About this application" pathName='/settings/info' />
+          </div>
+          </div>
         </div>
       </section>
     </>
