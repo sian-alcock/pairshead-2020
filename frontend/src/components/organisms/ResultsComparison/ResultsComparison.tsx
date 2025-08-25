@@ -404,7 +404,7 @@ const ComparisonResults: React.FC<ComparisonResultsProps> = ({ data }) => {
 
   return (
     <div className="results-comparison__results">
-      <h3 className="results-comparison__results-title">Comparison Results</h3>
+      <h3 className="results-comparison__results-title">Compare results</h3>
       <div className="results-table">
         <table className="results-table__table">
           <thead className="results-table__head">

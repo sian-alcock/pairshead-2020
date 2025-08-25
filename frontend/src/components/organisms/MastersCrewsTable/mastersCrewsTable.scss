@@ -35,7 +35,7 @@
     box-shadow: $standard-box-shadow;
   }
 
-    &__controls {
+  &__controls {
     @include tablet {
       @include grid(2);
     }

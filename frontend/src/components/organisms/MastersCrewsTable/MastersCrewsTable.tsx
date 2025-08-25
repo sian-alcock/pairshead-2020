@@ -1,4 +1,3 @@
-// MastersCrewsTable.tsx - Organism Component
 import React, { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {

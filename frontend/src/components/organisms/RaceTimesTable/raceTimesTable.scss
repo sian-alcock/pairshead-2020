@@ -6,13 +6,37 @@
     overflow-x: auto;
   }
 
+  &__table-container {
+    overflow-x: auto;
+  }
+
   &__table {
+    width: 100%;
+    
     @include table;
   }
 
-  &__control-wrapper {
-    @include grid(4);
+  &__stats {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
     margin-bottom: 1.5rem;
+  }
+
+  &__stat {
+    padding: 1rem;
+    border-radius: $border-radius-small;
+    box-shadow: $standard-box-shadow;
+  }
+
+    &__controls {
+    @include tablet {
+      @include grid(2);
+    }
+
+    @include laptop {
+      @include grid(4);
+    }
   }
 
   &__tag {

@@ -22,6 +22,9 @@ import PennantImage from "../../atoms/Pennant/Pennant"
 import Header from "../../organisms/Header/Header"
 
 import "./resultIndex.scss"
+import SearchInput from "../../molecules/SearchInput/SearchInput"
+import { FormSelect } from "../../atoms/FormSelect/FormSelect"
+import Checkbox from "../../atoms/Checkbox/Checkbox"
 
 interface CategoryResponseDataProps {
   override_name: string
@@ -208,7 +211,7 @@ export default function ResultIndex() {
     // Gender filter (assuming you have gender field on crew)
     if (gender && gender !== "all") {
       // You may need to adjust this based on your data structure
-      filtered = filtered.filter((crew) => crew.gender === gender)
+      filtered = filtered.filter((crew) => crew.event.gender === gender)
     }
 
     // First and second crews filter
@@ -249,6 +252,7 @@ export default function ResultIndex() {
   }
 
   const handleFirstAndSecondCrews = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('clicked')
     setFirstAndSecondCrewsBoolean(e.target.checked)
   }
 
@@ -289,6 +293,12 @@ export default function ResultIndex() {
   }
 
   console.log(resultsData)
+  const categoryOptions = categoriesData?.map((option) => (
+    {value: option.value, label: option.label}
+  ))
+  const options = genderOptions.map((option) => (
+    {value: option.value, label: option.label}
+  ))
 
   return (
     <>
@@ -304,93 +314,49 @@ export default function ResultIndex() {
       ) : (
         ""
       )} */}
-      <section className="section">
-        <div className="container">
-          <div className="columns no-print is-vtop">
-            <div className="column">
-              <label className="label has-text-left" htmlFor="searchResultsControl">
-                Search
-              </label>
-              <div className="field control has-icons-left" id="searchResultsControl">
-                <span className="icon is-left">
-                  <i className="fas fa-search"></i>
-                </span>
-                <input
-                  className="input"
-                  id="search"
-                  placeholder="Search across all columns"
-                  value={globalFilter}
-                  onChange={handleSearchChange}
-                />
-              </div>
+
+
+      <section className="result-index__section">
+        <div className="result-index__container">
+          <div className="result-index__controls">
+            <div className="result-index__control">
+              <SearchInput value={globalFilter} onChange={(e) => handleSearchChange} />
+            </div>
+            <div className="result-index__control">
+              <FormSelect
+                fieldName={"category"}
+                title={"Select category"}
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+                selectOptions={categoryOptions} 
+              />
+            </div>
+            <div className="result-index__control">
+              <FormSelect
+                fieldName={"gender"}
+                title={"Select gender"}
+                value={gender}
+                onChange={handleGenderChange}
+                selectOptions={options} 
+              />
             </div>
 
-            <div className="column">
-              <div className="field">
-                <label className="label has-text-left" htmlFor="category">
-                  Select category
-                </label>
-                <div className="select control-full-width">
-                  <select
-                    className="control-full-width"
-                    value={selectedCategory}
-                    onChange={handleCategoryChange}
-                  >
-                    {categoriesData?.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className="column">
-              <div className="field">
-                <label className="label has-text-left" htmlFor="gender">
-                  Select gender
-                </label>
-                <div className="select control-full-width">
-                  <select
-                    className="control-full-width"
-                    value={gender}
-                    onChange={handleGenderChange}
-                  >
-                    {genderOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className="column has-text-left">
-              <div className="field">
-                <label className="checkbox">
-                  <input
-                    type="checkbox"
-                    className="checkbox"
-                    checked={firstAndSecondCrewsBoolean}
-                    onChange={handleFirstAndSecondCrews}
-                  />
-                  <small>Crews in 1st and 2nd place</small>
-                </label>
-              </div>
-
-              <div className="field">
-                <label className="checkbox">
-                  <input
-                    type="checkbox"
-                    className="checkbox"
-                    checked={closeFirstAndSecondCrewsBoolean}
-                    onChange={handleCloseCrews}
-                  />
-                  <small>Highlight 1st/2nd crews within 2s&nbsp;❓</small>
-                </label>
-              </div>
+            <div className="result-index__control">
+              <Checkbox
+                name={"winners-get"}
+                label={"Crews in 1st and 2nd place"}
+                id={"winners-get"}
+                checked={firstAndSecondCrewsBoolean}
+                onChange={() => handleFirstAndSecondCrews}
+                value={'foo'}
+              />
+              <Checkbox
+                name={"winners-near"}
+                label={"Highlight 1st/2nd crews within 2s&nbsp;❓"}
+                id={"winners-near"}
+                checked={closeFirstAndSecondCrewsBoolean}
+                onChange={(e) => handleCloseCrews}
+              />
             </div>
           </div>
 

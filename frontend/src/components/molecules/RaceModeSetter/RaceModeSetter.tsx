@@ -1,0 +1,61 @@
+import React from "react";
+import { Link } from 'react-router-dom';
+import { useRaceMode, useCurrentEvent } from '../../hooks/useGlobalSettings';
+import Auth from '../../../lib/Auth';
+import './raceModeSetter.scss'
+
+export default function RaceModeSetter() {
+  const { raceMode, updateRaceMode, isLoading, error } = useRaceMode();
+  const { currentEventName, isLoading: eventLoading } = useCurrentEvent();
+  
+  const modes: Array<{key: 'SETUP' | 'PRE_RACE' | 'RACE', label: string}> = [
+    { key: 'SETUP', label: 'Setup' },
+    { key: 'PRE_RACE', label: 'Pre-race' },
+    { key: 'RACE', label: 'Race' }
+  ];
+
+  if (error) {
+    return (
+      <div className="race-mode-setter race-mode-setter--error">
+        <div className="race-mode-setter__error">
+          Error loading race mode: {error.message}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="race-mode-setter">
+      <div className="race-mode-setter__toggle">
+        {modes.map((mode) => (
+          <button 
+            key={mode.key}
+            className={`race-mode-setter__button ${raceMode === mode.key ? 'active' : ''}`}
+            onClick={() => updateRaceMode(mode.key)}
+            disabled={isLoading}
+          >
+            {mode.label}
+          </button>
+        ))}
+      </div>
+      <div className={`race-mode-setter__status-dot ${isLoading ? 'loading' : ''}`}></div>
+      <div className="race-mode-setter__event">
+        {eventLoading ? (
+          <span>Loading event...</span>
+        ) : currentEventName ? (
+          <>
+            {Auth.isAuthenticated() ? (
+              <span className="race-mode-setter__event-link"><Link to="/settings/keys">{currentEventName}</Link></span>
+            ) : <span>{currentEventName}</span>}
+          </>
+        ) : (
+          <>
+            {Auth.isAuthenticated() && (
+              <span className="race-mode-setter__event-link"><Link to="/settings/keys">Event</Link></span>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+}

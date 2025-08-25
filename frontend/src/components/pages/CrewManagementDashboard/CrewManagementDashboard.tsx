@@ -12,6 +12,8 @@ import RaceTimesTable from "../../organisms/RaceTimesTable/RaceTimesTable";
 import SequenceComparisonTable from "../../organisms/SequenceComparisonTable/SequenceComparisonTable";
 import MissingTimesTable from "../../organisms/MissingTimesTable/MissingTimesTable";
 import MastersCrewsTable from "../../organisms/MastersCrewsTable/MastersCrewsTable";
+import StatBlock, { StatBlockProps } from "../../organisms/StatBlock/StatBlock";
+import CrewsTable from "../../organisms/CrewsTable/CrewsTable";
 
 
 // Types
@@ -30,14 +32,31 @@ interface TabConfig {
   key: string;
   label: string;
   count?: number;
-  component: 'crew-table' | 'compare-winners' | 'race-times' | 'sequence-comparison' | 'missing-times' | 'masters-crews';
+  component: 'crew-table' | 'crew-race-view' | 'compare-winners' | 'race-times' | 'sequence-comparison' | 'missing-times' | 'masters-crews';
   needsCrews?: boolean;
   needsRaces?: boolean;
   raceId?: string;
   tap?: 'Start' | 'Finish';
 }
 
+interface DataStats {
+  races_count: number;
+  crews_count: number;
+  race_times_count: number;
+  races_with_start_times: number;
+  races_with_finish_times: number;
+  missing_times_count: number;
+  masters_crews_count: number;
+  original_event_categories_imported: number;
+  last_updated: string;
+}
+
 // API functions
+const fetchDataStats = async (): Promise<DataStats> => {
+  const response: AxiosResponse = await axios.get("/api/crews/stats/");
+  return response.data;
+};
+
 const fetchCrews = async (): Promise<CrewProps[]> => {
   const response: AxiosResponse = await axios.get("/api/crews/");
   return response.data;
@@ -55,6 +74,20 @@ export default function CrewManagementDashboard() {
   });
   
   const queryClient = useQueryClient();
+
+  // Fetch stats
+    const {
+    data: statsData,
+    isLoading: statsLoading,
+    error: statsError,
+  } = useQuery({
+    queryKey: ["data-stats"],
+    queryFn: fetchDataStats,
+    staleTime: 30 * 1000, // 30 seconds
+    retry: 3,
+    // Always fetch stats for dashboard overview
+    enabled: true,
+  });
 
   // Fetch crews
   const {
@@ -81,6 +114,40 @@ export default function CrewManagementDashboard() {
     retry: 3,
   });
 
+    const statBlocks = useMemo(() => {
+    if (!statsData) return [];
+
+    const blocks: StatBlockProps[] = [
+      {
+        value: statsData.crews_count,
+        subtitle: 'accepted crews',
+        status: statsData.crews_count > 0 ? 'good' : 'warning',
+      },
+      {
+        value: statsData.races_count,
+        subtitle: statsData.races_count === 0 ? "Import races first" : "races configured",
+        status: statsData.races_count > 0 ? 'good' : 'error',
+      },
+      {
+        value: statsData.race_times_count,
+        subtitle: statsData.race_times_count > 0 ? "times recorded" : "No times yet",
+        status: statsData.race_times_count > 0 ? 'good' : 'warning',
+      },
+      {
+        value: statsData.masters_crews_count,
+        subtitle: 'masters crews',
+        status: statsData.masters_crews_count > 0 ? 'good' : 'warning',
+      },
+      {
+        value: statsData.original_event_categories_imported,
+        subtitle: 'original event categories',
+        status: statsData.original_event_categories_imported > 0 ? 'good' : 'warning',
+      },
+    ];
+
+    return blocks;
+  }, [statsData]);
+
   // Generate dynamic tabs based on available races
   const tabs = useMemo<TabConfig[]>(() => {
     const baseTabs: TabConfig[] = [
@@ -89,6 +156,14 @@ export default function CrewManagementDashboard() {
         label: "All Crews",
         count: crewsData?.length || 0,
         component: "crew-table",
+        needsCrews: true,
+        needsRaces: true,
+      },
+      {
+        key: "crew-race-view",
+        label: "Crews / race view",
+        count: crewsData?.length || 0,
+        component: "crew-race-view",
         needsCrews: true,
         needsRaces: true,
       },
@@ -163,18 +238,13 @@ export default function CrewManagementDashboard() {
   }, [tabs, racesData, racesLoading]);
 
   // Event handlers
-  const handleRaceDataChanged = () => {
+  const handleDataChanged = () => {
     console.log("Race data changed - invalidating related queries");
+    queryClient.invalidateQueries({ queryKey: ["data-stats"] });
     queryClient.invalidateQueries({ queryKey: ["races"] });
     queryClient.invalidateQueries({ queryKey: ["crews"] });
     queryClient.invalidateQueries({ queryKey: ["winners-comparison"] });
     queryClient.invalidateQueries({ queryKey: ["raceTimes"] });
-  };
-
-  const handleCrewDataChanged = () => {
-    console.log("Crew data changed - invalidating crew queries");
-    queryClient.invalidateQueries({ queryKey: ["crews"] });
-    queryClient.invalidateQueries({ queryKey: ["winners-comparison"] });
   };
 
   const handleTabChange = (tabKey: string) => {
@@ -189,7 +259,12 @@ export default function CrewManagementDashboard() {
     if (!currentTab) return <div className="crew-manager__error">Tab not found</div>;
 
     switch (currentTab.component) {
-      case "crew-table":
+      case "crew-table":  
+        return (
+          <CrewsTable />
+        );
+
+      case "crew-race-view":
         const isLoading = crewsLoading || racesLoading;
         const hasError = crewsError || racesError;
         
@@ -199,7 +274,7 @@ export default function CrewManagementDashboard() {
             races={racesData || []}
             isLoading={isLoading}
             error={!!hasError}
-            onDataChanged={handleRaceDataChanged}
+            onDataChanged={handleDataChanged}
           />
         );
 
@@ -214,21 +289,21 @@ export default function CrewManagementDashboard() {
         return (
           <SequenceComparisonTable
             tap={currentTab.tap}
-            onDataChanged={handleRaceDataChanged}
+            onDataChanged={handleDataChanged}
           />
         );
 
       case "missing-times":
         return (
           <MissingTimesTable
-            onDataChanged={handleCrewDataChanged}
+            onDataChanged={handleDataChanged}
           />
         );
 
       case "masters-crews":
         return (
           <MastersCrewsTable
-            onDataChanged={handleCrewDataChanged}
+            onDataChanged={handleDataChanged}
           />
         );
 
@@ -243,7 +318,7 @@ export default function CrewManagementDashboard() {
             raceId={currentTab.raceId}
             tap={currentTab.tap}
             raceName={race?.name || 'Unknown Race'}
-            onDataChanged={handleRaceDataChanged}
+            onDataChanged={handleDataChanged}
           />
         );
 
@@ -258,7 +333,43 @@ export default function CrewManagementDashboard() {
   return (
     <>
       <Header />
-      <Hero title={"Crew Management Dashboard"} />
+      <Hero title={"Crew management dashboard"} />
+
+      <section className="crew-manager__stats-section">
+        <div className="crew-manager__container">
+          <>
+            <div className="crew-manager__stat-blocks-grid">
+              {statsLoading ? (
+                // Show loading skeleton blocks
+                Array.from({ length: 5 }).map((_, index) => (
+                  <StatBlock 
+                    key={index}
+                    value="Loading..."
+                    status="neutral"
+                    loading={true}
+                  />
+                ))
+              ) : statsError ? (
+                <StatBlock
+                  value="Error"
+                  subtitle="Unable to load data overview"
+                  status="error"
+                />
+              ) : (
+                statBlocks.map((block, index) => (
+                  <StatBlock key={index} {...block} />
+                ))
+              )}
+            </div>
+            {statsData?.last_updated && !statsLoading && (
+              <div className="crew-manager__last-updated">
+                <small>Last updated: {new Date(statsData.last_updated).toLocaleString()}</small>
+              </div>
+            )}
+          </>
+        </div>
+      </section>
+
       <section className="crew-manager__section">
         <div className="crew-manager__container">
           <div className="crew-manager__tab-wrapper">

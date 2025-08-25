@@ -7,12 +7,11 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import Home from "./components/pages/Home/Home"
 import Info from "./components/pages/Info/Info"
-import Register from "./components/auth/Register"
-import Login from "./components/auth/Login"
-import CrewIndex from "./components/pages/CrewIndex/CrewIndexNew"
+import Register from "./components/auth/Register/Register"
+import Login from "./components/auth/Login/Login"
 import CrewManagementDashboard from "./components/pages/CrewManagementDashboard/CrewManagementDashboard"
-import CrewTimeEdit from "./components/pages/CrewIndex/CrewTimeEdit"
-import ResultIndex from "./components/pages/ResultIndex/ResultIndexNew"
+import CrewTimeEdit from "./components/organisms/CrewsTable/components/CrewTimeEdit"
+import ResultIndex from "./components/pages/ResultIndex/ResultIndex"
 import GenerateResults from "./components/pages/GenerateResults/GenerateResults"
 import ExportData from "./components/pages/ExportData/ExportData"
 import CrewDrawReports from "./components/pages/CrewDrawReports/CrewDrawReports"
@@ -34,7 +33,6 @@ import RaceTimesManagerDetail from "./components/organisms/RaceTimesManagerDetai
 import TimingOffsetManagerDetail from "./components/organisms/TimingOffsetManager/TimingOffsetManagerDetail";
 import MarshallingDivisions from "./components/pages/MarshallingDivisions/MarshallingDivisions";
 
-// import 'bulma'
 import "./style.scss"
 
 // Create a client instance
@@ -60,8 +58,7 @@ function App() {
       <div>
         <HashRouter>
           <Switch>
-            <SecureRoute path="/generate-results/crews/:id/edit" component={CrewTimeEdit} />
-            <SecureRoute path="/generate-results/crews" component={CrewIndex} />
+            <SecureRoute path="/generate-results/crew-management-dashboard/:id/edit" component={CrewTimeEdit} />
             <SecureRoute path="/generate-results/crew-management-dashboard" component={CrewManagementDashboard} />
             <SecureRoute path="/generate-results/race-times/:id/edit" component={RaceTimeEdit} />
             <SecureRoute path="/generate-results/race-times" component={RaceTimeIndex} />

@@ -18,6 +18,7 @@ from .views import time_compare
 from .views import sequence_compare
 from .views import missing_times
 from .views import masters_crews
+from .views import crew_dashboard_stats
 
 
 urlpatterns = [
@@ -78,6 +79,7 @@ path('results-comparison/', time_compare.ResultsComparisonView.as_view(), name='
 path('race-sequence-comparison/', sequence_compare.SequenceComparisonView.as_view(), name='sequence-comparison'),
 path('crews/missing-times/', missing_times.MissingTimesView.as_view(), name='missing-times'),
 path('crews/masters/', masters_crews.MastersCrewsView.as_view(), name='masters-crews'),
+path('crews/stats/', crew_dashboard_stats.DataOverviewStatsView.as_view(), name='data-overview-stats'),
 
 
 ]

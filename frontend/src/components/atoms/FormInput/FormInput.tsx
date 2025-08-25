@@ -11,7 +11,7 @@ export interface FormInputProps {
   required?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  type: 'text' | 'number',
+  type: 'text' | 'number' | 'email' | 'password',
   min?: number;
   max?: number;
   disabled?: boolean;

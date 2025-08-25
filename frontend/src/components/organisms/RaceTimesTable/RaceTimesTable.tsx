@@ -291,9 +291,6 @@ export default function RaceTimesTable({
           <h3 className="race-times-table__title">
             {raceName} - {tap} Times
           </h3>
-          <p className="race-times-table__subtitle">
-            Race ID: {raceId} • Total records: {totalRows}
-          </p>
         </div>
         
         <div className="race-times-table__controls">
@@ -305,14 +302,6 @@ export default function RaceTimesTable({
               className="race-times-table__search"
             />
           </div>
-          
-          <button 
-            className="race-times-table__refresh-button"
-            onClick={handleRefreshData}
-            title="Refresh data"
-          >
-            ↻ Refresh
-          </button>
         </div>
       </div>
 

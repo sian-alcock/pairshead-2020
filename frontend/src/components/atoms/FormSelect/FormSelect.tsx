@@ -4,8 +4,8 @@ import Icon from '../Icons/Icons';
 import './formSelect.scss';
 
 export interface SelectOptionsProps {
-  label: string | number;
-  value: string | number;
+  label: string | number | undefined;
+  value: string | number | undefined;
   selected?: boolean;
 }
 
@@ -15,7 +15,7 @@ export interface FormSelectProps {
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   ariaControls?: string;
   autoFocus?: boolean;
-  selectOptions: SelectOptionsProps[];
+  selectOptions: SelectOptionsProps[] | undefined;
   value?: string | undefined;
   defaultValue?: string | undefined;
   hiddenLabel?: boolean;

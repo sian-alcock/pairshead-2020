@@ -168,11 +168,14 @@ $cols: 12;
     padding: 0 rem(48px);
   }
   @media screen and (min-width: $lg) {
-    padding: 0;
+    padding: 0 rem(24);
   }
 }
 
 @mixin form() {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
   width: 100%;
   margin: 1.5rem auto;
   padding: 1.5rem;
@@ -187,6 +190,54 @@ $cols: 12;
 
 @mixin field() {
   padding: 1.5rem 0;
+}
+
+@mixin animated-link($color: #341499, $underline-color: null, $animation-duration: 0.3s) {
+  // Set underline color to link color if not specified
+  $underline: if($underline-color, $underline-color, $color);
+  
+  color: $color;
+  text-decoration: none;
+  position: relative;
+  transition: color $animation-duration ease;
+  
+  // Animated underline using pseudo-element
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: $underline;
+    transition: width $animation-duration ease;
+  }
+  
+  // Hover effects
+  &:hover {
+    color: darken($color, 10%);
+    
+    &::after {
+      width: 100%;
+    }
+  }
+  
+  // Focus-visible effects (modern focus styling)
+  &:focus-visible {
+    outline: 2px solid $color;
+    outline-offset: 2px;
+    border-radius: 2px;
+    
+    // Show underline immediately on focus
+    &::after {
+      width: 100%;
+    }
+  }
+  
+  // Remove default focus outline for focus-visible supported browsers
+  &:focus:not(:focus-visible) {
+    outline: none;
+  }
 }
 
 @mixin grid($cols: $cols, $size: 1fr) {

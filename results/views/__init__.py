@@ -16,3 +16,4 @@ from .time_compare import *
 from .sequence_compare import *
 from .missing_times import *
 from .masters_crews import *
+from .crew_dashboard_stats import *

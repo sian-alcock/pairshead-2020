@@ -80,9 +80,9 @@ export default function CrewDrawReports() {
             <h2 className="crew-draw-reports__title">Lightweight weigh in - checklist</h2>
             <h3 className="crew-draw-reports__subtitle">Instructions</h3>
             <ol className="crew-draw-reports__list">
-              <li>Check correct crew with British rowing ID or other photo Id</li>
-              <li>Update Weigh in column: Yes = on or under weight; No = Did not make weight; NS = Did not turn up</li>
-              <li>When complete, please take photo and send to Sarah Powell</li>
+              <li><p>Check correct crew with British rowing ID or other photo Id</p></li>
+              <li><p>Update Weigh in column: Yes = on or under weight; No = Did not make weight; NS = Did not turn up</p></li>
+              <li><p>When complete, please take photo and send to Sarah Powell</p></li>
             </ol>
             <h3 className="crew-draw-reports__subtitle">Open lightweight - 75kg</h3>
             <h3 className="crew-draw-reports__subtitle">Womens lightweight - 61.5kg</h3>

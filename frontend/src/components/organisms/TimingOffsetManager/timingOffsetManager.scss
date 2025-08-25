@@ -1,11 +1,7 @@
 @import '../../../style.scss';
 .timing-offset-manager {
 
-  &__section {
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
-    @include section;
-  }
+  padding: 1.5rem 0;
 
   &__container {
     @include container;

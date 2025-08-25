@@ -1,6 +1,8 @@
 import React from 'react'
 import Header from '../../organisms/Header/Header'
 import TextButton from '../../atoms/TextButton/TextButton'
+import Hero from '../../organisms/Hero/Hero'
+import './exportData.scss'
 
 
 class DrawMenu extends React.Component {
@@ -45,55 +47,44 @@ class DrawMenu extends React.Component {
   render() {
 
     return (
-      <><Header /><section className="section">
-        <div className="container">
+      <>
+      <Header />
+      <Hero title={'Data exports'}/>
+      <section className="data-exports__section">
+        <div className="data-exports__container">
 
-          <div className="columns">
-            <div className="column is-one-quarter">
-              <TextButton onClick={this.exportCompetitorData} label={"Export competitor data"}/>
-            </div>
-            <div className="column left">
+          <div className="data-exports__columns">
+            <TextButton onClick={this.exportCompetitorData} label={"Export competitor data"}/>
+            <div className="data-exports__description">
               CSV showing crewID alongside competitor names
             </div>
           </div>
 
-          <div className="columns">
-            <div className="column is-one-quarter">
-              <TextButton onClick={this.exportCrewData} label={"Export to BROE"}/>
-            </div>
-            <div className="column left">
+          <div className="data-exports__columns">
+            <TextButton onClick={this.exportCrewData} label={"Export to BROE"}/>
+            <div className="data-exports__description">
               CSV of crew data and results in correct format for import into British Rowing Website
-
             </div>
           </div>
 
-          <div className="columns">
-            <div className="column is-one-quarter">
-              <TextButton onClick={this.exportResultsData} label={"Export crew data"}/>
-            </div>
-            <div className="column left">
+          <div className="data-exports__columns">
+            <TextButton onClick={this.exportResultsData} label={"Export crew data"}/>
+            <div className="data-exports__description">
               CSV of results
-
             </div>
           </div>
 
-          <div className="columns">
-            <div className="column is-one-quarter">
-              <TextButton onClick={this.exportStartData} label={"Export crew starting order data"}/>
-            </div>
-            <div className="column left">
+          <div className="data-exports__columns">
+            <TextButton onClick={this.exportStartData} label={"Export crew starting order data"}/>
+            <div className="data-exports__description">
               CSV of start order (contains bib number from BROE)
-
             </div>
           </div>
 
-          <div className="columns">
-            <div className="column is-one-quarter">
-              <TextButton onClick={this.exportWebScorerData} label={"Export crew data for Webscorer"}/>
-            </div>
-            <div className="column left">
+          <div className="data-exports__columns">
+            <TextButton onClick={this.exportWebScorerData} label={"Export crew data for Webscorer"}/>
+            <div className="data-exports__description">
               CSV for import into Webscorer
-
             </div>
           </div>
 

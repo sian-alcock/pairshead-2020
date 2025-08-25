@@ -1,6 +1,6 @@
 import React, { ReactElement } from 'react';
 import { Link } from 'react-router-dom'
-import Icon from '../Icons/Icons';
+import Icon, {IconProps} from '../Icons/Icons';
 import './textButton.scss';
 
 export interface TextButtonProps {
@@ -13,6 +13,7 @@ export interface TextButtonProps {
   isCancel?: boolean;
   stateProps?: {};
   style?: 'primary' | 'secondary' | 'tertiary';
+  icon?: IconProps;
 }
 
 export default function TextButton({
@@ -23,7 +24,8 @@ export default function TextButton({
   disabled = false,
   pathName,
   loading,
-  stateProps
+  stateProps,
+  icon
 }: TextButtonProps): ReactElement {
   return onClick || isSubmit ? (
     <button
@@ -34,6 +36,7 @@ export default function TextButton({
     >
       {label}
       {loading && <Icon icon={"clock-spinner"} />}
+      {!loading && icon && <Icon {...icon}/>}
     </button>
   ) : (
     <Link

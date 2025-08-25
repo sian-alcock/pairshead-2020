@@ -1,0 +1,36 @@
+@import '../../../../style.scss';
+
+.crew-time-edit {
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+
+  &__table-container {
+    overflow-x: auto;
+  }
+
+  &__table {
+    @include table;
+  }
+
+  &__control-wrapper {
+    @include grid(4);
+    margin-bottom: 1.5rem;
+  }
+
+  &__time-inputs,
+  &__box {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__field,
+  &__box {
+    margin-bottom: 1.5rem;
+  }
+}
