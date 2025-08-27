@@ -1,66 +1,20 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useHistory } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import Select from 'react-select'
-import axios from 'axios'
 import Header from '../../Header/Header'
 import Hero from '../../Hero/Hero'
-import { CrewRaceTimesTable } from './CrewRaceTimesTable'
+import { CrewTimeEditRaceTimesTable } from './CrewTimeEditRaceTimesTable'
 import TextButton from '../../../atoms/TextButton/TextButton'
-import { TimeProps, TimingOffsetProps } from '../../../components.types'
-import './crewTimeEdit.scss'
 import { FormInput } from '../../../atoms/FormInput/FormInput'
+import Checkbox from '../../../atoms/Checkbox/Checkbox'
+import { FormSelect, SelectOptionsProps } from '../../../atoms/FormSelect/FormSelect'
+import { useCrew } from '../../../../hooks/useCrew'
+import { useUpdateCrew } from '../../../../hooks/useUpdateCrew'
+import { useBands } from '../../../../hooks/useBands'
+import { useRaceTimeSync } from '../../../../hooks/useRaceTimeSync'
+import { BandProps, CrewProps } from '../../../../types/components.types'
+import './crewTimeEdit.scss'
 
 // Type definitions
-interface BandOption {
-  label: string
-  value: number | string
-}
-
-interface Band {
-  id: number
-  name: string
-  event: {
-    override_name: string
-  }
-}
-
-interface FormData {
-  // Basic crew info
-  id?: string | number
-  name?: string
-  bib_number?: string
-  competitor_names?: string
-  
-  // Timing data
-  category_position_time?: number
-  penalty?: number
-  manual_override_minutes?: number
-  manual_override_seconds?: number
-  manual_override_hundredths_seconds?: number
-  start_time?: string
-  finish_time?: string
-  raw_time?: string
-  
-  // Status flags
-  time_only?: boolean
-  did_not_start?: boolean
-  did_not_finish?: boolean
-  disqualified?: boolean
-  
-  // Band/event info
-  band?: {
-    id: number
-    value: number
-  }
-  
-  // Division/category info
-  marshalling_division?: string
-  times: TimeProps[];
-  race_id_start_override?: string | null;
-  race_id_finish_override?: string | null;
-}
-
 interface Errors {
   [key: string]: string
 }
@@ -69,147 +23,89 @@ interface RouteParams {
   id: string
 }
 
-// API functions
-const fetchCrewData = async (id: string): Promise<FormData> => {
-  const { data } = await axios.get(`/api/crews/${id}`)
-  return data
-}
 
-const fetchBands = async (): Promise<Band[]> => {
-  const { data } = await axios.get('/api/bands/')
-  return data
-}
-
-const fetchRaceTimeSync = async (): Promise<TimingOffsetProps[]> => {
-  const { data } = await axios.get('api/race-time-sync/')
-  return data
-}
-
-const updateCrew = async ({ id, formData }: { id: string, formData: FormData }) => {
-  const data = {
-    ...formData,
-    band: !formData?.band ? '' : formData.band.id,
-    requires_recalculation: true
-  }
-  
-  const { data: response } = await axios.put(`/api/crews/${id}`, data)
-  return response
-}
-
-const CrewTimeEdit: React.FC = () => {
+const CrewTimeEdit: React.FC=() => {
   const { id } = useParams<RouteParams>()
   const history = useHistory()
-  const queryClient = useQueryClient()
-  
-  const [formData, setFormData] = useState<FormData | undefined>(undefined)
   const [errors, setErrors] = useState<Errors>({})
+  const [formData, setFormData] = useState<CrewProps | null>(null)
 
-  // Queries
-  const {
-    data: crewData,
-    isLoading: isCrewLoading,
-    error: crewError
-  } = useQuery({
-    queryKey: ['crew', id],
-    queryFn: () => fetchCrewData(id!),
-    enabled: !!id
-  })
 
-  // Set form data when crew data is loaded
+  const { data: crew, isLoading: isCrewLoading, error: crewError } = useCrew(id)
+  const { data: bands = [], isLoading: isBandsLoading } = useBands()
+  const { data: raceTimeSync = [], isLoading: isRaceTimeSyncLoading } = useRaceTimeSync()
+
+  console.log(bands)
+
+  const updateCrewMutation = useUpdateCrew()
+
   useEffect(() => {
-    if (crewData) {
-      setFormData(crewData)
-    }
-  }, [crewData])
+    if (crew) setFormData(crew)
+  }, [crew])
 
-  const {
-    data: bandsData = [],
-    isLoading: isBandsLoading
-  } = useQuery({
-    queryKey: ['bands'],
-    queryFn: fetchBands,
-    staleTime: 5 * 60 * 1000 // 5 minutes
-  })
-
-  const {
-    data: raceTimeSync = [],
-    isLoading: isRaceTimeSyncLoading
-  } = useQuery({
-    queryKey: ['race-time-sync'],
-    queryFn: fetchRaceTimeSync,
-    staleTime: 5 * 60 * 1000 // 5 minutes
-  })
-
-  // Mutation
-  const updateCrewMutation = useMutation({
-    mutationFn: updateCrew,
-    onSuccess: () => {
-      // Invalidate and refetch crew data
-      queryClient.invalidateQueries({ queryKey: ['crew', id] })
-      queryClient.invalidateQueries({ queryKey: ['crews'] }) // If you have a crews list query
-      
-      // Navigate back
-      history.push('/generate-results/crew-management-dashboard/')
-    },
-    onError: (error: any) => {
-      if (error.response?.data) {
-        setErrors(error.response.data)
-      }
-    }
-  })
-
-  const getBandOptions = (): BandOption[] => {
-    const options = [{ label: '', value: '' }, ...bandsData.map((option: Band) => ({
-      label: `${option.event.override_name} ${option.name}`,
-      value: option.id
-    })).sort()]
-    return options
+  const getBandOptions = (): SelectOptionsProps[] => {
+    return [
+      { label: "Select a band", value: "" },
+      ...bands.map((band: BandProps) => ({
+        label: `${band.event.override_name} ${band.name}`,
+        value: band.id,
+      })),
+    ]
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData || !id) return
+    if (!formData) return
 
-    setErrors({}) // Clear previous errors
-    updateCrewMutation.mutate({ id, formData })
+    updateCrewMutation.mutate(formData, {
+      onSuccess: (updatedCrew) => {
+        setFormData(updatedCrew)
+        history.push('/generate-results/crew-management-dashboard')
+      },
+      onError: (err: any) => {
+        if (err.response?.data) setErrors(err.response.data)
+      },
+    })
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!formData) return
-    const updatedFormData = { ...formData, [e.target.name]: e.target.value }
-    setFormData(updatedFormData)
+    const { name, value, type, checked } = e.target
+    setFormData(prev =>
+      prev
+        ? {
+            ...prev,
+            [name]: type === 'checkbox' ? checked : value,
+          }
+        : prev
+    )
   }
 
-  const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!formData) return
-    const updatedFormData = { ...formData, [e.target.name]: e.target.checked }
-    setFormData(updatedFormData)
+ const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev =>
+      prev ? { ...prev, [e.target.name]: e.target.checked } : prev
+    )
   }
 
-  const handleBandChange = (selectedOption: BandOption | null) => {
-    if (selectedOption && formData) {
-      const updatedFormData = { ...formData, band: { id: selectedOption.value as number, value: selectedOption.value as number } }
-      setFormData(updatedFormData)
-    }
+  const handleBandChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = e.target.value ? Number(e.target.value) : null
+    const selectedBand = selectedId ? bands.find(b => b.id === selectedId) : undefined
+    setFormData(prev =>
+      prev ? { ...prev, band: selectedBand } : prev
+    )
   }
 
-  const handleStartOverrideChange = (raceId: string | null) => {
-    if (!formData) return;
-    const updatedFormData = { 
-      ...formData, 
-      race_id_start_override: raceId 
-    };
-    setFormData(updatedFormData);
-  };
+  const handleStartOverrideChange = (raceId: number | null) => {
+    setFormData(prev =>
+      prev ? { ...prev, race_id_start_override: raceId } : prev
+    )
+  }
 
-  const handleFinishOverrideChange = (raceId: string | null) => {
-    if (!formData) return;
-    const updatedFormData = { 
-      ...formData, 
-      race_id_finish_override: raceId 
-    };
-    setFormData(updatedFormData);
-  };
+  const handleFinishOverrideChange = (raceId: number | null) => {
+    setFormData(prev =>
+      prev ? { ...prev, race_id_finish_override: raceId } : prev
+    )
+  }
+
 
   // Loading state
   if (isCrewLoading || isBandsLoading || isRaceTimeSyncLoading) {
@@ -243,28 +139,23 @@ const CrewTimeEdit: React.FC = () => {
     )
   }
 
+  console.log(formData)
+
+  if (!crew) return null
+
   return (
     <>
       <Header />
       <Hero title={"Edit crew time"} />
       <section className="crew-time-edit__section">
         <div className="crew-time-edit__container">
-          <div className="crew-time-edit__box">
-            <div className="crew-time-edit__column">
+          <form className="crew-time-edit__form" onSubmit={handleSubmit}>
+            <div className="crew-time-edit__box">
               <div>Crew ID: {formData?.id}</div>
-            </div>
-
-            <div className="crew-time-edit__column">
-              <div>Crew: {formData?.name}</div>
-            </div>
-
-            <div className="crew-time-edit__column">
+              <div>Crew: {formData?.competitor_names ?? formData?.name}</div>
               <div>Bib number: {formData?.bib_number}</div>
             </div>
-          </div>
-
-          <form className="crew-time-edit__form" onSubmit={handleSubmit}>
-            <div className="crew-time-edit__form-wrapper">
+            <div className="crew-time-edit__penalty-band">
               <div className="crew-time-edit__field">
                 <FormInput
                   fieldName={'penalty'}
@@ -279,20 +170,21 @@ const CrewTimeEdit: React.FC = () => {
 
               <div className="crew-time-edit__field">
                 <div className="crew-time-edit__control">
-                  <label className="crew-time-edit__label" htmlFor="band">Band</label>
-                  <Select
-                    id="band"
+                <FormSelect
+                    fieldName={'band'}
+                    label={'Band'}
                     onChange={handleBandChange}
-                    options={getBandOptions()}
-                    value={!formData?.band ? null : getBandOptions().find(option => option.value === formData.band?.id)}
-                    isDisabled={updateCrewMutation.isPending}
+                    selectOptions={getBandOptions()}
+                    value={formData?.band?.id ?? ''}
+                    disabled={updateCrewMutation.isPending}
+                    title={'Band'}
                   />
                   {errors.band && <small className="crew-time-edit__error-text">{errors.band}</small>}
                 </div>
               </div>
             </div>
 
-            <p className="crew-time-edit__override-title">Override race time</p>
+            <h3 className="crew-time-edit__group-title">Override race time</h3>
 
             <div className="crew-time-edit__time-inputs">
               <div className="crew-time-edit__time-input-group">
@@ -344,82 +236,75 @@ const CrewTimeEdit: React.FC = () => {
               </div>
             </div>
 
+            <h3 className="crew-time-edit__group-title">Flags</h3>
+
             <div className="crew-time-edit__checkboxes">
               <div className="crew-time-edit__checkbox-group">
                 <div className="crew-time-edit__field">
-                  <label className="crew-time-edit__checkbox-label" htmlFor="time_only">
-                    <input
-                      className="crew-time-edit__checkbox"
-                      type="checkbox"
-                      name="time_only"
-                      id="time_only"
-                      checked={!!formData?.time_only}
-                      onChange={handleCheckbox}
-                      disabled={updateCrewMutation.isPending}
-                    /> Time only
-                  </label>
+                  <Checkbox
+                    name={'time_only'}
+                    label={'Time only'}
+                    id={'time_only'}
+                    checked={!!formData?.time_only}
+                    onChange={handleCheckbox}
+                    disabled={updateCrewMutation.isPending}
+                  />
                   {errors.time_only && <small className="crew-time-edit__error-text">{errors.time_only}</small>}
                 </div>
 
                 <div className="crew-time-edit__field">
-                  <label className="crew-time-edit__checkbox-label" htmlFor="did_not_start">
-                    <input
-                      className="crew-time-edit__checkbox"
-                      type="checkbox"
-                      name="did_not_start"
-                      id="did_not_start"
-                      checked={!!formData?.did_not_start}
-                      onChange={handleCheckbox}
-                      disabled={updateCrewMutation.isPending}
-                    /> Did not start
-                  </label>
+                  <Checkbox
+                    name={'did_not_start'}
+                    label={'Did not start'}
+                    id={'did_not_start'}
+                    checked={!!formData?.did_not_start}
+                    onChange={handleCheckbox}
+                    disabled={updateCrewMutation.isPending}
+                  />
                   {errors.did_not_start && <small className="crew-time-edit__error-text">{errors.did_not_start}</small>}
                 </div>
 
                 <div className="crew-time-edit__field">
-                  <label className="crew-time-edit__checkbox-label" htmlFor="did_not_finish">
-                    <input
-                      className="crew-time-edit__checkbox"
-                      type="checkbox"
-                      name="did_not_finish"
-                      id="did_not_finish"
-                      checked={!!formData?.did_not_finish}
-                      onChange={handleCheckbox}
-                      disabled={updateCrewMutation.isPending}
-                    /> Did not finish
-                  </label>
+                  <Checkbox
+                    name={'did_not_finish'}
+                    label={'Did not finish'}
+                    id={'did_not_finish'}
+                    checked={!!formData?.did_not_finish}
+                    onChange={handleCheckbox}
+                    disabled={updateCrewMutation.isPending}
+                    />
                   {errors.did_not_finish && <small className="crew-time-edit__error-text">{errors.did_not_finish}</small>}
                 </div>
 
                 <div className="crew-time-edit__field">
-                  <label className="crew-time-edit__checkbox-label" htmlFor="disqualified">
-                    <input
-                      className="crew-time-edit__checkbox"
-                      type="checkbox"
-                      name="disqualified"
-                      id="disqualified"
-                      checked={!!formData?.disqualified}
-                      onChange={handleCheckbox}
-                      disabled={updateCrewMutation.isPending}
-                    /> Disqualified
-                  </label>
+                  <Checkbox
+                    name={'disqualified'}
+                    label={'Disqualified'}
+                    id={'disqualified'}
+                    checked={!!formData?.disqualified}
+                    onChange={handleCheckbox}
+                    disabled={updateCrewMutation.isPending}
+                    />
                   {errors.disqualified && <small className="crew-time-edit__error-text">{errors.disqualified}</small>}
                 </div>
               </div>
             </div>
 
-            <div className="crew-time-edit__box">
-              {formData?.times && (
-                <CrewRaceTimesTable
+            {formData?.times && crew && (
+              <>
+                <h3 className="crew-time-edit__group-title">Race times</h3>
+                <CrewTimeEditRaceTimesTable
+                  crewId={crew.id!}
                   offsetData={raceTimeSync}
                   times={formData.times}
-                  startOverride={formData.race_id_start_override?.toString()}
-                  finishOverride={formData.race_id_finish_override?.toString()}
+                  startOverride={formData.race_id_start_override}
+                  finishOverride={formData.race_id_finish_override}
                   onStartOverrideChange={handleStartOverrideChange}
                   onFinishOverrideChange={handleFinishOverrideChange}
                 />
-              )}
-            </div>
+              </>
+            )}
+
 
             <br />
             <TextButton 

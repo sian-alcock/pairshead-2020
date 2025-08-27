@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 import axios, {AxiosResponse} from 'axios'
 import Breadcrumbs from '../../molecules/Breadcrumbs/Breadcrumbs';
-import { RaceInfoProps } from '../../components.types';
+import { RaceInfoProps } from '../../../types/components.types';
 import './hero.scss'
 import RaceModeSetter from '../../molecules/RaceModeSetter/RaceModeSetter';
 

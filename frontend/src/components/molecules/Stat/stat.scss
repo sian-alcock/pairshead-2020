@@ -1,0 +1,9 @@
+@import '../../../style.scss';
+
+.stat {
+  padding: 1rem;
+  border-radius: $border-radius-small;
+  box-shadow: $standard-box-shadow;
+
+  @include body-small;
+}

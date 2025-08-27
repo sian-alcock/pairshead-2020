@@ -1,10 +1,9 @@
-// Enhanced CrewTimeCompare.tsx with TanStack Table and dynamic tabs
 import React, { useState, useMemo, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosResponse } from "axios";
 import Hero from "../../organisms/Hero/Hero";
 import Header from "../../organisms/Header/Header";
-import { CrewProps, RaceProps } from "../../components.types";
+import { CrewProps, RaceProps } from "../../../types/components.types";
 import "./crewManagementDashboard.scss";
 import CrewTimeCompareTable from "../../organisms/CrewTimeCompareTable/CrewTimeCompareTable";
 import ResultsComparison from "../../organisms/ResultsComparison/ResultsComparison";
@@ -14,19 +13,11 @@ import MissingTimesTable from "../../organisms/MissingTimesTable/MissingTimesTab
 import MastersCrewsTable from "../../organisms/MastersCrewsTable/MastersCrewsTable";
 import StatBlock, { StatBlockProps } from "../../organisms/StatBlock/StatBlock";
 import CrewsTable from "../../organisms/CrewsTable/CrewsTable";
+import { useCrews } from '../../../hooks/useCrews'
+
 
 
 // Types
-interface RaceTimeProps {
-  id: number;
-  sequence: number;
-  bib_number?: number;
-  tap: string;
-  time_tap: number;
-  synchronized_time: number;
-  crew?: CrewProps;
-  race?: RaceProps;
-}
 
 interface TabConfig {
   key: string;
@@ -35,7 +26,7 @@ interface TabConfig {
   component: 'crew-table' | 'crew-race-view' | 'compare-winners' | 'race-times' | 'sequence-comparison' | 'missing-times' | 'masters-crews';
   needsCrews?: boolean;
   needsRaces?: boolean;
-  raceId?: string;
+  raceId?: number;
   tap?: 'Start' | 'Finish';
 }
 
@@ -54,11 +45,6 @@ interface DataStats {
 // API functions
 const fetchDataStats = async (): Promise<DataStats> => {
   const response: AxiosResponse = await axios.get("/api/crews/stats/");
-  return response.data;
-};
-
-const fetchCrews = async (): Promise<CrewProps[]> => {
-  const response: AxiosResponse = await axios.get("/api/crews/");
   return response.data;
 };
 
@@ -90,17 +76,9 @@ export default function CrewManagementDashboard() {
   });
 
   // Fetch crews
-  const {
-    data: crewsData,
-    isLoading: crewsLoading,
-    error: crewsError,
-  } = useQuery({
-    queryKey: ["crews"],
-    queryFn: fetchCrews,
-    staleTime: 5 * 60 * 1000,
-    retry: 3,
-    enabled: ["all"].includes(activeTab),
-  });
+
+  const { data: crewsData, isLoading: crewsLoading, error: crewsError } = useCrews()
+
 
   // Fetch races
   const {
@@ -152,8 +130,30 @@ export default function CrewManagementDashboard() {
   const tabs = useMemo<TabConfig[]>(() => {
     const baseTabs: TabConfig[] = [
       {
+        key: "sequence-comparison-start",
+        label: "Sequence compare - start",
+        component: "sequence-comparison",
+        tap: "Start",
+      },
+      {
+        key: "sequence-comparison-finish", 
+        label: "Sequence compare - finish",
+        component: "sequence-comparison",
+        tap: "Finish",
+      },
+      {
+        key: "missing-times",
+        label: "Missing times",
+        component: "missing-times",
+      },
+      {
+        key: "masters-crews",
+        label: "Masters",
+        component: "masters-crews",
+      },
+      {
         key: "all",
-        label: "All Crews",
+        label: "All crews",
         count: crewsData?.length || 0,
         component: "crew-table",
         needsCrews: true,
@@ -169,32 +169,10 @@ export default function CrewManagementDashboard() {
       },
       {
         key: "compare-winners",
-        label: "Compare Winners",
+        label: "Compare winners",
         component: "compare-winners",
         needsCrews: false,
         needsRaces: true,
-      },
-      {
-        key: "sequence-comparison-start",
-        label: "Sequence Compare - Start",
-        component: "sequence-comparison",
-        tap: "Start",
-      },
-      {
-        key: "sequence-comparison-finish", 
-        label: "Sequence Compare - Finish",
-        component: "sequence-comparison",
-        tap: "Finish",
-      },
-      {
-        key: "missing-times",
-        label: "Missing Times",
-        component: "missing-times",
-      },
-      {
-        key: "masters-crews",
-        label: "Masters",
-        component: "masters-crews",
       },
     ];
 
@@ -261,7 +239,12 @@ export default function CrewManagementDashboard() {
     switch (currentTab.component) {
       case "crew-table":  
         return (
-          <CrewsTable />
+          <CrewsTable
+            crews={crewsData || []}
+            isLoading={crewsLoading}
+            error={!!crewsError}
+            onDataChanged={handleDataChanged}
+          />
         );
 
       case "crew-race-view":

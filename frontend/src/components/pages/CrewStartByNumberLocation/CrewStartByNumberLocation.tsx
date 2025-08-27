@@ -10,7 +10,7 @@ import axios, { AxiosResponse } from 'axios'
 import BladeImage from '../../atoms/BladeImage/BladeImage'
 import Header from '../../organisms/Header/Header'
 import Hero from '../../organisms/Hero/Hero'
-import { CrewProps } from '../../components.types'
+import { CrewProps } from '../../../types/components.types'
 import "./crewStartByNumberLocation.scss"
 
 interface ResponseParamsProps {

@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 import axios, { AxiosResponse } from 'axios'
 import Header from '../Header/Header'
-import { RaceProps } from '../../components.types'
+import { RaceProps } from '../../../types/components.types'
 import TextButton from '../../atoms/TextButton/TextButton'
 import { useHistory, useParams } from 'react-router-dom'
 import Hero from '../Hero/Hero'

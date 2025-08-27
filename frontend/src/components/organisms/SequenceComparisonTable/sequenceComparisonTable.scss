@@ -6,23 +6,39 @@
     @include h3;
   }
 
+  &__table-container {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+
   &__table {
     width: 100%;
     
     @include table;
   }
 
-  &__stats {
-    margin-bottom: 1.5rem;
-        @include laptop {
-      grid-column: 1 / span 2;
+  &__cell--id {
+    @include animated-link;
+  }
+
+  &__title-section {
+    @include laptop {
+      @include grid(2);
     }
   }
 
-  &__stat {
-    padding: 1rem;
-    border-radius: $border-radius-small;
-    box-shadow: $standard-box-shadow;
+  &__filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__stats {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
   }
 
   &__controls,

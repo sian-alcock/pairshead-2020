@@ -98,6 +98,7 @@ class SequenceComparisonView(View):
                         race_time = race_times_for_race[0]
                         row['sequences'][race_id] = race_time.sequence
                         row['race_times'][race_id] = {
+                            'id': race_time.id,
                             'sequence': race_time.sequence,
                             'time_tap': race_time.time_tap,
                             'bib_number': race_time.bib_number,
@@ -135,6 +136,7 @@ class SequenceComparisonView(View):
                     'sequences': {race_id: race_time.sequence},
                     'race_times': {
                         race_id: {
+                            'id': race_time.id,
                             'sequence': race_time.sequence,
                             'time_tap': race_time.time_tap,
                             'bib_number': race_time.bib_number,

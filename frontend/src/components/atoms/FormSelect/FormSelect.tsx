@@ -16,10 +16,11 @@ export interface FormSelectProps {
   ariaControls?: string;
   autoFocus?: boolean;
   selectOptions: SelectOptionsProps[] | undefined;
-  value?: string | undefined;
-  defaultValue?: string | undefined;
+  value?: string | number | undefined;
+  defaultValue?: string | number | undefined;
   hiddenLabel?: boolean;
   label?: string;
+  disabled?: boolean;
 }
 
 export const FormSelect = ({
@@ -30,7 +31,8 @@ export const FormSelect = ({
   hiddenLabel = false,
   title,
   label,
-  onChange
+  onChange,
+  disabled,
 }: FormSelectProps): ReactElement => {
   // Determine if this is a controlled component
   const isControlled = value !== undefined;

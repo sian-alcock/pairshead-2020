@@ -22,6 +22,7 @@ import TablePagination from "../../molecules/TablePagination/TablePagination";
 import SearchInput from "../../molecules/SearchInput/SearchInput";
 import "./missingTimesTable.scss";
 import { FormSelect } from "../../atoms/FormSelect/FormSelect";
+import { Link } from "react-router-dom";
 
 // Types
 interface CrewMissingTimes {
@@ -103,7 +104,7 @@ export default function MissingTimesTable({ onDataChanged }: MissingTimesTablePr
       console.log('Fetching missing times data...');
       return fetchMissingTimes();
     },
-    staleTime: 1 * 60 * 1000, // 1 minute
+    staleTime: 0, // 1 minute
     retry: 3,
   });
 
@@ -112,13 +113,14 @@ export default function MissingTimesTable({ onDataChanged }: MissingTimesTablePr
     columnHelper.accessor("crew_id", {
       header: "ID",
       cell: (info) => (
-        <span className="missing-times__cell missing-times__cell--id">
-          {info.getValue()}
-        </span>
+        <Link to={`/generate-results/crew-management-dashboard/${info.getValue()}/edit`} className="missing-times__cell missing-times__cell--id">
+          {info.getValue() as string}
+        </Link>
       ),
       enableSorting: true,
       size: 80,
     }),
+
     columnHelper.accessor("bib_number", {
       header: "Bib",
       cell: (info) => (
@@ -284,12 +286,6 @@ export default function MissingTimesTable({ onDataChanged }: MissingTimesTablePr
     }
   };
 
-  // Refresh data handler
-  const handleRefreshData = () => {
-    refetch();
-    onDataChanged?.();
-  };
-
   // Loading state
   if (isLoading) {
     return (
@@ -309,12 +305,6 @@ export default function MissingTimesTable({ onDataChanged }: MissingTimesTablePr
         <div className="missing-times__error-content">
           <h4>Error loading missing times</h4>
           <p>Failed to load crews with missing times</p>
-          <button 
-            className="missing-times__retry-button"
-            onClick={handleRefreshData}
-          >
-            Try Again
-          </button>
         </div>
       </div>
     );

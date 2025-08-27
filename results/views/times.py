@@ -67,6 +67,16 @@ class RaceTimeDetailView(APIView):
         Crew.update_all_computed_properties()
         return Response(serializer.errors, status=422)
 
+    
+    def patch(self, request, pk):
+        race_time = self.get_race_time(pk)
+        serializer = RaceTimesSerializer(race_time, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            Crew.update_all_computed_properties()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=422)
+
     def delete(self, _request, pk):
         race_time = self.get_race_time(pk)
         race_time = RaceTime.objects.get(pk=pk)

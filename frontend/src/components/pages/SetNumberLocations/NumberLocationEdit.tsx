@@ -6,7 +6,7 @@ import useFetchData from '../../hooks/use-fetch-data'
 import Header from '../../organisms/Header/Header'
 import Hero from '../../organisms/Hero/Hero'
 import TextButton from '../../atoms/TextButton/TextButton'
-import { NumberLocationProps } from '../../components.types'
+import { NumberLocationProps } from '../../../types/components.types'
 
 type NumberLocationParams = {
   id: string;

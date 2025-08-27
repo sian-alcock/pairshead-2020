@@ -1,7 +1,7 @@
 import React, { ReactElement, Suspense } from "react"
 import image from "../../../assets/unknown_blades.png"
 import {useImage} from "react-image"
-import { CrewProps } from "../../components.types"
+import { CrewProps } from "../../../types/components.types"
 
 interface BladeImageProps {
   crew: CrewProps;

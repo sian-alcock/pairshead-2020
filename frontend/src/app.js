@@ -27,8 +27,8 @@ import Settings from "./components/pages/PHSettings/Settings"
 import SetNumberLocations from "./components/pages/SetNumberLocations/SetNumberLocations"
 import NumberLocationNew from "./components/pages/SetNumberLocations/NumberLocationNew"
 import NumberLocationEdit from "./components/pages/SetNumberLocations/NumberLocationEdit"
-import RaceTimeIndex from "./components/pages/RaceTimes/RaceTimeIndex"
-import RaceTimeEdit from "./components/pages/RaceTimes/RaceTimeEdit"
+// import RaceTimeIndex from "./components/pages/RaceTimes/RaceTimeIndex"
+import RaceTimeEdit from "./components/organisms/RaceTimesTable/components/RaceTimeEdit"
 import RaceTimesManagerDetail from "./components/organisms/RaceTimesManagerDetail/RaceTimesManagerDetail"
 import TimingOffsetManagerDetail from "./components/organisms/TimingOffsetManager/TimingOffsetManagerDetail";
 import MarshallingDivisions from "./components/pages/MarshallingDivisions/MarshallingDivisions";
@@ -61,7 +61,6 @@ function App() {
             <SecureRoute path="/generate-results/crew-management-dashboard/:id/edit" component={CrewTimeEdit} />
             <SecureRoute path="/generate-results/crew-management-dashboard" component={CrewManagementDashboard} />
             <SecureRoute path="/generate-results/race-times/:id/edit" component={RaceTimeEdit} />
-            <SecureRoute path="/generate-results/race-times" component={RaceTimeIndex} />
             <SecureRoute path="/generate-results/export" component={ExportData} />
             <SecureRoute path="/generate-results/results" component={ResultIndex} />
             <SecureRoute path="/generate-results" component={GenerateResults} />
@@ -91,7 +90,7 @@ function App() {
         </HashRouter>
       </div>
       {/* Add React Query DevTools in development */}
-      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
+      {/* {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />} */}
     </QueryClientProvider>
   );
 }

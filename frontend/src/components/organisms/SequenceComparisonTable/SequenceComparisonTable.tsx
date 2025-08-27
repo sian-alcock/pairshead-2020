@@ -23,6 +23,10 @@ import "./sequenceComparisonTable.scss";
 import { FormSelect } from "../../atoms/FormSelect/FormSelect";
 import { IconSuccess } from "../../atoms/IconSuccess/IconSuccess";
 import { IconFail } from "../../atoms/IconFail/IconFail";
+import Stat from "../../molecules/Stat/Stat";
+import Checkbox from "../../atoms/Checkbox/Checkbox";
+import { formatTimes } from "../../../lib/helpers";
+import { Link } from "react-router-dom";
 
 // Types
 interface CrewInfo {
@@ -34,6 +38,7 @@ interface CrewInfo {
 }
 
 interface RaceTimeData {
+  id: number;
   sequence: number;
   time_tap: number;
   bib_number: string | number | null;
@@ -173,7 +178,9 @@ export default function SequenceComparisonTable({
           return (
             <div className="sequence-comparison__crew-info">
               <div className="sequence-comparison__crew-name">
-                {crew.competitor_names || crew.name}
+                <Link to={`/generate-results/crew-management-dashboard/${crew.id}/edit`} className="sequence-comparison__cell sequence-comparison__cell--id">
+                  {crew.competitor_names || crew.name}
+                </Link>
               </div>
               <div className="sequence-comparison__crew-details">
                 Bib: {crew.bib_number} • {crew.club}
@@ -221,10 +228,7 @@ export default function SequenceComparisonTable({
           header: () => (
             <div className="sequence-comparison__race-header">
               <div className="sequence-comparison__race-name">
-                {raceInfo.name}
-              </div>
-              <div className="sequence-comparison__race-id">
-                ({raceInfo.race_id})
+                {raceInfo.name} ({raceInfo.race_id})
               </div>
               <div className="sequence-comparison__coverage">
                 {comparisonData.race_coverage[numericRaceId]?.crews_count || 0} crews, {comparisonData.race_coverage[numericRaceId]?.unassigned_count || 0} unassigned
@@ -260,11 +264,11 @@ export default function SequenceComparisonTable({
             return (
               <div className="sequence-comparison__sequence-info">
                 <div className="sequence-comparison__sequence-number">
-                  {sequence}
+                  <Link to={`/generate-results/race-times/${raceTimeData?.id}/edit`} className="sequence-comparison__cell sequence-comparison__cell--id">{sequence}</Link>
                 </div>
                 {raceTimeData && (
                   <div className="sequence-comparison__sequence-details">
-                    {raceTimeData.time_tap}ms
+                    {formatTimes(raceTimeData.time_tap)}
                   </div>
                 )}
               </div>
@@ -281,7 +285,7 @@ export default function SequenceComparisonTable({
       ...baseColumns,
       columnHelper.group({
         id: "race_sequences",
-        header: "Sequences by Race",
+        header: "Sequences by race",
         columns: raceColumns,
       }),
     ];
@@ -289,7 +293,6 @@ export default function SequenceComparisonTable({
     return groupedColumns;
   }, [comparisonData]);
 
-  // Table instance
   const table = useReactTable({
     data: tableData,
     columns,
@@ -381,30 +384,20 @@ export default function SequenceComparisonTable({
 
   return (
     <div className="sequence-comparison">
-      {/* Header and Controls */}
       <div className="sequence-comparison__header">
         <div className="sequence-comparison__title-section">
           <h3 className="sequence-comparison__title">
-            Crew Sequence Comparison: {tap} Times
+            Sequence compare - {tap}
           </h3>
+          <div className="sequence-comparison__stats">
+            <Stat statKey={"Total"} statValue={comparisonData.total_crews} />
+            <Stat statKey={"Agreements"} statValue={`${comparisonData.agreements} (${comparisonData.agreement_percentage}%)`} />
+            <Stat statKey={"Disagreements"} statValue={comparisonData.disagreements} />
+            <Stat statKey={"Unassigned"} statValue={comparisonData.total_unassigned}/>
+          </div>
         </div>
         
         <div className="sequence-comparison__controls">
-          <div className="sequence-comparison__stats">
-            <span className="sequence-comparison__stat sequence-comparison__stat--total">
-              Total Crews: {comparisonData.total_crews}
-            </span>
-            <span className="sequence-comparison__stat sequence-comparison__stat--agree">
-              Agreements: {comparisonData.agreements} ({comparisonData.agreement_percentage}%)
-            </span>
-            <span className="sequence-comparison__stat sequence-comparison__stat--disagree">
-              Disagreements: {comparisonData.disagreements}
-            </span>
-            <span className="sequence-comparison__stat sequence-comparison__stat--unassigned">
-              Unassigned: {comparisonData.total_unassigned}
-            </span>
-          </div>
-
           <div className="sequence-comparison__filter-group">
             <FormSelect
               value={agreementFilter}
@@ -418,16 +411,14 @@ export default function SequenceComparisonTable({
               fieldName={"filter_agreements"}
               title={"Filter by agreement"}
             />
-            
-            <label className="sequence-comparison__checkbox-label">
-              <input
-                type="checkbox"
-                checked={showUnassigned}
-                onChange={(e) => setShowUnassigned(e.target.checked)}
-                className="sequence-comparison__checkbox"
-              />
-              Show unassigned times
-            </label>
+
+            <Checkbox
+              name={"show-unassigned"}
+              label={"Show unassigned times"}
+              id={"show-unassigned"}
+              checked={showUnassigned}
+              onChange={(e) => setShowUnassigned(e.target.checked)}
+            />
           </div>
           
           <div className="sequence-comparison__search-wrapper">
@@ -441,21 +432,6 @@ export default function SequenceComparisonTable({
         </div>
       </div>
 
-      {/* Race Summary */}
-      <div className="sequence-comparison__race-summary">
-        {Object.entries(comparisonData.races).map(([raceId, raceInfo]) => {
-          const coverage = comparisonData.race_coverage[parseInt(raceId)];
-          return (
-            <div key={raceId} className="sequence-comparison__race-summary-item">
-              <strong>{raceInfo.name} ({raceInfo.race_id})</strong>
-              <span>{coverage?.crews_count} crews, {coverage?.unassigned_count} unassigned</span>
-              <span>({coverage?.coverage_percentage}% crew coverage)</span>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* Table */}
       <TablePagination 
         table={table}
         className="sequence-comparison__pagination"
@@ -473,7 +449,6 @@ export default function SequenceComparisonTable({
         </table>
       </div>
 
-      {/* Results Info and Pagination */}
       <div className="sequence-comparison__footer">
         <div className="sequence-comparison__results-info">
           <p className="sequence-comparison__results-text">

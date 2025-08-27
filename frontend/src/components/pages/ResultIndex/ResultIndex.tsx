@@ -13,7 +13,7 @@ import {
 import axios from "axios"
 import Hero from "../../organisms/Hero/Hero"
 import { formatTimes } from "../../../lib/helpers"
-import { CrewProps } from "../../components.types"
+import { CrewProps } from "../../../types/components.types"
 import BladeImage from "../../atoms/BladeImage/BladeImage"
 import CrewTimeCalculatedFieldsUpdate from "../../molecules/UpdateCrews/UpdateCrewTimeCalculatedFields"
 import { genderOptions } from "./defaultProps"

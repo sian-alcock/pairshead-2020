@@ -9,7 +9,7 @@ import {
   getExpandedRowModel,
   ExpandedState,
 } from '@tanstack/react-table'
-import { RaceProps } from '../../components.types'
+import { RaceProps } from '../../../types/components.types'
 import './raceTimesManager.scss'
 import TextButton from '../../atoms/TextButton/TextButton'
 import { IconButton } from '../../atoms/IconButton/IconButton'
@@ -18,7 +18,7 @@ import Icon from '../../atoms/Icons/Icons'
 import CSVDataLoader from '../../molecules/CSVDataLoader/CSVDataLoader'
 
 interface RadioSelection {
-  raceId: string;
+  raceId: number;
   type: 'default-start' | 'default-finish';
 }
 
@@ -28,17 +28,17 @@ const fetchRaces = async (): Promise<RaceProps[]> => {
   return response.data
 }
 
-const updateRace = async ({ raceId, updateData }: { raceId: string; updateData: any }) => {
+const updateRace = async ({ raceId, updateData }: { raceId: number; updateData: any }) => {
   const response: AxiosResponse = await axios.patch(`/api/races/${raceId}/`, updateData)
   return response.data
 }
 
-const deleteRace = async (raceId: string) => {
+const deleteRace = async (raceId: number) => {
   const response: AxiosResponse = await axios.delete(`/api/races/${raceId}`)
   return response.data
 }
 
-const refreshRaceData = async (raceId: string) => {
+const refreshRaceData = async (raceId: number) => {
   const response: AxiosResponse = await axios.get(`/api/crew-race-times-import-webscorer/${raceId}`)
   console.log(response.data)
   return response.data
@@ -49,7 +49,7 @@ const columnHelper = createColumnHelper<RaceProps>()
 export default function RaceTimesManager(): ReactElement {
   const [radioSelections, setRadioSelections] = useState<RadioSelection[]>([])
   const [expanded, setExpanded] = useState<ExpandedState>({})
-  const [refreshingRaceId, setRefreshingRaceId] = useState<string | null>(null)
+  const [refreshingRaceId, setRefreshingRaceId] = useState<number | null>(null)
   
   const queryClient = useQueryClient()
 
@@ -76,7 +76,7 @@ export default function RaceTimesManager(): ReactElement {
 
   const refreshRaceMutation = useMutation({
     mutationFn: refreshRaceData,
-    onMutate: (raceId: string) => {
+    onMutate: (raceId: number) => {
       setRefreshingRaceId(raceId)
     },
     onSuccess: () => {
@@ -110,7 +110,7 @@ export default function RaceTimesManager(): ReactElement {
     }
   }
 
-  const handleDelete = async (raceId: string) => {
+  const handleDelete = async (raceId: number) => {
     try {
       await deleteRaceMutation.mutateAsync(raceId)
     } catch (error) {
@@ -118,7 +118,7 @@ export default function RaceTimesManager(): ReactElement {
     }
   }
 
-const handleRefresh = async (raceId: string) => {
+const handleRefresh = async (raceId: number) => {
   try {
     await refreshRaceMutation.mutateAsync(raceId)
   } catch (error) {

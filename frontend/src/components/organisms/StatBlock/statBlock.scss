@@ -129,6 +129,10 @@
       }
     }
   }
+
+  &__link {
+    @include animated-link;
+  }
 }
 
 // Skeleton loading animation

@@ -25,8 +25,9 @@ function Navbar (): ReactElement {
       {Auth.isAuthenticated() && <div className="nav-bar__desktop">
         <MenuButton label={'Results'} pathName={"/generate-results/results"}/>
       </div>}
-      {Auth.isAuthenticated() && <><BROELoader
-        importPersonalData={true} title={'Get data from British Rowing'} description={'Import data from BROE via the api'} location={'menu'} /><Menu menuItems={menuProps.menuItems} /></>}
+      {Auth.isAuthenticated() && <>
+        <Menu menuItems={menuProps.menuItems} />
+      </>}
       {Auth.isAuthenticated() && <Link className="nav-bar__login" to="/" onClick={logout}>Log out</Link>}
       {!Auth.isAuthenticated() && <Link className="nav-bar__login" to="/login">Log in</Link>}
     </div>

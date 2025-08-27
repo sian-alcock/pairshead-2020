@@ -1,4 +1,3 @@
-// RaceTimesTable.tsx - Organism Component
 import React, { useState, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -14,9 +13,10 @@ import {
   SortingState,
   ColumnFiltersState,
 } from "@tanstack/react-table";
+import { useHistory, Link } from "react-router-dom";
 import axios, { AxiosResponse } from "axios";
 import { formatTimes } from "../../../lib/helpers";
-import { CrewProps, RaceProps } from "../../components.types";
+import { CrewProps, RaceProps } from "../../../types/components.types";
 import { TableHeader } from "../../molecules/TableHeader/TableHeader";
 import { TableBody } from "../../molecules/TableBody/TableBody";
 import TablePagination from "../../molecules/TablePagination/TablePagination";
@@ -36,14 +36,14 @@ interface RaceTimeProps {
 }
 
 interface RaceTimesTableProps {
-  raceId: string;
+  raceId: number;
   tap: 'Start' | 'Finish';
   raceName: string;
   onDataChanged?: () => void;
 }
 
 // API function
-const fetchRaceTimes = async (raceId: string, tap: string): Promise<RaceTimeProps[]> => {
+const fetchRaceTimes = async (raceId: number, tap: string): Promise<RaceTimeProps[]> => {
   const params = new URLSearchParams();
   params.append('race_id', raceId.toString());
   params.append('tap', tap);
@@ -108,6 +108,7 @@ export default function RaceTimesTable({
   raceName, 
   onDataChanged 
 }: RaceTimesTableProps) {
+  const history = useHistory();
   const queryClient = useQueryClient();
   const columnHelper = createColumnHelper<RaceTimeProps>();
 
@@ -143,13 +144,22 @@ export default function RaceTimesTable({
 
   // Table columns
   const columns = useMemo<ColumnDef<RaceTimeProps, any>[]>(() => [
-    columnHelper.accessor("sequence", {
+  columnHelper.accessor("sequence", {
       header: "Sequence",
-      cell: (info) => (
-        <span className="race-times-table__cell race-times-table__cell--sequence">
-          {info.getValue()}
-        </span>
-      ),
+      cell: (info) => {
+        const raceTime = info.row.original;
+        return (
+          <button
+            className="race-times-table__sequence-link"
+            onClick={() => history.push(`/generate-results/race-times/${raceTime.id}/edit`)}
+            title="Click to edit this race time"
+          >
+            <span className="race-times-table__cell race-times-table__cell--sequence">
+              {info.getValue()}
+            </span>
+          </button>
+        );
+      },
       enableSorting: true,
       filterFn: 'includesString',
     }),
@@ -197,7 +207,7 @@ export default function RaceTimesTable({
       sortingFn: timeSortingFn,
       filterFn: timeFilterFn,
     }),
-  ], []);
+  ], [history]);
 
   // Create column groups for grouped headers
   const columnGroups = useMemo(() => [
@@ -241,12 +251,6 @@ export default function RaceTimesTable({
     },
   });
 
-  // Refresh data handler
-  const handleRefreshData = () => {
-    refetch();
-    onDataChanged?.();
-  };
-
   // Loading state
   if (isLoading) {
     return (
@@ -266,12 +270,6 @@ export default function RaceTimesTable({
         <div className="race-times-table__error-content">
           <h4>Error loading race times</h4>
           <p>Failed to load {tap.toLowerCase()} times for {raceName}</p>
-          <button 
-            className="race-times-table__retry-button"
-            onClick={handleRefreshData}
-          >
-            Try Again
-          </button>
         </div>
       </div>
     );
@@ -281,15 +279,12 @@ export default function RaceTimesTable({
   const filteredRows = table.getFilteredRowModel().rows.length;
   const displayedRows = table.getRowModel().rows.length;
 
-  console.log(raceTimesData)
-
   return (
     <div className="race-times-table">
-      {/* Header and Controls */}
       <div className="race-times-table__header">
         <div className="race-times-table__title-section">
           <h3 className="race-times-table__title">
-            {raceName} - {tap} Times
+            {raceName} - {tap} times
           </h3>
         </div>
         
@@ -305,7 +300,6 @@ export default function RaceTimesTable({
         </div>
       </div>
 
-      {/* Table */}
       <div className="race-times-table__table-container">
         <table className="race-times-table__table">
           <TableHeader 
@@ -318,7 +312,6 @@ export default function RaceTimesTable({
         </table>
       </div>
 
-      {/* Results Info and Pagination */}
       <div className="race-times-table__footer">
         <div className="race-times-table__results-info">
           <p className="race-times-table__results-text">

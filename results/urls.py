@@ -80,6 +80,7 @@ path('race-sequence-comparison/', sequence_compare.SequenceComparisonView.as_vie
 path('crews/missing-times/', missing_times.MissingTimesView.as_view(), name='missing-times'),
 path('crews/masters/', masters_crews.MastersCrewsView.as_view(), name='masters-crews'),
 path('crews/stats/', crew_dashboard_stats.DataOverviewStatsView.as_view(), name='data-overview-stats'),
+path('masters-adjustments-import/', masters_adjustments.MastersAdjustmentsImport.as_view(), name='masters-adjustment-import'),
 
 
 ]

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Hero from "../../organisms/Hero/Hero";
 import { lightweightHeadings, marshallHeadings, timingHeadings } from "./defaultProps"
-import { CrewProps } from "../../components.types";
+import { CrewProps } from "../../../types/components.types";
 
 import "./crewDrawReports.scss"
 import Header from "../../organisms/Header/Header";

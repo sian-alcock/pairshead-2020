@@ -21,6 +21,7 @@ import TablePagination from "../../molecules/TablePagination/TablePagination";
 import SearchInput from "../../molecules/SearchInput/SearchInput";
 import "./mastersCrewsTable.scss";
 import { FormSelect } from "../../atoms/FormSelect/FormSelect";
+import Stat from "../../molecules/Stat/Stat";
 
 // Types
 interface AdjustmentDetails {
@@ -363,25 +364,16 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
 
   return (
     <div className="masters-crews">
-      {/* Header and Controls */}
       <div className="masters-crews__header">
         <div className="masters-crews__title-section">
           <h3 className="masters-crews__title">
-            Masters Crews & Handicaps
+            Masters
           </h3>
           <div className="masters-crews__stats">
-            <span className="masters-crews__stat masters-crews__stat--total">
-              Total: {mastersData.summary.total_masters_crews}
-            </span>
-            <span className="masters-crews__stat masters-crews__stat--with-adj">
-              With Adjustments: {mastersData.summary.crews_with_adjustments}
-            </span>
-            <span className="masters-crews__stat masters-crews__stat--with-times">
-              With Times: {mastersData.summary.crews_with_times}
-            </span>
-            <span className="masters-crews__stat masters-crews__stat--without-times">
-              No Times: {mastersData.summary.crews_without_times}
-            </span>
+            <Stat statKey={"Total"} statValue={mastersData.summary.total_masters_crews} />
+            <Stat statKey={"With adjustments"} statValue={mastersData.summary.crews_with_adjustments} />
+            <Stat statKey={"With times"} statValue={mastersData.summary.crews_with_times} />
+            <Stat statKey={"No times"} statValue={mastersData.summary.crews_without_times} />
           </div>
         </div>
         

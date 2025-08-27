@@ -1,0 +1,17 @@
+@import '../../../../style.scss';
+
+.race-time-edit {
+
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+
+  &__form {
+    @include form;
+  }
+  
+}

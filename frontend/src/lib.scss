@@ -58,17 +58,6 @@ $bold: 700;
 @mixin h1 {
   @include font-headline;
 
-  font-size: rem(36px);
-  line-height: 1.1;
-  @media screen and (min-width: $md) {
-    font-size: rem(48px);
-  }
-}
-
-@mixin h2 ($colour: $bblBlue) {
-  @include font-headline;
-  color: $colour;
-
   font-size: rem(28px);
   line-height: 1.1;
   @media screen and (min-width: $md) {
@@ -76,8 +65,9 @@ $bold: 700;
   }
 }
 
-@mixin h3($weight: $normal) {
-  @include font-headline($weight);
+@mixin h2 ($colour: $bblBlue) {
+  @include font-headline;
+  color: $colour;
 
   font-size: rem(24px);
   line-height: 1.1;
@@ -86,7 +76,7 @@ $bold: 700;
   }
 }
 
-@mixin h4($weight: $normal) {
+@mixin h3($weight: $normal) {
   @include font-headline($weight);
 
   font-size: rem(20px);
@@ -95,10 +85,18 @@ $bold: 700;
     font-size: rem(22px);
   }
 }
-@mixin h5($weight: $normal) {
+
+@mixin h4($weight: $normal) {
   @include font-headline($weight);
   color: $black;
   font-size: rem(18px);
+  line-height: 1.1;
+}
+
+@mixin h5($weight: $normal) {
+  @include font-headline($weight);
+  color: $black;
+  font-size: rem(16px);
   line-height: 1.1;
 }
 
@@ -137,6 +135,12 @@ $bold: 700;
     font-size: rem(14px);
     line-height: rem(22.4px);
   }
+}
+
+@mixin body-xs($weight: $normal) {
+  @include font-body($weight);
+  font-size: rem(12px);
+  line-height: 1.1;
 }
 
 /*************************
@@ -186,6 +190,16 @@ $cols: 12;
   @media screen and (min-width: $lg) {
     width: 50%;
   }
+}
+
+@mixin form-wider() {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 
 @mixin field() {

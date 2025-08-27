@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState } from 'react'
 import axios, { AxiosResponse } from 'axios'
 import Header from '../Header/Header'
-import { RaceProps, TimingOffsetProps } from '../../components.types'
+import { RaceProps, TimingOffsetProps } from '../../../types/components.types'
 import TextButton from '../../atoms/TextButton/TextButton'
 import { useHistory, useParams } from 'react-router-dom'
 import Hero from '../Hero/Hero'
@@ -164,9 +164,9 @@ export default function TimingOffsetManagerDetail () {
     }
   ))
 
-  const targetRaceOptions = races?.map((race: {id: string, name: string, is_timing_reference: boolean}) => (
+  const targetRaceOptions = races?.map((race: {id: number, name: string, is_timing_reference: boolean}) => (
     {
-      value: race.id.toString(),
+      value: race.id,
       label: race.name
     }
   ))

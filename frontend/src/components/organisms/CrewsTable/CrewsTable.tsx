@@ -14,9 +14,8 @@ import {
   ColumnFiltersState,
   VisibilityState,
 } from "@tanstack/react-table";
-import axios, { AxiosResponse } from "axios";
 import { formatTimes } from "../../../lib/helpers";
-import { CrewProps } from "../../components.types";
+import { CrewProps } from "../../../types/components.types";
 import { TableHeader } from "../../molecules/TableHeader/TableHeader";
 import { TableBody } from "../../molecules/TableBody/TableBody";
 import TablePagination from "../../molecules/TablePagination/TablePagination";
@@ -27,14 +26,11 @@ import Checkbox from "../../atoms/Checkbox/Checkbox";
 import TextButton from "../../atoms/TextButton/TextButton";
 
 interface CrewsTableProps {
+  crews: CrewProps[];
+  isLoading: boolean;
+  error: boolean;
   onDataChanged?: () => void;
 }
-
-// API function
-const fetchCrews = async (): Promise<CrewProps[]> => {
-  const response: AxiosResponse = await axios.get("/api/crews/");
-  return response.data;
-};
 
 // Custom filter functions
 const timeFilterFn = (row: any, columnId: string, filterValue: string) => {
@@ -104,7 +100,7 @@ const COLUMN_PRESETS = {
   all: {} // Will be populated with all columns visible
 };
 
-export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
+export default function CrewsTable({ crews, isLoading, error, onDataChanged }: CrewsTableProps) {
   const columnHelper = createColumnHelper<CrewProps>();
 
   // Component state
@@ -131,26 +127,6 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
   return saved ? JSON.parse(saved) : true; // Default to hiding scratched
   });
 
-  // Data fetching
-  const {
-    data: crewsData,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery({
-    queryKey: ["crews-table"],
-    queryFn: () => {
-      console.log("Fetching crews data...");
-      const startTime = Date.now();
-      return fetchCrews().then(result => {
-        console.log(`Crews fetch took ${Date.now() - startTime}ms`);
-        return result;
-      });
-    },
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
-  });
 
   // Table columns
   const columns = useMemo<ColumnDef<CrewProps, any>[]>(() => [
@@ -426,14 +402,14 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
 
   // Create filtered data with the scratched filter applied
   const filteredData = React.useMemo(() => {
-    const baseData = crewsData || [];
+    const baseData = crews || [];
     return hideScratched 
       ? baseData.filter(crew => {
           const status = crew.status;
           return status !== 'Scratched' && status !== 'scratched' && status !== 'SCRATCHED';
         })
       : baseData;
-  }, [crewsData, hideScratched]);
+  }, [crews, hideScratched]);
 
   // Table instance
   const table = useReactTable({
@@ -469,14 +445,6 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
     },
   });
 
-
-
-  // Refresh data handler
-  const handleRefreshData = () => {
-    refetch();
-    onDataChanged?.();
-  };
-
   // Loading state
   if (isLoading) {
     return (
@@ -496,25 +464,19 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
         <div className="crews-table__error-content">
           <h4>Error loading crews</h4>
           <p>Failed to load crew data</p>
-          <button 
-            className="crews-table__retry-button"
-            onClick={handleRefreshData}
-          >
-            Try Again
-          </button>
         </div>
       </div>
     );
   }
 
-  const totalRows = crewsData?.length || 0;
+  const totalRows = crews?.length || 0;
   const filteredRows = table.getFilteredRowModel().rows.length;
   const displayedRows = table.getRowModel().rows.length;
   const visibleColumnCount = table.getVisibleLeafColumns().length;
 
   return (
     <div className="crews-table">
-      <h2 className="crews-table__title">All crews</h2>
+      <h3 className="crews-table__title">All crews</h3>
       <div className="crews-table__controls">
         <SearchInput
           value={globalFilter}

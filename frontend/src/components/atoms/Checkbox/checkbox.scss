@@ -43,6 +43,6 @@
   }
 
   &__label {
-    font-size: rem(16px);
+    @include body-small(bold);
   }
 }

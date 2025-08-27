@@ -32,10 +32,23 @@ class PopulatedBandSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'event',)
 
 class ImportOriginalEventSerializer(serializers.ModelSerializer):
+    crew = serializers.CharField()  # accept string from CSV
 
     class Meta:
         model = OriginalEventCategory
         fields = ('crew', 'event_original',)
+
+    def validate_crew(self, value):
+        try:
+            crew_id = int(value)
+        except ValueError:
+            raise serializers.ValidationError(f"CrewID '{value}' is not a valid integer")
+
+        try:
+            return Crew.objects.get(pk=crew_id)
+        except Crew.DoesNotExist:
+            raise serializers.ValidationError(f"CrewID {crew_id} not found in database")
+
 
 class WriteEventOrderSerializer(serializers.ModelSerializer):
 

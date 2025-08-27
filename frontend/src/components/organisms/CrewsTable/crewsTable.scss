@@ -2,10 +2,10 @@
 @import '../../../lib.scss';
 
 .crews-table {
+  
   &__title {
     margin-bottom: 1.5rem;
-
-    @include h2;
+    @include h3;
   }
 
   &__table-container {

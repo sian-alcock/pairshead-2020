@@ -5,6 +5,7 @@ import Hero from '../../organisms/Hero/Hero';
 import StatBlock, { StatBlockProps } from "../../organisms/StatBlock/StatBlock";
 import './home.scss'
 import axios, { AxiosResponse } from 'axios';
+import { Link } from "react-router-dom";
 
 interface DataStats {
   races_count: number;
@@ -51,11 +52,15 @@ export default function Home () {
           value: statsData.crews_count,
           subtitle: 'accepted crews',
           status: statsData.crews_count > 0 ? 'good' : 'warning',
+          link: '/generate-results/crew-management-dashboard',
+          linkText: 'View crews'
         },
         {
           value: statsData.races_count,
           subtitle: statsData.races_count === 0 ? "Import races first" : "races configured",
           status: statsData.races_count > 0 ? 'good' : 'error',
+          link: '/generate-results',
+          linkText: 'View races'
         },
         {
           value: statsData.race_times_count,
@@ -111,6 +116,41 @@ export default function Home () {
               <small>Last updated: {new Date(statsData.last_updated).toLocaleString()}</small>
             </div>
           )}
+        </div>
+      </section>
+      <section className="home__section">
+        <div className="home__container">
+          <div className="step-card">
+          <h3>1. Import Data</h3>
+          <ul>
+            <li><Link to="/generate-results/import-broe-data">Get data from British Rowing</Link></li>
+            <li><Link to="/generate-results/import-penalties">Import penalties</Link></li>
+            <li><Link to="/generate-results/import-original-events">Import original event categories</Link></li>
+            <li><Link to="/generate-results/import-masters-adjustments">Import masters adjustments</Link></li>
+          </ul>
+        </div>
+        
+        <div className="step-card">
+          <h3>2. Configure Times & Offsets</h3>
+          <ul>
+            <li><Link to="/generate-results/manage-race-times">Manage race times</Link></li>
+            <li><Link to="/generate-results/manage-timing-offsets">Manage timing offsets</Link></li>
+          </ul>
+        </div>
+        
+        <div className="step-card">
+          <h3>3. Calculate Results</h3>
+          <ul>
+            <li><Link to="/generate-results/update-calculations">Update all calculations</Link></li>
+          </ul>
+        </div>
+        
+        <div className="step-card">
+          <h3>4. Generate Reports</h3>
+          <ul>
+            <li><Link to="/generate-results/reports">View all reports</Link></li>
+          </ul>
+        </div>
         </div>
       </section>
     </>

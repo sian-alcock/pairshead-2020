@@ -15,7 +15,7 @@ import {
 import axios, { AxiosResponse } from "axios";
 import { Link } from "react-router-dom";
 import { formatTimes, formatVarianceTime } from "../../../lib/helpers";
-import { CrewProps, RaceProps } from "../../components.types";
+import { CrewProps, RaceProps } from "../../../types/components.types";
 import { TableHeader } from "../../molecules/TableHeader/TableHeader";
 import { TableBody } from "../../molecules/TableBody/TableBody";
 import TablePagination from "../../molecules/TablePagination/TablePagination";
@@ -24,9 +24,9 @@ import TextButton from "../../atoms/TextButton/TextButton";
 import './crewTimeCompareTable.scss'
 
 interface CrewOverrideUpdate {
-  crew_id: string;
-  race_id_start_override?: string;
-  race_id_finish_override?: string;
+  crew_id: number;
+  race_id_start_override?: number;
+  race_id_finish_override?: number;
 }
 
 interface CrewTimeCompareTableProps {
@@ -95,7 +95,7 @@ export default function CrewTimeCompareTable({
   const columnHelper = createColumnHelper<CrewProps>();
 
   // State for tracking override changes
-  const [pendingOverrides, setPendingOverrides] = useState<Map<string, CrewOverrideUpdate>>(new Map());
+  const [pendingOverrides, setPendingOverrides] = useState<Map<number, CrewOverrideUpdate>>(new Map());
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 25,
@@ -120,7 +120,7 @@ export default function CrewTimeCompareTable({
   });
 
   // Handle radio button changes
-  const handleOverrideChange = (crewId: string, type: 'start' | 'finish', raceId: string) => {
+  const handleOverrideChange = (crewId: number, type: 'start' | 'finish', raceId: number) => {
     setPendingOverrides(prev => {
       const newMap = new Map(prev);
       const existing = newMap.get(crewId) || { crew_id: crewId };
@@ -137,32 +137,32 @@ export default function CrewTimeCompareTable({
   };
 
   // Get current override value (either pending or existing)
-  const getCurrentOverride = (crew: CrewProps, type: 'start' | 'finish'): string => {
+  const getCurrentOverride = (crew: CrewProps, type: 'start' | 'finish'): number | null => {
     const pending = pendingOverrides.get(crew.id);
     if (pending) {
       if (type === 'start' && pending.race_id_start_override) {
-        return pending.race_id_start_override.toString();
+        return pending.race_id_start_override;
       }
       if (type === 'finish' && pending.race_id_finish_override) {
-        return pending.race_id_finish_override.toString();
+        return pending.race_id_finish_override;
       }
     }
 
     // Return existing override or default
     if (type === 'start') {
-      return crew.race_id_start_override?.toString() || defaultStartRace?.id?.toString() || '';
+      return crew.race_id_start_override || defaultStartRace?.id || null;
     } else {
-      return crew.race_id_finish_override?.toString() || defaultFinishRace?.id?.toString() || '';
+      return crew.race_id_finish_override || defaultFinishRace?.id || null;
     }
   };
 
   // Calculate raw time based on selected races
   const calculateRawTime = (crew: CrewProps, race: RaceProps): number | null => {
     const startTime = crew.times.find(
-      time => time.tap === 'Start' && time.race.id === race.id
+      time => time.tap === 'Start' && time.race?.id === race.id
     );
     const finishTime = crew.times.find(
-      time => time.tap === 'Finish' && time.race.id === race.id
+      time => time.tap === 'Finish' && time.race?.id === race.id
     );
     
     if (startTime?.time_tap && finishTime?.time_tap) {
@@ -270,7 +270,7 @@ export default function CrewTimeCompareTable({
       raceColumns.push(columnHelper.accessor(
         (row) => {
           const time = row.times.find(
-            (time) => time.tap === 'Start' && time.race.race_id === race.race_id
+            (time) => time.tap === 'Start' && time.race?.race_id === race.race_id
           );
           return time?.time_tap || null;
         },
@@ -290,13 +290,13 @@ export default function CrewTimeCompareTable({
         header: "Use",
         cell: (info) => {
           const crew = info.row.original;
-          const isSelected = getCurrentOverride(crew, 'start') === race.id.toString();
+          const isSelected = getCurrentOverride(crew, 'start') === race.id;
           return (
             <input
               type="radio"
               name={`start_${crew.id}`}
               checked={isSelected}
-              onChange={() => handleOverrideChange(crew.id, 'start', race.id.toString())}
+              onChange={() => handleOverrideChange(crew.id, 'start', race.id)}
             />
           );
         },
@@ -308,7 +308,7 @@ export default function CrewTimeCompareTable({
       raceColumns.push(columnHelper.accessor(
         (row) => {
           const time = row.times.find(
-            (time) => time.tap === 'Finish' && time.race.race_id === race.race_id
+            (time) => time.tap === 'Finish' && time.race?.race_id === race.race_id
           );
           return time?.time_tap || null;
         },
@@ -328,13 +328,13 @@ export default function CrewTimeCompareTable({
         header: "Use",
         cell: (info) => {
           const crew = info.row.original;
-          const isSelected = getCurrentOverride(crew, 'finish') === race.id.toString();
+          const isSelected = getCurrentOverride(crew, 'finish') === race.id;
           return (
             <input
               type="radio"
               name={`finish_${crew.id}`}
               checked={isSelected}
-              onChange={() => handleOverrideChange(crew.id, 'finish', race.id.toString())}
+              onChange={() => handleOverrideChange(crew.id, 'finish', race.id)}
             />
           );
         },

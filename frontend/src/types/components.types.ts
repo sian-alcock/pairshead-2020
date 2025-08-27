@@ -5,8 +5,8 @@ export type TimeProps = {
   sequence: number;
   tap: 'Start' | 'Finish';
   time_tap: number;
-  crew: CrewProps;
-  race: RaceProps;
+  crew: CrewProps | null;
+  race: RaceProps | null;
 }
   
 export type ClubProps = {
@@ -28,9 +28,9 @@ export type EventProps = {
 }
 
 export type BandProps = {
-    id: number;
-    name: string;
-    event: EventProps;
+  id: number;
+  name: string;
+  event: EventProps;
 }
   
 export type CrewProps = {
@@ -38,7 +38,7 @@ export type CrewProps = {
   race_id_start_override: number | null;
   race_id_finish_override: number | null;
   category_position_time: number;
-  id: string;
+  id: number;
   name: string;
   bib_number?: string;
   competitor_names: string;
@@ -64,7 +64,7 @@ export type CrewProps = {
   overall_rank: number;
   category_rank: number;
   gender_rank: number;
-  band: BandProps;
+  band?: BandProps;
   event: EventProps;
   masters_adjustment?: number;
   masters_adjusted_time?: number;
@@ -83,6 +83,43 @@ export type CrewProps = {
   marshalling_division?: string;
   requires_ranking_update: boolean;
 }
+
+export type CrewFormData = {
+  // Basic crew info
+  id?: number
+  name?: string
+  bib_number?: string
+  competitor_names?: string
+  
+  // Timing data
+  category_position_time?: number
+  penalty?: number
+  manual_override_minutes?: number
+  manual_override_seconds?: number
+  manual_override_hundredths_seconds?: number
+  start_time?: string
+  finish_time?: string
+  raw_time?: string
+  
+  // Status flags
+  time_only?: boolean
+  did_not_start?: boolean
+  did_not_finish?: boolean
+  disqualified?: boolean
+  
+  // Band/event info
+  band?: {
+    id: number
+    value: number
+  }
+  
+  // Division/category info
+  marshalling_division?: string
+  times: TimeProps[];
+  race_id_start_override?: number | null;
+  race_id_finish_override?: number | null;
+}
+
 
 export type EventOriginalProps = {
   crew: number;
@@ -117,8 +154,8 @@ export type RaceInfoProps = {
 
 export type RaceProps = {
   is_timing_reference: any;
-  race_id: string;
-  id: string;
+  race_id: number;
+  id: number;
   name: string;
   default_start: boolean;
   default_finish: boolean;

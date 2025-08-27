@@ -6,6 +6,7 @@ export interface CheckboxProps {
   value?: string;
   defaultChecked?: boolean;
   checked?: boolean;
+  disabled?: boolean;
   label: string;
   id: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -15,6 +16,7 @@ export default function Checkbox({
   name,
   defaultChecked,
   checked,
+  disabled,
   label,
   id,
   value,
@@ -31,6 +33,7 @@ export default function Checkbox({
         onChange={onChange}
         defaultChecked={defaultChecked}
         checked={checked}
+        disabled={disabled}
       />
       <label htmlFor={id} className="checkbox__label">
         {label}

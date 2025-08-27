@@ -27,14 +27,17 @@ class GenerateResults extends React.Component {
               <p className="c-data-loader__description">Import data from BROE via the api</p>
             </div>
               <BROELoader
-            importPersonalData={true} title={'Get data from British Rowing'} description={'Import data from BROE via the api'} location={'page'}/>
+                importPersonalData={true}
+                title={'Get data from British Rowing'}
+                description={'Import data from BROE via the api'}
+                location={'page'}
+              />
             </section>
               <RaceTimesManager />
               <TimingOffsetManager />
               <CSVDataLoader
                 url='/api/crew-import-penalties/'
                 buttonText='Import penalties'
-                class='double-height-button' 
                 title='Import penalties from csv'
                 description='Import penalties from csv.'
                 lines='true' 
@@ -42,17 +45,14 @@ class GenerateResults extends React.Component {
 
               <CSVDataLoader
                 url='/api/original-event-import/'
-                buttonText='Import original event categories'
-                class='double-height-button' 
                 title='Import original event categories from csv'
                 description='Import event categories from csv.'
-                lines='true' 
-                />
+                lines={true} 
+              />
 
               <CSVDataLoader
                 url='/api/masters-adjustments-import/'
                 buttonText='Import masters adjustments'
-                class='double-height-button'
                 title='Import masters adjustments from csv'
                 description='Import masters adjustments from csv.'
                 lines='true'

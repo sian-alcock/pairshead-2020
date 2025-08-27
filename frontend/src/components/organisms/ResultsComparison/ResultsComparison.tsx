@@ -14,11 +14,12 @@ declare module '@tanstack/react-table' {
     className?: string;
   }
 }
-import { RaceProps, CrewProps } from '../../components.types';
+import { RaceProps, CrewProps } from '../../../types/components.types';
 import './resultsComparison.scss'
 import { FormSelect } from '../../atoms/FormSelect/FormSelect';
 import TextButton from '../../atoms/TextButton/TextButton';
 import Icon from '../../atoms/Icons/Icons';
+import TablePagination from '../../molecules/TablePagination/TablePagination';
 
 // Types
 
@@ -41,9 +42,9 @@ interface CategoryResult {
 }
 
 interface ComparisonResult {
-  start_race: string;
-  finish_race: string;
-  results: Record<string, CategoryResult>;
+  start_race: number;
+  finish_race: number;
+  results: Record<number, CategoryResult>;
 }
 
 interface ComparisonData {
@@ -52,8 +53,8 @@ interface ComparisonData {
 }
 
 interface RaceSelection {
-  start_race_id: string | null;
-  finish_race_id: string | null;
+  start_race_id: number | null;
+  finish_race_id: number | null;
 }
 
 // API functions
@@ -170,7 +171,7 @@ const ResultsComparison: React.FC = () => {
   return (
     <div className="results-comparison">
       <div className="results-comparison__header">
-        <h2 className="results-comparison__title">Results comparison</h2>
+        <h3 className="results-comparison__title">Results comparison</h3>
         <p className="results-comparison__description">
           Compare winners and runners-up between different start/finish race combinations
         </p>
@@ -183,7 +184,7 @@ const ResultsComparison: React.FC = () => {
             label="Start race"
             selectOptions={raceOptions}
             value={comparison1.start_race_id || ''}
-            onChange={(e) => setComparison1(prev => ({ ...prev, start_race_id: e.target.value }))} 
+            onChange={(e) => setComparison1(prev => ({ ...prev, start_race_id: e.target.value ? Number(e.target.value) : null }))} 
             fieldName={'start_race_1'}
             title={'Start race 1'}
             />
@@ -191,7 +192,7 @@ const ResultsComparison: React.FC = () => {
             label="Finish race"
             selectOptions={raceOptions}
             value={comparison1.finish_race_id || ''}
-            onChange={(e) => setComparison1(prev => ({ ...prev, finish_race_id: e.target.value }))}
+            onChange={(e) => setComparison1(prev => ({ ...prev, finish_race_id: e.target.value ? Number(e.target.value) : null }))}
             fieldName={'finish_race_1'}
             title={'Finish race 1'}
             />
@@ -203,7 +204,7 @@ const ResultsComparison: React.FC = () => {
             label="Start race"
             selectOptions={raceOptions}
             value={comparison2.start_race_id || ''}
-            onChange={(e) => setComparison2(prev => ({ ...prev, start_race_id: e.target.value }))}
+            onChange={(e) => setComparison2(prev => ({ ...prev, start_race_id: e.target.value ? Number(e.target.value) : null }))}
             fieldName={'start_race_2'}
             title={'Start Race 2'}
             />
@@ -211,7 +212,7 @@ const ResultsComparison: React.FC = () => {
             label="Finish race"
             selectOptions={raceOptions}
             value={comparison2.finish_race_id || ''}
-            onChange={(e) => setComparison2(prev => ({ ...prev, finish_race_id: e.target.value }))}
+            onChange={(e) => setComparison2(prev => ({ ...prev, finish_race_id: e.target.value ? Number(e.target.value) : null }))}
             fieldName={'finish_race_2'}
             title={'Finish race 2'}
             />
@@ -266,8 +267,9 @@ const ComparisonResults: React.FC<ComparisonResultsProps> = ({ data }) => {
     ]);
 
     return Array.from(categories).map(category => {
-      const comp1Result = data.comparison1.results[category];
-      const comp2Result = data.comparison2.results[category];
+      const categoryId = Number(category);
+      const comp1Result = data.comparison1.results[categoryId];
+      const comp2Result = data.comparison2.results[categoryId];
 
       let matchWinner = '';
       let matchRunnerUp = '';

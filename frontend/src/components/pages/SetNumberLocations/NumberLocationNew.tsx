@@ -4,7 +4,7 @@ import axios from 'axios'
 import Header from '../../organisms/Header/Header'
 import Hero from '../../organisms/Hero/Hero'
 import TextButton from '../../atoms/TextButton/TextButton'
-import { NumberLocationProps } from '../../components.types'
+import { NumberLocationProps } from '../../../types/components.types'
 
 export default function NumberLocationNew () {
   const history = useHistory()

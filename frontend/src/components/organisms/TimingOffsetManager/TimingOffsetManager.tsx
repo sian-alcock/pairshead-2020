@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import { Link } from "react-router-dom";
-import { RaceProps, TimingOffsetProps } from "../../components.types";
+import { RaceProps, TimingOffsetProps } from "../../../types/components.types";
 import "./timingOffsetManager.scss"
 import TextButton from "../../atoms/TextButton/TextButton";
 import { IconButton } from "../../atoms/IconButton/IconButton";

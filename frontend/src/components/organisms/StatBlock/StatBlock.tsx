@@ -1,5 +1,6 @@
 import React from "react";
 import "./statBlock.scss";
+import { Link } from "react-router-dom";
 
 export interface StatBlockProps {
   value: string | number;
@@ -8,6 +9,8 @@ export interface StatBlockProps {
   loading?: boolean;
   onClick?: () => void;
   className?: string;
+  link?: string;
+  linkText?: string;
 }
 
 const StatBlock: React.FC<StatBlockProps> = ({
@@ -16,7 +19,9 @@ const StatBlock: React.FC<StatBlockProps> = ({
   status = 'neutral',
   loading = false,
   onClick,
-  className = ''
+  className = '',
+  link,
+  linkText
 }) => {
   const baseClasses = [
     'stat-block',
@@ -57,6 +62,9 @@ const StatBlock: React.FC<StatBlockProps> = ({
           </div>
         )}
       </div>
+      {link && <span className="stat-block__link">
+        <Link to={link}>{linkText}</Link>
+      </span>}
     </div>
   );
 };

@@ -4,7 +4,7 @@ import Hero from "../../organisms/Hero/Hero";
 import { Link } from "react-router-dom";
 import BladeImage from "../../atoms/BladeImage/BladeImage";
 import { tableHeadings, pagingOptions } from "./defaultProps"
-import { CrewProps } from "../../components.types";
+import { CrewProps } from "../../../types/components.types";
 import Paginator from "../../molecules/Paginator/Paginator";
 import PageTotals from "../../molecules/PageTotals/PageTotals";
 
