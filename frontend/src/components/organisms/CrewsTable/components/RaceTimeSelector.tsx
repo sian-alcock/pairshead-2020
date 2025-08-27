@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import type { TimeProps } from "../../../../types/components.types";
 import axios from "axios";
 import { formatTimes } from "../../../../lib/helpers";
@@ -28,8 +28,13 @@ export const RaceTimeSelector: React.FC<RaceTimeSelectorProps> = ({
   tap,
   onChange,
 }) => {
+  // Local state to track the selected value before submission
+  const [selectedValue, setSelectedValue] = useState<number | null>(raceTimeId ?? null);
 
-  const queryClient = useQueryClient();
+  // Update local state when the prop changes (e.g., when switching crews)
+  useEffect(() => {
+    setSelectedValue(raceTimeId ?? null);
+  }, [raceTimeId]);
 
   const { data: options = [], isLoading } = useQuery({
     queryKey: ["race-times", raceId, tap],
@@ -37,26 +42,10 @@ export const RaceTimeSelector: React.FC<RaceTimeSelectorProps> = ({
     enabled: !!raceId,
   });
 
-  const mutation = useMutation({
-    mutationFn: async (newRaceTimeId: number | null) => {
-      if (newRaceTimeId) {
-        // assign RaceTime to crew
-        await axios.patch(`/api/race-times/${newRaceTimeId}`, { crew: crewId });
-      } else if (raceTimeId) {
-        // unassign RaceTime
-        await axios.patch(`/api/race-times/${raceTimeId}`, { crew: null });
-      }
-    },
-    onSuccess: (_, newRaceTimeId) => {
-      onChange(newRaceTimeId);
-      // refetch race-time options after assignment
-      queryClient.invalidateQueries({ queryKey: ["race-times", raceId, tap] });
-    },
-  });
-
   const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value === "unassign" ? null : Number(e.target.value);
-    mutation.mutate(value);
+    setSelectedValue(value);
+    onChange(value); // This now just updates the parent's local state
   };
 
   const selectOptions = [...options.map((option) => {
@@ -68,9 +57,9 @@ export const RaceTimeSelector: React.FC<RaceTimeSelectorProps> = ({
       fieldName={"select-race-time"}
       title={"Select race time"}
       selectOptions={selectOptions}
-      value={raceTimeId ?? "unassign"}
+      value={selectedValue ?? "unassign"}
       onChange={handleSelect}
-      disabled={isLoading || mutation.isPending}
+      disabled={isLoading}
     />
   );
 };

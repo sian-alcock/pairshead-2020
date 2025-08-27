@@ -173,7 +173,7 @@ export default function ResultIndex() {
       }),
       columnHelper.display({
         id: "close_crews",
-        header: "Close",
+        // header: "Close",
         cell: (info) => {
           const crew = info.row.original
           return getTopCrews(crew.event_band, resultsData || []) &&

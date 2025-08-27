@@ -40,7 +40,12 @@ class MastersCrewsView(View):
             # Get master category for lookup
             master_category = None
             if original_event and len(original_event) >= 4:
-                master_category = original_event[:4]
+                if crew.event.gender == 'Open':
+                    master_category = original_event[:4]
+                if crew.event.gender == 'Female':
+                    master_category = original_event[2:6]
+                if crew.event.gender == 'Mixed':
+                    master_category = original_event[3:7]
             
             # Look up the adjustment details
             adjustment_details = None

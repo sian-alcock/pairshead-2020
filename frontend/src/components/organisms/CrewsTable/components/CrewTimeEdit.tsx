@@ -29,7 +29,15 @@ const CrewTimeEdit: React.FC=() => {
   const history = useHistory()
   const [errors, setErrors] = useState<Errors>({})
   const [formData, setFormData] = useState<CrewProps | null>(null)
+  const [raceTimeChanges, setRaceTimeChanges] = useState<{ [key: string]: number | null }>({})
 
+  const handleRaceTimeChange = (raceId: number, tap: "Start" | "Finish", newRaceTimeId: number | null) => {
+    const changeKey = `${raceId}-${tap}`;
+    setRaceTimeChanges(prev => ({
+      ...prev,
+      [changeKey]: newRaceTimeId
+    }));
+  };
 
   const { data: crew, isLoading: isCrewLoading, error: crewError } = useCrew(id)
   const { data: bands = [], isLoading: isBandsLoading } = useBands()
@@ -53,19 +61,26 @@ const CrewTimeEdit: React.FC=() => {
     ]
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData) return
 
-    updateCrewMutation.mutate(formData, {
-      onSuccess: (updatedCrew) => {
-        setFormData(updatedCrew)
-        history.push('/generate-results/crew-management-dashboard')
+    updateCrewMutation.mutate(
+      { 
+        crew: formData, 
+        raceTimeChanges: Object.keys(raceTimeChanges).length > 0 ? raceTimeChanges : undefined 
       },
-      onError: (err: any) => {
-        if (err.response?.data) setErrors(err.response.data)
-      },
-    })
+      {
+        onSuccess: (updatedCrew) => {
+          setFormData(updatedCrew)
+          setRaceTimeChanges({}) // Clear pending changes
+          history.push('/generate-results/crew-management-dashboard')
+        },
+        onError: (err: any) => {
+          if (err.response?.data) setErrors(err.response.data)
+        },
+      }
+    )
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -301,6 +316,8 @@ const CrewTimeEdit: React.FC=() => {
                   finishOverride={formData.race_id_finish_override}
                   onStartOverrideChange={handleStartOverrideChange}
                   onFinishOverrideChange={handleFinishOverrideChange}
+                  raceTimeChanges={raceTimeChanges}
+                  onRaceTimeChange={handleRaceTimeChange}
                 />
               </>
             )}

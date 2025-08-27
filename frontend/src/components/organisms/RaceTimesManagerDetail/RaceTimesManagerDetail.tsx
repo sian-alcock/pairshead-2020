@@ -20,13 +20,11 @@ export default function RaceTimesManagerDetail () {
   const history = useHistory()
   
   const fetchData = async () => {
-
     try {
       const raceResponse: AxiosResponse = await axios.get(`/api/races/${routeParams.id}/`);
       const raceResponseData = raceResponse.data;
       setRaceFormData(raceResponseData)
       console.log(raceResponseData)
-
     } catch (error) {
       console.error(error);
     }
@@ -37,7 +35,6 @@ export default function RaceTimesManagerDetail () {
       fetchData();
     }
   }, []);
-
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
@@ -70,17 +67,12 @@ export default function RaceTimesManagerDetail () {
     axios.delete(`/api/races/${routeParams.id}`)
       .then(()=> history.push('/generate-results/generate-results/'))
       .catch(err => setErrors(err.response.data))
-    }
+  }
 
   const handleCheckbox = (e:React.ChangeEvent<HTMLInputElement>):void => {
-    if (e.target.name === "is_timing_reference") {
-      setRaceFormData({ ...raceFormData, [e.target.name]: e.target.checked})
-    } else {
-      setRaceFormData({ ...raceFormData, [e.target.name]: e.target.checked})
-    }
+    setRaceFormData({ ...raceFormData, [e.target.name]: e.target.checked})
   }
  
-
   return (
     <>
       <Header />
@@ -108,21 +100,24 @@ export default function RaceTimesManagerDetail () {
               checked={!!raceFormData.default_start}
               label={'Set as default race data to use for start times'}
               id={'default-start'}
-              onChange={(e) => handleCheckbox} value={''}
+              onChange={handleCheckbox}
+              value={''}
             />
             <Checkbox
               name={'default_finish'}
               checked={!!raceFormData.default_finish}
               label={'Set as default race data to use for finish times'}
               id={'default-finish'}
-              onChange={(e) => handleCheckbox} value={''}
+              onChange={handleCheckbox}
+              value={''}
             />
             <Checkbox
               name={'is_timing_reference'}
               checked={!!raceFormData.is_timing_reference}
               label={'Use this race as the time source (ie offset = 0)'}
               id={'is-timing-reference'}
-              onChange={(e) => handleCheckbox} value={''}
+              onChange={handleCheckbox}
+              value={''}
             />
 
             <div className="race-times-manager-detail__buttons">

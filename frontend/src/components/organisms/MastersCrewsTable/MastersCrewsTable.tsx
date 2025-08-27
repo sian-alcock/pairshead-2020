@@ -72,18 +72,18 @@ const fetchMastersCrews = async (): Promise<MastersCrewsData> => {
 };
 
 // Custom filter functions
-const adjustmentFilterFn = (row: any, columnId: string, filterValue: string) => {
+const adjustmentFilterFn = (row: any, columnId: string, filterValue: string): boolean => {
   const rowData = row.original as MastersCrew;
   
   switch (filterValue) {
     case 'with_adjustment':
-      return rowData.masters_adjustment && rowData.masters_adjustment !== 0;
+      return Boolean(rowData.masters_adjustment && rowData.masters_adjustment !== 0);
     case 'without_adjustment':
-      return !rowData.masters_adjustment || rowData.masters_adjustment === 0;
+      return Boolean(!rowData.masters_adjustment || rowData.masters_adjustment === 0);
     case 'with_times':
-      return rowData.has_valid_times;
+      return Boolean(rowData.has_valid_times);
     case 'without_times':
-      return !rowData.has_valid_times;
+      return Boolean(!rowData.has_valid_times);
     case 'all':
     default:
       return true;
@@ -143,7 +143,7 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
       size: 80,
     }),
     columnHelper.accessor("name", {
-      header: "Crew Name",
+      header: "Crew name",
       cell: (info) => (
         <span className="masters-crews__cell masters-crews__cell--name">
           {info.getValue()}
@@ -163,7 +163,7 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
       size: 120,
     }),
     columnHelper.accessor("event_band", {
-      header: "Category",
+      header: "Category (original)",
       cell: (info) => (
         <div className="masters-crews__category-cell">
           <span className="masters-crews__event-band">
@@ -171,7 +171,7 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
           </span>
           {info.row.original.original_event_category && (
             <span className="masters-crews__original-event">
-              ({info.row.original.original_event_category})
+              &nbsp;({info.row.original.original_event_category})
             </span>
           )}
         </div>
@@ -180,7 +180,7 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
       size: 150,
     }),
     columnHelper.accessor("raw_time", {
-      header: "Raw Time",
+      header: "Raw time",
       cell: (info) => {
         const time = info.getValue();
         return (
@@ -227,10 +227,12 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
         );
       },
       enableSorting: true,
+      enableColumnFilter: true,
+      filterFn: adjustmentFilterFn,
       size: 120,
     }),
     columnHelper.accessor("published_time", {
-      header: "Published Time",
+      header: "Published time",
       cell: (info) => {
         const time = info.getValue();
         return (
@@ -243,7 +245,7 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
       size: 120,
     }),
     columnHelper.accessor("applicable_fastest_time", {
-      header: "Fastest Time Used",
+      header: "Fastest time used",
       cell: (info) => {
         const fastestTime = info.getValue();
         const category = info.row.original.fastest_time_category;
@@ -262,7 +264,7 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
               {formatTimes(fastestTime)}
             </span>
             <span className="masters-crews__fastest-category">
-              {category.replace('fastest_', '').replace('_', ' ')}
+              &nbsp;({category.replace('fastest_', '').replace('_', ' ')})
             </span>
           </div>
         );
@@ -318,12 +320,6 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
     }
   };
 
-  // Refresh data handler
-  const handleRefreshData = () => {
-    refetch();
-    onDataChanged?.();
-  };
-
   // Loading state
   if (isLoading) {
     return (
@@ -343,12 +339,6 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
         <div className="masters-crews__error-content">
           <h4>Error loading masters crews</h4>
           <p>Failed to load masters crews data</p>
-          <button 
-            className="masters-crews__retry-button"
-            onClick={handleRefreshData}
-          >
-            Try Again
-          </button>
         </div>
       </div>
     );
@@ -361,6 +351,8 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
   const totalRows = mastersData.masters_crews.length;
   const filteredRows = table.getFilteredRowModel().rows.length;
   const displayedRows = table.getRowModel().rows.length;
+
+  console.log(mastersData)
 
   return (
     <div className="masters-crews">
@@ -383,8 +375,8 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
               title={"Select"}
               selectOptions={[
                 {label: 'All Masters', value: 'all'},
-                {label: 'With adjustments', value: 'with_adjustments'},
-                {label: 'No adjustments', value: 'without_adjustments'},
+                {label: 'With adjustments', value: 'with_adjustment'},
+                {label: 'No adjustments', value: 'without_adjustment'},
                 {label: 'With times', value: 'with_times'},
                 {label: 'No times', value: 'without_times'},
               ]}
@@ -404,7 +396,7 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
       </div>
 
       {/* Fastest Times Reference */}
-      {mastersData.fastest_times.length && mastersData.fastest_times.length > 0 &&  <div className="masters-crews__fastest-times">
+      {mastersData.fastest_times && Object.keys(mastersData.fastest_times).length > 0 &&  <div className="masters-crews__fastest-times">
         <h4>Reference Fastest Times:</h4>
         <div className="masters-crews__fastest-times-grid">
           {Object.entries(mastersData.fastest_times).map(([category, time]) => (

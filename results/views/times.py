@@ -7,6 +7,7 @@ logger = logging.getLogger(__name__)
 
 from .helpers import decode_utf8
 from django.http import Http404
+from django.db import transaction
 from pprint import pprint
 from rest_framework import status
 from rest_framework.views import APIView
@@ -70,12 +71,65 @@ class RaceTimeDetailView(APIView):
     
     def patch(self, request, pk):
         race_time = self.get_race_time(pk)
-        serializer = RaceTimesSerializer(race_time, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            Crew.update_all_computed_properties()
-            return Response(serializer.data, status=200)
-        return Response(serializer.errors, status=422)
+        
+        # Handle crew assignment with conflict resolution
+        if 'crew' in request.data:
+            new_crew_id = request.data.get('crew')
+            
+            with transaction.atomic():
+                try:
+                    if new_crew_id is not None:
+                        # Assigning to a crew - check for conflicts
+                        new_crew = Crew.objects.get(id=new_crew_id)
+                        
+                        # Find any existing race time for this crew/race/tap combination
+                        conflicting_race_time = RaceTime.objects.select_for_update().filter(
+                            crew=new_crew,
+                            race=race_time.race,
+                            tap=race_time.tap
+                        ).exclude(id=race_time.id).first()
+                        
+                        if conflicting_race_time:
+                            # Clear the existing assignment first
+                            conflicting_race_time.crew = None
+                            conflicting_race_time.save()
+                            print(f"Auto-cleared conflicting race time {conflicting_race_time.id} from crew {new_crew.id}")
+                        
+                        # Now assign this race time to the crew
+                        race_time.crew = new_crew
+                        race_time.save()
+                        
+                    else:
+                        # Unassigning (crew=null)
+                        race_time.crew = None
+                        race_time.save()
+                    
+                    # Update computed properties after the assignment
+                    Crew.update_all_computed_properties()
+                    
+                    # Return the updated race time data
+                    serializer = RaceTimesSerializer(race_time)
+                    return Response(serializer.data, status=200)
+                    
+                except Crew.DoesNotExist:
+                    return Response(
+                        {'error': f'Crew {new_crew_id} does not exist'}, 
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                except Exception as e:
+                    return Response(
+                        {'error': f'Error updating race time: {str(e)}'}, 
+                        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                    )
+        else:
+            # Handle other field updates (non-crew fields) with the original logic
+            serializer = RaceTimesSerializer(race_time, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                Crew.update_all_computed_properties()
+                return Response(serializer.data, status=200)
+            return Response(serializer.errors, status=422)
+
 
     def delete(self, _request, pk):
         race_time = self.get_race_time(pk)

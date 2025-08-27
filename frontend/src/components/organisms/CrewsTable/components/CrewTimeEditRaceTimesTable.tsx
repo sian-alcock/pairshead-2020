@@ -24,6 +24,8 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
   onStartOverrideChange: (raceId: number | null) => void;
   onFinishOverrideChange: (raceId: number | null) => void;
   offsetData: TimingOffsetProps[];
+  raceTimeChanges: { [key: string]: number | null };
+  onRaceTimeChange: (raceId: number, tap: "Start" | "Finish", newRaceTimeId: number | null) => void;
 }> = ({
   crewId,
   times,
@@ -32,6 +34,8 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
   onStartOverrideChange,
   onFinishOverrideChange,
   offsetData,
+  raceTimeChanges,
+  onRaceTimeChange,
 }) => {
   const { data, defaultStartRaceId, defaultFinishRaceId } = useRaceTimesData(times);
   const queryClient = useQueryClient()
@@ -72,11 +76,24 @@ const getSelectedFinishRaceId = () => {
     }
   };
 
-  const handleRaceTimeChange = (raceId: number, tap: "Start" | "Finish", newRaceTimeId: number | null) => {
-    queryClient.invalidateQueries({ queryKey: ['crew', crewId.toString()] });
+  const getCurrentRaceTimeId = (raceId: number, tap: "Start" | "Finish"): number | null => {
+    const changeKey = `${raceId}-${tap}`;
     
-    console.log(`Race time ${tap} changed for race ${raceId}: ${newRaceTimeId}`);
+    // Check if there's a pending change
+    if (raceTimeChanges[changeKey] !== undefined) {
+      return raceTimeChanges[changeKey];
+    }
+    
+    // Otherwise get from current data
+    const currentTime = times.find(t => t.race?.race_id === raceId && t.tap === tap);
+    return currentTime?.id ?? null;
   };
+
+  // const handleRaceTimeChange = (raceId: number, tap: "Start" | "Finish", newRaceTimeId: number | null) => {
+  //   queryClient.invalidateQueries({ queryKey: ['crew', crewId.toString()] });
+    
+  //   console.log(`Race time ${tap} changed for race ${raceId}: ${newRaceTimeId}`);
+  // };
 
   const columnHelper = createColumnHelper<RaceTimeRow>();
 
@@ -163,7 +180,9 @@ const getSelectedFinishRaceId = () => {
       id: "changeStart",
       header: "Change/remove start tap",
       cell: ({ row }) => {
-        const { race, start, finish } = row.original;
+        const { race, start } = row.original;
+        const currentRaceTimeId = getCurrentRaceTimeId(race?.race_id!, "Start");
+        
         return (
           <div>
             {start.length > 0 && (
@@ -171,10 +190,10 @@ const getSelectedFinishRaceId = () => {
                 crewId={crewId}
                 raceId={race?.id}
                 tap="Start"
-                raceTimeId={start[0]?.id ?? null}
+                raceTimeId={currentRaceTimeId} // Use helper function
                 onChange={(newId) => {
-                  handleRaceTimeChange(race?.id!, "Start", newId);
-                  console.log("Updated start RaceTime →", newId);
+                  onRaceTimeChange(race?.race_id!, "Start", newId); // Use prop
+                  console.log("Queued start RaceTime change →", newId);
                 }}
               />
             )}
@@ -184,10 +203,12 @@ const getSelectedFinishRaceId = () => {
     }),
 
     columnHelper.display({
-      id: "changeFinish",
+      id: "changeFinish", 
       header: "Change/remove finish tap",
       cell: ({ row }) => {
-        const { race, start, finish } = row.original;
+        const { race, finish } = row.original;
+        const currentRaceTimeId = getCurrentRaceTimeId(race?.race_id!, "Finish");
+        
         return (
           <div>
             {finish.length > 0 && (
@@ -195,10 +216,10 @@ const getSelectedFinishRaceId = () => {
                 crewId={crewId}
                 raceId={race?.id}
                 tap="Finish"
-                raceTimeId={finish[0]?.id ?? null}
+                raceTimeId={currentRaceTimeId} // Use helper function
                 onChange={(newId) => {
-                  handleRaceTimeChange(race?.id!, "Finish", newId);
-                  console.log("Updated finish RaceTime →", newId);
+                  onRaceTimeChange(race?.race_id!, "Finish", newId); // Use prop
+                  console.log("Queued finish RaceTime change →", newId);
                 }}
               />
             )}
@@ -207,8 +228,8 @@ const getSelectedFinishRaceId = () => {
       },
     }),
 
-  ], [getSelectedStartRaceId, getSelectedFinishRaceId, startOverride, finishOverride, times]);
-
+  ], [getSelectedStartRaceId, getSelectedFinishRaceId, startOverride, finishOverride, times, raceTimeChanges, onRaceTimeChange]);
+  
   const table = useReactTable({
     data,
     columns,

@@ -9,8 +9,10 @@ export const formatTimes = function formatTimes(timeInMs) {
   const minutes = Math.floor((totalMs % (1000 * 60 * 60)) / (1000 * 60))
   const seconds = Math.floor((totalMs % (1000 * 60)) / 1000)
   const centiseconds = Math.floor((totalMs % 1000) / 10)
-  
-  return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${centiseconds.toString().padStart(2, '0')}`
+  if (totalMs > (1000 * 60 * 60)) {
+    return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${centiseconds.toString().padStart(2, '0')}`
+  }
+  return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${centiseconds.toString().padStart(2, '0')}`
 }
 
 export const formatTimeDate = function formatTimeDate(timeInMs) {
