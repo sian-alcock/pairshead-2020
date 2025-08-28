@@ -78,42 +78,25 @@ class CrewGetEventBand(APIView):
             crew.competitor_names = crew.get_competitor_names()
             crew.save()
 
-class CrewGetStartScore(APIView):
-    def get(self, _request):
-        crews = Crew.objects.filter(status__exact='Accepted') # get all the Accepted crews
-        serializer = CrewSerializer(crews, many=True)
-        self.get_start_score(crews)
-        return Response(serializer.data) # send the JSON to the client
+class UpdateStartOrdersView(APIView):
+    """
+    API endpoint to recalculate start orders for all crews.
+    Call this when crew statuses change or you need to refresh calculations.
+    """
     
-    def get_start_score(self, crews):
-        # Recalculate rankings for all crews
-        for crew in crews:
-            crew.draw_start_score = crew.calc_draw_start_score()
-            crew.save()
-
-class CrewGetStartOrder(APIView):
-    def get(self, _request):
-        crews = Crew.objects.filter(status__exact='Accepted') # get all the Accepted crews
-        serializer = CrewSerializer(crews, many=True)
-        self.update_start_order(crews)
-        return Response(serializer.data) # send the JSON to the client
-
-    def update_start_order(self, crews):
-        # Add the start order
-
-        for crew in crews:
-            crew.calculated_start_order = crew.calc_calculated_start_order()
-            crew.save()
-
-class CheckStartOrderUnique(APIView):
-    def get(self, _request):
-        crews = Crew.objects.filter(status__exact='Accepted')
-        crews_with_unique_start_order = set(Crew.objects.filter(status__exact='Accepted').values_list('calculated_start_order'))
-
-        if len(crews) != len(crews_with_unique_start_order):
-            return Response('There are Accepted crews that do not have a unique start order')
-        else:
-            return Response('The start order is unique amongst accepted crews')
+    def post(self, request):
+        try:
+            updated_count = Crew.update_start_order_calcs()
+            return Response({
+                'success': True,
+                'message': f'Successfully updated start orders for {updated_count} crews',
+                'updated_crews': updated_count
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                'success': False,
+                'message': f'Error updating start orders: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class CrewUpdateRankings(APIView): 

@@ -19,6 +19,7 @@ import TablePagination from "../../molecules/TablePagination/TablePagination";
 import SearchInput from "../../molecules/SearchInput/SearchInput";
 import "./crewStartOrderTable.scss";
 import Checkbox from "../../atoms/Checkbox/Checkbox";
+import TextButton from "../../atoms/TextButton/TextButton";
 
 interface CrewStartOrderTableProps {
   crews: CrewProps[];
@@ -103,14 +104,78 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
     pageIndex: 0,
     pageSize: 50
   });
-  const [sorting, setSorting] = useState<SortingState>([{ id: "start_sequence", desc: false }]);
+  const [sorting, setSorting] = useState<SortingState>([{ id: "calculated_start_order", desc: false }]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
+  const [isUpdatingStartOrders, setIsUpdatingStartOrders] = useState(false);
 
   const [hideScratched, setHideScratched] = useState(() => {
     const saved = localStorage.getItem("crew-start-order-hide-scratched");
     return saved ? JSON.parse(saved) : true; // Default to hiding scratched
   });
+
+  // Function to update start orders via API
+  const updateStartOrders = async () => {
+    setIsUpdatingStartOrders(true);
+    try {
+      const response = await fetch("/api/crew-update-start-orders/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+          // Add your auth header here if needed, e.g.:
+          // 'Authorization': `Bearer ${getToken()}`,
+        }
+      });
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        console.log(`Updated start orders for ${result.updated_crews} crews`);
+        // Call the parent's data refresh function
+        if (onDataChanged) {
+          onDataChanged();
+        }
+      } else {
+        console.error("Failed to update start orders:", result.message);
+        alert(`Error updating start orders: ${result.message}`);
+      }
+    } catch (error) {
+      console.error("Error updating start orders:", error);
+      alert("Failed to update start orders. Please try again.");
+    } finally {
+      setIsUpdatingStartOrders(false);
+    }
+  };
+
+  // Function to check for duplicate start orders
+  const getDuplicateStartOrders = useMemo(() => {
+    const startOrderCounts: { [key: number]: CrewProps[] } = {};
+    const acceptedCrews = (crews || []).filter(
+      (crew) =>
+        crew.status === "Accepted" && crew.calculated_start_order != null && crew.calculated_start_order !== 9999999
+    );
+
+    // Group crews by their calculated_start_order
+    acceptedCrews.forEach((crew) => {
+      const startOrder = crew.calculated_start_order!;
+      if (!startOrderCounts[startOrder]) {
+        startOrderCounts[startOrder] = [];
+      }
+      startOrderCounts[startOrder].push(crew);
+    });
+
+    // Find duplicates
+    const duplicates: { [key: number]: CrewProps[] } = {};
+    Object.entries(startOrderCounts).forEach(([startOrder, crewsArray]) => {
+      if (crewsArray.length > 1) {
+        duplicates[parseInt(startOrder)] = crewsArray;
+      }
+    });
+
+    return duplicates;
+  }, [crews]);
+
+  const hasDuplicates = Object.keys(getDuplicateStartOrders).length > 0;
 
   // Table columns focused on start order information
   const columns = useMemo<ColumnDef<CrewProps, any>[]>(
@@ -182,12 +247,51 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
       }),
       columnHelper.accessor("calculated_start_order", {
         header: "Calculated start order",
-        cell: (info) => (
-          <span className={"crew-start-order-table__cell crew-start-order-table__cell--draw-start-score"}>
-            {info.getValue() || "--"}
-          </span>
-        ),
+        cell: (info) => {
+          const startOrder = info.getValue();
+          const isDuplicate =
+            startOrder != null && startOrder !== 9999999 && getDuplicateStartOrders[startOrder]?.length > 1;
+
+          return (
+            <span
+              className={`crew-start-order-table__cell crew-start-order-table__cell--calculated-start-order ${
+                isDuplicate ? "crew-start-order-table__cell--duplicate" : ""
+              }`}
+            >
+              {startOrder || "--"}
+              {isDuplicate && <span className="crew-start-order-table__duplicate-indicator">⚠️</span>}
+            </span>
+          );
+        },
         enableSorting: true
+      }),
+      // New duplicate check column
+      columnHelper.display({
+        id: "duplicate_check",
+        header: "Duplicate Check",
+        cell: (info) => {
+          const crew = info.row.original;
+          const startOrder = crew.calculated_start_order;
+          const isDuplicate =
+            startOrder != null && startOrder !== 9999999 && getDuplicateStartOrders[startOrder]?.length > 1;
+
+          if (!isDuplicate) {
+            return <span className="crew-start-order-table__cell crew-start-order-table__cell--no-duplicate">✅</span>;
+          }
+
+          const duplicateCrews = getDuplicateStartOrders[startOrder!];
+          const otherCrews = duplicateCrews.filter((c) => c.id !== crew.id);
+
+          return (
+            <span
+              className="crew-start-order-table__cell crew-start-order-table__cell--has-duplicate"
+              title={`Duplicate with: ${otherCrews.map((c) => c.competitor_names || c.name).join(", ")}`}
+            >
+              ❌ ({duplicateCrews.length})
+            </span>
+          );
+        },
+        enableSorting: false
       }),
       columnHelper.accessor("status", {
         header: "Status",
@@ -202,7 +306,7 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
         filterFn: "includesString"
       })
     ],
-    []
+    [getDuplicateStartOrders]
   );
 
   useEffect(() => {
@@ -245,7 +349,7 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
       },
       sorting: [
         {
-          id: "start_sequence",
+          id: "calculated_start_order",
           desc: false
         }
       ]
@@ -282,7 +386,28 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
 
   return (
     <section className="crew-start-order-table">
-      <h3 className="crew-start-order-table__title">Calculated start order</h3>
+      <div className="crew-start-order-table__header">
+        <h3 className="crew-start-order-table__title">Calculated start order</h3>
+
+        {/* Duplicate Status Alert */}
+        {hasDuplicates && (
+          <div className="crew-start-order-table__alert crew-start-order-table__alert--warning">
+            <strong>⚠️ Duplicate Start Orders Detected:</strong>
+            {Object.entries(getDuplicateStartOrders).map(([startOrder, crews]) => (
+              <div key={startOrder} className="crew-start-order-table__duplicate-detail">
+                Start Order {startOrder}: {crews.map((c) => c.competitor_names || c.name).join(", ")}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {!hasDuplicates && crews && crews.length > 0 && (
+          <div className="crew-start-order-table__alert crew-start-order-table__alert--success">
+            ✅ All start orders are unique
+          </div>
+        )}
+      </div>
+
       <div className="crew-start-order-table__controls">
         <SearchInput
           value={globalFilter}
@@ -290,12 +415,19 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
           placeholder="Search crews, names, events..."
           className="crew-start-order-table__search"
         />
+
         <Checkbox
           name={"scratched-crews"}
           label={"Hide scratched crews"}
           id={"scratched-crews"}
           checked={hideScratched}
           onChange={(e) => setHideScratched(e.target.checked)}
+        />
+
+        <TextButton
+          onClick={updateStartOrders}
+          disabled={isUpdatingStartOrders}
+          label={isUpdatingStartOrders ? "Updating" : "Update start orders"}
         />
       </div>
 

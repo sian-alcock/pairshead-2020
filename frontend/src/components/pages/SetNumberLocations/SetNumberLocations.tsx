@@ -1,10 +1,14 @@
-import React from "react"
-import Hero from "../../organisms/Hero/Hero"
-import Header from "../../organisms/Header/Header"
-import "./setNumberLocations.scss"
-import NumberLocationsManager from "../../organisms/NumberLocationsManager/NumberLocationsManager"
+import React from "react";
+import Hero from "../../organisms/Hero/Hero";
+import Header from "../../organisms/Header/Header";
+import "./setNumberLocations.scss";
+import NumberLocationsManager from "../../organisms/NumberLocationsManager/NumberLocationsManager";
 
-export default function SetNumberLocations () {
+export default function SetNumberLocations() {
+  const exportNumberLocationTemplate = (e: { preventDefault: any }) => {
+    e.preventDefault;
+    window.open("api/number-location-template/");
+  };
   return (
     <>
       <Header />
@@ -15,5 +19,5 @@ export default function SetNumberLocations () {
         </div>
       </section>
     </>
-  )
+  );
 }

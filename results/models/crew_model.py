@@ -54,8 +54,15 @@ class Crew(models.Model):
     submitting_administrator_email = models.CharField(max_length=50, blank=True, null=True)
 
 
-    # Calculated fields
+    # Calculated fields - start
+    draw_start_score = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=4)
+    calculated_start_order = models.IntegerField(blank=True, null=True)
+    
+    # Calculated fields - calculated on import
     event_band = models.CharField(max_length=40, null=True)
+    competitor_names = models.CharField(max_length=60, blank=True, null=True)
+
+    # Calculated fields - results (need updating when data changes)
     raw_time = models.IntegerField(blank=True, null=True)
     race_time = models.IntegerField(blank=True, null=True)
     published_time = models.IntegerField(blank=True, null=True)
@@ -68,9 +75,6 @@ class Crew(models.Model):
     masters_adjustment = models.IntegerField(blank=True, null=True)
     start_sequence = models.IntegerField(blank=True, null=True)
     finish_sequence = models.IntegerField(blank=True, null=True)
-    draw_start_score = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=4)
-    calculated_start_order = models.IntegerField(blank=True, null=True)
-    competitor_names = models.CharField(max_length=60, blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -341,37 +345,92 @@ class Crew(models.Model):
 # Calculate the draw start score (event order plus rowing / sculling CRI as appropriate)
     
     def calc_draw_start_score(self):
-        if not EventOrder.objects.filter(event_order=1).exists():
+        # Check if EventOrder data exists
+        if not EventOrder.objects.exists():
+            print(f"No EventOrder data found for crew {self.id}")
             return None
-        if not self.event_band:
-            return None
-        if '2x' in self.event_band:
-            crewsWithHigherScullingCRIInCategory = Crew.objects.all().filter(status__exact='Accepted', event_band__exact=self.event_band, sculling_CRI__gt=self.sculling_CRI)
-            row_score = (len(crewsWithHigherScullingCRIInCategory) + 1) / 1000
-        elif '2-' in self.event_band:
-            crewsWithHigherRowingCRIInCategory = Crew.objects.all().filter(status__exact='Accepted', event_band__exact=self.event_band, rowing_CRI__gt=self.rowing_CRI)
-            row_score = (len(crewsWithHigherRowingCRIInCategory) + 1) / 1000
             
+        if not self.event_band:
+            print(f"No event_band for crew {self.id}")
+            return None
+        
+        row_score = 0  # Default value
+        
         try:
-            draw_start_score = EventOrder.objects.get(event=self.event_band).event_order + row_score
-        except EventOrder.DoesNotExist:
-            draw_start_score = 0
-        return draw_start_score
+            # Calculate the rowing/sculling ranking component
+            if '2x' in self.event_band:
+                if self.sculling_CRI is not None:
+                    crews_with_higher_cri = Crew.objects.filter(
+                        status__exact='Accepted', 
+                        event_band__exact=self.event_band, 
+                        sculling_CRI__gt=self.sculling_CRI
+                    )
+                    row_score = (crews_with_higher_cri.count() + 1) / 1000
+                else:
+                    print(f"No sculling_CRI for crew {self.id}")
+                    return None
+                    
+            elif '2-' in self.event_band:
+                if self.rowing_CRI is not None:
+                    crews_with_higher_cri = Crew.objects.filter(
+                        status__exact='Accepted', 
+                        event_band__exact=self.event_band, 
+                        rowing_CRI__gt=self.rowing_CRI
+                    )
+                    row_score = (crews_with_higher_cri.count() + 1) / 1000
+                else:
+                    print(f"No rowing_CRI for crew {self.id}")
+                    return None
+            else:
+                # Event band doesn't match expected patterns
+                print(f"Unrecognized event_band pattern for crew {self.id}: {self.event_band}")
+                row_score = 0.001  # Small default value
+            
+            # Get the event order base score
+            try:
+                event_order_obj = EventOrder.objects.get(event=self.event_band)
+                draw_start_score = event_order_obj.event_order + row_score
+                print(f"Crew {self.id}: event_order={event_order_obj.event_order}, row_score={row_score}, total={draw_start_score}")
+                return draw_start_score
+            except EventOrder.DoesNotExist:
+                print(f"No EventOrder found for event_band: {self.event_band}")
+                return None
+                
+        except Exception as e:
+            print(f"Error calculating draw_start_score for crew {self.id}: {e}")
+            return None
     
-# Calculate the draw start order
-    def calc_calculated_start_order(self):
-        if not self.draw_start_score or self.draw_start_score == 0 or self.draw_start_score == None:
-            return 9999999
+    @classmethod
+    def update_start_order_calcs(cls):
+        """Update draw_start_score and calculated_start_order for all accepted crews"""
+        crews = cls.objects.filter(status__exact='Accepted')
+        
+        print(f"Found {crews.count()} accepted crews to update")
+        
+        # Step 1: Calculate draw_start_score for all crews
+        crew_scores = []
+        for crew in crews:
+            draw_score = crew.calc_draw_start_score()
+            crew.draw_start_score = draw_score
+            crew_scores.append((crew, draw_score))
+        
+        # Step 2: Sort crews by draw_start_score (lower scores = better start position)
+        crew_scores.sort(key=lambda x: (x[1] is None, x[1] if x[1] is not None else float('inf'), x[0].name))
+        
+        # Step 3: Assign calculated_start_order based on sorted position
+        for position, (crew, score) in enumerate(crew_scores, start=1):
+            if score is None or score == 0:
+                crew.calculated_start_order = 9999999
+            else:
+                crew.calculated_start_order = position
+        
+        # Step 4: Save all updates
+        crews_to_update = [crew for crew, _ in crew_scores]
+        cls.objects.bulk_update(crews_to_update, ['draw_start_score', 'calculated_start_order'])
+        
+        print(f"Updated start orders for {len(crews_to_update)} crews")
+        return len(crews_to_update)
 
-        crews_with_lower_score = Crew.objects.all().filter(status__exact='Accepted', draw_start_score__gt=0, draw_start_score__lt=self.draw_start_score)
-        crews_with_same_score = Crew.objects.all().filter(status__exact='Accepted', draw_start_score__gt=0, draw_start_score=self.draw_start_score).order_by('name')
-        
-        if crews_with_same_score.exists() and len(crews_with_same_score) > 1:
-            position = len(crews_with_lower_score) + 1 + list(crews_with_same_score).index(self)
-        else:
-            position = len(crews_with_lower_score) + 1
-        
-        return position
 
 # Look up the event order number
     @property
