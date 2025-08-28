@@ -39,19 +39,19 @@ export default function SetupDashboard() {
         </ActionCard>
 
         <ActionCard title="Import event order" icon={"upload"} description="Import event order from CSV">
-          <>
-            <TextButton onClick={() => setIsModalOpen(true)} label="Import event order" />
-
-            <CSVUploadModal
-              isOpen={isModalOpen}
-              closeModal={() => setIsModalOpen(false)}
-              title="Import event order"
-              description="Upload a CSV file to import the order in which event categories will race"
-              url="/api/event-order-import/"
-              onSuccess={(data) => console.log("Import completed:", data)}
-              autoCloseDelay={2000} // Optional: customize delay or set to 0 to disable
-            />
-          </>
+          <CSVUploadModal
+            title="Import event order"
+            description="Upload a CSV file to import the order in which event categories will race"
+            url="/api/event-order-import/"
+            acceptedFileTypes={[".csv"]}
+            autoCloseDelay={3000}
+            onSuccess={(data) => {
+              console.log("Event order imported:", data);
+            }}
+            onError={(error) => {
+              console.error("Import failed:", error);
+            }}
+          />
         </ActionCard>
 
         <ActionCard

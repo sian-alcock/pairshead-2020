@@ -1,11 +1,11 @@
-@import '../../../style.scss';
+@import "../../../style.scss";
 
 .feedback-modal {
   width: 100%;
   max-width: unset;
-//   height: 50%;
   max-height: unset;
   border: unset;
+  border-radius: 0.9rem;
 
   .trap {
     width: 100%;
@@ -71,9 +71,56 @@
       width: rem(18px);
       height: rem(18px);
     }
+
+    &__auto-close-indicator {
+      position: absolute;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+      z-index: 10;
+
+      // Animation for the indicator
+      animation: autoCloseIndicatorFade 0.3s ease-in-out;
+
+      small {
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+    }
+
+    // Auto-closing state modifications
+    &--auto-closing {
+      .feedback-modal__close {
+        button {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+
+      .feedback-modal__container {
+        // Subtle visual cue that modal is about to close
+        border: 2px solid #10b981;
+      }
+    }
   }
 
   @media screen and (min-width: $lg) {
     width: 50%;
+  }
+}
+
+@keyframes autoCloseIndicatorFade {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 }

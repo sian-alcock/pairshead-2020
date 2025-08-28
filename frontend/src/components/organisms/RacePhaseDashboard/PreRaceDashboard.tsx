@@ -31,18 +31,18 @@ export default function PreRaceDashboard() {
 
         <ActionCard
           title="Setup marshalling divisions"
-          icon={"search"}
+          icon={"person"}
           description="Assign crews to marshalling divisions"
         >
           <TextButton pathName={"/generate-start-order/marshalling-divisions"} label={"Marshalling divisions"} />
         </ActionCard>
 
-        <ActionCard title="Number locations" icon={"add"} description="Inspect or modify number locations">
+        <ActionCard title="Number locations" icon={"numbers"} description="Inspect or modify number locations">
           <TextButton pathName={"/generate-start-order/set-number-locations"} label={"Number locations"} />
         </ActionCard>
         <ActionCard
           title="Logistics reports"
-          icon={"add"}
+          icon={"report"}
           description="Create logistics reports eg crew labels, OTD contact details etc"
         >
           <TextButton pathName={"/logistics"} label={"Logistics"} />

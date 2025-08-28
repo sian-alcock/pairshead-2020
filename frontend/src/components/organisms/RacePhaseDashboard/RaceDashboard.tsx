@@ -29,45 +29,36 @@ export default function RaceDashboard() {
         >
           <BROELoader />
         </ActionCard>
-
         <ActionCard
-          title="Download original event category template"
-          icon={"download"}
-          description="Get a CSV template to structure your original event category."
-        >
-          <TextButton onClick={exportEventOrderTemplate} label={"Export event order template"} />
-        </ActionCard>
-
-        <ActionCard title="Import event order" icon={"upload"} description="Import event order from CSV">
-          <>
-            <TextButton onClick={() => setIsModalOpen(true)} label="Import event order" />
-
-            <CSVUploadModal
-              isOpen={isModalOpen}
-              closeModal={() => setIsModalOpen(false)}
-              title="Import event order"
-              description="Upload a CSV file to import the order in which event categories will race"
-              url="/api/event-order-import/"
-              onSuccess={(data) => console.log("Import completed:", data)}
-              autoCloseDelay={2000} // Optional: customize delay or set to 0 to disable
-            />
-          </>
-        </ActionCard>
-
-        <ActionCard
-          title="Calculate start order"
+          title={"Manage races and times"}
           icon={"flag"}
-          description="Create the official start order for the event."
+          description={"Set up race (or races) and import race times."}
         >
-          <TextButton pathName="/generate-start-order/crew-start-order" label={"Start order"} />
+          <TextButton pathName="/generate-results/manage-race-times" label="Manage race times" />
         </ActionCard>
 
         <ActionCard
-          title="Export bibs for BROE"
-          icon={"download"}
-          description="Export calculated start order as bib numbers for import into British Rowing."
+          title="Add penalties / disqualifications"
+          icon={"warning"}
+          description="Import penalties - time only, did not start, did not finish and disqualified."
         >
-          <TextButton onClick={exportBibData} label={"Export event order template"} />
+          <TextButton pathName="/generate-results/manage-penalties" label={"Manage penalties"} />
+        </ActionCard>
+        <ActionCard
+          title="Add original event categories"
+          icon={"category"}
+          description="The original event category is essential for masters crews to calculate the handicaps"
+        >
+          <TextButton pathName="/generate-results/manage-original-event-categories" label={"Original categories"} />
+        </ActionCard>
+        <ActionCard title="Inspect crews and results" icon={"search"} description="Review crew data and race times">
+          <TextButton pathName="/generate-results/crew-management-dashboard" label={"Inspect crew data"} />
+        </ActionCard>
+        <ActionCard title="Final results" icon={"success"} description="Final results">
+          <TextButton pathName="/generate-results/results" label={"Results"} />
+        </ActionCard>
+        <ActionCard title="Reports and data exports" icon={"report"} description="Final results">
+          <TextButton pathName="/generate-results/export" label={"Reports and exports"} />
         </ActionCard>
       </div>
     </div>
