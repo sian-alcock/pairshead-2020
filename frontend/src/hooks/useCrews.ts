@@ -6,7 +6,8 @@ export function useCrews() {
   return useQuery<CrewProps[]>({
     queryKey: ["crews"],
     queryFn: fetchCrews,
-    staleTime: 0, // always fresh
+    staleTime: 2 * 60 * 1000, // 2 minutes
+    refetchOnWindowFocus: true,
     retry: 3,
     enabled: true,
   });

@@ -50,9 +50,18 @@ interface MastersCrew {
   status: string;
 }
 
+interface CategoriesStatus {
+  has_categories: boolean;
+  total_categories: number;
+  key_categories_exist: boolean;
+  crews_with_categories: number;
+  warning_message: string | null;
+}
+
 interface MastersCrewsData {
   masters_crews: MastersCrew[];
   fastest_times: Record<string, number | null>;
+  categories_status: CategoriesStatus;
   summary: {
     total_masters_crews: number;
     crews_with_adjustments: number;
@@ -63,6 +72,7 @@ interface MastersCrewsData {
 
 interface MastersCrewsTableProps {
   onDataChanged?: () => void;
+  onNavigateToImport?: () => void;
 }
 
 // API function
@@ -90,7 +100,67 @@ const adjustmentFilterFn = (row: any, columnId: string, filterValue: string): bo
   }
 };
 
-export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTableProps) {
+// Warning Component
+const CategoryImportWarning: React.FC<{
+  categoriesStatus: CategoriesStatus;
+  onNavigateToImport?: () => void;
+}> = ({ categoriesStatus, onNavigateToImport }) => {
+  if (categoriesStatus.has_categories) {
+    return null;
+  }
+
+  return (
+    <div className="masters-crews__warning">
+      <div className="masters-crews__warning-content">
+        <div className="masters-crews__warning-header">
+          <div className="masters-crews__warning-icon">⚠️</div>
+          <h4 className="masters-crews__warning-title">Original Event Categories Required</h4>
+        </div>
+        
+        <p className="masters-crews__warning-message">
+          {categoriesStatus.warning_message}
+        </p>
+        
+        <div className="masters-crews__warning-details">
+          <div className="masters-crews__warning-stats">
+            <div className="masters-crews__warning-stat">
+              <span className="masters-crews__warning-stat-label">Categories imported:</span>
+              <span className="masters-crews__warning-stat-value">
+                {categoriesStatus.total_categories}
+              </span>
+            </div>
+            <div className="masters-crews__warning-stat">
+              <span className="masters-crews__warning-stat-label">Key categories exist:</span>
+              <span className="masters-crews__warning-stat-value">
+                {categoriesStatus.key_categories_exist ? 'Yes' : 'No'}
+              </span>
+            </div>
+            <div className="masters-crews__warning-stat">
+              <span className="masters-crews__warning-stat-label">Crews with categories:</span>
+              <span className="masters-crews__warning-stat-value">
+                {categoriesStatus.crews_with_categories}
+              </span>
+            </div>
+          </div>
+          
+          {onNavigateToImport && (
+            <div className="masters-crews__warning-actions">
+              <button 
+                className="masters-crews__warning-button"
+                onClick={onNavigateToImport}
+                type="button"
+              >
+                Import Original Event Categories
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default function MastersCrewsTable({ onDataChanged, onNavigateToImport }: MastersCrewsTableProps) {
   const queryClient = useQueryClient();
   const columnHelper = createColumnHelper<MastersCrew>();
 
@@ -352,10 +422,16 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
   const filteredRows = table.getFilteredRowModel().rows.length;
   const displayedRows = table.getRowModel().rows.length;
 
-  console.log(mastersData)
+  console.log(mastersData);
 
   return (
     <div className="masters-crews">
+      {/* Category Import Warning */}
+      <CategoryImportWarning 
+        categoriesStatus={mastersData.categories_status}
+        onNavigateToImport={onNavigateToImport}
+      />
+
       <div className="masters-crews__header">
         <div className="masters-crews__title-section">
           <h3 className="masters-crews__title">
@@ -396,21 +472,23 @@ export default function MastersCrewsTable({ onDataChanged }: MastersCrewsTablePr
       </div>
 
       {/* Fastest Times Reference */}
-      {mastersData.fastest_times && Object.keys(mastersData.fastest_times).length > 0 &&  <div className="masters-crews__fastest-times">
-        <h4>Reference Fastest Times:</h4>
-        <div className="masters-crews__fastest-times-grid">
-          {Object.entries(mastersData.fastest_times).map(([category, time]) => (
-            <div key={category} className="masters-crews__fastest-time-item">
-              <span className="masters-crews__fastest-category-name">
-                {category.replace('fastest_', '').replace('_', ' ').toUpperCase()}:
-              </span>
-              <span className="masters-crews__fastest-time-value">
-                {time ? formatTimes(time) : 'N/A'}
-              </span>
-            </div>
-          ))}
+      {mastersData.fastest_times && Object.keys(mastersData.fastest_times).length > 0 && (
+        <div className="masters-crews__fastest-times">
+          <h4>Reference Fastest Times:</h4>
+          <div className="masters-crews__fastest-times-grid">
+            {Object.entries(mastersData.fastest_times).map(([category, time]) => (
+              <div key={category} className="masters-crews__fastest-time-item">
+                <span className="masters-crews__fastest-category-name">
+                  {category.replace('fastest_', '').replace('_', ' ').toUpperCase()}:
+                </span>
+                <span className="masters-crews__fastest-time-value">
+                  {time ? formatTimes(time) : 'N/A'}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>}
+      )}
 
       {/* Table */}
       <div className="masters-crews__table-container">

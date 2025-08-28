@@ -34,12 +34,13 @@ export default function Menu({menuItems}: MenuProps): ReactElement {
 
   const closeMenu = (): void => {
     setIsOpen(false);
+    // document.body.classList.remove('lock-scroll');
   };
 
   const openMenu = (): void => {
     setIsOpen(true);
     // Prevent body from scrolling when Header is open
-    document.body.classList.add('lock-scroll');
+    // document.body.classList.add('lock-scroll');
   };
 
   useOnClickOutside(noClickOutsideRef, () => closeMenu());

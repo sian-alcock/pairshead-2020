@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.views import View
-from django.db.models import Min, Q
+from django.db.models import Min, Q, Count
 from ..models import Crew, OriginalEventCategory, MastersAdjustment
 
 class MastersCrewsView(View):
@@ -11,6 +11,9 @@ class MastersCrewsView(View):
         Masters crews are identified by having 'mas' in their event_band.
         """
         
+        # Check if original event categories have been imported
+        categories_status = self._check_categories_imported()
+        
         # Get all masters crews (those with 'mas' in event_band, case insensitive)
         masters_crews = Crew.objects.filter(
             Q(event_band__icontains='mas') | Q(event_band__icontains='Mas'),
@@ -19,14 +22,18 @@ class MastersCrewsView(View):
             Q(did_not_start=True) | Q(did_not_finish=True) | Q(disqualified=True)
         ).select_related('club', 'event').prefetch_related('event_original')
         
-        # Calculate the fastest times used in masters adjustments
-        fastest_times = self._get_fastest_times()
+        # Calculate the fastest times used in masters adjustments (only if categories imported)
+        fastest_times = {}
+        if categories_status['has_categories']:
+            fastest_times = self._get_fastest_times()
         
         masters_data = []
         
         for crew in masters_crews:
-            # Get masters adjustment
-            masters_adjustment = crew.calc_masters_adjustment() if hasattr(crew, 'calc_masters_adjustment') else 0
+            # Get masters adjustment (only if categories imported)
+            masters_adjustment = 0
+            if categories_status['has_categories'] and hasattr(crew, 'calc_masters_adjustment'):
+                masters_adjustment = crew.calc_masters_adjustment()
             
             # Get original event category
             original_event = None
@@ -34,41 +41,45 @@ class MastersCrewsView(View):
                 original_event = crew.event_original.first().event_original
             
             # Determine which fastest time category this crew falls into
-            fastest_time_category = self._determine_fastest_time_category(crew, original_event)
-            applicable_fastest_time = fastest_times.get(fastest_time_category)
-            
-            # Get master category for lookup
-            master_category = None
-            if original_event and len(original_event) >= 4:
-                if crew.event.gender == 'Open':
-                    master_category = original_event[:4]
-                if crew.event.gender == 'Female':
-                    master_category = original_event[2:6]
-                if crew.event.gender == 'Mixed':
-                    master_category = original_event[3:7]
-            
-            # Look up the adjustment details
+            fastest_time_category = None
+            applicable_fastest_time = None
             adjustment_details = None
-            if master_category and applicable_fastest_time:
-                try:
-                    rounded_fastest = round(int(applicable_fastest_time), -3)
-                    adjustment_record = MastersAdjustment.objects.get(
-                        master_category=master_category,
-                        standard_time_ms=rounded_fastest
-                    )
-                    adjustment_details = {
-                        'master_category': master_category,
-                        'standard_time_ms': rounded_fastest,
-                        'adjustment_ms': adjustment_record.master_time_adjustment_ms,
-                        'found_in_table': True
-                    }
-                except MastersAdjustment.DoesNotExist:
-                    adjustment_details = {
-                        'master_category': master_category,
-                        'standard_time_ms': rounded_fastest,
-                        'adjustment_ms': 0,
-                        'found_in_table': False
-                    }
+            
+            if categories_status['has_categories']:
+                fastest_time_category = self._determine_fastest_time_category(crew, original_event)
+                applicable_fastest_time = fastest_times.get(fastest_time_category)
+                
+                # Get master category for lookup
+                master_category = None
+                if original_event and len(original_event) >= 4:
+                    if crew.event.gender == 'Open':
+                        master_category = original_event[:4]
+                    if crew.event.gender == 'Female':
+                        master_category = original_event[2:6]
+                    if crew.event.gender == 'Mixed':
+                        master_category = original_event[3:7]
+                
+                # Look up the adjustment details
+                if master_category and applicable_fastest_time:
+                    try:
+                        rounded_fastest = round(int(applicable_fastest_time), -3)
+                        adjustment_record = MastersAdjustment.objects.get(
+                            master_category=master_category,
+                            standard_time_ms=rounded_fastest
+                        )
+                        adjustment_details = {
+                            'master_category': master_category,
+                            'standard_time_ms': rounded_fastest,
+                            'adjustment_ms': adjustment_record.master_time_adjustment_ms,
+                            'found_in_table': True
+                        }
+                    except MastersAdjustment.DoesNotExist:
+                        adjustment_details = {
+                            'master_category': master_category,
+                            'standard_time_ms': rounded_fastest,
+                            'adjustment_ms': 0,
+                            'found_in_table': False
+                        }
             
             masters_data.append({
                 'crew_id': crew.id,
@@ -97,6 +108,7 @@ class MastersCrewsView(View):
         return JsonResponse({
             'masters_crews': masters_data,
             'fastest_times': fastest_times,
+            'categories_status': categories_status,  # Include status for frontend
             'summary': {
                 'total_masters_crews': total_masters,
                 'crews_with_adjustments': with_adjustments,
@@ -104,6 +116,37 @@ class MastersCrewsView(View):
                 'crews_without_times': total_masters - with_times,
             }
         })
+    
+    def _check_categories_imported(self):
+        """
+        Check if original event categories have been imported.
+        Returns status information for the frontend.
+        """
+        # Count total OriginalEventCategory records
+        total_categories = OriginalEventCategory.objects.count()
+        
+        # Check for specific key categories that are needed for masters calculations
+        key_categories_exist = OriginalEventCategory.objects.filter(
+            event_original__in=['2x', '2-']
+        ).exists()
+        
+        # Count how many crews have original event categories assigned
+        crews_with_categories = Crew.objects.filter(
+            event_original__isnull=False
+        ).count()
+        
+        has_categories = total_categories > 0 and key_categories_exist
+        
+        return {
+            'has_categories': has_categories,
+            'total_categories': total_categories,
+            'key_categories_exist': key_categories_exist,
+            'crews_with_categories': crews_with_categories,
+            'warning_message': (
+                'Original event categories have not been imported. '
+                'Masters calculations cannot be performed until categories are imported.'
+            ) if not has_categories else None
+        }
     
     def _get_fastest_times(self):
         """

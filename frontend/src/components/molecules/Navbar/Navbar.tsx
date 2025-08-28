@@ -5,7 +5,6 @@ import Auth from "../../../lib/Auth"
 import { menuProps } from "../../organisms/Header/defaultProps"
 import { MenuProps } from "../Menu/Menu"
 import MenuButton from "../../atoms/MenuButton/MenuButton"
-import BROELoader from "../BROEDataLoader/ImportBROEData"
 import "./navbar.scss"
 
 export type NavbarProps = {

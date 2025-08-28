@@ -1,5 +1,5 @@
 import React from 'react'
-import BROELoader from '../../molecules/BROEDataLoader/ImportBROEData'
+import BROELoader from '../../molecules/BROEDataLoader/BROELoader'
 import CSVDataLoader from '../../molecules/CSVDataLoader/CSVDataLoader'
 import CalculateStartOrder from '../../molecules/CalculateStartOrder/CalculateStartOrder'
 import TextButton from '../../atoms/TextButton/TextButton'

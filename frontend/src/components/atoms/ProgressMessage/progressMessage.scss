@@ -1,24 +1,21 @@
 @import "../../../style.scss";
 
-
 .progress-message {
-
   &__container {
-    display: flex;
     align-items: center;
+    display: flex;
     margin-bottom: 1rem;
   }
 
   &__icon {
-    width: 1.5rem;
     height: 1.5rem;
     margin-right: 0.5rem;
-
+    width: 1.5rem;
 
     svg {
-      width: 100%;
       height: 100%;
       object-fit: cover;
+      width: 100%;
     }
   }
 }

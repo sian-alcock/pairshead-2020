@@ -1,4 +1,4 @@
-@import '../../../style.scss';
+@import "../../../style.scss";
 
 .home {
   &__section {
@@ -9,17 +9,16 @@
     @include container;
   }
 
-    &__stat-blocks-grid {
+  &__stat-blocks-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 1.5rem;
     margin: 1.5rem 0;
-    
+
     @media (max-width: 768px) {
       grid-template-columns: 1fr;
       gap: 1rem;
       margin: 1rem 0;
     }
   }
-
 }

@@ -1,3 +1,20 @@
 {
-    "python.pythonPath": "/Users/sianalcock/.local/share/virtualenvs/pairshead-2020--gfFQMru/bin/python"
+  "python.pythonPath": "/Users/sianalcock/.local/share/virtualenvs/pairshead-2020--gfFQMru/bin/python",
+
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.codeActionsOnSave": {
+    "source.fixAll.stylelint": true
+  },
+  "css.validate": false,
+  "scss.validate": false,
+  "stylelint.validate": ["css", "scss"]
 }
