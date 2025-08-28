@@ -1,181 +1,31 @@
-import React, { useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
-import Hero from "../../organisms/Hero/Hero";
-import { Link } from "react-router-dom";
-import BladeImage from "../../atoms/BladeImage/BladeImage";
-import { tableHeadings, pagingOptions } from "./defaultProps"
-import { CrewProps } from "../../../types/components.types";
-import Paginator from "../../molecules/Paginator/Paginator";
-import PageTotals from "../../molecules/PageTotals/PageTotals";
-
-import "./crewStartOrder.scss"
+import React from "react";
+import { useCrews } from "../../../hooks/useCrews";
+import CrewStartOrderTable from "../../organisms/CrewStartOrderTable/CrewStartOrderTable";
+import "./crewStartOrder.scss";
 import Header from "../../organisms/Header/Header";
-
-interface ResponseParamsProps {
-  page_size?: string;
-  page?: number;
-  order?: string;
-  status?: string | string[];
-  masters?: boolean;
-}
-
-interface ResponseDataProps {
-  count: number;
-  requires_ranking_update: number;
-  num_scratched_crews: number;
-  next: number | null;
-  previous: number | null;
-  results: CrewProps[];
-}
+import Hero from "../../organisms/Hero/Hero";
 
 export default function CrewStartOrder() {
-  const [crews, setCrews] = useState<CrewProps[]>([]);
-  const [totalCrews, setTotalCrews] = useState(0);
-  const [pageSize, setPageSize] = useState("20");
-  const [pageNumber, setPageNumber] = useState(1);
-  const [scratchedCrews, setScratchedCrews] = useState(0);
-  const [scratchedCrewsBoolean, setScratchedCrewsBoolean] = useState(sessionStorage.getItem("showScratchedCrewsOnStartOrderPage") === "true" || false)
-  
-  const fetchData = async (url: string, params: ResponseParamsProps) => {
-    console.log(url);
-    console.log(params);
-    try {
-      const response: AxiosResponse = await axios.get(url, {
-        params: params
-      });
+  const { data: crews, isLoading, error, refetch } = useCrews();
 
-      const responseData: CrewProps[] = response.data;
-
-      setCrews(responseData);
-      // setTotalCrews(responseData.count);
-      // setScratchedCrews(responseData.num_scratched_crews);
-    } catch (error) {
-      console.error(error);
-    }
+  const handleDataChanged = () => {
+    refetch();
   };
-
-  useEffect(() => {
-    fetchData("/api/crews", {
-      page_size: "20",
-      page: 1,
-      order: "start-score",
-      status: "Accepted"
-    });
-  }, []);
-
-  const refreshData = async (refreshDataQueryString:string | null = null) => {
-    fetchData(`/api/crews?${refreshDataQueryString}`, {
-      page_size: pageSize,
-      page: pageNumber,
-      order: "start-score",
-      status: scratchedCrewsBoolean ? "Accepted" : ["Accepted", "Scratched"],
-    });
-  };
-
-  useEffect(() => {
-    refreshData();
-  }, [pageNumber, pageSize, scratchedCrewsBoolean]);
-
-  const changePage = (pageNumber: number, totalPages: number) => {
-    if (pageNumber > totalPages || pageNumber < 0) return null;
-    setPageNumber(pageNumber);
-  };
-
-  const handlePagingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPageSize(e.target.value)
-    setPageNumber(1)
-  }
-
-  const handleScratchedCrews = (e: React.ChangeEvent<HTMLInputElement>) => {
-    sessionStorage.setItem("showScratchedCrewsOnStartOrderPage", e.target.checked ? "true" : "false")
-    setScratchedCrewsBoolean(e.target.checked)
-  }
-
-  console.log(crews);
-
-  const totalPages = Math.floor(totalCrews / Number(pageSize));
 
   return (
     <>
       <Header />
       <Hero title={"Crew start order"} />
-      <section className="section">
-        <div className="container">
-          <div className="columns is-vtop">
-            <div className="column column is-one-quarter">
-              <div className="field">
-                <label className="label has-text-left" htmlFor="paging">
-                  Select page size
-                </label>
-                <div className="select control-full-width">
-                  <select className="control-full-width" onChange={handlePagingChange}>
-                    <option value=""></option>
-                    {pagingOptions.map((option) =>
-                      <option key={option.value} value={option.value}>{option.label}</option>
-                    )}
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <div className="column">
-              <div className="field">
-                <label className="checkbox" htmlFor="showScratchedCrews" >
-                  <input type="checkbox"  className="checkbox" id="showScratchedCrews" checked={!!scratchedCrewsBoolean} onChange={handleScratchedCrews} />
-                  <small>Hide scratched crews {scratchedCrews ? `(${scratchedCrews})` : ""}</small>
-                </label>
-              </div>
-            </div>
+      <section className="crew-start-order__section">
+        <div className="crew-start-order__container">
+          <div className="crew-start-order__content">
+            <CrewStartOrderTable
+              crews={crews || []}
+              isLoading={isLoading}
+              error={!!error}
+              onDataChanged={handleDataChanged}
+            />
           </div>
-
-          <Paginator pageNumber={pageNumber} totalPages={totalPages} changePage={changePage} />
-          <PageTotals
-            totalCount={totalCrews}
-            entities='crews'
-            pageSize={pageSize}
-            pageNumber={pageNumber}  
-          />
-          <div className="crew-index__table-container">
-            <table className="crew-index__table table">
-              <thead>
-                <tr>
-                  {tableHeadings.map((heading) => (
-                    <td key={heading.name} colSpan={heading.colSpan}>{heading.name}</td>
-                  ))}
-                </tr>
-              </thead>
-              <tfoot>
-                <tr>
-                  {tableHeadings.map((heading) => (
-                    <td key={heading.name} colSpan={heading.colSpan}>{heading.name}</td>
-                  ))}
-                </tr>
-              </tfoot>
-              <tbody>
-              {crews.map(crew => <tr key={crew.id}>
-                <td><Link to={`/crews/${crew.id}`}>{crew.id}</Link></td>
-                <td>{!crew.competitor_names ? crew.name : crew.competitor_names}</td>
-                <td>{crew.status}</td>
-                <td>
-                  <BladeImage crew={crew} />
-                </td>
-                <td>{!crew.bib_number ? '' : crew.bib_number}</td>
-                <td>{crew.club.index_code}</td>
-                <td>{crew.event_band}</td>
-                <td>{crew.event_order}</td>
-                <td>{crew.sculling_CRI}</td>
-                <td>{crew.rowing_CRI}</td>
-                <td>{crew.draw_start_score}</td>
-                <td>{crew.calculated_start_order}</td>
-                <td>{crew.host_club?.name === 'Unknown club' ? `⚠️ ${crew.host_club.name}` : crew.host_club?.name}</td>
-                <td>{crew.number_location}</td>
-                <td>{crew.marshalling_division}</td>
-              </tr>
-              )}
-            </tbody>
-            </table>
-          </div>
-          <Paginator pageNumber={pageNumber} totalPages={totalPages} changePage={changePage} />
         </div>
       </section>
     </>

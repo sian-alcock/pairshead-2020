@@ -1,94 +1,10 @@
-@import '../../../style.scss';
-
-
-// .csv-drag-drop {
-//   margin: 0 auto;
-//   width: 100%;
-//   max-width: 150px;
-
-//   &__drop-zone {
-//     position: relative;
-//     border: 1px dashed $bblGrey;
-//     border-radius: 0.5rem;
-//     text-align: center;
-//     transition: all 0.2s ease-in;
-
-//     &.is-uploading {
-//       border-color: $bblGrey;
-//       background-color: $grey-tint;
-//       cursor: not-allowed;
-//     }
-
-//     &.is-active {
-//       border-color: $bblBlue;
-//       background-color: $blue-tint;
-//     }
-
-//     &.is-error {
-//       border-color: $red;
-//       background-color: $red-tint;
-//     }
-
-//     &.is-success {
-//       border-color: $green;
-//       background-color: $green-tint;
-//     }
-
-//     &.is-default {
-//       border-color: $bblGrey;
-//       background-color: unset;
-//       cursor: pointer;
-//       &:hover {
-//         border-width: 2px;
-//       }
-//     }
-//   }
-
-//   &__file-requirements {
-//     margin-top: 1.5rem;
-//     color: $bblGrey;
-//     @include body-small;
-//   }
-
-//   &__button-wrapper {
-//     display: flex;
-//     justify-content: center;
-
-//     .text-button {
-//       margin-left: 0.5rem;
-//     }
-//   }
-
-//   &__status {
-//     @include body-small;
-
-//     &--error {
-//       color: $red;
-//     }
-//   }
-
-//   &__message {
-//     margin-top: 1rem;
-//     @include body-small;
-//     &--error {
-//       color: $red;
-//     }
-//   }
-
-//   &__icon-wrapper {
-//     display: flex;
-//     justify-content: center;
-//     align-items: center; 
-//   }
-
-
-// }
+@import "../../../style.scss";
 
 .csv-drag-drop {
   width: 100%;
 
   &__drop-zone {
-    border: 2px dashed #d1d5db;
+    border: 2px dashed $bblGrey;
     border-radius: 8px;
     padding: 2rem;
     text-align: center;

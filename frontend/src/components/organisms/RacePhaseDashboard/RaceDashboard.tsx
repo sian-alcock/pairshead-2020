@@ -1,0 +1,75 @@
+import { useState } from "react";
+import BROELoader from "../../molecules/BROEDataLoader/BROELoader";
+import TextButton from "../../atoms/TextButton/TextButton";
+import { CSVUploadModal } from "../../molecules/CSVUploadModal/CSVUploadModal";
+import ActionCard from "../../molecules/ActionCard/ActionCard";
+import "./racePhaseDashboard.scss";
+
+export default function RaceDashboard() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const exportEventOrderTemplate = (e: { preventDefault: any }) => {
+    e.preventDefault;
+    window.open("api/event-order-template-export/");
+  };
+
+  const exportBibData = (e: { preventDefault: any }) => {
+    e.preventDefault;
+    window.open("api/bib-data-export/");
+  };
+
+  return (
+    <div className="race-setup">
+      {/* Action cards */}
+      <div className="actions">
+        <ActionCard
+          title={"Import BROE data"}
+          icon={"refresh"}
+          description={"Fetch crew & race data directly from British Rowing."}
+        >
+          <BROELoader />
+        </ActionCard>
+
+        <ActionCard
+          title="Download original event category template"
+          icon={"download"}
+          description="Get a CSV template to structure your original event category."
+        >
+          <TextButton onClick={exportEventOrderTemplate} label={"Export event order template"} />
+        </ActionCard>
+
+        <ActionCard title="Import event order" icon={"upload"} description="Import event order from CSV">
+          <>
+            <TextButton onClick={() => setIsModalOpen(true)} label="Import event order" />
+
+            <CSVUploadModal
+              isOpen={isModalOpen}
+              closeModal={() => setIsModalOpen(false)}
+              title="Import event order"
+              description="Upload a CSV file to import the order in which event categories will race"
+              url="/api/event-order-import/"
+              onSuccess={(data) => console.log("Import completed:", data)}
+              autoCloseDelay={2000} // Optional: customize delay or set to 0 to disable
+            />
+          </>
+        </ActionCard>
+
+        <ActionCard
+          title="Calculate start order"
+          icon={"flag"}
+          description="Create the official start order for the event."
+        >
+          <TextButton pathName="/generate-start-order/crew-start-order" label={"Start order"} />
+        </ActionCard>
+
+        <ActionCard
+          title="Export bibs for BROE"
+          icon={"download"}
+          description="Export calculated start order as bib numbers for import into British Rowing."
+        >
+          <TextButton onClick={exportBibData} label={"Export event order template"} />
+        </ActionCard>
+      </div>
+    </div>
+  );
+}

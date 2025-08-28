@@ -1,7 +1,7 @@
-import React, { useState, useRef, DragEvent, ChangeEvent } from 'react';
-import Icon from '../../atoms/Icons/Icons';
-import './csvDragDrop.scss'
-import TextButton from '../../atoms/TextButton/TextButton';
+import React, { useState, useRef, DragEvent, ChangeEvent } from "react";
+import Icon from "../../atoms/Icons/Icons";
+import "./csvDragDrop.scss";
+import TextButton from "../../atoms/TextButton/TextButton";
 
 interface UploadState {
   isUploading: boolean;
@@ -24,8 +24,8 @@ export const CSVDragDrop: React.FC<CSVUploadProps> = ({
   onFileUpload,
   disabled = false,
   maxFileSizeMB = 10,
-  className = '',
-  acceptedFileTypes = ['.csv']
+  className = "",
+  acceptedFileTypes = [".csv"]
 }) => {
   const [uploadState, setUploadState] = useState<UploadState>({
     isUploading: false,
@@ -38,9 +38,9 @@ export const CSVDragDrop: React.FC<CSVUploadProps> = ({
 
   const validateFile = (file: File): string | null => {
     // Check file type
-    const fileExtension = '.' + file.name.split('.').pop()?.toLowerCase();
+    const fileExtension = "." + file.name.split(".").pop()?.toLowerCase();
     if (!acceptedFileTypes.includes(fileExtension)) {
-      return `Please select a valid file type: ${acceptedFileTypes.join(', ')}`;
+      return `Please select a valid file type: ${acceptedFileTypes.join(", ")}`;
     }
 
     // Check file size
@@ -55,7 +55,7 @@ export const CSVDragDrop: React.FC<CSVUploadProps> = ({
   const processFile = async (file: File) => {
     const validationError = validateFile(file);
     if (validationError) {
-      setUploadState(prev => ({
+      setUploadState((prev) => ({
         ...prev,
         error: validationError,
         success: false
@@ -75,27 +75,26 @@ export const CSVDragDrop: React.FC<CSVUploadProps> = ({
     try {
       // Simulate progress updates
       const progressInterval = setInterval(() => {
-        setUploadState(prev => ({
+        setUploadState((prev) => ({
           ...prev,
           progress: Math.min(prev.progress + Math.random() * 20, 90)
         }));
       }, 200);
 
       await onFileUpload(file);
-      
+
       clearInterval(progressInterval);
-      setUploadState(prev => ({
+      setUploadState((prev) => ({
         ...prev,
         isUploading: false,
         progress: 100,
         success: true
       }));
-
     } catch (error) {
-      setUploadState(prev => ({
+      setUploadState((prev) => ({
         ...prev,
         isUploading: false,
-        error: error instanceof Error ? error.message : 'Upload failed',
+        error: error instanceof Error ? error.message : "Upload failed",
         success: false
       }));
     }
@@ -105,9 +104,9 @@ export const CSVDragDrop: React.FC<CSVUploadProps> = ({
     e.preventDefault();
     e.stopPropagation();
     dragCounter.current++;
-    
+
     if (!disabled && !uploadState.isUploading) {
-      setUploadState(prev => ({ ...prev, isDragOver: true }));
+      setUploadState((prev) => ({ ...prev, isDragOver: true }));
     }
   };
 
@@ -115,9 +114,9 @@ export const CSVDragDrop: React.FC<CSVUploadProps> = ({
     e.preventDefault();
     e.stopPropagation();
     dragCounter.current--;
-    
+
     if (dragCounter.current === 0) {
-      setUploadState(prev => ({ ...prev, isDragOver: false }));
+      setUploadState((prev) => ({ ...prev, isDragOver: false }));
     }
   };
 
@@ -130,9 +129,9 @@ export const CSVDragDrop: React.FC<CSVUploadProps> = ({
     e.preventDefault();
     e.stopPropagation();
     dragCounter.current = 0;
-    
-    setUploadState(prev => ({ ...prev, isDragOver: false }));
-    
+
+    setUploadState((prev) => ({ ...prev, isDragOver: false }));
+
     if (disabled || uploadState.isUploading) return;
 
     const files = Array.from(e.dataTransfer.files);
@@ -147,7 +146,7 @@ export const CSVDragDrop: React.FC<CSVUploadProps> = ({
       processFile(files[0]);
     }
     // Reset input value to allow re-selecting the same file
-    e.target.value = '';
+    e.target.value = "";
   };
 
   const openFileDialog = () => {
@@ -165,20 +164,20 @@ export const CSVDragDrop: React.FC<CSVUploadProps> = ({
   };
 
   const getDropZoneClasses = () => {
-    let classes = 'csv-drag-drop__drop-zone';
-    
+    let classes = "csv-drag-drop__drop-zone";
+
     if (disabled || uploadState.isUploading) {
-      classes += 'is-uploading ';
+      classes += " is-uploading ";
     } else if (uploadState.isDragOver) {
-      classes += 'is-active ';
+      classes += " is-active ";
     } else if (uploadState.error) {
-      classes += 'is-error ';
+      classes += " is-error ";
     } else if (uploadState.success) {
-      classes += 'is-success ';
+      classes += " is-success ";
     } else {
-      classes += 'is-idle ';
+      classes += " is-idle ";
     }
-    
+
     return classes + className;
   };
 
@@ -195,7 +194,7 @@ export const CSVDragDrop: React.FC<CSVUploadProps> = ({
         <input
           ref={fileInputRef}
           type="file"
-          accept={acceptedFileTypes.join(',')}
+          accept={acceptedFileTypes.join(",")}
           onChange={handleFileSelect}
           className="hidden"
           disabled={disabled || uploadState.isUploading}
@@ -204,20 +203,15 @@ export const CSVDragDrop: React.FC<CSVUploadProps> = ({
         {/* Upload States */}
         {!uploadState.isUploading && !uploadState.success && !uploadState.error && (
           <div className="csv-drag-drop__zone-wrapper">
-            <div className={`mx-auto h-12 w-12 ${uploadState.isDragOver ? 'text-blue-500' : 'text-gray-400'}`}>
-              <Icon icon={'upload'}/>
+            <div className={`csv-drag-drop ${uploadState.isDragOver ? "text-blue-500" : "text-gray-400"}`}>
+              <Icon icon={"upload"} />
             </div>
             <div>
-              <p className={`text-sm font-medium ${uploadState.isDragOver ? 'text-blue-700' : 'text-gray-900'}`}>
-                {uploadState.isDragOver ? 'Drop your CSV file here' : 'Drop CSV file here or click to browse'}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                Maximum file size: {maxFileSizeMB}MB
+              <p className={`text-sm font-medium ${uploadState.isDragOver ? "text-blue-700" : "text-gray-900"}`}>
+                {uploadState.isDragOver ? "Drop your CSV file here" : "Drop CSV file here or click to browse"}
               </p>
             </div>
-            {!uploadState.isDragOver && (
-              <TextButton label={'Choose file'} disabled={disabled} />
-            )}
+            {!uploadState.isDragOver && <TextButton label={"Choose file"} disabled={disabled} />}
           </div>
         )}
 
@@ -228,18 +222,11 @@ export const CSVDragDrop: React.FC<CSVUploadProps> = ({
               <Icon icon={"file"} />
             </div>
             <div>
-              <p className="csv-drag-drop__status csv-drag-drop__status--uploading">
-                Uploading {uploadState.fileName}
-              </p>
+              <p className="csv-drag-drop__status csv-drag-drop__status--uploading">Uploading {uploadState.fileName}</p>
               <div className="csv-drag-drop__progress-bar-wrapper">
-                <div 
-                  className="csv-drag-drop__progress-bar"
-                  style={{ width: `${uploadState.progress}%` }}
-                />
+                <div className="csv-drag-drop__progress-bar" style={{ width: `${uploadState.progress}%` }} />
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                {Math.round(uploadState.progress)}% complete
-              </p>
+              <p className="text-xs text-gray-500 mt-1">{Math.round(uploadState.progress)}% complete</p>
             </div>
           </div>
         )}
@@ -247,23 +234,21 @@ export const CSVDragDrop: React.FC<CSVUploadProps> = ({
         {uploadState.success && (
           <div className="csv-drag-drop__zone-wrapper">
             <div className="csv-drag-drop__icon-wrapper">
-              <Icon icon={'success'} />
+              <Icon icon={"success"} />
             </div>
             <div>
-              <p className="csv-drag-drop__status csv-drag-drop__status--success">
-                Upload successful!
-              </p>
+              <p className="csv-drag-drop__status csv-drag-drop__status--success">Upload successful!</p>
               <p className="csv-drag-drop__message csv-drag-drop__message--success">
                 {uploadState.fileName} has been processed
               </p>
             </div>
             <TextButton
-              label={'Upload another'}
+              label={"Upload another"}
               onClick={(e) => {
                 e.stopPropagation();
                 resetUpload();
               }}
-              />
+            />
           </div>
         )}
 
@@ -273,23 +258,19 @@ export const CSVDragDrop: React.FC<CSVUploadProps> = ({
               <Icon icon={"warning"} />
             </div>
             <div>
-              <p className="csv-drag-drop__status csv-drag-drop__status--error">
-                Upload failed
-              </p>
-              <p className="csv-drag-drop__message csv-drag-drop__message--error">
-                {uploadState.error}
-              </p>
+              <p className="csv-drag-drop__status csv-drag-drop__status--error">Upload failed</p>
+              <p className="csv-drag-drop__message csv-drag-drop__message--error">{uploadState.error}</p>
             </div>
             <div className="csv-drag-drop__button-wrapper">
               <TextButton
-                label={'Try again'}
+                label={"Try again"}
                 onClick={(e) => {
                   e.stopPropagation();
                   resetUpload();
                 }}
               />
-              <TextButton 
-                label={'Cancel'}
+              <TextButton
+                label={"Cancel"}
                 onClick={(e) => {
                   e.stopPropagation();
                   resetUpload();
@@ -302,7 +283,7 @@ export const CSVDragDrop: React.FC<CSVUploadProps> = ({
 
       {/* File requirements */}
       <div className="csv-drag-drop__file-requirements">
-        <p>Accepted formats: {acceptedFileTypes.join(', ')}</p>
+        <p>Accepted formats: {acceptedFileTypes.join(", ")}</p>
         <p>Maximum size: {maxFileSizeMB}MB</p>
       </div>
     </div>

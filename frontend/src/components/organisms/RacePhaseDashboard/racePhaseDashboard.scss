@@ -1,0 +1,9 @@
+.race-setup {
+  padding: 2rem;
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
