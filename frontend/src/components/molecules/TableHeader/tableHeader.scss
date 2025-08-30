@@ -1,97 +1,87 @@
-@import '../../../style.scss';
-@import '../../../lib.scss';
+@import "../../../style.scss";
 
 .table-header {
-    padding: 0.75rem 1rem;
-    text-align: left;
-    border-bottom: 2px solid grey-tint;
-    color: $black;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 2px solid $grey-tint;
+  color: $black;
+}
 
+.table-header--sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease;
+}
 
-  }
+.table-header--sortable:hover {
+  background-color: $grey-tint;
+}
 
-  .table-header--sortable {
-      cursor: pointer;
-      user-select: none;
-      transition: background-color 0.15s ease;
-  }
+.table-header__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
 
-  .table-header--sortable:hover {
-    background-color: $grey-tint;
-  }
+.table-header__sort-icon {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.4;
+  transition: opacity 0.15s ease;
+}
 
-  .table-header__content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    padding: 0.25rem;
-  }
+.table-header--sortable .table-header__sort-icon {
+  opacity: 0.6;
+}
 
-  .table-header__text {
-    flex: 1;
-    text-align: left;
-    @include body-small;
-  }
+.table-header--sortable:hover .table-header__sort-icon {
+  opacity: 0.8;
+}
 
-  .table-header__sort-icon {
-    flex-shrink: 0;
-    width: 16px;
-    height: 16px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.4;
-    transition: opacity 0.15s ease;
-  }
+.table-header--sorted .table-header__sort-icon {
+  opacity: 1;
+}
 
-  .table-header--sortable .table-header__sort-icon {
-    opacity: 0.6;
-  }
+.table-header__arrow {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  transition: all 0.15s ease;
+}
 
-  .table-header--sortable:hover .table-header__sort-icon {
-    opacity: 0.8;
-  }
+.table-header__arrow--up {
+  border-bottom: 5px solid currentColor;
+  margin-bottom: 1px;
+}
 
-  .table-header--sorted .table-header__sort-icon {
-    opacity: 1;
-  }
+.table-header__arrow--down {
+  border-top: 5px solid currentColor;
+  margin-top: 1px;
+}
 
-  .table-header__arrow {
-    width: 0;
-    height: 0;
-    border-left: 4px solid transparent;
-    border-right: 4px solid transparent;
-    transition: all 0.15s ease;
-  }
+/* When sorted ascending, highlight up arrow */
+.table-header--sorted-asc .table-header__arrow--up {
+  color: $phLogoBlue;
+  transform: scale(1.2);
+}
 
-  .table-header__arrow--up {
-    border-bottom: 5px solid currentColor;
-    margin-bottom: 1px;
-  }
+.table-header--sorted-asc .table-header__arrow--down {
+  opacity: 0.3;
+}
 
-  .table-header__arrow--down {
-    border-top: 5px solid currentColor;
-    margin-top: 1px;
-  }
+/* When sorted descending, highlight down arrow */
+.table-header--sorted-desc .table-header__arrow--up {
+  opacity: 0.3;
+}
 
-  /* When sorted ascending, highlight up arrow */
-  .table-header--sorted-asc .table-header__arrow--up {
-    color: #007bff;
-    transform: scale(1.2);
-  }
-
-  .table-header--sorted-asc .table-header__arrow--down {
-    opacity: 0.3;
-  }
-
-  /* When sorted descending, highlight down arrow */
-  .table-header--sorted-desc .table-header__arrow--up {
-    opacity: 0.3;
-  }
-
-  .table-header--sorted-desc .table-header__arrow--down {
-    color: #007bff;
-    transform: scale(1.2);
-  }
+.table-header--sorted-desc .table-header__arrow--down {
+  color: $phLogoBlue;
+  transform: scale(1.2);
+}

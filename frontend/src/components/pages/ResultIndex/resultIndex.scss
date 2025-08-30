@@ -1,7 +1,6 @@
-@import '../../../style.scss';
+@import "../../../style.scss";
 
 .result-index {
-
   &__section {
     @include section;
   }
@@ -27,31 +26,26 @@
 
   &__table {
     width: 100%;
-    
+
     @include table;
   }
 
-  // &__stats {
-  //   display: flex;
-  //   align-items: center;
-  //   flex-wrap: wrap;
-  //   margin-bottom: 1.5rem;
-  // }
+  &__controls {
+    margin-bottom: 1.5rem;
+    @include tablet {
+      @include grid(2);
+    }
 
-  // &__stat {
-  //   padding: 1rem;
-  //   border-radius: $border-radius-small;
-  //   box-shadow: $standard-box-shadow;
-  // }
+    @include laptop {
+      @include grid(4);
+    }
+  }
 
-    &__controls {
-      margin-bottom: 1.5rem;
-      @include tablet {
-        @include grid(2);
-      }
-
-      @include laptop {
-        @include grid(4);
-      }
+  &__control {
+    &--flags {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
   }
 }

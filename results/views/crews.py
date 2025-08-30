@@ -24,39 +24,10 @@ from ..serializers import ClubSerializer, CrewSerializer, CrewSerializerLimited,
 
 from ..models import Crew, Race, RaceTime, OriginalEventCategory, EventMeetingKey
 
-# from ..pagination import CrewPaginationWithAggregates
-
 
 class CrewListView(generics.ListCreateAPIView):
     queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted', 'Submitted'))
     serializer_class = PopulatedCrewSerializer
-    # pagination_class = CrewPaginationWithAggregates
-    # PageNumberPagination.page_size_query_param = 'page_size' or 10
-    # filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
-    # ordering_fields = '__all__'
-    # search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number', 'competitor_names',]
-    # filterset_fields = ['status', 'event_band', 'start_time', 'finish_time',]
-
-    # def get_queryset(self):
-
-    #     queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted', 'Submitted'))
-
-    #     masters = self.request.query_params.get('masters')
-    #     if masters == 'true':
-    #         queryset = queryset.filter(status__exact='Accepted', masters_adjustment__gt=0).order_by('event_band')
-    #         return queryset
-
-    #     order = self.request.query_params.get('order', None)
-    #     if order == 'start-score':
-    #         return queryset.order_by('draw_start_score')
-    #     if order == 'club':
-    #         return queryset.order_by('club__name', 'name',)
-    #     if order is not None:
-    #         return queryset.order_by(order)
-    #     return queryset.order_by('bib_number')
-
-    # def get_num_scratched_crews(self):
-    #     return len(self.queryset.filter(status__exact='Scratched'))
     
 class CrewListOptionsForSelect(APIView):
     def get(self, _request):

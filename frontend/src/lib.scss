@@ -1,5 +1,5 @@
-@use 'sass:math';
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
+@use "sass:math";
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap");
 
 /*************************
 ** Breakpoints **
@@ -12,8 +12,8 @@ $xl: 1920px;
 ** Typography **
 *************************/
 
-$font-headline: 'Open sans', 'Times New Roman', 'Times', serif;
-$font-body: 'Open sans', 'Arial', sans-serif;
+$font-headline: "Open sans", "Times New Roman", "Times", serif;
+$font-body: "Open sans", "Arial", sans-serif;
 $normal: 400;
 $bold: 700;
 
@@ -65,7 +65,7 @@ $bold: 700;
   }
 }
 
-@mixin h2 ($colour: $bblBlue) {
+@mixin h2($colour: $bblBlue) {
   @include font-headline;
   color: $colour;
 
@@ -140,7 +140,7 @@ $bold: 700;
 @mixin body-xs($weight: $normal) {
   @include font-body($weight);
   font-size: rem(12px);
-  line-height: 1.1;
+  line-height: 1.2;
 }
 
 /*************************
@@ -185,7 +185,7 @@ $cols: 12;
   padding: 1.5rem;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   @media screen and (min-width: $md) {
-    width: 75%
+    width: 75%;
   }
   @media screen and (min-width: $lg) {
     width: 50%;
@@ -209,15 +209,15 @@ $cols: 12;
 @mixin animated-link($color: #341499, $underline-color: null, $animation-duration: 0.3s) {
   // Set underline color to link color if not specified
   $underline: if($underline-color, $underline-color, $color);
-  
+
   color: $color;
   text-decoration: none;
   position: relative;
   transition: color $animation-duration ease;
-  
+
   // Animated underline using pseudo-element
   &::after {
-    content: '';
+    content: "";
     position: absolute;
     bottom: -2px;
     left: 0;
@@ -226,28 +226,28 @@ $cols: 12;
     background-color: $underline;
     transition: width $animation-duration ease;
   }
-  
+
   // Hover effects
   &:hover {
     color: darken($color, 10%);
-    
+
     &::after {
       width: 100%;
     }
   }
-  
+
   // Focus-visible effects (modern focus styling)
   &:focus-visible {
     outline: 2px solid $color;
     outline-offset: 2px;
     border-radius: 2px;
-    
+
     // Show underline immediately on focus
     &::after {
       width: 100%;
     }
   }
-  
+
   // Remove default focus outline for focus-visible supported browsers
   &:focus:not(:focus-visible) {
     outline: none;
@@ -289,14 +289,15 @@ $html-font-size: 16px;
 }
 
 @mixin table {
-  th, td {
+  th,
+  td {
     padding: 0.5rem 1rem;
     text-align: left;
-    @include body-small;
+    @include body-xs;
   }
 
-  th {
-    @include body-small(bold);
+  th:first-of-type {
+    padding-left: 0;
   }
 
   tr {
