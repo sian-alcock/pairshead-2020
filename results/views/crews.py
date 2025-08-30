@@ -7,6 +7,7 @@ import time
 # if this is where you store your django-rest-framework settings
 # from django.conf import settings
 from django.db import transaction
+from django.db.models import Min, Avg
 from rest_framework import status
 from django.http import Http404, HttpResponse
 from rest_framework.views import APIView
@@ -481,6 +482,19 @@ class CrewUniqueHostClub(generics.ListCreateAPIView):
             data.append(ClubSerializer(club).data)
 
         return Response(data)
+
+class CreatePenaltiesTemplate(APIView):
+    def get(self, _request):
+
+        filename = 'penaltiestemplate - ' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M.csv")
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
+
+        writer = csv.writer(response, delimiter=',')
+        writer.writerow(['Bib number', 'Penalty (seconds)',  'Time only (true/false/blank)', 'Did not start (true/false/blank)', 'Did not finish (true/false/blank)', 'Disqualified (true/false/blank)'])
+
+        return response
 
 
 class CSVImportPenalties(APIView):

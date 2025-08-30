@@ -1,23 +1,10 @@
 import { useState } from "react";
 import BROELoader from "../../molecules/BROEDataLoader/BROELoader";
 import TextButton from "../../atoms/TextButton/TextButton";
-import { CSVUploadModal } from "../../molecules/CSVUploadModal/CSVUploadModal";
 import ActionCard from "../../molecules/ActionCard/ActionCard";
 import "./racePhaseDashboard.scss";
 
 export default function PreRaceDashboard() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const exportEventOrderTemplate = (e: { preventDefault: any }) => {
-    e.preventDefault;
-    window.open("api/event-order-template-export/");
-  };
-
-  const exportBibData = (e: { preventDefault: any }) => {
-    e.preventDefault;
-    window.open("api/bib-data-export/");
-  };
-
   return (
     <div className="pre-race">
       <div className="actions">

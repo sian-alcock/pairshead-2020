@@ -4,20 +4,9 @@ import TextButton from "../../atoms/TextButton/TextButton";
 import { CSVUploadModal } from "../../molecules/CSVUploadModal/CSVUploadModal";
 import ActionCard from "../../molecules/ActionCard/ActionCard";
 import "./racePhaseDashboard.scss";
+import DataExportButton from "../../molecules/DataExportComponent/DataExportComponent";
 
 export default function SetupDashboard() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const exportEventOrderTemplate = (e: { preventDefault: any }) => {
-    e.preventDefault;
-    window.open("api/event-order-template-export/");
-  };
-
-  const exportBibData = (e: { preventDefault: any }) => {
-    e.preventDefault;
-    window.open("api/bib-data-export/");
-  };
-
   return (
     <div className="race-setup">
       {/* Action cards */}
@@ -35,7 +24,11 @@ export default function SetupDashboard() {
           icon={"download"}
           description="Get a CSV template to structure your event order."
         >
-          <TextButton onClick={exportEventOrderTemplate} label={"Export event order template"} />
+          <DataExportButton
+            url="api/event-order-template-export/"
+            buttonText="Event order template"
+            filename="event-order.csv"
+          />
         </ActionCard>
 
         <ActionCard title="Import event order" icon={"upload"} description="Import event order from CSV">
@@ -67,7 +60,7 @@ export default function SetupDashboard() {
           icon={"download"}
           description="Export calculated start order as bib numbers for import into British Rowing."
         >
-          <TextButton onClick={exportBibData} label={"Export event order template"} />
+          <DataExportButton url="api/bib-data-export/" buttonText="Export Bib Data" filename="bib-data.csv" />
         </ActionCard>
       </div>
     </div>

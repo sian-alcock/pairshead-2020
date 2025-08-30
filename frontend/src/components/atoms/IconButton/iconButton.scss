@@ -1,4 +1,4 @@
-@import '../../../style.scss';
+@import "../../../style.scss";
 
 .icon-button {
   display: flex;
@@ -15,7 +15,7 @@
   &:disabled {
     background-color: $white;
     border: 1px solid $bblGrey;
-    pointer-events: none; 
+    pointer-events: none;
 
     .icon-button__icon {
       svg {
@@ -29,7 +29,7 @@
 
   &__icon {
     display: flex;
-    width: 24px;
+    width: rem(20px);
     align-items: center;
     justify-content: center;
 
@@ -46,8 +46,8 @@
   }
 
   @media screen and (min-width: $md) {
-    width: rem(48px);
-    height: rem(48px);
+    width: rem(40px);
+    height: rem(40px);
   }
 
   &--small {
@@ -67,7 +67,6 @@
       stroke: $white;
     }
   }
-
 
   &:focus-visible {
     border: 2px solid $bblBlue;

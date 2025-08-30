@@ -1,44 +1,20 @@
 import React from "react";
 import "./statBlock.scss";
-import { Link } from "react-router-dom";
 
 export interface StatBlockProps {
   value: string | number;
   subtitle?: string;
-  status: 'good' | 'warning' | 'error' | 'neutral';
+  status: "good" | "warning" | "error" | "neutral";
   loading?: boolean;
-  onClick?: () => void;
-  className?: string;
-  link?: string;
-  linkText?: string;
 }
 
-const StatBlock: React.FC<StatBlockProps> = ({
-  value,
-  subtitle,
-  status = 'neutral',
-  loading = false,
-  onClick,
-  className = '',
-  link,
-  linkText
-}) => {
-  const baseClasses = [
-    'stat-block',
-    `stat-block--${status}`,
-    onClick ? 'stat-block--clickable' : '',
-    loading ? 'stat-block--loading' : '',
-    className
-  ].filter(Boolean).join(' ');
-
-  const handleClick = () => {
-    if (onClick && !loading) {
-      onClick();
-    }
-  };
+const StatBlock: React.FC<StatBlockProps> = ({ value, subtitle, status = "neutral", loading = false }) => {
+  const baseClasses = ["stat-block", `stat-block--${status}`, loading ? "stat-block--loading" : ""]
+    .filter(Boolean)
+    .join(" ");
 
   return (
-    <div className={baseClasses} onClick={handleClick}>
+    <div className={baseClasses}>
       <div className="stat-block__content">
         <div className="stat-block__value">
           {loading ? (
@@ -49,7 +25,7 @@ const StatBlock: React.FC<StatBlockProps> = ({
             <span>{value}</span>
           )}
         </div>
-        
+
         {subtitle && (
           <div className="stat-block__subtitle">
             {loading ? (
@@ -62,9 +38,6 @@ const StatBlock: React.FC<StatBlockProps> = ({
           </div>
         )}
       </div>
-      {link && <span className="stat-block__link">
-        <Link to={link}>{linkText}</Link>
-      </span>}
     </div>
   );
 };

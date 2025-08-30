@@ -3,12 +3,12 @@ export type TimeProps = {
   start_time?: number | null;
   id: number;
   sequence: number;
-  tap: 'Start' | 'Finish';
+  tap: "Start" | "Finish";
   time_tap: number;
   crew: CrewProps | null;
   race: RaceProps | null;
-}
-  
+};
+
 export type ClubProps = {
   abbreviation: string;
   blade_image: string;
@@ -16,8 +16,8 @@ export type ClubProps = {
   id: number;
   name: string;
   index_code: string;
-}
-  
+};
+
 export type EventProps = {
   gender: string;
   id: number;
@@ -25,14 +25,14 @@ export type EventProps = {
   name: string;
   override_name: string;
   type: string;
-}
+};
 
 export type BandProps = {
   id: number;
   name: string;
   event: EventProps;
-}
-  
+};
+
 export type CrewProps = {
   gender: string;
   race_id_start_override: number | null;
@@ -45,8 +45,8 @@ export type CrewProps = {
   status: string;
   start_sequence?: number | null;
   finish_sequence?: number | null;
-  event_band?: 'string';
-  composite_code?: 'string';
+  event_band?: "string";
+  composite_code?: "string";
   penalty: number;
   start_time?: number | null;
   finish_time?: number | null;
@@ -78,79 +78,78 @@ export type CrewProps = {
   calculated_start_order?: number;
   host_club?: {
     name: string;
-  }
+  };
   number_location?: string;
   marshalling_division?: string;
   requires_ranking_update: boolean;
-}
+};
 
 export type CrewFormData = {
   // Basic crew info
-  id?: number
-  name?: string
-  bib_number?: string
-  competitor_names?: string
-  
+  id?: number;
+  name?: string;
+  bib_number?: string;
+  competitor_names?: string;
+
   // Timing data
-  category_position_time?: number
-  penalty?: number
-  manual_override_minutes?: number
-  manual_override_seconds?: number
-  manual_override_hundredths_seconds?: number
-  start_time?: string
-  finish_time?: string
-  raw_time?: string
-  
+  category_position_time?: number;
+  penalty?: number;
+  manual_override_minutes?: number;
+  manual_override_seconds?: number;
+  manual_override_hundredths_seconds?: number;
+  start_time?: string;
+  finish_time?: string;
+  raw_time?: string;
+
   // Status flags
-  time_only?: boolean
-  did_not_start?: boolean
-  did_not_finish?: boolean
-  disqualified?: boolean
-  
+  time_only?: boolean;
+  did_not_start?: boolean;
+  did_not_finish?: boolean;
+  disqualified?: boolean;
+
   // Band/event info
   band?: {
-    id: number
-    value: number
-  }
-  
+    id: number;
+    value: number;
+  };
+
   // Division/category info
-  marshalling_division?: string
+  marshalling_division?: string;
   times: TimeProps[];
   race_id_start_override?: number | null;
   race_id_finish_override?: number | null;
-}
-
+};
 
 export type EventOriginalProps = {
   crew: number;
   event_original: string;
-}
+};
 
 export type KeyProps = {
   id: number;
   event_meeting_key: string;
   event_meeting_name: string;
   current_event_meeting: boolean;
-}
+};
 
 export type NumberLocationProps = {
   club: string;
   number_location?: string;
   id: number;
-}
+};
 
 export type TimingOffsetProps = {
   id?: number;
   reference_race: number;
   target_race: number;
   timing_offset_ms: number;
-}
+};
 
 export type RaceInfoProps = {
   id: number;
   broe_data_last_update: string;
   pre_race_mode: boolean;
-}
+};
 
 export type RaceProps = {
   is_timing_reference: any;
@@ -159,4 +158,24 @@ export type RaceProps = {
   name: string;
   default_start: boolean;
   default_finish: boolean;
-}
+};
+
+export type DataStats = {
+  races_count: number;
+  total_crews_count: number;
+  accepted_crews_count: number;
+  race_times_count: number;
+  races_with_start_times: number;
+  races_with_finish_times: number;
+  missing_times_count: number;
+  masters_crews_count: number;
+  original_event_categories_imported: number;
+  event_order_count: number;
+  crews_with_start_order_count: number;
+  scratched_crews_count: number;
+  withdrawn_crews_count: number;
+  submitted_crews_count: number;
+  marshalling_divisions_count: number;
+  number_locations_count: number;
+  last_updated: string;
+};

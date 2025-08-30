@@ -1,93 +1,142 @@
-import React, { useState, useMemo, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import React, { useMemo } from "react";
 import Header from "../../organisms/Header/Header";
 import Hero from "../../organisms/Hero/Hero";
 import StatBlock, { StatBlockProps } from "../../organisms/StatBlock/StatBlock";
-import "./home.scss";
-import axios, { AxiosResponse } from "axios";
-import { Link } from "react-router-dom";
-import BROELoader from "../../molecules/BROEDataLoader/BROELoader";
 import { useCurrentRaceMode } from "../../hooks/useGlobalSettings";
-import TextButton from "../../atoms/TextButton/TextButton";
-import CSVDataLoader from "../../molecules/CSVDataLoader/CSVDataLoader";
-import RaceSetupDashboard from "../../organisms/RacePhaseDashboard/SetupDashboard";
 import SetupDashboard from "../../organisms/RacePhaseDashboard/SetupDashboard";
 import PreRaceDashboard from "../../organisms/RacePhaseDashboard/PreRaceDashboard";
 import RaceDashboard from "../../organisms/RacePhaseDashboard/RaceDashboard";
-
-interface DataStats {
-  races_count: number;
-  crews_count: number;
-  race_times_count: number;
-  races_with_start_times: number;
-  races_with_finish_times: number;
-  missing_times_count: number;
-  masters_crews_count: number;
-  original_event_categories_imported: number;
-  last_updated: string;
-}
-
-// API functions
-const fetchDataStats = async (): Promise<DataStats> => {
-  const response: AxiosResponse = await axios.get("/api/crews/stats/");
-  return response.data;
-};
+import { useDataStats } from "../../../hooks/useDataStats";
+import "./home.scss";
 
 export default function Home() {
   const { raceMode } = useCurrentRaceMode();
-  const queryClient = useQueryClient();
 
-  // Fetch stats
-  const {
-    data: statsData,
-    isLoading: statsLoading,
-    error: statsError
-  } = useQuery({
-    queryKey: ["data-stats"],
-    queryFn: fetchDataStats,
-    staleTime: 30 * 1000, // 30 seconds
-    retry: 3,
-    // Always fetch stats for dashboard overview
-    enabled: true
-  });
+  // Convert raceMode to phase format for API
+  const phase = useMemo(() => {
+    switch (raceMode) {
+      case "SETUP":
+        return "setup";
+      case "PRE_RACE":
+        return "pre-race";
+      case "RACE":
+        return "race";
+      default:
+        return "setup";
+    }
+  }, [raceMode]);
+
+  // Fetch stats for current phase
+  const { data: statsData, isLoading: statsLoading, error: statsError } = useDataStats(phase);
 
   const statBlocks = useMemo(() => {
     if (!statsData) return [];
 
-    const blocks: StatBlockProps[] = [
-      {
-        value: statsData.crews_count,
-        subtitle: "accepted crews",
-        status: statsData.crews_count > 0 ? "good" : "warning",
-        link: "/generate-results/crew-management-dashboard",
-        linkText: "View crews"
-      },
-      {
-        value: statsData.races_count,
-        subtitle: statsData.races_count === 0 ? "Import races first" : "races configured",
-        status: statsData.races_count > 0 ? "good" : "error",
-        link: "/generate-results",
-        linkText: "View races"
-      },
-      {
-        value: statsData.race_times_count,
-        subtitle: statsData.race_times_count > 0 ? "times recorded" : "No times yet",
-        status: statsData.race_times_count > 0 ? "good" : "warning"
-      },
-      {
-        value: statsData.masters_crews_count,
-        subtitle: "masters crews",
-        status: statsData.masters_crews_count > 0 ? "good" : "warning"
-      },
-      {
-        value: statsData.original_event_categories_imported,
-        subtitle: "original event categories",
-        status: statsData.original_event_categories_imported > 0 ? "good" : "warning"
-      }
-    ];
+    const blocks: StatBlockProps[] = [];
+
+    // Phase-specific stat blocks
+    if (phase === "setup") {
+      blocks.push(
+        {
+          value: statsData.total_crews_count,
+          subtitle: "total crews registered",
+          status: statsData.total_crews_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.scratched_crews_count,
+          subtitle: "scratched crews",
+          status: "neutral"
+        },
+        {
+          value: statsData.withdrawn_crews_count,
+          subtitle: "withdrawn crews",
+          status: "neutral"
+        },
+        {
+          value: statsData.submitted_crews_count,
+          subtitle: "submitted crews",
+          status: statsData.submitted_crews_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.accepted_crews_count,
+          subtitle: "accepted crews",
+          status: statsData.accepted_crews_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.event_order_count,
+          subtitle: "event orders configured",
+          status: statsData.event_order_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.crews_with_start_order_count,
+          subtitle: "crews with calculated start order",
+          status: statsData.crews_with_start_order_count > 0 ? "good" : "warning"
+        }
+      );
+    } else if (phase === "pre-race") {
+      blocks.push(
+        {
+          value: statsData.accepted_crews_count,
+          subtitle: "accepted crews",
+          status: statsData.accepted_crews_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.marshalling_divisions_count,
+          subtitle: "marshalling divisions",
+          status: statsData.marshalling_divisions_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.number_locations_count,
+          subtitle: "number locations",
+          status: statsData.number_locations_count > 0 ? "good" : "warning"
+        }
+      );
+    } else if (phase === "race") {
+      blocks.push(
+        {
+          value: statsData.accepted_crews_count,
+          subtitle: "crews racing",
+          status: statsData.accepted_crews_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.race_times_count,
+          subtitle: statsData.race_times_count > 0 ? "times recorded" : "No times yet",
+          status: statsData.race_times_count > 0 ? "good" : "neutral"
+        },
+        {
+          value: statsData.races_count,
+          subtitle: "total races",
+          status: "good"
+        },
+        {
+          value: statsData.original_event_categories_imported,
+          subtitle: "original event categories",
+          status: statsData.original_event_categories_imported > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.masters_crews_count,
+          subtitle: "masters crews",
+          status: "neutral"
+        }
+      );
+    }
 
     return blocks;
-  }, [statsData]);
+  }, [statsData, phase]);
+
+  // Calculate number of skeleton blocks based on phase
+  const skeletonBlockCount = useMemo(() => {
+    switch (phase) {
+      case "setup":
+        return 3;
+      case "pre-race":
+        return 4;
+      case "race":
+        return 3;
+      default:
+        return 3;
+    }
+  }, [phase]);
 
   return (
     <>
@@ -97,8 +146,8 @@ export default function Home() {
         <div className="home__container">
           <div className="crew-manager__stat-blocks-grid">
             {statsLoading ? (
-              // Show loading skeleton blocks
-              Array.from({ length: 5 }).map((_, index) => (
+              // Show loading skeleton blocks based on phase
+              Array.from({ length: skeletonBlockCount }).map((_, index) => (
                 <StatBlock key={index} value="Loading..." status="neutral" loading={true} />
               ))
             ) : statsError ? (
@@ -107,11 +156,6 @@ export default function Home() {
               statBlocks.map((block, index) => <StatBlock key={index} {...block} />)
             )}
           </div>
-          {statsData?.last_updated && !statsLoading && (
-            <div className="crew-manager__last-updated">
-              <small>Last updated: {new Date(statsData.last_updated).toLocaleString()}</small>
-            </div>
-          )}
         </div>
       </section>
       <section className="home__section">
