@@ -74,7 +74,7 @@ export default function ResultIndex() {
         label: option,
         value: option
       }));
-      return [{ label: "All cats", value: "" }, ...options];
+      return [{ label: "All events", value: "" }, ...options];
     }
   });
 
@@ -378,10 +378,8 @@ export default function ResultIndex() {
             </div>
           </div>
 
-          <div className="mb-4">
-            <p className="has-text-grey">
-              Showing {table.getRowModel().rows.length} of {filteredData.length} crews
-            </p>
+          <div className="result-index__count">
+            Showing {table.getRowModel().rows.length} of {filteredData.length} crews
           </div>
 
           <div className="result-index__table-container">

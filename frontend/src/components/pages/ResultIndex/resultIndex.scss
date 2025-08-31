@@ -41,6 +41,11 @@
     }
   }
 
+  &__count {
+    margin-bottom: 1rem;
+    @include body-small;
+  }
+
   &__control {
     &--flags {
       display: flex;

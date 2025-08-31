@@ -11,7 +11,7 @@ import {
   PaginationState,
   createColumnHelper,
   SortingState,
-  ColumnFiltersState,
+  ColumnFiltersState
 } from "@tanstack/react-table";
 import { useHistory, Link } from "react-router-dom";
 import axios, { AxiosResponse } from "axios";
@@ -37,7 +37,7 @@ interface RaceTimeProps {
 
 interface RaceTimesTableProps {
   raceId: number;
-  tap: 'Start' | 'Finish';
+  tap: "Start" | "Finish";
   raceName: string;
   onDataChanged?: () => void;
 }
@@ -45,9 +45,9 @@ interface RaceTimesTableProps {
 // API function
 const fetchRaceTimes = async (raceId: number, tap: string): Promise<RaceTimeProps[]> => {
   const params = new URLSearchParams();
-  params.append('race_id', raceId.toString());
-  params.append('tap', tap);
-  
+  params.append("race_id", raceId.toString());
+  params.append("tap", tap);
+
   const response: AxiosResponse = await axios.get(`/api/race-times/?${params.toString()}`);
   return response.data;
 };
@@ -56,36 +56,36 @@ const fetchRaceTimes = async (raceId: number, tap: string): Promise<RaceTimeProp
 const timeFilterFn = (row: any, columnId: string, filterValue: string) => {
   const cellValue = row.getValue(columnId);
   if (cellValue === null || cellValue === undefined) return false;
-  
+
   const formattedTime = formatTimes(cellValue);
   return formattedTime.toLowerCase().includes(filterValue.toLowerCase());
 };
 
 const globalFilterFn = (row: any, columnId: string, filterValue: string) => {
   const cellValue = row.getValue(columnId);
-  
+
   if (cellValue === null || cellValue === undefined) return false;
-  
+
   // Handle different data types
-  if (typeof cellValue === 'number') {
+  if (typeof cellValue === "number") {
     // For time values, convert to formatted time
-    if (columnId.includes('time')) {
+    if (columnId.includes("time")) {
       const formattedTime = formatTimes(cellValue);
       return formattedTime.toLowerCase().includes(filterValue.toLowerCase());
     }
     // For other numbers, convert to string
     return cellValue.toString().toLowerCase().includes(filterValue.toLowerCase());
   }
-  
-  if (typeof cellValue === 'string') {
+
+  if (typeof cellValue === "string") {
     return cellValue.toLowerCase().includes(filterValue.toLowerCase());
   }
-  
+
   // Handle objects (like crew)
-  if (typeof cellValue === 'object' && cellValue !== null) {
+  if (typeof cellValue === "object" && cellValue !== null) {
     return JSON.stringify(cellValue).toLowerCase().includes(filterValue.toLowerCase());
   }
-  
+
   return false;
 };
 
@@ -93,21 +93,16 @@ const globalFilterFn = (row: any, columnId: string, filterValue: string) => {
 const timeSortingFn = (rowA: any, rowB: any, columnId: string) => {
   const a = rowA.getValue(columnId) as number | null;
   const b = rowB.getValue(columnId) as number | null;
-  
+
   // Handle null values - put them at the end
   if (a === null && b === null) return 0;
   if (a === null) return 1;
   if (b === null) return -1;
-  
+
   return a - b;
 };
 
-export default function RaceTimesTable({ 
-  raceId, 
-  tap, 
-  raceName, 
-  onDataChanged 
-}: RaceTimesTableProps) {
+export default function RaceTimesTable({ raceId, tap, raceName, onDataChanged }: RaceTimesTableProps) {
   const history = useHistory();
   const queryClient = useQueryClient();
   const columnHelper = createColumnHelper<RaceTimeProps>();
@@ -115,107 +110,101 @@ export default function RaceTimesTable({
   // Component state
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 25,
+    pageSize: 25
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState<string>('');
+  const [globalFilter, setGlobalFilter] = useState<string>("");
 
   // Data fetching
   const {
     data: raceTimesData,
     isLoading,
     error,
-    refetch,
+    refetch
   } = useQuery({
     queryKey: ["raceTimes", raceId, tap],
     queryFn: () => {
       console.log(`Fetching race times for race ${raceId}, tap ${tap}...`);
       const startTime = Date.now();
-      return fetchRaceTimes(raceId, tap).then(result => {
+      return fetchRaceTimes(raceId, tap).then((result) => {
         console.log(`Race times fetch took ${Date.now() - startTime}ms`);
         return result;
       });
     },
     staleTime: 2 * 60 * 1000, // 2 minutes
     retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
   });
 
   // Table columns
-  const columns = useMemo<ColumnDef<RaceTimeProps, any>[]>(() => [
-  columnHelper.accessor("sequence", {
-      header: "Sequence",
-      cell: (info) => {
-        const raceTime = info.row.original;
-        return (
-          <button
-            className="race-times-table__sequence-link"
-            onClick={() => history.push(`/generate-results/race-times/${raceTime.id}/edit`)}
-            title="Click to edit this race time"
-          >
-            <span className="race-times-table__cell race-times-table__cell--sequence">
-              {info.getValue()}
-            </span>
-          </button>
-        );
-      },
-      enableSorting: true,
-      filterFn: 'includesString',
-    }),
-    columnHelper.accessor((row) => row.crew?.bib_number || '--', {
-      id: 'bib_number',
-      header: "Bib",
-      cell: (info) => (
-        <span className="race-times-table__cell race-times-table__cell--bib">
-          {info.getValue() || '--'}
-        </span>
-      ),
-      enableSorting: true,
-      filterFn: 'includesString',
-    }),
-    columnHelper.accessor((row) => row.crew?.competitor_names || row.crew?.name || 'Unassigned', {
-      id: "competitor_names",
-      header: "Crew",
-      cell: (info) => (
-        <span className="race-times-table__cell race-times-table__cell--competitors">
-          {info.getValue()}
-        </span>
-      ),
-      enableSorting: true,
-      filterFn: 'includesString',
-    }),
+  const columns = useMemo<ColumnDef<RaceTimeProps, any>[]>(
+    () => [
+      columnHelper.accessor("sequence", {
+        header: "Sequence",
+        cell: (info) => {
+          const raceTime = info.row.original;
+          return (
+            <button
+              className="race-times-table__sequence-link"
+              onClick={() => history.push(`/race-times/${raceTime.id}/edit`)}
+              title="Click to edit this race time"
+            >
+              <span className="race-times-table__cell race-times-table__cell--sequence">{info.getValue()}</span>
+            </button>
+          );
+        },
+        enableSorting: true,
+        filterFn: "includesString"
+      }),
+      columnHelper.accessor((row) => row.crew?.bib_number || "--", {
+        id: "bib_number",
+        header: "Bib",
+        cell: (info) => (
+          <span className="race-times-table__cell race-times-table__cell--bib">{info.getValue() || "--"}</span>
+        ),
+        enableSorting: true,
+        filterFn: "includesString"
+      }),
+      columnHelper.accessor((row) => row.crew?.competitor_names || row.crew?.name || "Unassigned", {
+        id: "competitor_names",
+        header: "Crew",
+        cell: (info) => (
+          <span className="race-times-table__cell race-times-table__cell--competitors">{info.getValue()}</span>
+        ),
+        enableSorting: true,
+        filterFn: "includesString"
+      }),
       columnHelper.accessor("tap", {
-      header: "Tap",
-      cell: (info) => (
-        <span className="race-times-table__cell race-times-table__cell--tap">
-          {info.getValue()}
-        </span>
-      ),
-      enableSorting: true,
-      sortingFn: timeSortingFn,
-      filterFn: timeFilterFn,
-    }),
-    columnHelper.accessor("time_tap", {
-      header: "Time tap",
-      cell: (info) => (
-        <span className="race-times-table__cell race-times-table__cell--time">
-          {formatTimes(info.getValue())}
-        </span>
-      ),
-      enableSorting: true,
-      sortingFn: timeSortingFn,
-      filterFn: timeFilterFn,
-    }),
-  ], [history]);
+        header: "Tap",
+        cell: (info) => <span className="race-times-table__cell race-times-table__cell--tap">{info.getValue()}</span>,
+        enableSorting: true,
+        sortingFn: timeSortingFn,
+        filterFn: timeFilterFn
+      }),
+      columnHelper.accessor("time_tap", {
+        header: "Time tap",
+        cell: (info) => (
+          <span className="race-times-table__cell race-times-table__cell--time">{formatTimes(info.getValue())}</span>
+        ),
+        enableSorting: true,
+        sortingFn: timeSortingFn,
+        filterFn: timeFilterFn
+      })
+    ],
+    [history]
+  );
 
   // Create column groups for grouped headers
-  const columnGroups = useMemo(() => [
-    { header: "Sequence", columns: ["sequence"] },
-    { header: "Bib", columns: ["bib_number"] },
-    { header: "Crew Info", columns: ["crew_name", "competitor_names", "club"] },
-    { header: "Timing", columns: ["time_tap", "synchronized_time"] },
-  ], []);
+  const columnGroups = useMemo(
+    () => [
+      { header: "Sequence", columns: ["sequence"] },
+      { header: "Bib", columns: ["bib_number"] },
+      { header: "Crew Info", columns: ["crew_name", "competitor_names", "club"] },
+      { header: "Timing", columns: ["time_tap", "synchronized_time"] }
+    ],
+    []
+  );
 
   // Table instance
   const table = useReactTable({
@@ -236,19 +225,19 @@ export default function RaceTimesTable({
       pagination,
       sorting,
       columnFilters,
-      globalFilter,
+      globalFilter
     },
     initialState: {
       pagination: {
-        pageSize: 25,
+        pageSize: 25
       },
       sorting: [
         {
           id: "sequence",
-          desc: false,
-        },
-      ],
-    },
+          desc: false
+        }
+      ]
+    }
   });
 
   // Loading state
@@ -257,7 +246,9 @@ export default function RaceTimesTable({
       <div className="race-times-table__loading">
         <div className="race-times-table__loading-content">
           <div className="race-times-table__spinner"></div>
-          <p>Loading {tap.toLowerCase()} times for {raceName}...</p>
+          <p>
+            Loading {tap.toLowerCase()} times for {raceName}...
+          </p>
         </div>
       </div>
     );
@@ -269,7 +260,9 @@ export default function RaceTimesTable({
       <div className="race-times-table__error">
         <div className="race-times-table__error-content">
           <h4>Error loading race times</h4>
-          <p>Failed to load {tap.toLowerCase()} times for {raceName}</p>
+          <p>
+            Failed to load {tap.toLowerCase()} times for {raceName}
+          </p>
         </div>
       </div>
     );
@@ -287,7 +280,7 @@ export default function RaceTimesTable({
             {raceName} - {tap} times
           </h3>
         </div>
-        
+
         <div className="race-times-table__controls">
           <div className="race-times-table__search-wrapper">
             <SearchInput
@@ -302,13 +295,8 @@ export default function RaceTimesTable({
 
       <div className="race-times-table__table-container">
         <table className="race-times-table__table">
-          <TableHeader 
-            headerGroups={table.getHeaderGroups()}
-            columnGroups={columnGroups}
-          />
-          <TableBody 
-            rows={table.getRowModel().rows}
-          />
+          <TableHeader headerGroups={table.getHeaderGroups()} columnGroups={columnGroups} />
+          <TableBody rows={table.getRowModel().rows} />
         </table>
       </div>
 
@@ -316,13 +304,11 @@ export default function RaceTimesTable({
         <div className="race-times-table__results-info">
           <p className="race-times-table__results-text">
             Showing {displayedRows} of {filteredRows} records
-            {globalFilter && filteredRows !== totalRows && (
-              <span> (filtered from {totalRows} total)</span>
-            )}
+            {globalFilter && filteredRows !== totalRows && <span> (filtered from {totalRows} total)</span>}
           </p>
         </div>
 
-        <TablePagination 
+        <TablePagination
           table={table}
           className="race-times-table__pagination"
           showRowInfo={false}

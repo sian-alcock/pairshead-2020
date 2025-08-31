@@ -130,7 +130,7 @@ export default function CrewsTable({ crews, isLoading, error, onDataChanged }: C
         header: "ID",
         cell: (info) => (
           <Link
-            to={`/generate-results/crew-management-dashboard/${info.getValue()}/edit`}
+            to={`/crew-management-dashboard/${info.getValue()}/edit`}
             className="crews-table__cell crews-table__cell--id"
           >
             {info.getValue() as string}

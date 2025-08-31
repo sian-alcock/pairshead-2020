@@ -60,18 +60,14 @@ function App() {
       <div>
         <HashRouter>
           <Switch>
-            <SecureRoute path="/generate-results/crew-management-dashboard/:id/edit" component={CrewTimeEdit} />
-            <SecureRoute path="/generate-results/crew-management-dashboard" component={CrewManagementDashboard} />
-            <SecureRoute path="/generate-results/race-times/:id/edit" component={RaceTimeEdit} />
-            <SecureRoute path="/generate-results/export" component={ExportData} />
-            <SecureRoute path="/generate-results/results" component={ResultIndex} />
-            <SecureRoute path="/generate-results/manage-race-times" component={ManageRaceTimes} />
-            <SecureRoute path="/generate-results/manage-penalties" component={ManagePenalties} />
-            <SecureRoute
-              path="/generate-results/manage-original-event-categories"
-              component={ManagingOriginalEventCategories}
-            />
-            <SecureRoute path="/generate-results" component={GenerateResults} />
+            <SecureRoute path="/crew-management-dashboard/:id/edit" component={CrewTimeEdit} />
+            <SecureRoute path="/crew-management-dashboard" component={CrewManagementDashboard} />
+            <SecureRoute path="/race-times/:id/edit" component={RaceTimeEdit} />
+            <SecureRoute path="/export" component={ExportData} />
+            <SecureRoute path="/results" component={ResultIndex} />
+            <SecureRoute path="/manage-race-times" component={ManageRaceTimes} />
+            <SecureRoute path="/manage-penalties" component={ManagePenalties} />
+            <SecureRoute path="/manage-original-event-categories" component={ManagingOriginalEventCategories} />
             <SecureRoute path="/settings/keys" component={EventKeys} />
             <SecureRoute path="/settings/info" component={Info} />
             <SecureRoute path="/settings/register" component={Register} />
@@ -91,12 +87,11 @@ function App() {
             <SecureRoute path="/logistics/crew-on-the-day-contact" component={ContactDetailReport} />
             <SecureRoute path="/logistics/start-order-by-number-location" component={CrewStartByNumberLocation} />
             <SecureRoute path="/logistics" component={Logistics} />
-            <SecureRoute path="/generate-start-order/crew-start-order" component={CrewStartOrder} />
-            <SecureRoute path="/generate-start-order/set-number-locations/:id/edit" component={NumberLocationEdit} />
-            <SecureRoute path="/generate-start-order/set-number-locations/new" component={NumberLocationNew} />
-            <SecureRoute path="/generate-start-order/set-number-locations" component={SetNumberLocations} />
-            <SecureRoute path="/generate-start-order/marshalling-divisions" component={MarshallingDivisions} />
-            <SecureRoute path="/generate-start-order" component={GenerateStartOrder} />
+            <SecureRoute path="/crew-start-order" component={CrewStartOrder} />
+            <SecureRoute path="/set-number-locations/:id/edit" component={NumberLocationEdit} />
+            <SecureRoute path="/set-number-locations/new" component={NumberLocationNew} />
+            <SecureRoute path="/set-number-locations" component={SetNumberLocations} />
+            <SecureRoute path="/marshalling-divisions" component={MarshallingDivisions} />
             <Route path="/login" component={Login} />
             <SecureRoute path="/" component={Home} />
           </Switch>

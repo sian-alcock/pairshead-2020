@@ -52,7 +52,7 @@ export default function SetupDashboard() {
           icon={"flag"}
           description="Create the official start order for the event."
         >
-          <TextButton pathName="/generate-start-order/crew-start-order" label={"Start order"} />
+          <TextButton pathName="/crew-start-order" label={"Start order"} />
         </ActionCard>
 
         <ActionCard

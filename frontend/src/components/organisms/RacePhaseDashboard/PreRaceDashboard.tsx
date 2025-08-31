@@ -21,11 +21,11 @@ export default function PreRaceDashboard() {
           icon={"person"}
           description="Assign crews to marshalling divisions"
         >
-          <TextButton pathName={"/generate-start-order/marshalling-divisions"} label={"Marshalling divisions"} />
+          <TextButton pathName={"/marshalling-divisions"} label={"Marshalling divisions"} />
         </ActionCard>
 
         <ActionCard title="Number locations" icon={"numbers"} description="Inspect or modify number locations">
-          <TextButton pathName={"/generate-start-order/set-number-locations"} label={"Number locations"} />
+          <TextButton pathName={"/set-number-locations"} label={"Number locations"} />
         </ActionCard>
         <ActionCard
           title="Logistics reports"

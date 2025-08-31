@@ -12,7 +12,7 @@ import {
   PaginationState,
   createColumnHelper,
   SortingState,
-  ColumnFiltersState,
+  ColumnFiltersState
 } from "@tanstack/react-table";
 import axios, { AxiosResponse } from "axios";
 import { formatTimes } from "../../../lib/helpers";
@@ -57,22 +57,22 @@ interface MissingTimesTableProps {
 
 // API function
 const fetchMissingTimes = async (): Promise<MissingTimesData> => {
-  const response: AxiosResponse = await axios.get('/api/crews/missing-times/');
+  const response: AxiosResponse = await axios.get("/api/crews/missing-times/");
   return response.data;
 };
 
 // Custom filter functions
 const missingTypeFilterFn = (row: any, columnId: string, filterValue: string) => {
   const rowData = row.original as CrewMissingTimes;
-  
+
   switch (filterValue) {
-    case 'start_only':
+    case "start_only":
       return rowData.missing_start && !rowData.missing_finish;
-    case 'finish_only':
+    case "finish_only":
       return rowData.missing_finish && !rowData.missing_start;
-    case 'both':
+    case "both":
       return rowData.missing_both;
-    case 'all':
+    case "all":
     default:
       return true;
   }
@@ -85,160 +85,135 @@ export default function MissingTimesTable({ onDataChanged }: MissingTimesTablePr
   // Component state
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 25,
+    pageSize: 25
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState<string>('');
-  const [missingTypeFilter, setMissingTypeFilter] = useState<string>('all');
+  const [globalFilter, setGlobalFilter] = useState<string>("");
+  const [missingTypeFilter, setMissingTypeFilter] = useState<string>("all");
 
   // Data fetching
   const {
     data: missingTimesData,
     isLoading,
     error,
-    refetch,
+    refetch
   } = useQuery({
     queryKey: ["missingTimes"],
     queryFn: () => {
-      console.log('Fetching missing times data...');
+      console.log("Fetching missing times data...");
       return fetchMissingTimes();
     },
     staleTime: 0, // 1 minute
-    retry: 3,
+    retry: 3
   });
 
   // Table columns
-  const columns = useMemo<ColumnDef<CrewMissingTimes, any>[]>(() => [
-    columnHelper.accessor("crew_id", {
-      header: "ID",
-      cell: (info) => (
-        <Link to={`/generate-results/crew-management-dashboard/${info.getValue()}/edit`} className="missing-times__cell missing-times__cell--id">
-          {info.getValue() as string}
-        </Link>
-      ),
-      enableSorting: true,
-      size: 80,
-    }),
+  const columns = useMemo<ColumnDef<CrewMissingTimes, any>[]>(
+    () => [
+      columnHelper.accessor("crew_id", {
+        header: "ID",
+        cell: (info) => (
+          <Link
+            to={`/crew-management-dashboard/${info.getValue()}/edit`}
+            className="missing-times__cell missing-times__cell--id"
+          >
+            {info.getValue() as string}
+          </Link>
+        ),
+        enableSorting: true,
+        size: 80
+      }),
 
-    columnHelper.accessor("bib_number", {
-      header: "Bib",
-      cell: (info) => (
-        <span className="missing-times__cell missing-times__cell--bib">
-          {info.getValue() || '--'}
-        </span>
-      ),
-      enableSorting: true,
-      size: 80,
-    }),
-    columnHelper.accessor("name", {
-      header: "Crew Name",
-      cell: (info) => (
-        <span className="missing-times__cell missing-times__cell--name">
-          {info.getValue()}
-        </span>
-      ),
-      enableSorting: true,
-      size: 200,
-    }),
-    columnHelper.accessor("club", {
-      header: "Club",
-      cell: (info) => (
-        <span className="missing-times__cell missing-times__cell--club">
-          {info.getValue() || '--'}
-        </span>
-      ),
-      enableSorting: true,
-      size: 150,
-    }),
-    columnHelper.accessor("start_time", {
-      header: "Start Time",
-      cell: (info) => {
-        const time = info.getValue();
-        const row = info.row.original;
-        
-        if (row.missing_start) {
+      columnHelper.accessor("bib_number", {
+        header: "Bib",
+        cell: (info) => <span className="missing-times__cell missing-times__cell--bib">{info.getValue() || "--"}</span>,
+        enableSorting: true,
+        size: 80
+      }),
+      columnHelper.accessor("name", {
+        header: "Crew Name",
+        cell: (info) => <span className="missing-times__cell missing-times__cell--name">{info.getValue()}</span>,
+        enableSorting: true,
+        size: 200
+      }),
+      columnHelper.accessor("club", {
+        header: "Club",
+        cell: (info) => (
+          <span className="missing-times__cell missing-times__cell--club">{info.getValue() || "--"}</span>
+        ),
+        enableSorting: true,
+        size: 150
+      }),
+      columnHelper.accessor("start_time", {
+        header: "Start Time",
+        cell: (info) => {
+          const time = info.getValue();
+          const row = info.row.original;
+
+          if (row.missing_start) {
+            return <span className="missing-times__cell missing-times__cell--missing">❌ Missing</span>;
+          }
+
           return (
-            <span className="missing-times__cell missing-times__cell--missing">
-              ❌ Missing
-            </span>
+            <div className="missing-times__time-cell">
+              <span className="missing-times__time">{time ? formatTimes(time) : "--"}</span>
+              {row.start_race && <span className="missing-times__race-name">{row.start_race}</span>}
+            </div>
           );
-        }
-        
-        return (
-          <div className="missing-times__time-cell">
-            <span className="missing-times__time">
-              {time ? formatTimes(time) : '--'}
-            </span>
-            {row.start_race && (
-              <span className="missing-times__race-name">
-                {row.start_race}
-              </span>
-            )}
-          </div>
-        );
-      },
-      enableSorting: true,
-      size: 150,
-    }),
-    columnHelper.accessor("finish_time", {
-      header: "Finish Time", 
-      cell: (info) => {
-        const time = info.getValue();
-        const row = info.row.original;
-        
-        if (row.missing_finish) {
+        },
+        enableSorting: true,
+        size: 150
+      }),
+      columnHelper.accessor("finish_time", {
+        header: "Finish Time",
+        cell: (info) => {
+          const time = info.getValue();
+          const row = info.row.original;
+
+          if (row.missing_finish) {
+            return <span className="missing-times__cell missing-times__cell--missing">❌ Missing</span>;
+          }
+
           return (
-            <span className="missing-times__cell missing-times__cell--missing">
-              ❌ Missing
-            </span>
+            <div className="missing-times__time-cell">
+              <span className="missing-times__time">{time ? formatTimes(time) : "--"}</span>
+              {row.finish_race && <span className="missing-times__race-name">{row.finish_race}</span>}
+            </div>
           );
+        },
+        enableSorting: true,
+        size: 150
+      }),
+      columnHelper.accessor(
+        (row) => {
+          if (row.missing_both) return "Both Missing";
+          if (row.missing_start) return "Start Missing";
+          if (row.missing_finish) return "Finish Missing";
+          return "Complete";
+        },
+        {
+          id: "missing_status",
+          header: "Status",
+          cell: (info) => {
+            const status = info.getValue();
+            const row = info.row.original;
+
+            let className = "missing-times__status";
+            if (row.missing_both) className += " missing-times__status--both";
+            else if (row.missing_start || row.missing_finish) className += " missing-times__status--partial";
+            else className += " missing-times__status--complete";
+
+            return <span className={className}>{status}</span>;
+          },
+          enableSorting: true,
+          filterFn: missingTypeFilterFn,
+          size: 120
         }
-        
-        return (
-          <div className="missing-times__time-cell">
-            <span className="missing-times__time">
-              {time ? formatTimes(time) : '--'}
-            </span>
-            {row.finish_race && (
-              <span className="missing-times__race-name">
-                {row.finish_race}
-              </span>
-            )}
-          </div>
-        );
-      },
-      enableSorting: true,
-      size: 150,
-    }),
-    columnHelper.accessor((row) => {
-      if (row.missing_both) return 'Both Missing';
-      if (row.missing_start) return 'Start Missing';
-      if (row.missing_finish) return 'Finish Missing';
-      return 'Complete';
-    }, {
-      id: 'missing_status',
-      header: "Status",
-      cell: (info) => {
-        const status = info.getValue();
-        const row = info.row.original;
-        
-        let className = "missing-times__status";
-        if (row.missing_both) className += " missing-times__status--both";
-        else if (row.missing_start || row.missing_finish) className += " missing-times__status--partial";
-        else className += " missing-times__status--complete";
-        
-        return (
-          <span className={className}>
-            {status}
-          </span>
-        );
-      },
-      enableSorting: true,
-      filterFn: missingTypeFilterFn,
-      size: 120,
-    }),
-  ], []);
+      )
+    ],
+    []
+  );
 
   // Table instance
   const table = useReactTable({
@@ -258,31 +233,28 @@ export default function MissingTimesTable({ onDataChanged }: MissingTimesTablePr
       pagination,
       sorting,
       columnFilters,
-      globalFilter,
+      globalFilter
     },
     initialState: {
       pagination: {
-        pageSize: 25,
+        pageSize: 25
       },
       sorting: [
         {
           id: "crew_id",
-          desc: false,
-        },
-      ],
-    },
+          desc: false
+        }
+      ]
+    }
   });
 
   // Handle missing type filter change
   const handleMissingTypeFilterChange = (value: string) => {
     setMissingTypeFilter(value);
-    if (value === 'all') {
-      setColumnFilters(prev => prev.filter(f => f.id !== 'missing_status'));
+    if (value === "all") {
+      setColumnFilters((prev) => prev.filter((f) => f.id !== "missing_status"));
     } else {
-      setColumnFilters(prev => [
-        ...prev.filter(f => f.id !== 'missing_status'),
-        { id: 'missing_status', value }
-      ]);
+      setColumnFilters((prev) => [...prev.filter((f) => f.id !== "missing_status"), { id: "missing_status", value }]);
     }
   };
 
@@ -323,9 +295,7 @@ export default function MissingTimesTable({ onDataChanged }: MissingTimesTablePr
       {/* Header and Controls */}
       <div className="missing-times__header">
         <div className="missing-times__title-section">
-          <h3 className="missing-times__title">
-            Crews Missing Times
-          </h3>
+          <h3 className="missing-times__title">Crews Missing Times</h3>
           <div className="missing-times__stats">
             <span className="missing-times__stat missing-times__stat--total">
               Total Missing: {missingTimesData.summary.total_crews_missing_times}
@@ -341,7 +311,7 @@ export default function MissingTimesTable({ onDataChanged }: MissingTimesTablePr
             </span>
           </div>
         </div>
-        
+
         <div className="missing-times__controls">
           <div className="missing-times__filter-group">
             <FormSelect
@@ -350,14 +320,14 @@ export default function MissingTimesTable({ onDataChanged }: MissingTimesTablePr
               fieldName={""}
               title={""}
               selectOptions={[
-                {label: 'All missing', value: 'all'},
-                {label: 'Start only', value: 'start_only'},
-                {label: 'Finish only', value: 'finish_only'},
-                {label: 'Both', value: 'both'},
-              ]} 
+                { label: "All missing", value: "all" },
+                { label: "Start only", value: "start_only" },
+                { label: "Finish only", value: "finish_only" },
+                { label: "Both", value: "both" }
+              ]}
             />
           </div>
-          
+
           <div className="missing-times__search-wrapper">
             <SearchInput
               value={globalFilter}
@@ -372,12 +342,8 @@ export default function MissingTimesTable({ onDataChanged }: MissingTimesTablePr
       {/* Table */}
       <div className="missing-times__table-container">
         <table className="missing-times__table">
-          <TableHeader 
-            headerGroups={table.getHeaderGroups()}
-          />
-          <TableBody 
-            rows={table.getRowModel().rows}
-          />
+          <TableHeader headerGroups={table.getHeaderGroups()} />
+          <TableBody rows={table.getRowModel().rows} />
         </table>
       </div>
 
@@ -386,13 +352,11 @@ export default function MissingTimesTable({ onDataChanged }: MissingTimesTablePr
         <div className="missing-times__results-info">
           <p className="missing-times__results-text">
             Showing {displayedRows} of {filteredRows} crews
-            {globalFilter && filteredRows !== totalRows && (
-              <span> (filtered from {totalRows} total)</span>
-            )}
+            {globalFilter && filteredRows !== totalRows && <span> (filtered from {totalRows} total)</span>}
           </p>
         </div>
 
-        <TablePagination 
+        <TablePagination
           table={table}
           className="missing-times__pagination"
           showRowInfo={false}

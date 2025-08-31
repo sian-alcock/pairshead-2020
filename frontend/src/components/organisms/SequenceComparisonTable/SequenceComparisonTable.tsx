@@ -12,7 +12,7 @@ import {
   PaginationState,
   createColumnHelper,
   SortingState,
-  ColumnFiltersState,
+  ColumnFiltersState
 } from "@tanstack/react-table";
 import axios, { AxiosResponse } from "axios";
 import { TableHeader } from "../../molecules/TableHeader/TableHeader";
@@ -65,12 +65,15 @@ interface SequenceComparisonRow {
 interface SequenceComparisonData {
   tap: string;
   races: Record<number, RaceInfo>;
-  race_coverage: Record<number, {
-    crews_count: number;
-    unassigned_count: number;
-    total_sequences: number;
-    coverage_percentage: number;
-  }>;
+  race_coverage: Record<
+    number,
+    {
+      crews_count: number;
+      unassigned_count: number;
+      total_sequences: number;
+      coverage_percentage: number;
+    }
+  >;
   comparison_data: SequenceComparisonRow[];
   unassigned_data: SequenceComparisonRow[];
   total_crews: number;
@@ -86,15 +89,15 @@ interface SequenceComparisonData {
 }
 
 interface SequenceComparisonTableProps {
-  tap: 'Start' | 'Finish';
+  tap: "Start" | "Finish";
   onDataChanged?: () => void;
 }
 
 // API function
 const fetchSequenceComparison = async (tap: string): Promise<SequenceComparisonData> => {
   const params = new URLSearchParams();
-  params.append('tap', tap);
-  
+  params.append("tap", tap);
+
   const response: AxiosResponse = await axios.get(`/api/race-sequence-comparison/?${params.toString()}`);
   return response.data;
 };
@@ -102,29 +105,26 @@ const fetchSequenceComparison = async (tap: string): Promise<SequenceComparisonD
 // Custom filter functions
 const agreementFilterFn = (row: any, columnId: string, filterValue: string) => {
   const cellValue = row.getValue(columnId);
-  if (filterValue === 'all') return true;
-  if (filterValue === 'agree') return cellValue === true;
-  if (filterValue === 'disagree') return cellValue === false;
-  if (filterValue === 'unassigned') return cellValue === null;
+  if (filterValue === "all") return true;
+  if (filterValue === "agree") return cellValue === true;
+  if (filterValue === "disagree") return cellValue === false;
+  if (filterValue === "unassigned") return cellValue === null;
   return true;
 };
 
-export default function SequenceComparisonTable({ 
-  tap, 
-  onDataChanged 
-}: SequenceComparisonTableProps) {
+export default function SequenceComparisonTable({ tap, onDataChanged }: SequenceComparisonTableProps) {
   const queryClient = useQueryClient();
   const columnHelper = createColumnHelper<SequenceComparisonRow>();
 
   // Component state
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 25,
+    pageSize: 25
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState<string>('');
-  const [agreementFilter, setAgreementFilter] = useState<string>('all');
+  const [globalFilter, setGlobalFilter] = useState<string>("");
+  const [agreementFilter, setAgreementFilter] = useState<string>("all");
   const [showUnassigned, setShowUnassigned] = useState<boolean>(true);
 
   // Data fetching
@@ -132,7 +132,7 @@ export default function SequenceComparisonTable({
     data: comparisonData,
     isLoading,
     error,
-    refetch,
+    refetch
   } = useQuery({
     queryKey: ["sequenceComparison", tap],
     queryFn: () => {
@@ -140,19 +140,19 @@ export default function SequenceComparisonTable({
       return fetchSequenceComparison(tap);
     },
     staleTime: 2 * 60 * 1000, // 2 minutes
-    retry: 3,
+    retry: 3
   });
 
   // Combine crew data and unassigned data
   const tableData = useMemo(() => {
     if (!comparisonData) return [];
-    
+
     let data = [...comparisonData.comparison_data];
-    
+
     if (showUnassigned) {
       data = [...data, ...comparisonData.unassigned_data];
     }
-    
+
     return data;
   }, [comparisonData, showUnassigned]);
 
@@ -178,7 +178,10 @@ export default function SequenceComparisonTable({
           return (
             <div className="sequence-comparison__crew-info">
               <div className="sequence-comparison__crew-name">
-                <Link to={`/generate-results/crew-management-dashboard/${crew.id}/edit`} className="sequence-comparison__cell sequence-comparison__cell--id">
+                <Link
+                  to={`/crew-management-dashboard/${crew.id}/edit`}
+                  className="sequence-comparison__cell sequence-comparison__cell--id"
+                >
                   {crew.competitor_names || crew.name}
                 </Link>
               </div>
@@ -189,33 +192,31 @@ export default function SequenceComparisonTable({
           );
         },
         enableSorting: true,
-        size: 250,
+        size: 250
       }),
-      
+
       // Agreement column
       columnHelper.accessor("sequences_agree", {
         header: "Agreement",
         cell: (info) => {
           const agrees = info.getValue();
           if (agrees === null) {
-            return (
-              <span className="sequence-comparison__cell sequence-comparison__cell--na">
-                N/A
-              </span>
-            );
+            return <span className="sequence-comparison__cell sequence-comparison__cell--na">N/A</span>;
           }
           return (
-            <span className={`sequence-comparison__cell sequence-comparison__cell--agreement ${
-              agrees ? 'sequence-comparison__cell--agree' : 'sequence-comparison__cell--disagree'
-            }`}>
+            <span
+              className={`sequence-comparison__cell sequence-comparison__cell--agreement ${
+                agrees ? "sequence-comparison__cell--agree" : "sequence-comparison__cell--disagree"
+              }`}
+            >
               {agrees ? <IconSuccess /> : <IconFail />}
             </span>
           );
         },
         enableSorting: true,
         filterFn: agreementFilterFn,
-        size: 120,
-      }),
+        size: 120
+      })
     ];
 
     // Add sequence columns for each race
@@ -231,7 +232,8 @@ export default function SequenceComparisonTable({
                 {raceInfo.name} ({raceInfo.race_id})
               </div>
               <div className="sequence-comparison__coverage">
-                {comparisonData.race_coverage[numericRaceId]?.crews_count || 0} crews, {comparisonData.race_coverage[numericRaceId]?.unassigned_count || 0} unassigned
+                {comparisonData.race_coverage[numericRaceId]?.crews_count || 0} crews,{" "}
+                {comparisonData.race_coverage[numericRaceId]?.unassigned_count || 0} unassigned
               </div>
             </div>
           ),
@@ -239,15 +241,11 @@ export default function SequenceComparisonTable({
             const row = info.row.original;
             const sequence = info.getValue();
             const raceTimeData = row.race_times[numericRaceId];
-            
+
             if (sequence === null || sequence === undefined) {
-              return (
-                <span className="sequence-comparison__cell sequence-comparison__cell--missing">
-                  Missing
-                </span>
-              );
+              return <span className="sequence-comparison__cell sequence-comparison__cell--missing">Missing</span>;
             }
-            
+
             // Handle multiple sequences (shouldn't normally happen but just in case)
             if (Array.isArray(sequence)) {
               return (
@@ -260,22 +258,25 @@ export default function SequenceComparisonTable({
                 </div>
               );
             }
-            
+
             return (
               <div className="sequence-comparison__sequence-info">
                 <div className="sequence-comparison__sequence-number">
-                  <Link to={`/generate-results/race-times/${raceTimeData?.id}/edit`} className="sequence-comparison__cell sequence-comparison__cell--id">{sequence}</Link>
+                  <Link
+                    to={`/race-times/${raceTimeData?.id}/edit`}
+                    className="sequence-comparison__cell sequence-comparison__cell--id"
+                  >
+                    {sequence}
+                  </Link>
                 </div>
                 {raceTimeData && (
-                  <div className="sequence-comparison__sequence-details">
-                    {formatTimes(raceTimeData.time_tap)}
-                  </div>
+                  <div className="sequence-comparison__sequence-details">{formatTimes(raceTimeData.time_tap)}</div>
                 )}
               </div>
             );
           },
           enableSorting: true,
-          size: 120,
+          size: 120
         })
       );
     });
@@ -286,8 +287,8 @@ export default function SequenceComparisonTable({
       columnHelper.group({
         id: "race_sequences",
         header: "Sequences by race",
-        columns: raceColumns,
-      }),
+        columns: raceColumns
+      })
     ];
 
     return groupedColumns;
@@ -310,19 +311,19 @@ export default function SequenceComparisonTable({
       pagination,
       sorting,
       columnFilters,
-      globalFilter,
+      globalFilter
     },
     initialState: {
       pagination: {
-        pageSize: 25,
+        pageSize: 25
       },
       sorting: [
         {
           id: "crew_info",
-          desc: false,
-        },
-      ],
-    },
+          desc: false
+        }
+      ]
+    }
   });
 
   // Refresh data handler
@@ -334,13 +335,10 @@ export default function SequenceComparisonTable({
   // Handle agreement filter change
   const handleAgreementFilterChange = (value: string) => {
     setAgreementFilter(value);
-    if (value === 'all') {
-      setColumnFilters(prev => prev.filter(f => f.id !== 'sequences_agree'));
+    if (value === "all") {
+      setColumnFilters((prev) => prev.filter((f) => f.id !== "sequences_agree"));
     } else {
-      setColumnFilters(prev => [
-        ...prev.filter(f => f.id !== 'sequences_agree'),
-        { id: 'sequences_agree', value }
-      ]);
+      setColumnFilters((prev) => [...prev.filter((f) => f.id !== "sequences_agree"), { id: "sequences_agree", value }]);
     }
   };
 
@@ -363,10 +361,7 @@ export default function SequenceComparisonTable({
         <div className="sequence-comparison__error-content">
           <h4>Error loading sequence comparison</h4>
           <p>Failed to load comparison data for {tap} times</p>
-          <button 
-            className="sequence-comparison__retry-button"
-            onClick={handleRefreshData}
-          >
+          <button className="sequence-comparison__retry-button" onClick={handleRefreshData}>
             Try Again
           </button>
         </div>
@@ -386,27 +381,28 @@ export default function SequenceComparisonTable({
     <div className="sequence-comparison">
       <div className="sequence-comparison__header">
         <div className="sequence-comparison__title-section">
-          <h3 className="sequence-comparison__title">
-            Sequence compare - {tap}
-          </h3>
+          <h3 className="sequence-comparison__title">Sequence compare - {tap}</h3>
           <div className="sequence-comparison__stats">
             <Stat statKey={"Total"} statValue={comparisonData.total_crews} />
-            <Stat statKey={"Agreements"} statValue={`${comparisonData.agreements} (${comparisonData.agreement_percentage}%)`} />
+            <Stat
+              statKey={"Agreements"}
+              statValue={`${comparisonData.agreements} (${comparisonData.agreement_percentage}%)`}
+            />
             <Stat statKey={"Disagreements"} statValue={comparisonData.disagreements} />
-            <Stat statKey={"Unassigned"} statValue={comparisonData.total_unassigned}/>
+            <Stat statKey={"Unassigned"} statValue={comparisonData.total_unassigned} />
           </div>
         </div>
-        
+
         <div className="sequence-comparison__controls">
           <div className="sequence-comparison__filter-group">
             <FormSelect
               value={agreementFilter}
               onChange={(e) => handleAgreementFilterChange(e.target.value)}
               selectOptions={[
-                { label: 'All', value: 'all' },
-                { label: 'Agreements only', value: 'agree' },
-                { label: 'Disagreements only', value: 'disagree' },
-                { label: 'Unassigned only', value: 'unassigned' }
+                { label: "All", value: "all" },
+                { label: "Agreements only", value: "agree" },
+                { label: "Disagreements only", value: "disagree" },
+                { label: "Unassigned only", value: "unassigned" }
               ]}
               fieldName={"filter_agreements"}
               title={"Filter by agreement"}
@@ -420,7 +416,7 @@ export default function SequenceComparisonTable({
               onChange={(e) => setShowUnassigned(e.target.checked)}
             />
           </div>
-          
+
           <div className="sequence-comparison__search-wrapper">
             <SearchInput
               value={globalFilter}
@@ -432,7 +428,7 @@ export default function SequenceComparisonTable({
         </div>
       </div>
 
-      <TablePagination 
+      <TablePagination
         table={table}
         className="sequence-comparison__pagination"
         showRowInfo={false}
@@ -440,12 +436,8 @@ export default function SequenceComparisonTable({
       />
       <div className="sequence-comparison__table-container">
         <table className="sequence-comparison__table">
-          <TableHeader 
-            headerGroups={table.getHeaderGroups()}
-          />
-          <TableBody 
-            rows={table.getRowModel().rows}
-          />
+          <TableHeader headerGroups={table.getHeaderGroups()} />
+          <TableBody rows={table.getRowModel().rows} />
         </table>
       </div>
 
@@ -453,13 +445,11 @@ export default function SequenceComparisonTable({
         <div className="sequence-comparison__results-info">
           <p className="sequence-comparison__results-text">
             Showing {displayedRows} of {filteredRows} entries
-            {globalFilter && filteredRows !== totalRows && (
-              <span> (filtered from {totalRows} total)</span>
-            )}
+            {globalFilter && filteredRows !== totalRows && <span> (filtered from {totalRows} total)</span>}
           </p>
         </div>
 
-        <TablePagination 
+        <TablePagination
           table={table}
           className="sequence-comparison__pagination"
           showRowInfo={false}

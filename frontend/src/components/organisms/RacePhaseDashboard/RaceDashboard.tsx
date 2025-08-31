@@ -34,7 +34,7 @@ export default function RaceDashboard() {
           icon={"flag"}
           description={"Set up race (or races) and import race times."}
         >
-          <TextButton pathName="/generate-results/manage-race-times" label="Manage race times" />
+          <TextButton pathName="/manage-race-times" label="Manage race times" />
         </ActionCard>
 
         <ActionCard
@@ -42,23 +42,23 @@ export default function RaceDashboard() {
           icon={"warning"}
           description="Import penalties - time only, did not start, did not finish and disqualified."
         >
-          <TextButton pathName="/generate-results/manage-penalties" label={"Manage penalties"} />
+          <TextButton pathName="/manage-penalties" label={"Manage penalties"} />
         </ActionCard>
         <ActionCard
           title="Add original event categories"
           icon={"category"}
           description="The original event category is essential for masters crews to calculate the handicaps"
         >
-          <TextButton pathName="/generate-results/manage-original-event-categories" label={"Original categories"} />
+          <TextButton pathName="/manage-original-event-categories" label={"Original categories"} />
         </ActionCard>
         <ActionCard title="Inspect crews and results" icon={"search"} description="Review crew data and race times">
-          <TextButton pathName="/generate-results/crew-management-dashboard" label={"Inspect crew data"} />
+          <TextButton pathName="/crew-management-dashboard" label={"Inspect crew data"} />
         </ActionCard>
         <ActionCard title="Final results" icon={"success"} description="Final results">
-          <TextButton pathName="/generate-results/results" label={"Results"} />
+          <TextButton pathName="/results" label={"Results"} />
         </ActionCard>
         <ActionCard title="Reports and data exports" icon={"report"} description="Final results">
-          <TextButton pathName="/generate-results/export" label={"Reports and exports"} />
+          <TextButton pathName="/export" label={"Reports and exports"} />
         </ActionCard>
       </div>
     </div>
