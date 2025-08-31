@@ -15,7 +15,7 @@ module.exports = (env, argv) => {
       filename: isDevelopment ? "[name].js" : "[name].[contenthash].js",
       chunkFilename: isDevelopment ? "[name].chunk.js" : "[name].[contenthash].chunk.js",
       path: path.resolve(__dirname, "frontend/dist"),
-      publicPath: "/assets/",
+      publicPath: isDevelopment ? "/" : "/assets/",
       clean: true
     },
     resolve: {
