@@ -10,10 +10,23 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # First, drop any problematic indexes
+        # Drop any problematic indexes first
         migrations.RunSQL(
-            "DROP INDEX IF EXISTS results_race_id_varchar_idx;",
-            reverse_sql="-- No reverse needed"
+            """
+            DO $$ 
+            BEGIN
+                -- Drop indexes that might have varchar_pattern_ops on the id field
+                IF EXISTS (SELECT 1 FROM pg_indexes WHERE indexname LIKE '%race%id%') THEN
+                    EXECUTE 'DROP INDEX CONCURRENTLY IF EXISTS ' || (
+                        SELECT indexname FROM pg_indexes 
+                        WHERE tablename = 'results_race' 
+                        AND indexdef LIKE '%varchar_pattern_ops%'
+                        LIMIT 1
+                    );
+                END IF;
+            END $$;
+            """,
+            reverse_sql="-- No reverse needed",
         ),
         
         migrations.AddField(
@@ -26,11 +39,5 @@ class Migration(migrations.Migration):
             model_name='race',
             name='id',
             field=models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
-        ),
-        
-        # Recreate proper indexes if needed
-        migrations.RunSQL(
-            "CREATE INDEX IF NOT EXISTS results_race_race_id_idx ON results_race (race_id);",
-            reverse_sql="DROP INDEX IF EXISTS results_race_race_id_idx;"
         ),
     ]
