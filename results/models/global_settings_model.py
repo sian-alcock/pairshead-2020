@@ -11,7 +11,7 @@ class GlobalSettings(models.Model):
     ]
 
     race_mode = models.CharField(
-        default='race',
+        default='SETUP',
         choices=MODE_CHOICES,
         max_length=10
     )
