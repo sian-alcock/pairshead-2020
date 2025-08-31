@@ -5,9 +5,9 @@ import { RaceProps } from "../../../types/components.types";
 import TextButton from "../../atoms/TextButton/TextButton";
 import { useHistory, useParams } from "react-router-dom";
 import Hero from "../Hero/Hero";
-import "./RaceTimesManagerDetail.scss";
 import { FormInput } from "../../atoms/FormInput/FormInput";
 import Checkbox from "../../atoms/Checkbox/Checkbox";
+import "./raceTimesManagerDetail.scss";
 
 type RaceTimesManagerParams = {
   id: string;
