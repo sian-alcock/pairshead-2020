@@ -14,10 +14,8 @@ module.exports = (env, argv) => {
     output: {
       filename: isDevelopment ? "[name].js" : "[name].[contenthash].js",
       chunkFilename: isDevelopment ? "[name].chunk.js" : "[name].[contenthash].chunk.js",
-      // FIXED: Output to Django's static directory
-      path: path.resolve(__dirname, "static/js"),
-      // FIXED: Public path should match Django's STATIC_URL
-      publicPath: "/static/js/",
+      path: path.resolve(__dirname, "frontend/dist"),
+      publicPath: "/",
       clean: true
     },
     resolve: {
@@ -87,8 +85,7 @@ module.exports = (env, argv) => {
 
       new HtmlWebpackPlugin({
         template: "src/index.html",
-        // FIXED: Output HTML to Django templates directory
-        filename: "../templates/index.html",
+        filename: "index.html",
         inject: "body",
         minify: isDevelopment
           ? false
