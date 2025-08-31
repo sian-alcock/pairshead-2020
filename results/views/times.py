@@ -65,7 +65,10 @@ class RaceTimeDetailView(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)
-        Crew.update_all_computed_properties()
+        try:
+            Crew.update_all_computed_properties()
+        except Exception:
+            pass
         return Response(serializer.errors, status=422)
 
     
@@ -105,7 +108,10 @@ class RaceTimeDetailView(APIView):
                         race_time.save()
                     
                     # Update computed properties after the assignment
-                    Crew.update_all_computed_properties()
+                    try:
+                        Crew.update_all_computed_properties()
+                    except Exception:
+                        pass
                     
                     # Return the updated race time data
                     serializer = RaceTimesSerializer(race_time)
@@ -126,7 +132,10 @@ class RaceTimeDetailView(APIView):
             serializer = RaceTimesSerializer(race_time, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
-                Crew.update_all_computed_properties()
+                try:
+                    Crew.update_all_computed_properties()
+                except Exception:
+                    pass
                 return Response(serializer.data, status=200)
             return Response(serializer.errors, status=422)
 
@@ -135,7 +144,10 @@ class RaceTimeDetailView(APIView):
         race_time = self.get_race_time(pk)
         race_time = RaceTime.objects.get(pk=pk)
         race_time.delete()
-        Crew.update_all_computed_properties()
+        try:
+            Crew.update_all_computed_properties()
+        except Exception:
+            pass
         return Response(status=204)
 
 
@@ -178,7 +190,10 @@ class ImportRaceTimes(APIView):
 
         serializer = WriteRaceTimesSerializer(race_times, many=True)
 
-        Crew.update_all_computed_properties()
+        try:
+            Crew.update_all_computed_properties()
+        except Exception:
+            pass
 
         return Response(serializer.data)
 
@@ -220,7 +235,10 @@ class ImportTimesWebscorer(APIView):
 
             serializer = RaceTimesSerializer(race_times, many=True)
 
-            Crew.update_all_computed_properties()
+            try:
+                Crew.update_all_computed_properties()
+            except Exception:
+                pass
 
             return Response(serializer.data)
         

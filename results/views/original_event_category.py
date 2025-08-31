@@ -48,7 +48,10 @@ class OriginalEventCategoryImport(APIView):
 
         event_categories = OriginalEventCategory.objects.all()
         serializer = ImportOriginalEventSerializer(event_categories, many=True)
-        Crew.update_all_computed_properties()
+            try:
+                Crew.update_all_computed_properties()
+            except Exception:
+                pass
 
         return Response({
             "status": "success",

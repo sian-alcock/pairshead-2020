@@ -21,9 +21,15 @@ from ..models import Race, Crew
 class RaceListView(generics.ListCreateAPIView):
     queryset = Race.objects.all()
     serializer_class = RaceSerializer
-    Crew.update_all_computed_properties()
+    try:
+        Crew.update_all_computed_properties()
+    except Exception:
+        pass
 
 class RaceDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Race.objects.all()
     serializer_class = RaceSerializer
-    Crew.update_all_computed_properties()
+    try:
+        Crew.update_all_computed_properties()
+    except Exception:
+        pass
