@@ -18,7 +18,7 @@ export default function CrewLabels() {
 
       const responseData = response.data;
 
-      setCrews(responseData.results);
+      setCrews(responseData);
     } catch (error) {
       console.error(error);
     }

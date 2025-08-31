@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from ..serializers import WriteEventOrderSerializer
-from ..models import EventOrder
+from ..models import EventOrder, Crew
 
 class EventOrderImport(APIView):
 
@@ -29,5 +29,7 @@ class EventOrderImport(APIView):
         event_orders = EventOrder.objects.all()
 
         serializer = WriteEventOrderSerializer(event_orders, many=True)
+
+        Crew.update_start_order_calcs()
 
         return Response(serializer.data)

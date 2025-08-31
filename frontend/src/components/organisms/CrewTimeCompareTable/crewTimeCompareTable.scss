@@ -1,0 +1,43 @@
+@import '../../../style.scss';
+@import '../../../lib.scss';
+
+.crew-time-compare {
+  &__table-container {
+    overflow-x: auto;
+  }
+
+  &__table {
+    @include table;
+  }
+
+  &__control-wrapper {
+    @include grid(4);
+    margin-bottom: 1.5rem;
+  }
+
+  &__tag {
+    border-radius: 0.25rem;
+    padding: 0.175rem 0.25rem;
+    border: 1px solid $bblGrey;
+    min-width: 40px;
+
+    &--red {
+      color: $red;
+      background-color: $red-tint;
+      border-color: $red;
+    }
+
+    &--amber {
+      color: $amber;
+      background-color: $amber-tint;
+      border-color: $amber;
+    }
+
+    &--green {
+      color: $green;
+      background-color: $green-tint;
+      border-color: $green;
+    }
+  }
+}
+

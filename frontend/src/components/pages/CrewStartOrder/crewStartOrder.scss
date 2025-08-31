@@ -1,0 +1,11 @@
+@import "../../../style.scss";
+
+.crew-start-order {
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+}

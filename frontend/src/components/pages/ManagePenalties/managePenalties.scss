@@ -1,0 +1,17 @@
+@import "../../../style.scss";
+
+.manage-penalties {
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}

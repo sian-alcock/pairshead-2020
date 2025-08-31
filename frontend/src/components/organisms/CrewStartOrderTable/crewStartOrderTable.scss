@@ -1,0 +1,103 @@
+@import "../../../style.scss";
+
+.crew-start-order-table {
+  &__title {
+    margin-bottom: 1.5rem;
+    @include h3;
+  }
+
+  &__table-container {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+
+  &__table {
+    @include table;
+  }
+
+  &__controls {
+    @include tablet {
+      @include grid(2);
+    }
+
+    @include laptop {
+      @include grid(4);
+    }
+  }
+
+  // Add these styles to your existing crewStartOrderTable.scss file
+
+  &__header {
+    margin-bottom: 1rem;
+  }
+
+  &__alert {
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+
+    &--warning {
+      background-color: #fef3c7;
+      border: 1px solid #f59e0b;
+      color: #92400e;
+    }
+
+    &--success {
+      background-color: #d1fae5;
+      border: 1px solid #10b981;
+      color: #065f46;
+    }
+  }
+
+  &__duplicate-detail {
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    padding-left: 1rem;
+  }
+
+  &__spinner {
+    &--small {
+      width: 1rem;
+      height: 1rem;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  &__cell {
+    &--duplicate {
+      background-color: #fef3c7 !important;
+      color: #92400e;
+      font-weight: 600;
+    }
+
+    &--calculated-start-order {
+      position: relative;
+    }
+
+    &--no-duplicate {
+      color: #059669;
+      font-size: 1.1rem;
+    }
+
+    &--has-duplicate {
+      color: #dc2626;
+      font-size: 0.9rem;
+      cursor: help;
+      font-weight: 600;
+    }
+  }
+
+  &__duplicate-indicator {
+    margin-left: 0.25rem;
+    font-size: 0.75rem;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

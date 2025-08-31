@@ -1,0 +1,84 @@
+@import '../../../style.scss';
+@import '../../../lib.scss';
+
+.results-comparison {
+
+  &__title {
+    margin-bottom: 1.5rem;
+
+    @include h3;
+  }
+
+  &__description {
+    @include body;
+  }
+
+  &__actions {
+    margin-bottom: 1.5rem;
+  }
+
+  &__loading,
+  &__error {
+    padding: 2rem;
+    text-align: center;
+    border-radius: 0.5rem;
+  }
+
+  &__loading {
+    background-color: $grey-tint;
+    color: $bblGrey;
+  }
+
+  &__error {
+    background-color: $red-tint;
+    color: $red;
+  }
+
+  &__selectors {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  &__comparison-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+
+    @include form;
+  }
+
+  &__icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+    width: 2rem;
+    height: 2rem;
+
+    &--success {
+      background-color: $green-mid;
+    }
+
+    &--fail {
+      background-color: $red-mid;
+    }
+  }
+}
+
+.results-table {
+  &__table {
+    @include table;
+  }
+
+  &__cell--comparison1,
+  &__header--comparison1 {
+    background-color: $blue-tint;
+  }
+
+  &__cell--comparison2,
+  &__header--comparison2 {
+    background-color: $green-tint;
+  }
+}

@@ -1,22 +1,41 @@
 import React, { ReactElement } from "react";
 
 export type IconType =
-  | 'chevron-down'
-  | 'chevron-right'
-  | 'arrow-right'
-  | 'arrow-right-large'
-  | 'hamburger'
-  | 'cross'
-  | 'slim-cross'
-  | 'arrow-left'
-  | 'search'
-  | 'arrow-down'
-  | 'home'
-  | 'rocket'
-  | 'menu'
-  | 'success'
-  | 'clock-spinner'
-  | 'warning';
+  | "category"
+  | "numbers"
+  | "report"
+  | "person"
+  | "flag"
+  | "warning-mark"
+  | "fail-cross"
+  | "success-tick"
+  | "save"
+  | "edit"
+  | "add"
+  | "sort"
+  | "sort-asc"
+  | "sort-desc"
+  | "file"
+  | "upload"
+  | "download"
+  | "chevron-down"
+  | "chevron-right"
+  | "arrow-right"
+  | "arrow-right-large"
+  | "hamburger"
+  | "cross"
+  | "slim-cross"
+  | "arrow-left"
+  | "search"
+  | "arrow-down"
+  | "home"
+  | "rocket"
+  | "menu"
+  | "success"
+  | "clock-spinner"
+  | "warning"
+  | "delete"
+  | "refresh";
 
 export type IconProps = {
   icon: IconType;
@@ -24,21 +43,256 @@ export type IconProps = {
   ariaHidden?: boolean;
 };
 
-export default function Icon({
-  icon,
-  ariaHidden = false
-}: IconProps): ReactElement {
+export default function Icon({ icon, ariaHidden = false }: IconProps): ReactElement {
   switch (icon) {
+    case "category":
+      return (
+        <svg
+          className="icon__category"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="#1f1f1f"
+        >
+          <path d="m260-520 220-360 220 360H260ZM700-80q-75 0-127.5-52.5T520-260q0-75 52.5-127.5T700-440q75 0 127.5 52.5T880-260q0 75-52.5 127.5T700-80Zm-580-20v-320h320v320H120Zm580-60q42 0 71-29t29-71q0-42-29-71t-71-29q-42 0-71 29t-29 71q0 42 29 71t71 29Zm-500-20h160v-160H200v160Zm202-420h156l-78-126-78 126Zm78 0ZM360-340Zm340 80Z" />
+        </svg>
+      );
+    case "numbers":
+      return (
+        <svg
+          className="icon__numbers"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="#1f1f1f"
+        >
+          <path d="M220-360v-180h-60v-60h120v240h-60Zm140 0v-100q0-17 11.5-28.5T400-500h80v-40H360v-60h140q17 0 28.5 11.5T540-560v60q0 17-11.5 28.5T500-460h-80v40h120v60H360Zm240 0v-60h120v-40h-80v-40h80v-40H600v-60h140q17 0 28.5 11.5T780-560v160q0 17-11.5 28.5T740-360H600Z" />
+        </svg>
+      );
+    case "report":
+      return (
+        <svg
+          className="icon__report"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="#1f1f1f"
+        >
+          <path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h168q13-36 43.5-58t68.5-22q38 0 68.5 22t43.5 58h168q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm80-80h280v-80H280v80Zm0-160h400v-80H280v80Zm0-160h400v-80H280v80Zm200-190q13 0 21.5-8.5T510-820q0-13-8.5-21.5T480-850q-13 0-21.5 8.5T450-820q0 13 8.5 21.5T480-790ZM200-200v-560 560Z" />
+        </svg>
+      );
+    case "person":
+      return (
+        <svg
+          className="icon__person"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="#1f1f1f"
+        >
+          <path d="M480-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47ZM160-160v-112q0-34 17.5-62.5T224-378q62-31 126-46.5T480-440q66 0 130 15.5T736-378q29 15 46.5 43.5T800-272v112H160Zm80-80h480v-32q0-11-5.5-20T700-306q-54-27-109-40.5T480-360q-56 0-111 13.5T260-306q-9 5-14.5 14t-5.5 20v32Zm240-320q33 0 56.5-23.5T560-640q0-33-23.5-56.5T480-720q-33 0-56.5 23.5T400-640q0 33 23.5 56.5T480-560Zm0-80Zm0 400Z" />
+        </svg>
+      );
+    case "flag":
+      return (
+        <svg
+          className="icon__flag"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path d="M360-720h80v-80h-80v80Zm160 0v-80h80v80h-80ZM360-400v-80h80v80h-80Zm320-160v-80h80v80h-80Zm0 160v-80h80v80h-80Zm-160 0v-80h80v80h-80Zm160-320v-80h80v80h-80Zm-240 80v-80h80v80h-80ZM200-160v-640h80v80h80v80h-80v80h80v80h-80v320h-80Zm400-320v-80h80v80h-80Zm-160 0v-80h80v80h-80Zm-80-80v-80h80v80h-80Zm160 0v-80h80v80h-80Zm80-80v-80h80v80h-80Z" />
+        </svg>
+      );
+    case "warning-mark":
+      return (
+        <svg
+          className="icon__warning-mark"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path d="M440-400v-360h80v360h-80Zm0 200v-80h80v80h-80Z" />
+        </svg>
+      );
+    case "fail-cross":
+      return (
+        <svg
+          className="icon__fail-cross"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+        </svg>
+      );
+    case "success-tick":
+      return (
+        <svg
+          className="icon__success-tick"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z" />
+        </svg>
+      );
+    case "save":
+      return (
+        <svg
+          className="icon__save"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path d="M840-680v480q0 33-23.5 56.5T760-120H200q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h480l160 160Zm-80 34L646-760H200v560h560v-446ZM480-240q50 0 85-35t35-85q0-50-35-85t-85-35q-50 0-85 35t-35 85q0 50 35 85t85 35ZM240-560h360v-160H240v160Zm-40-86v446-560 114Z" />
+        </svg>
+      );
+    case "edit":
+      return (
+        <svg
+          className="icon__edit"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z" />
+        </svg>
+      );
+    case "add":
+      return (
+        <svg
+          className="icon__plus"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+        </svg>
+      );
+    case "sort":
+      return (
+        <svg
+          className="icon__sort"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path d="M440-80v-168l-64 64-56-56 160-160 160 160-56 56-64-64v168h-80ZM160-440v-80h640v80H160Zm320-120L320-720l56-56 64 64v-168h80v168l64-64 56 56-160 160Z" />
+        </svg>
+      );
+    case "sort-asc":
+      return (
+        <svg
+          className="icon__sort-asc"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path d="M440-240v-368L296-464l-56-56 240-240 240 240-56 56-144-144v368h-80Z" />
+        </svg>
+      );
+    case "sort-desc":
+      return (
+        <svg
+          className="icon__sort-desc"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path d="M480-240 240-480l56-56 144 144v-368h80v368l144-144 56 56-240 240Z" />
+        </svg>
+      );
+    case "file":
+      return (
+        <svg
+          className="icon__file"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path d="M320-240h320v-80H320v80Zm0-160h320v-80H320v80ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v480q0 33-23.5 56.5T720-80H240Zm280-520v-200H240v640h480v-440H520ZM240-800v200-200 640-640Z" />
+        </svg>
+      );
+    case "upload":
+      return (
+        <svg
+          className="icon__upload"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path d="M440-320v-326L336-542l-56-58 200-200 200 200-56 58-104-104v326h-80ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
+        </svg>
+      );
+    case "download":
+      return (
+        <svg
+          className="icon__download"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="#currentColor"
+        >
+          <path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
+        </svg>
+      );
     case "chevron-down":
       return (
         <svg
           className="icon__chevron-down"
+          aria-hidden={ariaHidden}
           width="24"
           height="24"
           viewBox="0 0 48 48"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          aria-hidden={ariaHidden}
         >
           <path d="M36 18L24 30L12 18" stroke="currentColor" strokeWidth="2" />
         </svg>
@@ -70,7 +324,7 @@ export default function Icon({
           xmlns="http://www.w3.org/2000/svg"
           aria-hidden={ariaHidden}
         >
-          <path d="M0.999999 1L9 9L1 17" stroke="black" strokeWidth="1.5" />
+          <path d="M0.999999 1L9 9L1 17" stroke="currentColor" strokeWidth="1.5" />
         </svg>
       );
     case "hamburger":
@@ -115,6 +369,7 @@ export default function Icon({
       return (
         <svg
           className="icon__arrow-left"
+          aria-hidden={ariaHidden}
           width="14"
           height="12"
           viewBox="0 0 14 12"
@@ -128,20 +383,15 @@ export default function Icon({
     case "search":
       return (
         <svg
-          className="icon__search"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
+          className="icon__arrow-left"
           aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
         >
-          <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M12 16.5C9.51472 16.5 7.5 14.4853 7.5 12C7.5 9.51472 9.51472 7.5 12 7.5C14.4853 7.5 16.5 9.51472 16.5 12C16.5 14.4853 14.4853 16.5 12 16.5ZM12 18C8.68629 18 6 15.3137 6 12C6 8.68629 8.68629 6 12 6C15.3137 6 18 8.68629 18 12C18 13.3865 17.5297 14.6632 16.7399 15.6792L18.5303 17.4696L17.4697 18.5303L15.6792 16.7399C14.6632 17.5297 13.3865 18 12 18Z"
-            fill="currentColor"
-          />
+          <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
         </svg>
       );
     case "arrow-down":
@@ -230,45 +480,92 @@ export default function Icon({
           <path fillRule="evenodd" clipRule="evenodd" d="M0 1.5H12V0H0V1.5ZM0 6H8V4.5H0V6Z" fill="currentColor" />
         </svg>
       );
-      case "success":
-        return (
-          <svg
-            className="icon__success"
-            aria-hidden={ariaHidden}
-            width="24"
-            height="28"
-            viewBox="0 0 24 28"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <rect y="2" width="24" height="24" rx="12" fill="#3AAA35" />
-            <path d="M17.3327 10L9.99935 17.3333L6.66602 14" stroke="#F7F7F7" strokeWidth="2" strokeLinecap="square" />
-          </svg>
-        );
-      case "warning":
-        return (
-          <svg
+    case "success":
+      return (
+        <svg
+          className="icon__success"
+          aria-hidden={ariaHidden}
+          width="24"
+          height="28"
+          viewBox="0 0 24 28"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <rect y="2" width="24" height="24" rx="12" fill="#3AAA35" />
+          <path d="M17.3327 10L9.99935 17.3333L6.66602 14" stroke="#F7F7F7" strokeWidth="2" strokeLinecap="square" />
+        </svg>
+      );
+    case "warning":
+      return (
+        <svg
           className="icon__warning"
           aria-hidden={ariaHidden}
-            width="26"
-            height="28"
-            viewBox="0 0 26 28"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M14.7598 4.2589C14.004 2.8593 11.996 2.85931 11.2402 4.25891L1.09316 23.0497C0.373594 24.3822 1.33857 26 2.85297 26H23.147C24.6614 26 25.6264 24.3822 24.9068 23.0497L14.7598 4.2589Z"
-              fill="#E30513"
+          width="26"
+          height="28"
+          viewBox="0 0 26 28"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M14.7598 4.2589C14.004 2.8593 11.996 2.85931 11.2402 4.25891L1.09316 23.0497C0.373594 24.3822 1.33857 26 2.85297 26H23.147C24.6614 26 25.6264 24.3822 24.9068 23.0497L14.7598 4.2589Z"
+            fill="#E30513"
+          />
+          <path fillRule="evenodd" clipRule="evenodd" d="M12 11V19H14V11H12ZM12 21V23H14V21H12Z" fill="#F7F7F7" />
+        </svg>
+      );
+
+    case "clock-spinner":
+      return (
+        <svg className="icon__spinner" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,20a9,9,0,1,1,9-9A9,9,0,0,1,12,21Z" />
+          <rect x="11" y="6" rx="1" width="2" height="7">
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              dur="9s"
+              values="0 12 12;360 12 12"
+              repeatCount="indefinite"
             />
-            <path fillRule="evenodd" clipRule="evenodd" d="M12 11V19H14V11H12ZM12 21V23H14V21H12Z" fill="#F7F7F7" />
-          </svg>
-        );
-
-        case "clock-spinner":
-          return (
-            <svg className="icon__spinner" width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12,1A11,11,0,1,0,23,12,11,11,0,0,0,12,1Zm0,20a9,9,0,1,1,9-9A9,9,0,0,1,12,21Z"/><rect x="11" y="6" rx="1" width="2" height="7"><animateTransform attributeName="transform" type="rotate" dur="9s" values="0 12 12;360 12 12" repeatCount="indefinite"/></rect><rect x="11" y="11" rx="1" width="2" height="9"><animateTransform attributeName="transform" type="rotate" dur="0.75s" values="0 12 12;360 12 12" repeatCount="indefinite"/></rect></svg>
-          )
-
+          </rect>
+          <rect x="11" y="11" rx="1" width="2" height="9">
+            <animateTransform
+              attributeName="transform"
+              type="rotate"
+              dur="0.75s"
+              values="0 12 12;360 12 12"
+              repeatCount="indefinite"
+            />
+          </rect>
+        </svg>
+      );
+    case "delete":
+      return (
+        <svg
+          className="icon__delete"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z" />
+        </svg>
+      );
+    case "refresh":
+      return (
+        <svg
+          className="icon__delete"
+          aria-hidden={ariaHidden}
+          xmlns="http://www.w3.org/2000/svg"
+          height="24px"
+          viewBox="0 -960 960 960"
+          width="24px"
+          fill="currentColor"
+        >
+          <path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z" />
+        </svg>
+      );
     default:
       return <></>;
   }

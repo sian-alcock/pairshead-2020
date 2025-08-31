@@ -1,0 +1,62 @@
+@import '../../../style.scss';
+.race-times-manager {
+  &__form {
+    margin-bottom: 1.5rem;
+  }
+  &__table {
+    margin-bottom: 1.5rem;
+    @include table;
+  }
+
+  &__expand {
+    height: 100%;
+    width: 0.5rem;
+    padding: 0.25rem 0;
+    transition: transform 0.3s ease-in-out;
+
+    svg {
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+
+    &.open {
+      display: block;
+      transform: rotate(90deg);
+    }
+  }
+
+  &__button-wrapper {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .td-center {
+    text-align: center;
+
+    input[type='radio'] {
+      display: inline-block;
+      margin-top: .25rem;
+    }
+  }
+
+  .icon-button {
+    display: inline-flex;
+  }
+
+  .spinning {
+    svg {
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+}
+

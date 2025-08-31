@@ -1,0 +1,195 @@
+@import "../../../style.scss";
+
+.masters-crews {
+  &__title {
+    margin-bottom: 1.5rem;
+    @include h3;
+  }
+
+  &__title-section {
+    @include laptop {
+      @include grid(2);
+    }
+  }
+
+  &__table-container {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+  }
+
+  &__table {
+    width: 100%;
+
+    @include table;
+  }
+
+  &__stats {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  &__controls {
+    @include tablet {
+      @include grid(2);
+    }
+
+    @include laptop {
+      @include grid(4);
+    }
+  }
+}
+
+// Add these styles to your mastersCrewsTable.scss file
+
+.masters-crews__warning {
+  margin-bottom: 24px;
+  border: 1px solid #fbbf24; // amber-400
+  border-radius: 8px;
+  background-color: #fef3c7; // amber-50
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.masters-crews__warning-content {
+  padding: 16px;
+}
+
+.masters-crews__warning-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.masters-crews__warning-icon {
+  font-size: 24px;
+  margin-right: 12px;
+}
+
+.masters-crews__warning-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #92400e; // amber-800
+}
+
+.masters-crews__warning-message {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  color: #78350f; // amber-900
+  line-height: 1.5;
+}
+
+.masters-crews__warning-details {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+}
+
+.masters-crews__warning-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+    gap: 24px;
+  }
+}
+
+.masters-crews__warning-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  @media (min-width: 640px) {
+    align-items: center;
+  }
+}
+
+.masters-crews__warning-stat-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #78350f; // amber-900
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.masters-crews__warning-stat-value {
+  font-size: 16px;
+  font-weight: 600;
+  color: #92400e; // amber-800
+}
+
+.masters-crews__warning-actions {
+  flex-shrink: 0;
+}
+
+.masters-crews__warning-button {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  background-color: #f59e0b; // amber-500
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #d97706; // amber-600
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+  }
+
+  &:active {
+    background-color: #b45309; // amber-700
+  }
+}
+
+// Responsive adjustments for smaller screens
+@media (max-width: 640px) {
+  .masters-crews__warning-content {
+    padding: 12px;
+  }
+
+  .masters-crews__warning-title {
+    font-size: 1rem;
+  }
+
+  .masters-crews__warning-message {
+    font-size: 13px;
+  }
+
+  .masters-crews__warning-stats {
+    gap: 12px;
+  }
+
+  .masters-crews__warning-stat {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background-color: rgba(251, 191, 36, 0.2);
+    border-radius: 4px;
+  }
+
+  .masters-crews__warning-button {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
+  }
+}

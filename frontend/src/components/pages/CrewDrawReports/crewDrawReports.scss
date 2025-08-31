@@ -26,6 +26,9 @@
   &__list {
     margin-bottom: 0.5rem;
     list-style-position: inside;
+    p {
+      margin-bottom: 0.5rem;
+    }
   }
 
   &__table-container {
@@ -35,6 +38,8 @@
   &__table {
     max-width: 100%;
     margin-left: 0;
+
+    @include table;
   }
 
   &__tabs {

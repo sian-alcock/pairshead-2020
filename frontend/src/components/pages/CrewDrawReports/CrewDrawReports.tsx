@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Hero from "../../organisms/Hero/Hero";
 import { lightweightHeadings, marshallHeadings, timingHeadings } from "./defaultProps"
-import { CrewProps } from "../../components.types";
+import { CrewProps } from "../../../types/components.types";
 
 import "./crewDrawReports.scss"
 import Header from "../../organisms/Header/Header";
@@ -28,32 +28,23 @@ interface ResponseDataProps {
 export default function CrewDrawReports() {
   const [crews, setCrews] = useState<CrewProps[]>([]);
   const [view, setView] = useState(sessionStorage.getItem('view') || 'marshall')
-  const [totalCrews, setTotalCrews] = useState(0);
+  // const [totalCrews, setTotalCrews] = useState(0);
 
-  const fetchData = async (url: string, params: ResponseParamsProps) => {
-    console.log(url);
-    console.log(params);
+  const fetchData = async (url: string) => {
     try {
-      const response: AxiosResponse = await axios.get(url, {
-        params: params
-      });
+      const response: AxiosResponse = await axios.get(url);
 
-      const responseData: ResponseDataProps = response.data;
+      const responseData: CrewProps[] = response.data;
 
-      setCrews(responseData.results);
-      setTotalCrews(responseData.count);
+      setCrews(responseData);
+      // setTotalCrews(responseData.count);
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    fetchData("/api/crews", {
-      page_size: "500",
-      page: 1,
-      order: "bib_number",
-      status: ["Accepted", "Scratched"]
-    });
+    fetchData("/api/crews");
   }, []);
 
   const changeView = (view: string) => {
@@ -89,9 +80,9 @@ export default function CrewDrawReports() {
             <h2 className="crew-draw-reports__title">Lightweight weigh in - checklist</h2>
             <h3 className="crew-draw-reports__subtitle">Instructions</h3>
             <ol className="crew-draw-reports__list">
-              <li>Check correct crew with British rowing ID or other photo Id</li>
-              <li>Update Weigh in column: Yes = on or under weight; No = Did not make weight; NS = Did not turn up</li>
-              <li>When complete, please take photo and send to Sarah Powell</li>
+              <li><p>Check correct crew with British rowing ID or other photo Id</p></li>
+              <li><p>Update Weigh in column: Yes = on or under weight; No = Did not make weight; NS = Did not turn up</p></li>
+              <li><p>When complete, please take photo and send to Sarah Powell</p></li>
             </ol>
             <h3 className="crew-draw-reports__subtitle">Open lightweight - 75kg</h3>
             <h3 className="crew-draw-reports__subtitle">Womens lightweight - 61.5kg</h3>

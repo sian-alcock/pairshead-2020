@@ -1,5 +1,7 @@
-from django.db import models
-from django.db.models import Min
+from django.db import models, transaction
+from django.db.models.signals import post_save, post_delete
+from django.db.models import Min, Avg
+from django.dispatch import receiver
 
 from .club_model import Club
 from .band_model import Band
@@ -9,6 +11,7 @@ from .event_order_model import EventOrder
 from .marshalling_division_model import MarshallingDivision
 from .number_location_model import NumberLocation
 from .global_settings_model import GlobalSettings
+from .race_model import Race, RaceTimingSync
 
 class Crew(models.Model):
     created = models.DateTimeField(auto_now_add=True, blank=True, null=True)
@@ -37,6 +40,10 @@ class Crew(models.Model):
     did_not_finish = models.BooleanField(default=False)
     disqualified = models.BooleanField(default=False)
     requires_recalculation = models.BooleanField(default=False)
+    race_id_start_override = models.ForeignKey(Race, related_name='crew_override_start',
+    on_delete=models.SET_NULL, blank=True, null=True)
+    race_id_finish_override = models.ForeignKey(Race, related_name='crew_override_finish',
+    on_delete=models.SET_NULL, blank=True, null=True)
 
     # The following fields are only populated to run the On the day contact report
     # Importing for the results will set these to null
@@ -47,8 +54,15 @@ class Crew(models.Model):
     submitting_administrator_email = models.CharField(max_length=50, blank=True, null=True)
 
 
-    # Calculated fields
+    # Calculated fields - start
+    draw_start_score = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=4)
+    calculated_start_order = models.IntegerField(blank=True, null=True)
+    
+    # Calculated fields - calculated on import
     event_band = models.CharField(max_length=40, null=True)
+    competitor_names = models.CharField(max_length=60, blank=True, null=True)
+
+    # Calculated fields - results (need updating when data changes)
     raw_time = models.IntegerField(blank=True, null=True)
     race_time = models.IntegerField(blank=True, null=True)
     published_time = models.IntegerField(blank=True, null=True)
@@ -59,78 +73,116 @@ class Crew(models.Model):
     category_position_time = models.IntegerField(blank=True, null=True)
     category_rank = models.IntegerField(blank=True, null=True)
     masters_adjustment = models.IntegerField(blank=True, null=True)
-    invalid_time = models.IntegerField(blank=True, null=True)
     start_sequence = models.IntegerField(blank=True, null=True)
     finish_sequence = models.IntegerField(blank=True, null=True)
-    draw_start_score = models.DecimalField(blank=True, null=True, max_digits=9, decimal_places=4)
-    calculated_start_order = models.IntegerField(blank=True, null=True)
-    competitor_names = models.CharField(max_length=60, blank=True, null=True)
-    crew_timing_offset = models.IntegerField(blank=True, null=True, default=0)
-
 
     def __str__(self):
         return self.name
-    
-    # Get offset if there is one
-    def save(self, *args, **kwargs):
-        self.crew_timing_offset = self.calc_crew_timing_offset()
-        super(Crew, self).save(*args, **kwargs)
-    
-    def calc_crew_timing_offset(self):
-        settings = GlobalSettings.objects.all()
-        for setting in settings:
-            setting.save()
 
-        if GlobalSettings.objects.filter(timing_offset__gt=0).exists():
-            offset_record = GlobalSettings.objects.filter(timing_offset__gt=0)[0]
-            if offset_record.timing_offset_positive:
-                offset = offset_record.timing_offset
-            else:
-                offset = 0 - offset_record.timing_offset
-        else: 
-            offset = 0
-
-        return offset
-        
-    # Event band
+    # Save calculated fields
     def save(self, *args, **kwargs):
+        """
+        Combined save method that calculates all computed fields
+        """
+        # Calculate all the computed fields
         self.event_band = self.calc_event_band()
-        super(Crew, self).save(*args, **kwargs)
     
+        # Call the parent save method
+        super(Crew, self).save(*args, **kwargs)
+
+    def update_computed_properties(self, save=True):
+        """Update all computed properties for this crew."""
+        self.raw_time = self.calc_raw_time()
+        self.race_time = self.calc_race_time()
+        self.published_time = self.calc_published_time()
+        self.start_time = self.calc_start_time()
+        self.finish_time = self.calc_finish_time()
+        self.overall_rank = self.calc_overall_rank()
+        self.gender_rank = self.calc_gender_rank()
+        self.category_position_time = self.calc_category_position_time()
+        self.category_rank = self.calc_category_rank()
+        self.start_sequence = self.calc_start_sequence()
+        self.finish_sequence = self.calc_finish_sequence()
+        self.masters_adjustment = self.calc_masters_adjustment()
+        
+        if save:
+            self.save()
+    
+    @classmethod
+    def update_all_computed_properties(cls):
+        """Update computed properties for all crews."""
+        for crew in cls.objects.all():
+            crew.update_computed_properties()
+
+    
+    # Event band
     def calc_event_band(self):
         return str(self.event.override_name) + ' ' + str(self.band.name) if self.band else self.event.override_name
     
 
-    # Raw time
-    def save(self, *args, **kwargs):
-        self.raw_time = self.calc_raw_time()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_raw_time(self):
+        """
+        Calculate raw time (finish - start) with proper timing synchronization.
+        Returns time in milliseconds.
+        """
+        try:
+            # Get the default start and finish races
+            race_default_start = Race.objects.get(default_start=True)
+            race_default_finish = Race.objects.get(default_finish=True)
+        except Race.DoesNotExist:
+            # If no default races are set, return 0
+            return 0
 
         try:
-            if len(self.times.filter(tap='Start')) > 1 or len(self.times.filter(tap='Finish')) > 1:
-                return 0
-
             if self.did_not_start or self.did_not_finish or self.disqualified:
                 return 0
 
-            start = self.times.get(tap='Start').time_tap
-            end = self.times.get(tap='Finish').time_tap
+            # Get start and finish times for this crew from the appropriate races
+            if self.race_id_start_override:
+                start_time_record = self.times.get(tap="Start", race=self.race_id_start_override)
+            else:
+                start_time_record = self.times.get(tap='Start', race=race_default_start)
 
-            if self.crew_timing_offset:
-                end = end + self.crew_timing_offset
+            if self.race_id_finish_override:
+                finish_time_record = self.times.get(tap="Finish", race=self.race_id_finish_override)
+            else:
+                finish_time_record = self.times.get(tap='Finish', race=race_default_finish)
 
-            return end - start
+            # Get the races for timing synchronization
+            start_race = start_time_record.race
+            finish_race = finish_time_record.race
+
+            # Get synchronized times
+            synchronized_start = self._get_synchronized_time(start_time_record.time_tap, start_race)
+            synchronized_finish = self._get_synchronized_time(finish_time_record.time_tap, finish_race)
+
+            return synchronized_finish - synchronized_start
         
         except RaceTime.DoesNotExist:
+            # Return 0 if start or finish time records don't exist
             return 0
-    
-    # Race time
-    def save(self, *args, **kwargs):
-        self.race_time = self.calc_race_time()
-        super(Crew, self).save(*args, **kwargs)
 
+    def _get_synchronized_time(self, raw_time_ms, source_race):
+        """
+        Helper method to get synchronized time for a given race.
+        If the race is the timing reference, return the raw time.
+        Otherwise, apply the timing offset.
+        """
+        # If this race is the timing reference, no adjustment needed
+        if source_race.is_timing_reference:
+            return raw_time_ms
+        
+        try:
+            # Look for a sync record where this race is the target
+            sync_record = RaceTimingSync.objects.get(target_race=source_race)
+            synchronized_time = raw_time_ms + sync_record.timing_offset_ms
+            return synchronized_time
+        except RaceTimingSync.DoesNotExist:
+            # If no sync record exists, treat this race as already synchronized
+            # This handles the case where races are already in sync or no sync is needed
+            return raw_time_ms
+        
+        # Race time
     def calc_race_time(self):
         try:
             # The race time can include the penalty as by default it is 0
@@ -139,10 +191,6 @@ class Crew(models.Model):
             return 0
     
     # Published time
-    def save(self, *args, **kwargs):
-        self.published_time = self.calc_published_time()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_published_time(self):
         # If overall time has been overriden - use the override time + penalty otherwise use race_time
         if self.manual_override_time > 0:
@@ -150,57 +198,34 @@ class Crew(models.Model):
         return self.race_time
 
     # Start time
-    def save(self, *args, **kwargs):
-        self.start_time = self.calc_start_time()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_start_time(self):
         try:
-            if len(self.times.filter(tap='Start')) > 1:
-                return 0
-
-            start = self.times.get(tap='Start').time_tap
-            return start
-        except RaceTime.DoesNotExist:
+            race_default_start = Race.objects.get(default_start=True)
+            start_time_record = self.times.get(tap='Start', race=race_default_start)
+            return start_time_record.time_tap
+        except (Race.DoesNotExist, RaceTime.DoesNotExist):
             return 0
     
     # Finish time
-    def save(self, *args, **kwargs):
-        self.finish_time = self.calc_finish_time()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_finish_time(self):
         try:
-            if len(self.times.filter(tap='Finish')) > 1:
-                return 0
-            finish = self.times.get(tap='Finish').time_tap
-            return finish
-        except RaceTime.DoesNotExist:
+            race_default_finish = Race.objects.get(default_finish=True)
+            finish_time_record = self.times.get(tap='Finish', race=race_default_finish)
+            return finish_time_record.time_tap
+        except (Race.DoesNotExist, RaceTime.DoesNotExist):
             return 0
     
     # Overall rank
-    def save(self, *args, **kwargs):
-        self.overall_rank = self.calc_overall_rank()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_overall_rank(self):
         crews = Crew.objects.all().filter(status__exact='Accepted', published_time__gt=0, published_time__lt=self.published_time)
         return len(crews) + 1
 
     # Gender rank
-    def save(self, *args, **kwargs):
-        self.gender_rank = self.calc_gender_rank()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_gender_rank(self):
         crews = Crew.objects.all().filter(status__exact='Accepted', event__gender__exact=self.event.gender, published_time__gt=0, published_time__lt=self.published_time)
         return len(crews) + 1
 
     # Category position time
-    def save(self, *args, **kwargs):
-        self.category_position_time = self.calc_category_position_time()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_category_position_time(self):
         # This property created purely for use when calculating position in category ranking.  It uses the published time or masters adjusted time if one exists.
         if self.masters_adjusted_time is not None and self.masters_adjusted_time > 0:
@@ -208,61 +233,32 @@ class Crew(models.Model):
         return self.published_time
     
     # Category rank
-    def save(self, *args, **kwargs):
-        self.category_rank = self.calc_category_rank()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_category_rank(self):
         crews = Crew.objects.all().filter(status__exact='Accepted', time_only__exact=False, event_band__exact=self.event_band, published_time__gt=0, category_position_time__lt=self.category_position_time)
         if self.time_only:
             return 0
 
         return len(crews) + 1
-    
-    # Invalid time
-    def save(self, *args, **kwargs):
-        self.invalid_time = self.calc_invalid_time()
-        super(Crew, self).save(*args, **kwargs)
-
-    def calc_invalid_time(self):
-        if len(self.times.filter(tap='Start')) > 1:
-            return 1
-        if len(self.times.filter(tap='Finish')) > 1:
-            return 1
 
     # Start sequence
-    def save(self, *args, **kwargs):
-        self.start_sequence = self.calc_start_sequence()
-        super(Crew, self).save(*args, **kwargs)
-
     def calc_start_sequence(self):
-        try:
-            if len(self.times.filter(tap='Start')) > 1:
-                return 0
-            sequence = self.times.get(tap='Start').sequence
-            return sequence
-        except RaceTime.DoesNotExist:
-            return 0
-    
-    # Finish sequence
-    def save(self, *args, **kwargs):
-        self.finish_sequence = self.calc_finish_sequence()
-        super(Crew, self).save(*args, **kwargs)
-
-    def calc_finish_sequence(self):
-        try:
-            if len(self.times.filter(tap='Finish')) > 1:
-                return 0
-            sequence = self.times.get(tap='Finish').sequence
-            return sequence
-        except RaceTime.DoesNotExist:
+        race_default_start = Race.objects.filter(default_start=True).first()
+        if not race_default_start:
             return 0
         
+        sequence_record = self.times.filter(tap='Start', race=race_default_start).first()
+        return sequence_record.sequence if sequence_record else 0
+    
+    # Finish sequence
+    def calc_finish_sequence(self):
+        race_default_finish = Race.objects.filter(default_finish=True).first()
+        if not race_default_finish:
+            return 0
+        
+        sequence_record = self.times.filter(tap='Finish', race=race_default_finish).first()
+        return sequence_record.sequence if sequence_record else 0
+        
     # Competitor names
-    def save(self, *args, **kwargs):
-        self.competitor_names = self.get_competitor_names()
-        super(Crew, self).save(*args, **kwargs)
-
     def get_competitor_names(self):
         if not self.competitors:
             return 0
@@ -284,10 +280,6 @@ class Crew(models.Model):
 # Need to calculate the fastest time in race type
     
     # Masters adjustment
-    def save(self, *args, **kwargs):
-        self.masters_adjustment = self.calc_masters_adjustment()
-        super(Crew, self).save(*args, **kwargs)
-        
     def calc_masters_adjustment(self):
 
         if not OriginalEventCategory.objects.filter(event_original='2x').exists():
@@ -299,16 +291,7 @@ class Crew(models.Model):
             fastest_female_scull = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
             fastest_female_sweep = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time')) or 0
             fastest_mixed_scull = Crew.objects.all().filter(event_band__startswith='Mx', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time')) or 0
-            # print('Fastest men scull')
-            # print(fastest_men_scull)
-            # print('Fastest men sweep')
-            # print(fastest_men_sweep)
-            # print('Fastest female scull')
-            # print(fastest_female_scull)
-            # print('Fastest female sweep')
-            # print(fastest_female_sweep)
-            # print('Fastest mixed scull')
-            # print(fastest_mixed_scull)
+ 
 
             # Mens 2x (scull)
             if fastest_men_scull['raw_time__min'] is not None and self.event.gender == 'Open' and '2x' in self.event_original.first().event_original:
@@ -360,47 +343,94 @@ class Crew(models.Model):
             return 0
         
 # Calculate the draw start score (event order plus rowing / sculling CRI as appropriate)
-
-    def save(self, *args, **kwargs):
-        self.draw_start_score = self.calc_draw_start_score()
-        super(Crew, self).save(*args, **kwargs)
     
     def calc_draw_start_score(self):
-        if not EventOrder.objects.filter(event_order=1).exists():
+        # Check if EventOrder data exists
+        if not EventOrder.objects.exists():
+            print(f"No EventOrder data found for crew {self.id}")
             return None
-        if not self.event_band:
-            return None
-        if '2x' in self.event_band:
-            crewsWithHigherScullingCRIInCategory = Crew.objects.all().filter(status__exact='Accepted', event_band__exact=self.event_band, sculling_CRI__gt=self.sculling_CRI)
-            row_score = (len(crewsWithHigherScullingCRIInCategory) + 1) / 1000
-        elif '2-' in self.event_band:
-            crewsWithHigherRowingCRIInCategory = Crew.objects.all().filter(status__exact='Accepted', event_band__exact=self.event_band, rowing_CRI__gt=self.rowing_CRI)
-            row_score = (len(crewsWithHigherRowingCRIInCategory) + 1) / 1000
             
+        if not self.event_band:
+            print(f"No event_band for crew {self.id}")
+            return None
+        
+        row_score = 0  # Default value
+        
         try:
-            draw_start_score = EventOrder.objects.get(event=self.event_band).event_order + row_score
-        except EventOrder.DoesNotExist:
-            draw_start_score = 0
-        return draw_start_score
+            # Calculate the rowing/sculling ranking component
+            if '2x' in self.event_band:
+                if self.sculling_CRI is not None:
+                    crews_with_higher_cri = Crew.objects.filter(
+                        status__exact='Accepted', 
+                        event_band__exact=self.event_band, 
+                        sculling_CRI__gt=self.sculling_CRI
+                    )
+                    row_score = (crews_with_higher_cri.count() + 1) / 1000
+                else:
+                    print(f"No sculling_CRI for crew {self.id}")
+                    return None
+                    
+            elif '2-' in self.event_band:
+                if self.rowing_CRI is not None:
+                    crews_with_higher_cri = Crew.objects.filter(
+                        status__exact='Accepted', 
+                        event_band__exact=self.event_band, 
+                        rowing_CRI__gt=self.rowing_CRI
+                    )
+                    row_score = (crews_with_higher_cri.count() + 1) / 1000
+                else:
+                    print(f"No rowing_CRI for crew {self.id}")
+                    return None
+            else:
+                # Event band doesn't match expected patterns
+                print(f"Unrecognized event_band pattern for crew {self.id}: {self.event_band}")
+                row_score = 0.001  # Small default value
+            
+            # Get the event order base score
+            try:
+                event_order_obj = EventOrder.objects.get(event=self.event_band)
+                draw_start_score = event_order_obj.event_order + row_score
+                print(f"Crew {self.id}: event_order={event_order_obj.event_order}, row_score={row_score}, total={draw_start_score}")
+                return draw_start_score
+            except EventOrder.DoesNotExist:
+                print(f"No EventOrder found for event_band: {self.event_band}")
+                return None
+                
+        except Exception as e:
+            print(f"Error calculating draw_start_score for crew {self.id}: {e}")
+            return None
     
-# Calculate the draw start order
-    def save(self, *args, **kwargs):
-        self.calculated_start_order = self.calc_calculated_start_order()
-        super(Crew, self).save(*args, **kwargs)
-    
-    def calc_calculated_start_order(self):
-        if not self.draw_start_score or self.draw_start_score == 0 or self.draw_start_score == None:
-            return 9999999
+    @classmethod
+    def update_start_order_calcs(cls):
+        """Update draw_start_score and calculated_start_order for all accepted crews"""
+        crews = cls.objects.filter(status__exact='Accepted')
+        
+        print(f"Found {crews.count()} accepted crews to update")
+        
+        # Step 1: Calculate draw_start_score for all crews
+        crew_scores = []
+        for crew in crews:
+            draw_score = crew.calc_draw_start_score()
+            crew.draw_start_score = draw_score
+            crew_scores.append((crew, draw_score))
+        
+        # Step 2: Sort crews by draw_start_score (lower scores = better start position)
+        crew_scores.sort(key=lambda x: (x[1] is None, x[1] if x[1] is not None else float('inf'), x[0].name))
+        
+        # Step 3: Assign calculated_start_order based on sorted position
+        for position, (crew, score) in enumerate(crew_scores, start=1):
+            if score is None or score == 0:
+                crew.calculated_start_order = 9999999
+            else:
+                crew.calculated_start_order = position
+        
+        # Step 4: Save all updates
+        crews_to_update = [crew for crew, _ in crew_scores]
+        cls.objects.bulk_update(crews_to_update, ['draw_start_score', 'calculated_start_order'])
+        
+        print(f"Updated start orders for {len(crews_to_update)} crews")
+        return len(crews_to_update)
 
-        crews_with_lower_score = Crew.objects.all().filter(status__exact='Accepted', draw_start_score__gt=0, draw_start_score__lt=self.draw_start_score)
-        crews_with_same_score = Crew.objects.all().filter(status__exact='Accepted', draw_start_score__gt=0, draw_start_score=self.draw_start_score).order_by('name')
-        
-        if crews_with_same_score.exists() and len(crews_with_same_score) > 1:
-            position = len(crews_with_lower_score) + 1 + list(crews_with_same_score).index(self)
-        else:
-            position = len(crews_with_lower_score) + 1
-        
-        return position
 
 # Look up the event order number
     @property
@@ -443,6 +473,16 @@ class RaceTime(models.Model):
     time_tap = models.BigIntegerField()
     crew = models.ForeignKey(Crew, related_name='times',
     on_delete=models.SET_NULL, blank=True, null=True,)
+    race = models.ForeignKey(Race, related_name='race_times', on_delete=models.CASCADE, blank=True, null=True,)
+    
+    @property
+    def synchronized_time(self):
+        """
+        Get the time synchronized to the reference timing system.
+        """
+        if self.race:
+            return self.race.get_synchronized_time(self.time_tap)
+        return self.time_tap
 
 class OriginalEventCategory(models.Model):
     crew = models.ForeignKey(Crew, related_name='event_original',

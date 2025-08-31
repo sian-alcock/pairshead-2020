@@ -1,0 +1,15 @@
+@import '../../../style.scss';
+
+.table-pagination {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  
+  &__wrapper {
+    @include tablet {
+      display: flex;
+      align-items: flex-end;
+      gap: 1rem;
+    }
+  }
+}

@@ -1,0 +1,120 @@
+// DataExportButton.scss
+
+$white: #ffffff;
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-400: #ced4da;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$red-100: #f8d7da;
+$red-600: #dc3545;
+$red-700: #c82333;
+
+$border-radius: 0.375rem;
+$border-radius-sm: 0.25rem;
+$transition: all 0.15s ease-in-out;
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+// Base component
+.data-export {
+  display: inline-block;
+  position: relative;
+
+  // Progress indicator
+  &__progress {
+    margin-top: 0.75rem;
+    width: 200px;
+  }
+
+  &__progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    color: $gray-600;
+  }
+
+  &__progress-text {
+    font-weight: 500;
+  }
+
+  &__progress-percentage {
+    font-weight: 600;
+    color: $gray-700;
+  }
+
+  &__progress-bar {
+    width: 100%;
+    height: 0.5rem;
+    background-color: $gray-200;
+    border-radius: $border-radius-sm;
+    overflow: hidden;
+  }
+
+  &__progress-fill {
+    height: 100%;
+    transition: width 0.3s ease-in-out;
+    border-radius: $border-radius-sm;
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.2) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.2) 75%,
+        transparent 75%,
+        transparent
+      );
+      background-size: 1rem 1rem;
+      animation: progress-stripes 1s linear infinite;
+    }
+  }
+
+  // Error message
+  &__error {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    padding: 0.75rem;
+    background-color: $red-100;
+    border: 1px solid transparentize($red-600, 0.8);
+    border-radius: $border-radius;
+    color: $red-700;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  &__error-icon {
+    flex-shrink: 0;
+    font-size: 1rem;
+    font-weight: bold;
+  }
+
+  &__error-message {
+    flex: 1;
+    word-break: break-word;
+  }
+}
+
+// Animations
+
+@keyframes progress-stripes {
+  0% {
+    background-position: 1rem 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}

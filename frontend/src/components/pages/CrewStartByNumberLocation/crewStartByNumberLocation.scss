@@ -1,4 +1,4 @@
-@import '../../../style.scss';
+@import "../../../style.scss";
 
 .crew-start-by-number-location {
   &__section {
@@ -14,8 +14,7 @@
   }
 
   &__table {
-    margin-left: 0;
-    max-width: 100%;
+    @include table;
   }
 
   &__title {
@@ -28,4 +27,7 @@
     @include h4;
   }
 
+  &__field {
+    margin-bottom: 1rem;
+  }
 }

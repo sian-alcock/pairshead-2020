@@ -1,10 +1,16 @@
 @import '../../../style.scss';
 
 .settings {
-    &__section {
-      @include section;
-    }
-    &__container {
-      @include container;
-    }
+  &__section {
+    @include section;
   }
+  &__container {
+    @include container;
+  }
+  &__menu-button-container {
+    padding: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+}

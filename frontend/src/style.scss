@@ -1,21 +1,40 @@
-@use "bulma/sass/base";
-@use "bulma/sass/themes";
-@use "bulma/sass/elements/button";
 @import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
 @import './lib.scss';
+@import './base.scss';
 
 $family-primary: 'Open Sans', sans-serif;
+// colours
 $bblBlue: #341499;
 $phLogoBlue: #00B4FC;
 $phLogoRiver: #1E099C;
-$bblLogoBlu: #4169e1;
+$bblLogoBlue: #4169e1;
 $bblGrey: lightgrey;
 $darkGrey: #666666;
 $white: #fff;
+$screen-font-color: #222;
 $black: #000;
 $primary: $bblBlue;
+$green: #00C950;
+$green-tint: #EFFDF4;
+$green-mid: #7AF2A8;
+$red: #FA2C37;
+$red-tint: #FEF2F2;
+$red-mid: #FFA1A3;
+$amber: #FF6900;
+$amber-tint: #FEFBEA;
+$amber-mid: #FFD230;
+$blue-tint: #EEF6FF;
+$grey-tint: #F9FAFB;
+$skeleton-base: #f3f4f6;
+$skeleton-highlight: #e5e7eb;
+
+$standard-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+$border-radius-small: 0.25rem;
+$border-radius-medium: 1rem;
+$border-radius-large: 4rem;
+
 $section-padding: 1.5rem 1.5rem;
-// $tabs-link-hover-color: $phLogoBlue;
 $tabs-boxed-link-hover-background-color: $phLogoBlue;
 $tabs-toggle-link-hover-background-color: $phLogoBlue;
 $tabs-toggle-link-active-background-color: $phLogoBlue;
@@ -28,22 +47,8 @@ $navbar-item-hover-color: white;
 $navbar-height: 1 rem;
 
 
-
-
-
-.startTab.active, .finishTab.active {
-  text-align: center;
-  padding: 10px 30px;
-  background-color: $phLogoBlue;
-  border: 1px solid #dbdbdb;
-}
-
-body {
-  margin: 0 auto;
-}
-
-table {
-  margin: 0 auto;
+.sr-only {
+  @include sr-only;
 }
 
 @media all {
@@ -59,104 +64,4 @@ table {
 
     .page-break	{ display: block; page-break-before: always; }
 
-}
-
-.padding {
-  padding: 1em;
-}
-
-.container {
-  align-content: center;
-}
-
-.column.left, div.list-totals {
-  text-align: left;
-}
-
-div.list-totals {
-  margin-bottom: 2px;
-  padding-left: 9px;
-}
-
-.tabContainer {
-  margin: 0 auto;
-  width: 400px;
-  display: flex;
-  align-content: center;
-  justify-content: center;
-  margin-bottom: 10px;
-}
-
-.search {
-  width: 400px;
-  margin: 0 auto;
-}
-
-.navbar-item {
-  margin-left: 10px;
-}
-
-.checkbox {
-  margin-right: 8px;
-}
-
-.button {
-  width: 200px;
-}
-
-.button:disabled {
-  opacity: 0.5;
-}
-
-.double-height-button.button {
-  height: 60px;
-  white-space: normal;
-}
-
-.spinner {
-  margin: 0 5px;
-}
-
-td, th, .control {
-  font-size: 12px;
-}
-
-.icon-clickable {
-  color: $bblBlue;
-  margin-top: 5px;
-  cursor: pointer;
-}
-
-.icon-disabled {
-  color: $bblGrey;
-  margin-top: 5px;
-  cursor: pointer;
-}
-
-.accordion {
-  margin-bottom: 15px;
-}
-
-.accordion-item {
-  button {
-    font-size: 18px;
-  }
-}
-
-.control-full-width {
-  width: 100%;
-}
-
-.file.is-right {
-  justify-content: flex-start;
-  margin-bottom: 15px;
-}
-
-.section-has-lines {
-  border-top: 1px solid $bblBlue;
-  padding: 15px 0;
-}
-
-.text-container {
-  margin-bottom: 15px;
 }

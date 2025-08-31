@@ -1,29 +1,21 @@
-import { MenuProps } from "../../molecules/Menu/Menu"
+import { MenuProps } from "../../molecules/Menu/Menu";
 
 export const menuProps: MenuProps = {
   menuItems: [
     {
-      key: 0,
-      parentItem: "Start order",
-      link: "/generate-start-order",
-      authenticated: true,
-      items: [
-        {
-          link: "/generate-start-order",
-          title: "Generate start order",
-          authenticated: true
-        }
-      ]
-    },
-    {
-      key: 1,
-      parentItem: "Logistics",
+      key: 3,
+      parentItem: "Pre-race / setup",
       link: "/logistics",
       authenticated: true,
       items: [
         {
           link: "/logistics/crew-labels",
           title: "Crew labels",
+          authenticated: true
+        },
+        {
+          link: "/marshalling-divisions",
+          title: "Marshalling divisions",
           authenticated: true
         },
         {
@@ -47,30 +39,25 @@ export const menuProps: MenuProps = {
       parentItem: "Results",
       link: "/generate-results",
       authenticated: true,
-      key: 2,
+      key: 4,
       items: [
         {
-          link: "/generate-results",
-          title: "Generate results",
-          authenticated: true
-        },
-        {
-          link: "/generate-results/crews",
-          title: "All crews",
-          authenticated: true
-        },
-        {
-          link: "/generate-results/race-times",
+          link: "/race-times",
           title: "Race times",
           authenticated: true
         },
         {
-          link: "/generate-results/results",
+          link: "/crew-management-dashboard",
+          title: "Crew time management dashboard",
+          authenticated: true
+        },
+        {
+          link: "/results",
           title: "Final results",
           authenticated: false
         },
         {
-          link: "/generate-results/export",
+          link: "/export",
           title: "Data exports",
           authenticated: true
         }
@@ -80,7 +67,7 @@ export const menuProps: MenuProps = {
       parentItem: "Settings",
       link: "/settings/keys",
       authenticated: true,
-      key: 3,
+      key: 5,
       items: [
         {
           link: "/settings/keys",
@@ -100,4 +87,4 @@ export const menuProps: MenuProps = {
       ]
     }
   ]
-}
+};

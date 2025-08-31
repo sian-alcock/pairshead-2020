@@ -2,8 +2,9 @@ import csv
 import datetime
 from .helpers import decode_utf8
 from django.http import Http404, HttpResponse
+from django.db import transaction
 from rest_framework.views import APIView
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, ParseError
 from ..serializers import NumberLocationSerializer
@@ -16,6 +17,30 @@ class NumberLocationListView(generics.ListCreateAPIView):
 class NumberLocationDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = NumberLocation.objects.all()
     serializer_class = NumberLocationSerializer
+
+class NumberLocationBulkUpdate(APIView):
+    def post(self, request):
+        # Handling bulk create
+        serializer = NumberLocationSerializer(data=request.data, many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request):
+        # Handling bulk update
+        data = request.data
+        with transaction.atomic():
+            for item in data:
+                number_location, created = NumberLocation.objects.update_or_create(
+                    id=item.get('id'),
+                    defaults={
+                        'number_location': item.get('number_location'),
+                        'club': item.get('club'),
+                    }
+                )
+        return Response({'status': 'Updated number_locations successfully'}, status=status.HTTP_200_OK)
+
 
 class NumberLocationImport(APIView):
     # This function imports the csv from frontend

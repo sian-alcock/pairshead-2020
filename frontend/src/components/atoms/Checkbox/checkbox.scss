@@ -1,0 +1,48 @@
+@import '../../../style';
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: $black;
+
+  &__input {
+    position: relative;
+    min-width: rem(24px);
+    min-height: rem(24px);
+    padding: 0;
+    border-radius: rem(8px);
+    margin: 0;
+    appearance: none;
+    transition: 0.2s all;
+    border: 1.5px solid $darkGrey;
+
+    &:focus-visible {
+      border-width: 2px;
+      outline: 3px solid get-value(highlight-color);
+      outline-offset: 0;
+    }
+
+    &::before {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: rem(14px);
+      height: rem(14px);
+      border-radius: rem(5px);
+      content: '';
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      transition: 0.1s all;
+      background-color: $darkGrey;
+    }
+
+    &:checked::before {
+      opacity: 1;
+    }
+  }
+
+  &__label {
+    @include body-small(bold);
+  }
+}

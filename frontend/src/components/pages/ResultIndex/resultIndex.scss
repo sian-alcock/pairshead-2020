@@ -1,12 +1,56 @@
-@import '../../../style.scss';
+@import "../../../style.scss";
 
 .result-index {
-    &__table-container {
-      overflow-x: auto;
-      margin-bottom: 1.5rem;
-    }
-  
-    &__table {
-      max-width: 100%;
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+
+  &__title {
+    margin-bottom: 1.5rem;
+    @include h3;
+  }
+
+  &__title-section {
+    @include laptop {
+      @include grid(2);
     }
   }
+
+  &__table-container {
+    overflow-x: auto;
+  }
+
+  &__table {
+    width: 100%;
+
+    @include table;
+  }
+
+  &__controls {
+    margin-bottom: 1.5rem;
+    @include tablet {
+      @include grid(2);
+    }
+
+    @include laptop {
+      @include grid(4);
+    }
+  }
+
+  &__count {
+    margin-bottom: 1rem;
+    @include body-small;
+  }
+
+  &__control {
+    &--flags {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+}

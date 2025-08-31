@@ -3,6 +3,8 @@
 .nav-bar {
   display: flex;
   align-items: center;
+
+  @include body;
   
   &__desktop {
     display: none;
@@ -13,19 +15,7 @@
 
   &__login {
     margin-left: 0.5rem;
-    color: $bblBlue;
-    @include font-size(14);
+    @include animated-link;
 
-    @media (min-width: $lg) {
-      @include font-size(16);
-    }
-    
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-
-  .c-data-loader {
-    margin-right: 0.5rem;
   }
 }

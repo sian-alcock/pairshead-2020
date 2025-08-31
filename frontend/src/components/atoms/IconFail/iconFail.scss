@@ -1,0 +1,11 @@
+@import '../../../style.scss';
+  
+.icon-fail {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 100%;
+  width: 2rem;
+  height: 2rem;
+  background-color: $red-mid;
+}

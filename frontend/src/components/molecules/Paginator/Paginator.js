@@ -15,7 +15,7 @@ const Paginator = ({ pageNumber, totalPages, changePage }) => {
           onClick={() => changePage(pageNumber+1, totalPages)}
         >Next</a>
         <ul className="pagination-list">
-          <li><a
+            <li><a
             className="pagination-link" aria-label="Goto page 1"
             onClick={() => changePage(1, totalPages)}
           >1</a></li>

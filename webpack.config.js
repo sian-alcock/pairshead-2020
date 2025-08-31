@@ -1,71 +1,193 @@
 const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
-module.exports = {
-  mode: 'development',
-  entry: './src/app.js',
-  context: path.resolve(__dirname, 'frontend'),
-  output: {
-    filename: 'bundle.js',
-    path: path.resolve(__dirname, 'frontend/dist'),
-    publicPath: '/'
-  },
-  resolve: {
-    extensions: ['.tsx', '.ts', '.js', '.jsx'],
-    fallback: { 
-      'buffer': require.resolve('buffer/'),
-      'stream': require.resolve('stream-browserify'),
-      'crypto': require.resolve('crypto-browserify'),
-      'vm': require.resolve('vm-browserify'),
-      'util': require.resolve('util')
-    }
-  },
-  watchOptions: {
-    poll: 1000,
-    ignored: /node_modules/,
-  },
-  devtool: 'source-map',
-  module: {
-    rules: [
-      {
-        test: /.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/
-      },
-      { test: /\.js$/, use: 'babel-loader', exclude: /node_modules/ },
-      { test: /\.css$/, use: ['style-loader', 'css-loader'] },
-      { test: /\.s(a|c)ss$/, use: ['style-loader', 'css-loader', 'sass-loader'] },
-      { test: /\.woff2?$/, use: 'file-loader' },
-      { test: /\.(jpg|png|gif|svg)$/, use: 'file-loader' }
-    ]
-  },
-  devServer: {
-    static: 'src',
-    open: true,
-    port: 8000,
-    historyApiFallback: true,
-    proxy: [
-      {
-        context: ['/api'],
-        target: 'http://127.0.0.1:4000',
-        secure: false,
-        changeOrigin: true
+module.exports = (env, argv) => {
+  const isDevelopment = argv.mode === 'development' || process.env.NODE_ENV === 'development'
+  const shouldAnalyze = env && env.analyze // Check for --env analyze flag
+  
+  return {
+    mode: isDevelopment ? 'development' : 'production',
+    entry: './src/app.js',
+    context: path.resolve(__dirname, 'frontend'),
+    output: {
+      filename: isDevelopment ? '[name].js' : '[name].[contenthash].js',
+      chunkFilename: isDevelopment ? '[name].chunk.js' : '[name].[contenthash].chunk.js',
+      path: path.resolve(__dirname, 'frontend/dist'),
+      publicPath: '/',
+      clean: true
+    },
+    resolve: {
+      extensions: ['.tsx', '.ts', '.js', '.jsx'],
+      fallback: { 
+        'buffer': require.resolve('buffer/'),
+        'stream': require.resolve('stream-browserify'),
+        'crypto': require.resolve('crypto-browserify'),
+        'vm': require.resolve('vm-browserify'),
+        'util': require.resolve('util')
       }
-    ]
-  },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-    new HtmlWebpackPlugin({
-      template: 'src/index.html',
-      filename: 'index.html',
-      inject: 'body'
+    },
+    watchOptions: {
+      poll: isDevelopment ? 1000 : false,
+      ignored: /node_modules/,
+    },
+    devtool: isDevelopment ? 'eval-source-map' : 'source-map',
+    module: {
+      rules: [
+        {
+          test: /.tsx?$/,
+          use: 'ts-loader',
+          exclude: /node_modules/
+        },
+        { 
+          test: /\.js$/, 
+          use: 'babel-loader', 
+          exclude: /node_modules/ 
+        },
+        { 
+          test: /\.css$/, 
+          use: ['style-loader', 'css-loader'] 
+        },
+        { 
+          test: /\.s(a|c)ss$/, 
+          use: ['style-loader', 'css-loader', 'sass-loader'] 
+        },
+        { 
+          test: /\.woff2?$/, 
+          type: 'asset/resource'
+        },
+        { 
+          test: /\.(jpg|png|gif|svg)$/, 
+          type: 'asset/resource'
+        }
+      ]
+    },
+    ...(isDevelopment && {
+      devServer: {
+        static: 'src',
+        open: true,
+        port: 8000,
+        historyApiFallback: true,
+        hot: true,
+        proxy: [
+          {
+            context: ['/api'],
+            target: 'http://127.0.0.1:4000',
+            secure: false,
+            changeOrigin: true
+          }
+        ]
+      }
     }),
-    new webpack.ProvidePlugin({
-      process: 'process/browser'
-    }),
-    new webpack.ProvidePlugin({
-      Buffer: ['buffer', 'Buffer']
-    })
-  ]
+    plugins: [
+      ...(isDevelopment ? [new webpack.HotModuleReplacementPlugin()] : []),
+      
+      new HtmlWebpackPlugin({
+        template: 'src/index.html',
+        filename: 'index.html',
+        inject: 'body',
+        minify: isDevelopment ? false : {
+          removeComments: true,
+          collapseWhitespace: true,
+          removeAttributeQuotes: true
+        }
+      }),
+      new webpack.ProvidePlugin({
+        process: 'process/browser',
+        Buffer: ['buffer', 'Buffer']
+      }),
+      
+      new webpack.DefinePlugin({
+        'process.env.NODE_ENV': JSON.stringify(isDevelopment ? 'development' : 'production'),
+        'process.env.DEBUG': JSON.stringify(isDevelopment)
+      }),
+
+      // ADD BUNDLE ANALYZER PLUGIN
+      ...(shouldAnalyze ? [
+        new BundleAnalyzerPlugin({
+          analyzerMode: 'server', // Opens in browser automatically
+          analyzerHost: 'localhost',
+          analyzerPort: 8888,
+          openAnalyzer: true,
+          generateStatsFile: true,
+          statsFilename: 'bundle-stats.json',
+          reportFilename: 'bundle-report.html'
+        })
+      ] : [])
+    ],
+    
+    optimization: {
+      minimize: !isDevelopment,
+      splitChunks: {
+        chunks: 'all',
+        minSize: 20000,
+        maxSize: 244000,
+        cacheGroups: {
+          // React core
+          react: {
+            test: /[\\/]node_modules[\\/](react|react-dom|react-router)[\\/]/,
+            name: 'react-vendor',
+            priority: 10,
+          },
+          
+          // Data & State Management
+          dataLibs: {
+            test: /[\\/]node_modules[\\/](@tanstack\/react-query|@tanstack\/react-table)[\\/]/,
+            name: 'data-libs',
+            priority: 9,
+          },
+          
+          // UI & Animation Libraries
+          uiLibs: {
+            test: /[\\/]node_modules[\\/](framer-motion|react-select|react-toastify|bulma)[\\/]/,
+            name: 'ui-libs',
+            priority: 8,
+          },
+          
+          // Utilities (including potential lodash)
+          utils: {
+            test: /[\\/]node_modules[\\/](lodash|moment|axios|classnames)[\\/]/,
+            name: 'utils',
+            priority: 7,
+          },
+          
+          // Node.js polyfills
+          polyfills: {
+            test: /[\\/]node_modules[\\/](buffer|crypto-browserify|stream-browserify|util|vm-browserify|process)[\\/]/,
+            name: 'polyfills',
+            priority: 6,
+          },
+          
+          // Everything else
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendor',
+            priority: 5,
+          },
+          
+          // Common code
+          common: {
+            name: 'common',
+            minChunks: 2,
+            chunks: 'all',
+            priority: 4,
+            enforce: true,
+          },
+        },
+      },
+      concatenateModules: !isDevelopment,
+      removeEmptyChunks: true,
+      mergeDuplicateChunks: true,
+      runtimeChunk: {
+        name: 'runtime'
+      }
+    },
+    
+    performance: {
+      hints: isDevelopment ? false : 'warning',
+      maxEntrypointSize: 250000,
+      maxAssetSize: 250000
+    }
+  }
 }

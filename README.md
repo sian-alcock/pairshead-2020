@@ -49,9 +49,8 @@ The original project brief:
 * Python Dotenv
 * SCSS, Bulma
 * Git, GitHub
-* Lodash
-* Google Fonts, FortAwesome
-* Moment, Moment-duration-format
+* Google Fonts
+* Date-fns
 
 ## Approach Taken
 

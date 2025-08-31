@@ -1,0 +1,26 @@
+@import '../../../style.scss';
+.timing-offset-manager {
+
+  padding: 1.5rem 0;
+
+  &__container {
+    @include container;
+
+  }
+
+  &__form{
+    @include form;
+  }
+
+  &__field {
+    @include field;
+  }
+
+  &__table {
+    margin-bottom: 1.5rem;
+    margin-left: 0;
+
+    @include table;
+  }
+}
+

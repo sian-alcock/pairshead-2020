@@ -6,6 +6,8 @@ import requests
 import time
 # if this is where you store your django-rest-framework settings
 # from django.conf import settings
+from django.db import transaction
+from django.db.models import Min, Avg
 from rest_framework import status
 from django.http import Http404, HttpResponse
 from rest_framework.views import APIView
@@ -20,45 +22,12 @@ from .helpers import decode_utf8
 
 from ..serializers import ClubSerializer, CrewSerializer, CrewSerializerLimited, CSVUpdateCrewSerializer, PopulatedCrewSerializer, WriteCrewSerializer, CrewExportSerializer
 
-from ..models import Crew, RaceTime, OriginalEventCategory, EventMeetingKey
+from ..models import Crew, Race, RaceTime, OriginalEventCategory, EventMeetingKey
 
-from ..pagination import CrewPaginationWithAggregates
 
 class CrewListView(generics.ListCreateAPIView):
     queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted', 'Submitted'))
     serializer_class = PopulatedCrewSerializer
-    pagination_class = CrewPaginationWithAggregates
-    PageNumberPagination.page_size_query_param = 'page_size' or 10
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend,]
-    ordering_fields = '__all__'
-    search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number', 'competitor_names',]
-    filterset_fields = ['status', 'event_band', 'start_time', 'finish_time', 'invalid_time',]
-
-    def get_queryset(self):
-
-        queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted', 'Submitted'))
-
-        masters = self.request.query_params.get('masters')
-        # print(masters)
-        if masters == 'true':
-            queryset = queryset.filter(status__exact='Accepted', masters_adjustment__gt=0).order_by('event_band')
-            return queryset
-
-        order = self.request.query_params.get('order', None)
-        if order == 'start-score':
-            return queryset.order_by('draw_start_score')
-        if order == 'club':
-            return queryset.order_by('club__name', 'name',)
-        # if order == 'crew':
-        #     return queryset.order_by('competitor_names', 'name',)
-        # if order == '-crew':
-        #     return queryset.order_by('-competitor_names', '-name',)
-        if order is not None:
-            return queryset.order_by(order)
-        return queryset.order_by('bib_number')
-
-    def get_num_scratched_crews(self):
-        return len(self.queryset.filter(status__exact='Scratched'))
     
 class CrewListOptionsForSelect(APIView):
     def get(self, _request):
@@ -81,42 +50,25 @@ class CrewGetEventBand(APIView):
             crew.competitor_names = crew.get_competitor_names()
             crew.save()
 
-class CrewGetStartScore(APIView):
-    def get(self, _request):
-        crews = Crew.objects.filter(status__exact='Accepted') # get all the Accepted crews
-        serializer = CrewSerializer(crews, many=True)
-        self.get_start_score(crews)
-        return Response(serializer.data) # send the JSON to the client
+class UpdateStartOrdersView(APIView):
+    """
+    API endpoint to recalculate start orders for all crews.
+    Call this when crew statuses change or you need to refresh calculations.
+    """
     
-    def get_start_score(self, crews):
-        # Recalculate rankings for all crews
-        for crew in crews:
-            crew.draw_start_score = crew.calc_draw_start_score()
-            crew.save()
-
-class CrewGetStartOrder(APIView):
-    def get(self, _request):
-        crews = Crew.objects.filter(status__exact='Accepted') # get all the Accepted crews
-        serializer = CrewSerializer(crews, many=True)
-        self.update_start_order(crews)
-        return Response(serializer.data) # send the JSON to the client
-
-    def update_start_order(self, crews):
-        # Add the start order
-
-        for crew in crews:
-            crew.calculated_start_order = crew.calc_calculated_start_order()
-            crew.save()
-
-class CheckStartOrderUnique(APIView):
-    def get(self, _request):
-        crews = Crew.objects.filter(status__exact='Accepted')
-        crews_with_unique_start_order = set(Crew.objects.filter(status__exact='Accepted').values_list('calculated_start_order'))
-
-        if len(crews) != len(crews_with_unique_start_order):
-            return Response('There are Accepted crews that do not have a unique start order')
-        else:
-            return Response('The start order is unique amongst accepted crews')
+    def post(self, request):
+        try:
+            updated_count = Crew.update_start_order_calcs()
+            return Response({
+                'success': True,
+                'message': f'Successfully updated start orders for {updated_count} crews',
+                'updated_crews': updated_count
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                'success': False,
+                'message': f'Error updating start orders: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class CrewUpdateRankings(APIView): 
@@ -131,13 +83,11 @@ class CrewUpdateRankings(APIView):
 
         for crew in crews:
             crew.event_band = crew.calc_event_band()
-            crew.crew_timing_offset = crew.calc_crew_timing_offset()
             crew.raw_time = crew.calc_raw_time()
             crew.race_time = crew.calc_race_time()
             crew.published_time = crew.calc_published_time()
             crew.start_time = crew.calc_start_time()
             crew.finish_time = crew.calc_finish_time()
-            crew.invalid_time = crew.calc_invalid_time()
             crew.overall_rank = crew.calc_overall_rank()
             crew.gender_rank = crew.calc_gender_rank()
             crew.category_rank = crew.calc_category_rank()
@@ -151,7 +101,7 @@ class CrewUpdateRankings(APIView):
 
 class CrewDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Crew.objects.all()
-    serializer_class = CrewSerializer
+    serializer_class = PopulatedCrewSerializer
 
 class CrewDataImport(APIView):
 
@@ -504,6 +454,19 @@ class CrewUniqueHostClub(generics.ListCreateAPIView):
 
         return Response(data)
 
+class CreatePenaltiesTemplate(APIView):
+    def get(self, _request):
+
+        filename = 'penaltiestemplate - ' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M.csv")
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
+
+        writer = csv.writer(response, delimiter=',')
+        writer.writerow(['Bib number', 'Penalty (seconds)',  'Time only (true/false/blank)', 'Did not start (true/false/blank)', 'Did not finish (true/false/blank)', 'Disqualified (true/false/blank)'])
+
+        return response
+
 
 class CSVImportPenalties(APIView):
     parser_classes = [MultiPartParser, FormParser]
@@ -547,3 +510,131 @@ class CSVImportPenalties(APIView):
             'success': False,
             'errors': serializer.errors
         }, status=status.HTTP_400_BAD_REQUEST)
+
+class CrewBulkUpdateOverridesView(APIView):
+    def patch(self, request):
+        updates = request.data.get('updates', [])
+        if not updates:
+            return Response({'error': 'No updates provided'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            with transaction.atomic():
+                updated_crews = []
+                for update in updates:
+                    crew_id = update.get('crew_id')
+                    if not crew_id:
+                        continue
+                    try:
+                        crew = Crew.objects.get(id=crew_id)
+                        if 'race_id_start_override' in update:
+                            race_id = update['race_id_start_override']
+                            crew.race_id_start_override_id = race_id if race_id else None
+                        if 'race_id_finish_override' in update:
+                            race_id = update['race_id_finish_override']
+                            crew.race_id_finish_override_id = race_id if race_id else None
+                        crew.save()
+                        updated_crews.append(crew_id)
+                    except Crew.DoesNotExist:
+                        return Response({'error': f'Crew with id {crew_id} not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'success': True, 'updated_count': len(updated_crews), 'updated_crew_ids': updated_crews})
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ResultDataExport(APIView):
+
+    def get(self, _request):
+
+        filename = 'resultdataexport - ' + datetime.datetime.now().strftime("%Y-%m-%d-%H-%M.csv")
+
+        crews = Crew.objects.filter(status__exact='Accepted', published_time__gt=0,).order_by('overall_rank')
+        fastest_female_scull = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time'))
+        fastest_female_sweep = Crew.objects.all().filter(event_band__startswith='W', event_band__contains='2-', raw_time__gt=0).aggregate(Min('raw_time'))
+        fastest_mixed_scull = Crew.objects.all().filter(event_band__startswith='Mx', event_band__contains='2x', raw_time__gt=0).aggregate(Min('raw_time'))
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="' + filename + '"'
+
+        writer = csv.writer(response, delimiter=',')
+        writer.writerow(['Id', 'Overall pos', 'No', 'Time', 'Mas adj time','Blade(img)', 'Club', 'Crew', 'Com code', 'Category', 'Pos in Cat', 'Pennant', 'Trophy', 'Penalty', 'Time only',])
+
+
+
+        for crew in crews:
+
+            if crew.published_time == 0:
+                rank = 0
+            else:
+                rank = crew.overall_rank
+
+            if crew.published_time > 0:
+                tenths = int((crew.published_time / 100)%10)
+                seconds = int((crew.published_time / 1000)%60)
+                minutes = int((crew.published_time / (1000*60))%60)
+
+                published_time = str("%02d" % minutes)+':'+str("%02d" % seconds)+'.'+str("%01d" % tenths)
+            else:
+                published_time = 0
+
+            if crew.masters_adjusted_time > 0:
+                tenths = int((crew.masters_adjusted_time / 100)%10)
+                seconds = int((crew.masters_adjusted_time / 1000)%60)
+                minutes = int((crew.masters_adjusted_time / (1000*60))%60)
+
+                masters_adjusted_time = str("%02d" % minutes)+':'+str("%02d" % seconds)+'.'+str("%01d" % tenths)
+            else:
+                masters_adjusted_time = ''
+
+
+            if crew.penalty > 0:
+                penalty = 'P'
+            else:
+                penalty = ''
+
+            if crew.time_only:
+                time_only = 'TO'
+            else:
+                time_only = ''
+
+            if crew.category_rank == 0:
+                category_rank = ''
+            else:
+                category_rank = crew.category_rank
+
+            if crew.category_rank == 1:
+                pennant = '=IMAGE("https://www.bblrc.co.uk/wp-content/uploads/2021/09/pennant-ph80.png")'
+            else:
+                pennant = ''
+
+            if crew.overall_rank == 1 or crew.published_time == fastest_female_scull['raw_time__min'] or crew.published_time == fastest_female_sweep['raw_time__min'] or crew.published_time == fastest_mixed_scull['raw_time__min']:
+                trophy = '=IMAGE("https://www.bblrc.co.uk/wp-content/uploads/2023/10/trophy_PH-2.jpg")'
+            else:
+                trophy = ''
+
+            if crew.club.blade_image:
+                image = '=IMAGE("' + crew.club.blade_image + '")'
+
+            writer.writerow(
+            [
+            crew.id,    
+            rank,
+            crew.bib_number,
+            published_time,
+            masters_adjusted_time,
+            image,
+            crew.club.name,
+            crew.competitor_names,
+            crew.composite_code,
+            crew.event_band,
+            category_rank,
+            pennant,
+            trophy,
+            penalty,
+            time_only,
+            ])
+
+            # print(crew.calc_published_time)
+            # print(fastest_female_scull)
+            # print(fastest_female_sweep)
+            # print(fastest_mixed_scull)
+
+        return response
+
+

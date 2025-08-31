@@ -1,0 +1,23 @@
+@import '../../../style.scss';
+@import '../../../lib.scss';
+
+.register {
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+
+  &__form {
+    justify-content: center;
+
+    @include form;
+
+    .text-button {
+      width: fit-content;
+      margin: 0 auto;
+    }
+  }
+}

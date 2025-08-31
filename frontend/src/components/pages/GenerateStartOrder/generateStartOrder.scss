@@ -11,4 +11,19 @@
     margin-bottom: 1rem;
     @include body;
   }
+
+  &__section {
+    @include section;
+  }
+
+  &__sub-section {
+    border-top: 1px solid $bblBlue;
+    padding-top: 1rem;
+
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
 }

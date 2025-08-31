@@ -1,10 +1,9 @@
 import React, { ReactElement } from 'react';
 import { Link } from 'react-router-dom'
-import Icon from '../Icons/Icons';
+import Icon, {IconProps} from '../Icons/Icons';
 import './textButton.scss';
 
 export interface TextButtonProps {
-
   label: string;
   onClick?: (() => void) | ((e: React.MouseEvent<HTMLButtonElement>) => void);
   pathName?: string;
@@ -13,27 +12,31 @@ export interface TextButtonProps {
   loading?: boolean;
   isCancel?: boolean;
   stateProps?: {};
+  style?: 'primary' | 'secondary' | 'tertiary';
+  icon?: IconProps;
 }
 
 export default function TextButton({
   label,
+  style = 'primary',
   onClick,
   isSubmit = false,
   disabled = false,
   pathName,
   loading,
-  stateProps
+  stateProps,
+  icon
 }: TextButtonProps): ReactElement {
   return onClick || isSubmit ? (
     <button
-      className={loading ? 'text-button text-button--loading' : 'text-button'}
+      className={`text-button text-button--${style} ${loading ? 'text-button--loading' : 'text-'}`}
       type={isSubmit ? 'submit' : 'button'}
       onClick={onClick}
       disabled={disabled}
-
     >
       {label}
       {loading && <Icon icon={"clock-spinner"} />}
+      {!loading && icon && <Icon {...icon}/>}
     </button>
   ) : (
     <Link

@@ -1,0 +1,20 @@
+@import '../../../style.scss';
+
+.race-times-manager-detail {
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+
+  &__form {
+    @include form;
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 0.5rem;
+  }
+}

@@ -1,0 +1,16 @@
+@import '../../../../style.scss';
+
+.crew-time-edit-race-times-table {
+  &__table {
+    @include table;
+  }
+
+  &__pill {
+    display: block;
+    background-color: $blue-tint;
+    padding: 0 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid $bblGrey;
+    @include body-xs;
+  }
+}

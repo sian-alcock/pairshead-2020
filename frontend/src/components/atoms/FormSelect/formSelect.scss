@@ -1,0 +1,60 @@
+@import '../../../style';
+
+.form-select {
+
+  &__label {
+    display: block;
+    margin-bottom: 0.25rem;
+
+    @include body-small(bold);
+  }
+
+  &__select-wrapper {
+    position: relative;
+    border: 2px solid $bblGrey;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease-in;
+    
+    &:focus-within {
+      border: 2px solid $bblBlue;
+      background: $white;
+      outline: 2px solid $phLogoBlue;
+    }
+  }
+
+  &__select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: unset;
+    appearance: none;
+    background: none;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease-in;
+
+    @include body-small;
+  }
+
+  &__icon {
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    right: 0.6rem;
+    width: 2rem;
+    height: 100%;
+    transform: translateY(-50%);
+
+    svg {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      height: 1rem;
+      transform: translateY(-50%);
+
+      path {
+        transition: transform 0.2s ease-in;
+      }
+    }
+  }
+}

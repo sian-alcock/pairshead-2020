@@ -1,5 +1,5 @@
-@use 'sass:math';
-@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap');
+@use "sass:math";
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap");
 
 /*************************
 ** Breakpoints **
@@ -7,14 +7,33 @@
 $sm: 320px;
 $md: 768px;
 $lg: 1248px;
+$xl: 1920px;
 /*************************
 ** Typography **
 *************************/
 
-$font-headline: 'Open sans', 'Times New Roman', 'Times', serif;
-$font-body: 'Open sans', 'Arial', sans-serif;
+$font-headline: "Open sans", "Times New Roman", "Times", serif;
+$font-body: "Open sans", "Arial", sans-serif;
 $normal: 400;
 $bold: 700;
+
+@mixin tablet {
+  @media only screen and (min-width: $md) {
+    @content;
+  }
+}
+
+@mixin laptop {
+  @media only screen and (min-width: $lg) {
+    @content;
+  }
+}
+
+@mixin wide {
+  @media only screen and (min-width: $xl) {
+    @content;
+  }
+}
 
 @mixin font-headline($weight: $normal) {
   font-family: $font-headline;
@@ -39,17 +58,6 @@ $bold: 700;
 @mixin h1 {
   @include font-headline;
 
-  font-size: rem(36px);
-  line-height: 1.1;
-  @media screen and (min-width: $md) {
-    font-size: rem(48px);
-  }
-}
-
-@mixin h2 ($colour: $bblBlue) {
-  @include font-headline;
-  color: $colour;
-
   font-size: rem(28px);
   line-height: 1.1;
   @media screen and (min-width: $md) {
@@ -57,8 +65,9 @@ $bold: 700;
   }
 }
 
-@mixin h3($weight: $normal) {
-  @include font-headline($weight);
+@mixin h2($colour: $bblBlue) {
+  @include font-headline;
+  color: $colour;
 
   font-size: rem(24px);
   line-height: 1.1;
@@ -67,7 +76,7 @@ $bold: 700;
   }
 }
 
-@mixin h4($weight: $normal) {
+@mixin h3($weight: $normal) {
   @include font-headline($weight);
 
   font-size: rem(20px);
@@ -76,20 +85,28 @@ $bold: 700;
     font-size: rem(22px);
   }
 }
-@mixin h5($weight: $normal) {
+
+@mixin h4($weight: $normal) {
   @include font-headline($weight);
   color: $black;
   font-size: rem(18px);
   line-height: 1.1;
 }
 
+@mixin h5($weight: $normal) {
+  @include font-headline($weight);
+  color: $black;
+  font-size: rem(16px);
+  line-height: 1.1;
+}
+
 @mixin body($weight: $normal) {
   @include font-body($weight);
 
-  font-size: rem(16px);
+  font-size: rem(14px);
   line-height: 1.1;
   @media screen and (min-width: $lg) {
-    font-size: rem(18px);
+    font-size: rem(16px);
   }
 
   // Prevent body from scrolling when nav is open
@@ -112,12 +129,18 @@ $bold: 700;
 @mixin body-small($weight: $normal) {
   @include font-body($weight);
 
-  font-size: rem(14px);
+  font-size: rem(12px);
   line-height: rem(19.6px);
   @media screen and (min-width: $lg) {
-    font-size: rem(16px);
+    font-size: rem(14px);
     line-height: rem(22.4px);
   }
+}
+
+@mixin body-xs($weight: $normal) {
+  @include font-body($weight);
+  font-size: rem(12px);
+  line-height: 1.2;
 }
 
 /*************************
@@ -149,7 +172,85 @@ $cols: 12;
     padding: 0 rem(48px);
   }
   @media screen and (min-width: $lg) {
-    padding: 0;
+    padding: 0 rem(24);
+  }
+}
+
+@mixin form() {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  @media screen and (min-width: $md) {
+    width: 75%;
+  }
+  @media screen and (min-width: $lg) {
+    width: 50%;
+  }
+}
+
+@mixin form-wider() {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  margin: 1.5rem auto;
+  padding: 1.5rem;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+@mixin field() {
+  padding: 1.5rem 0;
+}
+
+@mixin animated-link($color: #341499, $underline-color: null, $animation-duration: 0.3s) {
+  // Set underline color to link color if not specified
+  $underline: if($underline-color, $underline-color, $color);
+
+  color: $color;
+  text-decoration: none;
+  position: relative;
+  transition: color $animation-duration ease;
+
+  // Animated underline using pseudo-element
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: $underline;
+    transition: width $animation-duration ease;
+  }
+
+  // Hover effects
+  &:hover {
+    color: darken($color, 10%);
+
+    &::after {
+      width: 100%;
+    }
+  }
+
+  // Focus-visible effects (modern focus styling)
+  &:focus-visible {
+    outline: 2px solid $color;
+    outline-offset: 2px;
+    border-radius: 2px;
+
+    // Show underline immediately on focus
+    &::after {
+      width: 100%;
+    }
+  }
+
+  // Remove default focus outline for focus-visible supported browsers
+  &:focus:not(:focus-visible) {
+    outline: none;
   }
 }
 
@@ -185,4 +286,21 @@ $html-font-size: 16px;
 }
 @function rem($pxValue) {
   @return #{math.div(strip-unit($pxValue), strip-unit($html-font-size))}rem;
+}
+
+@mixin table {
+  th,
+  td {
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    @include body-xs;
+  }
+
+  th:first-of-type {
+    padding-left: 0;
+  }
+
+  tr {
+    border-bottom: 1px solid $bblGrey;
+  }
 }

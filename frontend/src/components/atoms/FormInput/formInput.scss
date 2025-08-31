@@ -1,0 +1,40 @@
+@import '../../../style';
+
+.form-input {
+  &__label {
+    display: block;
+    margin-bottom: 0.25rem;
+
+    @include body-small(bold);
+  }
+
+  &__input {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    border: 2px solid $bblGrey;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.2s ease-in;
+
+    @include body-small;
+
+    &:focus-visible {
+      border: 2px solid $bblBlue;
+      background: $white;
+      outline: 2px solid $phLogoBlue;
+    }
+
+    &:read-only {
+      background-color: $grey-tint;
+      cursor: not-allowed;
+
+      &:focus-visible {
+        outline: unset;
+        border: 2px solid $bblGrey;
+      }
+    }
+  }
+}
