@@ -10,14 +10,27 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        # First, drop any problematic indexes
+        migrations.RunSQL(
+            "DROP INDEX IF EXISTS results_race_id_varchar_idx;",
+            reverse_sql="-- No reverse needed"
+        ),
+        
         migrations.AddField(
             model_name='race',
             name='race_id',
             field=models.CharField(default='', max_length=15),
         ),
+        
         migrations.AlterField(
             model_name='race',
             name='id',
             field=models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
+        ),
+        
+        # Recreate proper indexes if needed
+        migrations.RunSQL(
+            "CREATE INDEX IF NOT EXISTS results_race_race_id_idx ON results_race (race_id);",
+            reverse_sql="DROP INDEX IF EXISTS results_race_race_id_idx;"
         ),
     ]
