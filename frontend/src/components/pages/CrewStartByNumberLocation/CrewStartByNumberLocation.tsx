@@ -26,7 +26,7 @@ const fetchCrews = async (params: ResponseParamsProps): Promise<CrewProps[]> => 
 const columnHelper = createColumnHelper<CrewProps>();
 
 export default function CrewStartByNumberLocation() {
-  const [showHostClubBoolean, setShowHostClubBoolean] = useState(false);
+  const [showHostClubBoolean, setShowHostClubBoolean] = useState(true);
 
   // React Query for data fetching
   const {
@@ -190,7 +190,13 @@ export default function CrewStartByNumberLocation() {
         <div className="crew-start-by-number-location__container">
           <div className="no-print">
             <div className="crew-start-by-number-location__field">
-              <Checkbox name={"host-club"} label={"Show host club"} id={"host-club"} onChange={showHostClubColumn} />
+              <Checkbox
+                name={"host-club"}
+                label={"Show host club"}
+                id={"host-club"}
+                onChange={showHostClubColumn}
+                checked={showHostClubBoolean}
+              />
             </div>
           </div>
           <h2 className="crew-start-by-number-location__title">Pairs Head {new Date().getFullYear()} - Start order</h2>
