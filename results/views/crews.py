@@ -132,6 +132,8 @@ class CrewDataImport(APIView):
                 else:
                     time_only = False
 
+                host_club_value = crew['boatingPermissionsClubID']  # This will be None if null
+
                 if personal > 0:
 
                     data = {
@@ -145,7 +147,7 @@ class CrewDataImport(APIView):
                         'status': crew['status'],
                         'bib_number': crew['customCrewNumber'],
                         'band': crew['bandId'],
-                        'host_club': crew['boatingPermissionsClubID'] or 999999,
+                        'host_club': host_club_value,
                         'otd_contact': crew['competitionContactName'],
                         'otd_home_phone': crew['competitionContactHomePhone'],
                         'otd_mobile_phone': crew['competitionContactMobilePhone'],
@@ -166,7 +168,7 @@ class CrewDataImport(APIView):
                         'status': crew['status'],
                         'bib_number': crew['customCrewNumber'],
                         'band': crew['bandId'],
-                        'host_club': crew['boatingPermissionsClubID'] or 999999,
+                        'host_club': host_club_value,
                         'time_only': time_only
                     }
 

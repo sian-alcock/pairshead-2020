@@ -27,7 +27,8 @@
     @include h4;
   }
 
-  &__field {
+  &__field,
+  &__block {
     margin-bottom: 1rem;
   }
 }

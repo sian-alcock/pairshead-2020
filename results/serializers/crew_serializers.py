@@ -97,21 +97,32 @@ class CrewExportSerializer(serializers.ModelSerializer):
 
 class WriteCrewSerializer(serializers.ModelSerializer):
 
-    host_club = serializers.CharField()
+    host_club = serializers.CharField(allow_null=True, required=False)
 
     class Meta:
         model = Crew
         fields = ('id', 'name', 'composite_code', 'club', 'rowing_CRI', 'sculling_CRI', 'event', 'status', 'band', 'bib_number', 'host_club', 'otd_contact', 'otd_home_phone', 'otd_mobile_phone', 'otd_work_phone', 'updated', 'time_only', )
     
     def create(self, validated_data):
-        host_club = validated_data.pop('host_club')
+        host_club_id = validated_data.pop('host_club')
 
-        try:
-            club = Club.objects.get(id = host_club)
-        except Club.DoesNotExist:
-            club = Club.objects.create(id = host_club, name = 'Unknown club' + ' - ' + host_club)
+        if host_club_id is None:
+            # Handle null host_club - assign to a single "not assigned" club
+            club, created = Club.objects.get_or_create(
+                id=999998,  # Use a specific ID for the "not assigned" club
+                defaults={'name': 'Unknown club - host club not assigned'}
+            )
+        else:
+            # Handle cases where we have an ID but the club might not exist
+            try:
+                club = Club.objects.get(id=host_club_id)
+            except Club.DoesNotExist:
+                club = Club.objects.create(
+                    id=host_club_id, 
+                    name=f'Unknown club - {host_club_id}'
+                )
 
-        new_crew = Crew.objects.create(host_club = club, **validated_data)
+        new_crew = Crew.objects.create(host_club=club, **validated_data)
         return new_crew
 
 

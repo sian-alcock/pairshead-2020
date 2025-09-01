@@ -142,7 +142,7 @@ export default function CrewStartByNumberLocation() {
 
     return (
       <div className="crew-start-by-number-location__table-container">
-        <table className="table crew-start-by-number-location__table has-text-left">
+        <table className="crew-start-by-number-location__table">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
@@ -154,17 +154,6 @@ export default function CrewStartByNumberLocation() {
               </tr>
             ))}
           </thead>
-          <tfoot className="no-print">
-            {table.getFooterGroups().map((footerGroup) => (
-              <tr key={footerGroup.id}>
-                {footerGroup.headers.map((header) => (
-                  <td key={header.id}>
-                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.footer, header.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tfoot>
           <tbody>
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id}>
@@ -209,7 +198,7 @@ export default function CrewStartByNumberLocation() {
           {isLoading ? <p>Loading...</p> : null}
 
           {groupedCrews.map((group, i) => (
-            <div className="block" key={`${group.location}-${i}`}>
+            <div className="crew-start-by-number-location__block" key={`${group.location}-${i}`}>
               <h3 className="crew-start-by-number-location__location-title">
                 {group.location === null
                   ? `Crews with no host club / number locations (${group.crews.length} numbers)`

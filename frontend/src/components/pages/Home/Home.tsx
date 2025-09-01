@@ -76,9 +76,24 @@ export default function Home() {
     } else if (phase === "pre-race") {
       blocks.push(
         {
-          value: statsData.accepted_crews_count,
-          subtitle: "accepted crews",
-          status: statsData.accepted_crews_count > 0 ? "good" : "warning"
+          value: statsData.total_crews_count,
+          subtitle: "total crews registered",
+          status: statsData.total_crews_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.scratched_crews_count,
+          subtitle: "scratched crews",
+          status: "neutral"
+        },
+        {
+          value: statsData.withdrawn_crews_count,
+          subtitle: "withdrawn crews",
+          status: "neutral"
+        },
+        {
+          value: statsData.submitted_crews_count,
+          subtitle: "submitted crews",
+          status: statsData.submitted_crews_count > 0 ? "good" : "warning"
         },
         {
           value: statsData.marshalling_divisions_count,
