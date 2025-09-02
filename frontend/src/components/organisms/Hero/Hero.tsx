@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from "axios";
 import Breadcrumbs from "../../molecules/Breadcrumbs/Breadcrumbs";
 import { RaceInfoProps } from "../../../types/components.types";
 import "./hero.scss";
-// import RaceModeSetter from "../../molecules/RaceModeSetter/RaceModeSetter";
+import RaceModeSetter from "../../molecules/RaceModeSetter/RaceModeSetter";
 
 interface HeroProps {
   title: string;
@@ -34,7 +34,9 @@ export default function Hero({ title }: HeroProps): ReactElement {
       <section className="page-hero no-print">
         <div className="page-hero__container">
           <h1>{title}</h1>
-          <div className="page-hero__side">{/* <RaceModeSetter /> */}</div>
+          <div className="page-hero__side">
+            <RaceModeSetter />
+          </div>
         </div>
       </section>
       <div className="page-hero__container">

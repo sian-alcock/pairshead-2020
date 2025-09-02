@@ -10,154 +10,154 @@ import { useDataStats } from "../../../hooks/useDataStats";
 import "./home.scss";
 
 export default function Home() {
-  // const { raceMode } = useCurrentRaceMode();
+  const { raceMode } = useCurrentRaceMode();
 
   // Convert raceMode to phase format for API
-  // const phase = useMemo(() => {
-  //   switch (raceMode) {
-  //     case "SETUP":
-  //       return "setup";
-  //     case "PRE_RACE":
-  //       return "pre-race";
-  //     case "RACE":
-  //       return "race";
-  //     default:
-  //       return "setup";
-  //   }
-  // }, [raceMode]);
+  const phase = useMemo(() => {
+    switch (raceMode) {
+      case "SETUP":
+        return "setup";
+      case "PRE_RACE":
+        return "pre-race";
+      case "RACE":
+        return "race";
+      default:
+        return "setup";
+    }
+  }, [raceMode]);
 
   // Fetch stats for current phase
-  // const { data: statsData, isLoading: statsLoading, error: statsError } = useDataStats(phase);
+  const { data: statsData, isLoading: statsLoading, error: statsError } = useDataStats(phase);
 
-  // const statBlocks = useMemo(() => {
-  //   if (!statsData) return [];
+  const statBlocks = useMemo(() => {
+    if (!statsData) return [];
 
-  //   const blocks: StatBlockProps[] = [];
+    const blocks: StatBlockProps[] = [];
 
-  //   // Phase-specific stat blocks
-  //   if (phase === "setup") {
-  //     blocks.push(
-  //       {
-  //         value: statsData.total_crews_count,
-  //         subtitle: "total crews registered",
-  //         status: statsData.total_crews_count > 0 ? "good" : "warning"
-  //       },
-  //       {
-  //         value: statsData.scratched_crews_count,
-  //         subtitle: "scratched crews",
-  //         status: "neutral"
-  //       },
-  //       {
-  //         value: statsData.withdrawn_crews_count,
-  //         subtitle: "withdrawn crews",
-  //         status: "neutral"
-  //       },
-  //       {
-  //         value: statsData.submitted_crews_count,
-  //         subtitle: "submitted crews",
-  //         status: statsData.submitted_crews_count > 0 ? "good" : "warning"
-  //       },
-  //       {
-  //         value: statsData.accepted_crews_count,
-  //         subtitle: "accepted crews",
-  //         status: statsData.accepted_crews_count > 0 ? "good" : "warning"
-  //       },
-  //       {
-  //         value: statsData.event_order_count,
-  //         subtitle: "event orders configured",
-  //         status: statsData.event_order_count > 0 ? "good" : "warning"
-  //       },
-  //       {
-  //         value: statsData.crews_with_start_order_count,
-  //         subtitle: "crews with calculated start order",
-  //         status: statsData.crews_with_start_order_count > 0 ? "good" : "warning"
-  //       }
-  //     );
-  //   } else if (phase === "pre-race") {
-  //     blocks.push(
-  //       {
-  //         value: statsData.total_crews_count,
-  //         subtitle: "total crews registered",
-  //         status: statsData.total_crews_count > 0 ? "good" : "warning"
-  //       },
-  //       {
-  //         value: statsData.scratched_crews_count,
-  //         subtitle: "scratched crews",
-  //         status: "neutral"
-  //       },
-  //       {
-  //         value: statsData.withdrawn_crews_count,
-  //         subtitle: "withdrawn crews",
-  //         status: "neutral"
-  //       },
-  //       {
-  //         value: statsData.submitted_crews_count,
-  //         subtitle: "submitted crews",
-  //         status: statsData.submitted_crews_count > 0 ? "good" : "warning"
-  //       },
-  //       {
-  //         value: statsData.marshalling_divisions_count,
-  //         subtitle: "marshalling divisions",
-  //         status: statsData.marshalling_divisions_count > 0 ? "good" : "warning"
-  //       },
-  //       {
-  //         value: statsData.number_locations_count,
-  //         subtitle: "number locations",
-  //         status: statsData.number_locations_count > 0 ? "good" : "warning"
-  //       }
-  //     );
-  //   } else if (phase === "race") {
-  //     blocks.push(
-  //       {
-  //         value: statsData.accepted_crews_count,
-  //         subtitle: "crews racing",
-  //         status: statsData.accepted_crews_count > 0 ? "good" : "warning"
-  //       },
-  //       {
-  //         value: statsData.race_times_count,
-  //         subtitle: statsData.race_times_count > 0 ? "times recorded" : "No times yet",
-  //         status: statsData.race_times_count > 0 ? "good" : "neutral"
-  //       },
-  //       {
-  //         value: statsData.races_count,
-  //         subtitle: "total races",
-  //         status: "good"
-  //       },
-  //       {
-  //         value: statsData.original_event_categories_imported,
-  //         subtitle: "original event categories",
-  //         status: statsData.original_event_categories_imported > 0 ? "good" : "warning"
-  //       },
-  //       {
-  //         value: statsData.masters_crews_count,
-  //         subtitle: "masters crews",
-  //         status: "neutral"
-  //       }
-  //     );
-  //   }
+    // Phase-specific stat blocks
+    if (phase === "setup") {
+      blocks.push(
+        {
+          value: statsData.total_crews_count,
+          subtitle: "total crews registered",
+          status: statsData.total_crews_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.scratched_crews_count,
+          subtitle: "scratched crews",
+          status: "neutral"
+        },
+        {
+          value: statsData.withdrawn_crews_count,
+          subtitle: "withdrawn crews",
+          status: "neutral"
+        },
+        {
+          value: statsData.submitted_crews_count,
+          subtitle: "submitted crews",
+          status: statsData.submitted_crews_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.accepted_crews_count,
+          subtitle: "accepted crews",
+          status: statsData.accepted_crews_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.event_order_count,
+          subtitle: "event orders configured",
+          status: statsData.event_order_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.crews_with_start_order_count,
+          subtitle: "crews with calculated start order",
+          status: statsData.crews_with_start_order_count > 0 ? "good" : "warning"
+        }
+      );
+    } else if (phase === "pre-race") {
+      blocks.push(
+        {
+          value: statsData.total_crews_count,
+          subtitle: "total crews registered",
+          status: statsData.total_crews_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.scratched_crews_count,
+          subtitle: "scratched crews",
+          status: "neutral"
+        },
+        {
+          value: statsData.withdrawn_crews_count,
+          subtitle: "withdrawn crews",
+          status: "neutral"
+        },
+        {
+          value: statsData.submitted_crews_count,
+          subtitle: "submitted crews",
+          status: statsData.submitted_crews_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.marshalling_divisions_count,
+          subtitle: "marshalling divisions",
+          status: statsData.marshalling_divisions_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.number_locations_count,
+          subtitle: "number locations",
+          status: statsData.number_locations_count > 0 ? "good" : "warning"
+        }
+      );
+    } else if (phase === "race") {
+      blocks.push(
+        {
+          value: statsData.accepted_crews_count,
+          subtitle: "crews racing",
+          status: statsData.accepted_crews_count > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.race_times_count,
+          subtitle: statsData.race_times_count > 0 ? "times recorded" : "No times yet",
+          status: statsData.race_times_count > 0 ? "good" : "neutral"
+        },
+        {
+          value: statsData.races_count,
+          subtitle: "total races",
+          status: "good"
+        },
+        {
+          value: statsData.original_event_categories_imported,
+          subtitle: "original event categories",
+          status: statsData.original_event_categories_imported > 0 ? "good" : "warning"
+        },
+        {
+          value: statsData.masters_crews_count,
+          subtitle: "masters crews",
+          status: "neutral"
+        }
+      );
+    }
 
-  //   return blocks;
-  // }, [statsData, phase]);
+    return blocks;
+  }, [statsData, phase]);
 
   // Calculate number of skeleton blocks based on phase
-  // const skeletonBlockCount = useMemo(() => {
-  //   switch (phase) {
-  //     case "setup":
-  //       return 3;
-  //     case "pre-race":
-  //       return 4;
-  //     case "race":
-  //       return 3;
-  //     default:
-  //       return 3;
-  //   }
-  // }, [phase]);
+  const skeletonBlockCount = useMemo(() => {
+    switch (phase) {
+      case "setup":
+        return 3;
+      case "pre-race":
+        return 4;
+      case "race":
+        return 3;
+      default:
+        return 3;
+    }
+  }, [phase]);
 
   return (
     <>
       <Header />
       <Hero title="Home" />
-      {/* <section className="home__section">
+      <section className="home__section">
         <div className="home__container">
           <div className="crew-manager__stat-blocks-grid">
             {statsLoading ? (
@@ -172,14 +172,13 @@ export default function Home() {
             )}
           </div>
         </div>
-      </section> */}
+      </section>
       <section className="home__section">
-        <h1>Do not call the RaceSetter</h1>
-        {/* <div className="home__container">
+        <div className="home__container">
           {raceMode === "SETUP" && <SetupDashboard />}
           {raceMode === "PRE_RACE" && <PreRaceDashboard />}
           {raceMode === "RACE" && <RaceDashboard />}
-        </div> */}
+        </div>
       </section>
     </>
   );
