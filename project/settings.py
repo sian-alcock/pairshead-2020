@@ -93,7 +93,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
 if os.environ.get('DATABASE_URL'):
     # Use Postgres on Heroku
     DATABASES = {
-        'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+        'default': dj_database_url.config(conn_max_age=0, ssl_require=True)
     }
 else:
     # Use SQLite locally
