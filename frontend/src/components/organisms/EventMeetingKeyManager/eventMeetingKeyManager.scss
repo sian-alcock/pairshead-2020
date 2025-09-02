@@ -16,6 +16,16 @@
     @include h2;
   }
 
+  &__empty {
+    padding: 1rem 0;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+  }
+
   &__description {
     margin-bottom: 0.5rem;
   }
