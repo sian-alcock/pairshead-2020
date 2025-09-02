@@ -97,7 +97,7 @@ const COLUMN_PRESETS = {
     race_time: true,
     overall_rank: true
   },
-  all: {} // Will be populated with all columns visible
+  all: {}
 };
 
 export default function CrewsTable({ crews, isLoading, error, onDataChanged }: CrewsTableProps) {
@@ -419,7 +419,6 @@ export default function CrewsTable({ crews, isLoading, error, onDataChanged }: C
     }
   });
 
-  // Loading state
   if (isLoading) {
     return (
       <div className="crews-table__loading">
@@ -431,7 +430,6 @@ export default function CrewsTable({ crews, isLoading, error, onDataChanged }: C
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="crews-table__error">
@@ -494,7 +492,6 @@ export default function CrewsTable({ crews, isLoading, error, onDataChanged }: C
         </table>
       </div>
 
-      {/* Results Info and Pagination */}
       <div className="crews-table__footer">
         <div className="crews-table__results-info">
           <p className="crews-table__results-text">
