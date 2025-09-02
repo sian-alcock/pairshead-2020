@@ -8,6 +8,7 @@
     "build": "webpack --mode production",
     "serve:backend": "python manage.py runserver 4000",
     "serve:frontend": "webpack serve --mode development",
+    "heroku-postbuild": "webpack --mode production",
     "seed": "python manage.py loaddata results/fixtures.json",
     "build:stats": "webpack --mode production --profile --json --silent > webpack-stats.json",
     "analyze": "yarn build:stats && npx webpack-bundle-analyzer webpack-stats.json",
