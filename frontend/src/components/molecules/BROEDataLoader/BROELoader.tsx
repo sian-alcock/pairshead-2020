@@ -189,7 +189,7 @@ const BROELoader: React.FC<BROELoaderProps> = ({ importPersonalData = false }) =
         throw error;
       }
     },
-    onSuccess: (lastUpdated) => {
+    onSuccess: (lastUpdated: any) => {
       // Invalidate relevant queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["clubs"] });
       queryClient.invalidateQueries({ queryKey: ["events"] });
@@ -200,7 +200,7 @@ const BROELoader: React.FC<BROELoaderProps> = ({ importPersonalData = false }) =
 
       console.log("All data imported successfully at:", lastUpdated);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       console.error("Import process failed:", error);
     }
   });

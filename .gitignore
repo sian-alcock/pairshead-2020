@@ -5,3 +5,4 @@ staticfiles/dbase-backups
 *.sqlite3
 results/csv
 frontend/dist
+node_modules
