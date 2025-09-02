@@ -6,7 +6,6 @@ import { IconButton } from "../../atoms/IconButton/IconButton";
 import TextButton from "../../atoms/TextButton/TextButton";
 import { FormInput } from "../../atoms/FormInput/FormInput";
 
-// Type definitions
 interface EventMeetingKey {
   id?: number;
   event_meeting_key: string;
@@ -14,7 +13,6 @@ interface EventMeetingKey {
   current_event_meeting: boolean;
 }
 
-// API functions
 const fetchEventMeetingKeys = async (): Promise<EventMeetingKey[]> => {
   const response = await fetch("/api/event-meeting-key-list/");
   if (!response.ok) throw new Error("Failed to fetch event meeting keys");
@@ -130,7 +128,6 @@ const EventMeetingKeyManager = () => {
     queryFn: fetchEventMeetingKeys
   });
 
-  // Process fetched data
   React.useEffect(() => {
     if (fetchedData) {
       setData(fetchedData);
@@ -308,7 +305,6 @@ const EventMeetingKeyManager = () => {
             removeEventMeetingKey(row.index);
           };
 
-          // Check if this specific row is being deleted
           const totalExistingItems = data.length;
           const isExistingItem = row.index < totalExistingItems;
           const currentItem = isExistingItem ? data[row.index] : null;
