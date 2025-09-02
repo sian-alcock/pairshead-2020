@@ -311,7 +311,7 @@ const EventMeetingKeyManager = () => {
           const isThisRowDeleting = currentItem?.id === deletingId;
 
           return (
-            <div className="event-meeting-manager__actions">
+            <div className="event-meeting-manager__table-actions">
               <IconButton
                 title={"Delete key"}
                 icon={"delete"}
@@ -397,13 +397,12 @@ const EventMeetingKeyManager = () => {
             ))}
           </tbody>
         </table>
+        {tableData.length === 0 && (
+          <div className="event-meeting-manager__empty">
+            No event meeting keys found. Click "Add new key" to get started.
+          </div>
+        )}
       </div>
-
-      {tableData.length === 0 && (
-        <div className="event-meeting-manager__empty">
-          No event meeting keys found. Click "Add new key" to get started.
-        </div>
-      )}
     </div>
   );
 };
