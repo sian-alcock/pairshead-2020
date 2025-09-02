@@ -190,7 +190,6 @@ const BROELoader: React.FC<BROELoaderProps> = ({ importPersonalData = false }) =
       }
     },
     onSuccess: (lastUpdated: any) => {
-      // Invalidate relevant queries to refresh data
       queryClient.invalidateQueries({ queryKey: ["clubs"] });
       queryClient.invalidateQueries({ queryKey: ["events"] });
       queryClient.invalidateQueries({ queryKey: ["bands"] });
