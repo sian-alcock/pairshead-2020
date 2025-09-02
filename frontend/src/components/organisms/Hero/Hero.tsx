@@ -28,7 +28,6 @@ export default function Hero({ title }: HeroProps): ReactElement {
     fetchData("/api/global-settings-list/");
   }, []);
 
-  console.log(settings[0]?.broe_data_last_update);
   return (
     <>
       <section className="page-hero no-print">
