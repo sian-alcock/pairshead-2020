@@ -1,4 +1,4 @@
-@import '../../../style.scss';
+@import "../../../style.scss";
 
 .marshalling-table {
   padding: 1.5rem;
@@ -23,5 +23,11 @@
 
   &__table {
     @include table;
+  }
+
+  &__empty {
+    padding: 1rem 0;
+
+    @include body-xs;
   }
 }

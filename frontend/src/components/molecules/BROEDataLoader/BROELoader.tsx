@@ -195,7 +195,7 @@ const BROELoader: React.FC<BROELoaderProps> = ({ importPersonalData = false }) =
       queryClient.invalidateQueries({ queryKey: ["bands"] });
       queryClient.invalidateQueries({ queryKey: ["crews"] });
       queryClient.invalidateQueries({ queryKey: ["competitors"] });
-      // queryClient.invalidateQueries({ queryKey: ["data-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["data-stats"] });
 
       console.log("All data imported successfully at:", lastUpdated);
     },
