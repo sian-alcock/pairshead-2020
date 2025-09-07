@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 class TimeoutMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
-        self.timeout = getattr(settings, 'REQUEST_TIMEOUT', 10)  # 10 seconds default
+        self.timeout = getattr(settings, 'REQUEST_TIMEOUT', 28)  # 10 seconds default
 
     def __call__(self, request):
         response = [None]
