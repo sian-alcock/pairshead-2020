@@ -65,22 +65,16 @@ function App() {
             <SecureRoute path="/race-times/:id/edit" component={RaceTimeEdit} />
             <SecureRoute path="/export" component={ExportData} />
             <SecureRoute path="/results" component={ResultIndex} />
-            <SecureRoute path="/manage-race-times" component={ManageRaceTimes} />
             <SecureRoute path="/manage-penalties" component={ManagePenalties} />
             <SecureRoute path="/manage-original-event-categories" component={ManagingOriginalEventCategories} />
             <SecureRoute path="/settings/keys" component={EventKeys} />
             <SecureRoute path="/settings/info" component={Info} />
             <SecureRoute path="/settings/register" component={Register} />
-            <SecureRoute path="/settings/race-time-manager/races/:id/edit" component={RaceTimesManagerDetail} />
-            <SecureRoute path="/settings/race-time-manager/races/new" component={RaceTimesManagerDetail} />
-            <SecureRoute
-              path="/settings/timing-offset-manager/race-time-syncs/:id/edit"
-              component={TimingOffsetManagerDetail}
-            />
-            <SecureRoute
-              path="/settings/timing-offset-manager/race-time-syncs/new"
-              component={TimingOffsetManagerDetail}
-            />
+            <SecureRoute path="/manage-race-times/:id/edit" component={RaceTimesManagerDetail} />
+            <SecureRoute path="/manage-race-times/new" component={RaceTimesManagerDetail} />
+            <SecureRoute path="/manage-race-times/race-time-syncs/:id/edit" component={TimingOffsetManagerDetail} />
+            <SecureRoute path="/manage-race-times/race-time-syncs/new" component={TimingOffsetManagerDetail} />
+            <SecureRoute path="/manage-race-times" component={ManageRaceTimes} />
             <SecureRoute path="/settings" component={Settings} />
             <SecureRoute path="/logistics/crew-draw-reports" component={CrewDrawReports} />
             <SecureRoute path="/logistics/crew-labels" component={CrewLabels} />

@@ -11,8 +11,13 @@ export default function ManageRaceTimes() {
       <Hero title="Manage race times" />
       <section className="settings__section">
         <div className="settings__container">
-          <RaceTimesManager />
-          <TimingOffsetManager />
+          <div id="race-times-manager">
+            <RaceTimesManager />
+          </div>
+
+          <div id="timing-offset-manager">
+            <TimingOffsetManager />
+          </div>
         </div>
       </section>
     </>
