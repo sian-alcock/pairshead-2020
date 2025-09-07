@@ -12,6 +12,14 @@ interface EventKey {
   current_event_meeting: boolean;
 }
 
+// Paginated response structure from DRF
+interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
 const fetchGlobalSettings = async (): Promise<GlobalSettings[]> => {
   const response = await fetch(`api/global-settings-list/`);
 
@@ -20,8 +28,9 @@ const fetchGlobalSettings = async (): Promise<GlobalSettings[]> => {
     throw new Error(`Failed to fetch global settings: ${response.status} ${errorText}`);
   }
 
-  const data = await response.json();
-  return data;
+  const data: PaginatedResponse<GlobalSettings> = await response.json();
+  // Extract just the results array from paginated response
+  return data.results;
 };
 
 const fetchEventKeys = async (): Promise<EventKey[]> => {
@@ -32,8 +41,9 @@ const fetchEventKeys = async (): Promise<EventKey[]> => {
     throw new Error(`Failed to fetch event keys: ${response.status} ${errorText}`);
   }
 
-  const data = await response.json();
-  return data;
+  const data: PaginatedResponse<EventKey> = await response.json();
+  // Extract just the results array from paginated response
+  return data.results;
 };
 
 const updateGlobalSettings = async ({
@@ -108,8 +118,6 @@ export const useRaceMode = () => {
     isUpdating: updateMutation.isPending
   };
 };
-
-// Usage:   const { raceMode } = useCurrentRaceMode();
 
 export const useCurrentRaceMode = () => {
   const { data: settings, isLoading } = useGlobalSettings();
