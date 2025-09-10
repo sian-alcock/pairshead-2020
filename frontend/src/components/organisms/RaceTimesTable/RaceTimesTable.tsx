@@ -16,24 +16,13 @@ import {
 import { useHistory, Link } from "react-router-dom";
 import axios, { AxiosResponse } from "axios";
 import { formatTimes } from "../../../lib/helpers";
-import { CrewProps, RaceProps } from "../../../types/components.types";
+import { CrewProps, RaceProps, TimeProps } from "../../../types/components.types";
 import { TableHeader } from "../../molecules/TableHeader/TableHeader";
 import { TableBody } from "../../molecules/TableBody/TableBody";
 import TablePagination from "../../molecules/TablePagination/TablePagination";
 import SearchInput from "../../molecules/SearchInput/SearchInput";
 import "./raceTimesTable.scss";
-
-// Types
-interface RaceTimeProps {
-  id: number;
-  sequence: number;
-  bib_number?: number;
-  tap: string;
-  time_tap: number;
-  synchronized_time: number;
-  crew?: CrewProps;
-  race?: RaceProps;
-}
+import { useRaceTimes } from "../../../hooks/useRaceTimes";
 
 interface RaceTimesTableProps {
   raceId: number;
@@ -41,16 +30,6 @@ interface RaceTimesTableProps {
   raceName: string;
   onDataChanged?: () => void;
 }
-
-// API function
-const fetchRaceTimes = async (raceId: number, tap: string): Promise<RaceTimeProps[]> => {
-  const params = new URLSearchParams();
-  params.append("race_id", raceId.toString());
-  params.append("tap", tap);
-
-  const response: AxiosResponse = await axios.get(`/api/race-times/?${params.toString()}`);
-  return response.data;
-};
 
 // Custom filter functions
 const timeFilterFn = (row: any, columnId: string, filterValue: string) => {
@@ -105,7 +84,7 @@ const timeSortingFn = (rowA: any, rowB: any, columnId: string) => {
 export default function RaceTimesTable({ raceId, tap, raceName, onDataChanged }: RaceTimesTableProps) {
   const history = useHistory();
   const queryClient = useQueryClient();
-  const columnHelper = createColumnHelper<RaceTimeProps>();
+  const columnHelper = createColumnHelper<TimeProps>();
 
   // Component state
   const [pagination, setPagination] = useState<PaginationState>({
@@ -120,25 +99,14 @@ export default function RaceTimesTable({ raceId, tap, raceName, onDataChanged }:
   const {
     data: raceTimesData,
     isLoading,
-    error,
-    refetch
-  } = useQuery({
-    queryKey: ["raceTimes", raceId, tap],
-    queryFn: () => {
-      console.log(`Fetching race times for race ${raceId}, tap ${tap}...`);
-      const startTime = Date.now();
-      return fetchRaceTimes(raceId, tap).then((result) => {
-        console.log(`Race times fetch took ${Date.now() - startTime}ms`);
-        return result;
-      });
-    },
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000)
+    error
+  } = useRaceTimes({
+    race: raceId,
+    tap
   });
 
   // Table columns
-  const columns = useMemo<ColumnDef<RaceTimeProps, any>[]>(
+  const columns = useMemo<ColumnDef<TimeProps, any>[]>(
     () => [
       columnHelper.accessor("sequence", {
         header: "Sequence",

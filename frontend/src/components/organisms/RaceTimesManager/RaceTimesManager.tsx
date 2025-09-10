@@ -16,27 +16,12 @@ import { IconButton } from "../../atoms/IconButton/IconButton";
 import { Link } from "react-router-dom";
 import Icon from "../../atoms/Icons/Icons";
 import CSVDataLoader from "../../molecules/CSVDataLoader/CSVDataLoader";
+import { useDeleteRace, useRaces, useUpdateRace } from "../../../hooks/useRaces";
 
 interface RadioSelection {
   raceId: number;
   type: "default-start" | "default-finish";
 }
-
-// API functions
-const fetchRaces = async (): Promise<RaceProps[]> => {
-  const response: AxiosResponse = await axios.get("/api/races/");
-  return response.data;
-};
-
-const updateRace = async ({ raceId, updateData }: { raceId: number; updateData: any }) => {
-  const response: AxiosResponse = await axios.patch(`/api/races/${raceId}/`, updateData);
-  return response.data;
-};
-
-const deleteRace = async (raceId: number) => {
-  const response: AxiosResponse = await axios.delete(`/api/races/${raceId}`);
-  return response.data;
-};
 
 const refreshRaceData = async (raceId: number) => {
   const response: AxiosResponse = await axios.get(`/api/crew-race-times-import-webscorer/${raceId}`);
@@ -53,30 +38,12 @@ export default function RaceTimesManager(): ReactElement {
 
   const queryClient = useQueryClient();
 
-  // React Query for data fetching
-  const {
-    data: raceDetails = [],
-    isLoading,
-    error
-  } = useQuery({
-    queryKey: ["races"],
-    queryFn: fetchRaces
-  });
+  const { data: raceDetails = [], isLoading, error } = useRaces();
 
   // Mutations
-  const updateRaceMutation = useMutation({
-    mutationFn: updateRace,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["races"] });
-    }
-  });
+  const updateRaceMutation = useUpdateRace();
 
-  const deleteRaceMutation = useMutation({
-    mutationFn: deleteRace,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["races"] });
-    }
-  });
+  const deleteRaceMutation = useDeleteRace();
 
   const refreshRaceMutation = useMutation({
     mutationFn: refreshRaceData,
@@ -101,8 +68,8 @@ export default function RaceTimesManager(): ReactElement {
         };
 
         await updateRaceMutation.mutateAsync({
-          raceId: selection.raceId,
-          updateData
+          id: selection.raceId,
+          raceData: updateData
         });
       }
 

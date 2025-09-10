@@ -19,8 +19,10 @@ export default function RaceTimesManagerDetail() {
   const routeParams = useParams<RaceTimesManagerParams>();
   const history = useHistory();
 
+  const id = Number(routeParams.id);
+
   // Query for fetching race data
-  const { data: raceData, isLoading, error } = useRace(routeParams.id || "");
+  const { data: raceData, isLoading, error } = useRace(id);
 
   // Mutations
   const createRaceMutation = useCreateRace();
@@ -48,7 +50,7 @@ export default function RaceTimesManagerDetail() {
       if (routeParams.id === undefined) {
         await createRaceMutation.mutateAsync(data);
       } else {
-        await updateRaceMutation.mutateAsync({ id: routeParams.id, raceData: data });
+        await updateRaceMutation.mutateAsync({ id: id, raceData: data });
       }
       history.push("/manage-race-times");
     } catch (error: any) {
@@ -66,7 +68,7 @@ export default function RaceTimesManagerDetail() {
   const handleDelete = async () => {
     if (routeParams.id) {
       try {
-        await deleteRaceMutation.mutateAsync(routeParams.id);
+        await deleteRaceMutation.mutateAsync(id);
         history.push("/manage-race-times");
       } catch (error: any) {
         if (error.response?.data) {

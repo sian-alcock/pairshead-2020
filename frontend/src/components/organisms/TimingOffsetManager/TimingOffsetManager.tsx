@@ -5,6 +5,7 @@ import { RaceProps, TimingOffsetProps } from "../../../types/components.types";
 import "./timingOffsetManager.scss";
 import TextButton from "../../atoms/TextButton/TextButton";
 import { IconButton } from "../../atoms/IconButton/IconButton";
+import { PaginatedResponse } from "../../../types/components.types";
 
 export default function TimingOffsetManager() {
   const [timingOffsets, setTimingOffsets] = useState<TimingOffsetProps[]>([]);
@@ -12,15 +13,15 @@ export default function TimingOffsetManager() {
 
   const fetchData = async (url: string) => {
     try {
-      const response: AxiosResponse = await axios.get(url);
+      const response: AxiosResponse<PaginatedResponse<TimingOffsetProps>> = await axios.get(url);
 
-      const responseData: TimingOffsetProps[] = response.data;
+      const responseData: TimingOffsetProps[] = response.data.results;
 
       setTimingOffsets(responseData);
 
-      const raceResponse: AxiosResponse = await axios.get("api/races");
+      const raceResponse: AxiosResponse<PaginatedResponse<RaceProps>> = await axios.get("api/races");
       console.log(raceResponse);
-      setRaces(raceResponse.data);
+      setRaces(raceResponse.data.results);
     } catch (error) {
       console.error(error);
     }
@@ -35,9 +36,11 @@ export default function TimingOffsetManager() {
     const timingOffset = clickedElement.closest("tr")?.dataset.timingOffset;
 
     try {
-      const response: AxiosResponse = await axios.delete(`api/race-time-sync/${timingOffset}`);
+      const response: AxiosResponse<PaginatedResponse<TimingOffsetProps>> = await axios.delete(
+        `api/race-time-sync/${timingOffset}`
+      );
 
-      const responseData: TimingOffsetProps[] = response.data;
+      const responseData: TimingOffsetProps[] = response.data.results;
 
       setTimingOffsets(responseData);
     } catch (error) {

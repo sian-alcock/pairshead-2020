@@ -1,12 +1,14 @@
 export type TimeProps = {
-  finish_time?: number | null;
-  start_time?: number | null;
   id: number;
   sequence: number;
+  finish_time?: number | null;
+  start_time?: number | null;
+  synchronized_time: number;
   tap: "Start" | "Finish";
   time_tap: number;
-  crew: CrewProps | null;
-  race: RaceProps | null;
+  bib_number?: number;
+  crew?: CrewProps | null;
+  race?: RaceProps | null;
 };
 
 export type ClubProps = {
@@ -178,4 +180,18 @@ export type DataStats = {
   marshalling_divisions_count: number;
   number_locations_count: number;
   last_updated: string;
+};
+
+export type EventMeetingKey = {
+  id?: number;
+  event_meeting_key: string;
+  event_meeting_name: string;
+  current_event_meeting: boolean;
+};
+
+export type PaginatedResponse<T> = {
+  results: T[];
+  count: number;
+  next: string | null;
+  previous: string | null;
 };

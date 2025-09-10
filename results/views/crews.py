@@ -19,7 +19,7 @@ from rest_framework import filters, generics, serializers
 from django_filters.rest_framework import DjangoFilterBackend
 from .helpers import decode_utf8
 
-
+from ..pagination import CrewPaginationWithAggregates
 from ..serializers import ClubSerializer, CrewSerializer, CrewSerializerLimited, CSVUpdateCrewSerializer, PopulatedCrewSerializer, WriteCrewSerializer, CrewExportSerializer
 
 from ..models import Crew, Race, RaceTime, OriginalEventCategory, EventMeetingKey
@@ -28,6 +28,43 @@ from ..models import Crew, Race, RaceTime, OriginalEventCategory, EventMeetingKe
 class CrewListView(generics.ListCreateAPIView):
     queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted', 'Submitted'))
     serializer_class = PopulatedCrewSerializer
+    pagination_class = CrewPaginationWithAggregates
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
+    ordering_fields = '__all__'  # Allow ordering on all fields
+    ordering = ['overall_rank']  # Default ordering
+    search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number', 'competitor_names']
+    filterset_fields = ['status', 'event_band', 'start_time', 'finish_time']
+
+    def get_queryset(self):
+        queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted', 'Submitted')).select_related('club')
+
+        # Handle masters filter
+        masters = self.request.query_params.get('masters')
+        if masters == 'true':
+            queryset = queryset.filter(status__exact='Accepted', masters_adjustment__gt=0)
+            # Let the OrderingFilter handle ordering, but set default for masters
+            if not self.request.query_params.get('ordering'):
+                return queryset.order_by('event_band')
+            return queryset
+
+        # Handle status exclusion (for hiding scratched crews)
+        status_not = self.request.query_params.get('status__not')
+        if status_not:
+            excluded_statuses = [status.strip() for status in status_not.split(',')]
+            queryset = queryset.exclude(status__in=excluded_statuses)
+
+        # Handle special ordering cases that need custom logic
+        order = self.request.query_params.get('order')  # Keep for special cases
+        if order == 'start-score':
+            return queryset.order_by('draw_start_score')
+        if order == 'club':
+            return queryset.order_by('club__name', 'name')
+        if order is not None:
+            return queryset.order_by(order)
+
+        # Don't apply default ordering here - let DRF's OrderingFilter handle it
+        # The ordering attribute at class level will be used as default
+        return queryset
     
 class CrewListOptionsForSelect(APIView):
     def get(self, _request):

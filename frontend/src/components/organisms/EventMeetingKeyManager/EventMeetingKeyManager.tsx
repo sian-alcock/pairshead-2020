@@ -1,68 +1,11 @@
 import React, { useState, useMemo, useCallback } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useReactTable, getCoreRowModel, flexRender, createColumnHelper } from "@tanstack/react-table";
 import "./eventMeetingKeyManager.scss";
 import { IconButton } from "../../atoms/IconButton/IconButton";
 import TextButton from "../../atoms/TextButton/TextButton";
 import { FormInput } from "../../atoms/FormInput/FormInput";
-
-interface EventMeetingKey {
-  id?: number;
-  event_meeting_key: string;
-  event_meeting_name: string;
-  current_event_meeting: boolean;
-}
-
-const fetchEventMeetingKeys = async (): Promise<EventMeetingKey[]> => {
-  const response = await fetch("/api/event-meeting-key-list/");
-  if (!response.ok) throw new Error("Failed to fetch event meeting keys");
-  return response.json();
-};
-
-const createEventMeetingKeys = async (data: Partial<EventMeetingKey>[]): Promise<EventMeetingKey[]> => {
-  const response = await fetch("/api/event-meeting-key-bulk-update/", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
-  if (!response.ok) throw new Error("Failed to create event meeting keys");
-  return response.json();
-};
-
-const updateEventMeetingKeys = async (data: EventMeetingKey[]): Promise<any> => {
-  const response = await fetch("/api/event-meeting-key-bulk-update/", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data)
-  });
-  if (!response.ok) throw new Error("Failed to update event meeting keys");
-  return response.json();
-};
-
-const deleteEventMeetingKey = async (id: number): Promise<any> => {
-  // Using the correct detail endpoint pattern without trailing slash
-  const url = `/api/event-meeting-key-list/${String(id).trim()}`;
-  console.log("DELETE URL:", url); // Debug log
-
-  const response = await fetch(url, {
-    method: "DELETE",
-    headers: {
-      "Content-Type": "application/json"
-    }
-  });
-
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error("Delete error:", response.status, errorText);
-    throw new Error(`Failed to delete event meeting key: ${response.status} ${errorText}`);
-  }
-
-  // Some DELETE endpoints return empty response, handle both cases
-  if (response.status === 204) {
-    return null;
-  }
-  return response.json();
-};
+import { useEventMeetingKeyManager } from "../../../hooks/useEventKeys";
+import { EventMeetingKey } from "../../../types/components.types";
 
 // Editable Cell Component
 const EditableCell: React.FC<{
@@ -78,9 +21,9 @@ const EditableCell: React.FC<{
     table.options.meta?.updateData(row.index, column.id, value);
   };
 
-  React.useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
+  // React.useEffect(() => {
+  //   setValue(initialValue);
+  // }, [initialValue]);
 
   if (column.id === "current_event_meeting") {
     return (
@@ -112,21 +55,21 @@ const EditableCell: React.FC<{
 };
 
 const EventMeetingKeyManager = () => {
-  const queryClient = useQueryClient();
+  const {
+    data: fetchedData,
+    isLoading,
+    isSaving,
+    isDeleting,
+    error,
+    saveNewItems,
+    saveExistingItems,
+    deleteItem
+  } = useEventMeetingKeyManager();
+
   const [data, setData] = useState<EventMeetingKey[]>([]);
   const [hasChanges, setHasChanges] = useState(false);
   const [newItems, setNewItems] = useState<EventMeetingKey[]>([]);
   const [deletingId, setDeletingId] = useState<number | null>(null);
-
-  // Fetch data
-  const {
-    data: fetchedData,
-    isLoading,
-    error
-  } = useQuery<EventMeetingKey[]>({
-    queryKey: ["eventMeetingKeys"],
-    queryFn: fetchEventMeetingKeys
-  });
 
   React.useEffect(() => {
     if (fetchedData) {
@@ -138,36 +81,6 @@ const EventMeetingKeyManager = () => {
   const tableData = useMemo(() => {
     return [...data, ...newItems];
   }, [data, newItems]);
-
-  // Mutations
-  const createMutation = useMutation({
-    mutationFn: createEventMeetingKeys,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["eventMeetingKeys"] });
-      setNewItems([]);
-      setHasChanges(false);
-    }
-  });
-
-  const updateMutation = useMutation({
-    mutationFn: updateEventMeetingKeys,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["eventMeetingKeys"] });
-      setHasChanges(false);
-    }
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: deleteEventMeetingKey,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["eventMeetingKeys"] });
-      setDeletingId(null);
-    },
-    onError: (error) => {
-      console.error("Delete failed:", error);
-      setDeletingId(null);
-    }
-  });
 
   // Update data handler
   const updateData = useCallback(
@@ -234,7 +147,7 @@ const EventMeetingKeyManager = () => {
 
   // Remove meeting key
   const removeEventMeetingKey = useCallback(
-    (index: number) => {
+    async (index: number) => {
       const totalExistingItems = data.length;
 
       if (index < totalExistingItems) {
@@ -242,7 +155,13 @@ const EventMeetingKeyManager = () => {
         const itemToDelete = data[index];
         if (itemToDelete.id) {
           setDeletingId(itemToDelete.id);
-          deleteMutation.mutate(itemToDelete.id);
+          try {
+            await deleteItem(itemToDelete.id);
+          } catch (error) {
+            console.error("Delete failed:", error);
+          } finally {
+            setDeletingId(null);
+          }
         }
       } else {
         // Removing new item (no API call needed)
@@ -250,22 +169,31 @@ const EventMeetingKeyManager = () => {
         setNewItems((prev) => prev.filter((_, i) => i !== newItemIndex));
       }
     },
-    [data, deleteMutation]
+    [data, deleteItem]
   );
 
   // Save changes
-  const saveChanges = () => {
-    // Save existing changes
-    if (hasChanges && data.some((item) => item.id)) {
-      updateMutation.mutate(data.filter((item) => item.id));
-    }
+  const saveChanges = async () => {
+    try {
+      const promises: Promise<any>[] = [];
 
-    // Save new items
-    if (newItems.length > 0) {
-      const validNewItems = newItems.filter((item) => item.event_meeting_key && item.event_meeting_name);
-      if (validNewItems.length > 0) {
-        createMutation.mutate(validNewItems);
+      // Save existing changes
+      if (hasChanges && data.some((item) => item.id)) {
+        promises.push(saveExistingItems(data.filter((item) => item.id)));
       }
+
+      // Save new items
+      if (newItems.length > 0) {
+        promises.push(saveNewItems(newItems));
+      }
+
+      await Promise.all(promises);
+
+      // Reset local state after successful save
+      setNewItems([]);
+      setHasChanges(false);
+    } catch (error) {
+      console.error("Save failed:", error);
     }
   };
 
@@ -316,7 +244,7 @@ const EventMeetingKeyManager = () => {
                 title={"Delete key"}
                 icon={"delete"}
                 onClick={handleDelete}
-                disabled={isThisRowDeleting}
+                disabled={isThisRowDeleting || isDeleting}
                 smaller
               />
             </div>
@@ -324,7 +252,7 @@ const EventMeetingKeyManager = () => {
         }
       })
     ],
-    [removeEventMeetingKey, data, deletingId]
+    [removeEventMeetingKey, data, deletingId, isDeleting]
   );
 
   const table = useReactTable({
@@ -362,9 +290,9 @@ const EventMeetingKeyManager = () => {
             <>
               <TextButton
                 onClick={saveChanges}
-                disabled={createMutation.isPending || updateMutation.isPending}
-                loading={createMutation.isPending || updateMutation.isPending}
-                label={createMutation.isPending || updateMutation.isPending ? "Saving..." : "Save changes"}
+                disabled={isSaving}
+                loading={isSaving}
+                label={isSaving ? "Saving..." : "Save changes"}
               />
               <TextButton onClick={resetChanges} label={"Reset"} style={"secondary"} />
             </>

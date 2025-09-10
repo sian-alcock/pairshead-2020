@@ -11,7 +11,7 @@ export const useRaces = () => {
   });
 };
 
-export const useRace = (id: string) => {
+export const useRace = (id: number) => {
   return useQuery({
     queryKey: ["races", id],
     queryFn: () => fetchRace(id),
@@ -36,7 +36,7 @@ export const useUpdateRace = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, raceData }: { id: string; raceData: Partial<RaceProps> }) => updateRace(id, raceData),
+    mutationFn: ({ id, raceData }: { id: number; raceData: Partial<RaceProps> }) => updateRace(id, raceData),
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["races"] });
       queryClient.invalidateQueries({ queryKey: ["races", variables.id] });
@@ -48,7 +48,7 @@ export const useDeleteRace = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) => deleteRace(id),
+    mutationFn: (id: number) => deleteRace(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["races"] });
     }

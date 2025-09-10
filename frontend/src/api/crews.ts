@@ -1,9 +1,9 @@
 import axios, { AxiosResponse } from "axios";
-import { CrewProps } from "../types/components.types";
+import { CrewProps, PaginatedResponse } from "../types/components.types";
 
 export const fetchCrews = async (): Promise<CrewProps[]> => {
-  const response: AxiosResponse<CrewProps[]> = await axios.get("/api/crews/");
-  return response.data;
+  const response: AxiosResponse<PaginatedResponse<CrewProps>> = await axios.get("/api/crews/");
+  return response.data.results;
 };
 
 export const fetchCrew = async (id: string | number): Promise<CrewProps> => {

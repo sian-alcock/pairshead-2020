@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
 import Header from "../Header/Header";
-import { RaceProps, TimingOffsetProps } from "../../../types/components.types";
+import { PaginatedResponse, RaceProps, TimingOffsetProps } from "../../../types/components.types";
 import TextButton from "../../atoms/TextButton/TextButton";
 import { useHistory, useParams } from "react-router-dom";
 import Hero from "../Hero/Hero";
@@ -36,8 +36,8 @@ export default function TimingOffsetManagerDetail() {
         setIsLoading(true);
       }
 
-      const raceResponse: AxiosResponse = await axios.get(`/api/races/`);
-      const raceResponseData = raceResponse.data;
+      const raceResponse: AxiosResponse<PaginatedResponse<RaceProps>> = await axios.get(`/api/races/`);
+      const raceResponseData = raceResponse.data.results;
       const races = raceResponseData;
       if (races) {
         setRaces(races);
@@ -124,11 +124,10 @@ export default function TimingOffsetManagerDetail() {
       };
 
       if (routeParams.id === undefined) {
-        axios.post(`/api/race-time-sync/`, data).then(() => history.push("/race-times"));
+        axios.post(`/api/race-time-sync/`, data).then(() => history.push("/manage-race-times"));
       } else {
-        axios.put(`/api/race-time-sync/${routeParams.id}/`, data).then(() => history.push("/race-times"));
+        axios.put(`/api/race-time-sync/${routeParams.id}/`, data).then(() => history.push("/manage-race-times"));
       }
-      // history.push('/race-times')
     } catch (error) {
       setMessage("Failed to save timing offset");
       setMessageType("error");

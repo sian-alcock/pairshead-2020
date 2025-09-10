@@ -5,6 +5,7 @@ import { formatTimeDate } from "../../../lib/helpers";
 import TextButton from "../../atoms/TextButton/TextButton";
 import { FeedbackModal } from "../FeedbackModal/FeedbackModal";
 import ProgressMessage from "../../atoms/ProgressMessage/ProgressMessage";
+import { PaginatedResponse } from "../../../types/components.types";
 import "./importBroeData.scss";
 
 // Types
@@ -37,7 +38,7 @@ const importApis = {
   crews: (apiEndpoint: string) => axios.get<ApiResponse[]>(apiEndpoint),
   competitors: () => axios.get<ApiResponse[]>("/api/competitor-data-import"),
   eventBands: () => axios.get<ApiResponse[]>("/api/crew-get-event-band/"),
-  getSettings: () => axios.get<GlobalSetting[]>("api/global-settings-list/"),
+  getSettings: () => axios.get<PaginatedResponse<GlobalSetting>>("api/global-settings-list/"),
   updateSettings: (id: number, data: FormData) => axios.put(`/api/global-settings-list/${id}`, data),
   createSettings: (data: FormData) => axios.post("/api/global-settings-list/", data)
 };
@@ -67,8 +68,8 @@ const BROELoader: React.FC<BROELoaderProps> = ({ importPersonalData = false }) =
       const formData = new FormData();
       formData.append("broe_data_last_update", updatedTime);
 
-      if (settingsResponse.data.length > 0) {
-        await importApis.updateSettings(settingsResponse.data[0].id, formData);
+      if (settingsResponse.data.results.length > 0) {
+        await importApis.updateSettings(settingsResponse.data.results[0].id, formData);
       } else {
         await importApis.createSettings(formData);
       }

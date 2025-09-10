@@ -41,6 +41,8 @@ export default function CrewManagementDashboard() {
 
   const queryClient = useQueryClient();
 
+  // Only fetch crews data for components that still need it passed as props
+  // CrewsTable now handles its own data fetching
   const { data: crewsData, isLoading: crewsLoading, error: crewsError } = useCrews();
   const { data: racesData, isLoading: racesLoading, error: racesError } = useRaces();
 
@@ -72,9 +74,11 @@ export default function CrewManagementDashboard() {
       {
         key: "all",
         label: "All crews",
+        // Note: We could remove the count here since CrewsTable handles its own data
+        // Or fetch a separate count if needed for UI purposes
         count: crewsData?.length || 0,
         component: "crew-table",
-        needsCrews: true,
+        needsCrews: false, // Changed to false since CrewsTable fetches its own data
         needsRaces: true
       },
       {
@@ -82,7 +86,7 @@ export default function CrewManagementDashboard() {
         label: "Crews / race view",
         count: crewsData?.length || 0,
         component: "crew-race-view",
-        needsCrews: true,
+        needsCrews: true, // This still needs crews data passed down
         needsRaces: true
       },
       {
@@ -155,16 +159,11 @@ export default function CrewManagementDashboard() {
 
     switch (currentTab.component) {
       case "crew-table":
-        return (
-          <CrewsTable
-            crews={crewsData || []}
-            isLoading={crewsLoading}
-            error={!!crewsError}
-            onDataChanged={handleDataChanged}
-          />
-        );
+        // CrewsTable now handles its own data fetching - no props needed!
+        return <CrewsTable onDataChanged={handleDataChanged} />;
 
       case "crew-race-view":
+        // This component still needs crews data passed as props
         const isLoading = crewsLoading || racesLoading;
         const hasError = crewsError || racesError;
 
