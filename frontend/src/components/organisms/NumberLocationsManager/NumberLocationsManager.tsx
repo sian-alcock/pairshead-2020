@@ -7,6 +7,7 @@ import { FormInput } from "../../atoms/FormInput/FormInput";
 import DataExportComponent from "../../molecules/DataExportComponent/DataExportComponent";
 import { CSVUploadModal } from "../../molecules/CSVUploadModal/CSVUploadModal";
 import "./numberLocationsManager.scss";
+import axios from "axios";
 
 // Type definitions
 interface NumberLocation {
@@ -17,9 +18,8 @@ interface NumberLocation {
 
 // API functions
 const fetchNumberLocations = async (): Promise<NumberLocation[]> => {
-  const response = await fetch("/api/number-locations/");
-  if (!response.ok) throw new Error("Failed to fetch number locations");
-  return response.json();
+  const response = await axios.get("/api/number-locations/");
+  return response.data.results;
 };
 
 const createNumberLocations = async (data: Partial<NumberLocation>[]): Promise<NumberLocation[]> => {
