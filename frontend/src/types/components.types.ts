@@ -141,7 +141,7 @@ export type NumberLocationProps = {
 };
 
 export type TimingOffsetProps = {
-  id?: number;
+  id?: number | null;
   reference_race: number;
   target_race: number;
   timing_offset_ms: number;

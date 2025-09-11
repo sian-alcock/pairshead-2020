@@ -98,7 +98,7 @@ const useServerCrews = ({
             orderField = "club__name";
             break;
           case "crew_name":
-            orderField = "name";
+            orderField = "competitor_names";
             break;
           default:
             // Handle other mappings as needed
