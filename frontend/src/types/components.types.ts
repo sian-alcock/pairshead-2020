@@ -182,6 +182,14 @@ export type DataStats = {
   last_updated: string;
 };
 
+export type MarshallingDivision = {
+  id?: number;
+  name: string;
+  bottom_range: number;
+  top_range: number;
+  order: number;
+};
+
 export type EventMeetingKey = {
   id?: number;
   event_meeting_key: string;
