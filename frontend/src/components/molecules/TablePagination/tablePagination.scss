@@ -1,15 +1,24 @@
-@import '../../../style.scss';
+@import "../../../style.scss";
 
 .table-pagination {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  
+
   &__wrapper {
+    @include body-small;
     @include tablet {
       display: flex;
       align-items: flex-end;
       gap: 1rem;
     }
+  }
+
+  &__row-info {
+    @include body-small;
+  }
+
+  .form-select {
+    width: 200px;
   }
 }

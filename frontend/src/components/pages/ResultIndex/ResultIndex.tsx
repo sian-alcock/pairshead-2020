@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   useReactTable,
@@ -63,8 +63,7 @@ const useServerCrews = ({
   globalFilter,
   selectedCategory,
   gender,
-  firstAndSecondCrewsBoolean,
-  hideScratched
+  firstAndSecondCrewsBoolean
 }: {
   page: number;
   pageSize: number;
@@ -73,22 +72,13 @@ const useServerCrews = ({
   selectedCategory: string;
   gender: string;
   firstAndSecondCrewsBoolean: boolean;
-  hideScratched: boolean;
 }) => {
   return useQuery({
-    queryKey: [
-      "crews",
-      page,
-      pageSize,
-      sorting,
-      globalFilter,
-      selectedCategory,
-      gender,
-      firstAndSecondCrewsBoolean,
-      hideScratched
-    ],
+    queryKey: ["crews", page, pageSize, sorting, globalFilter, selectedCategory, gender, firstAndSecondCrewsBoolean],
     queryFn: async (): Promise<CrewsApiResponse> => {
       const params = new URLSearchParams();
+
+      params.append("status", "Accepted");
 
       // Pagination
       params.append("page", (page + 1).toString()); // TanStack uses 0-based, DRF uses 1-based
@@ -138,11 +128,6 @@ const useServerCrews = ({
         // You might need to implement this differently based on your data structure
       }
 
-      // Status filters
-      if (hideScratched) {
-        params.append("status__not", "Scratched");
-      }
-
       // First and second crews only
       // This might need custom backend logic if not already implemented
       if (firstAndSecondCrewsBoolean) {
@@ -169,29 +154,18 @@ export default function ResultIndex() {
   const [gender, setGender] = useState("all");
   const [firstAndSecondCrewsBoolean, setFirstAndSecondCrewsBoolean] = useState(false);
   const [closeFirstAndSecondCrewsBoolean, setCloseFirstAndSecondCrewsBoolean] = useState(false);
-  const [hideScratched, setHideScratched] = useState(true); // New state for hiding scratched crews
 
   // Debounced search to avoid too many API calls
   const [debouncedGlobalFilter, setDebouncedGlobalFilter] = useState("");
   const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  const handleSearchChange = useCallback(
-    (value: string) => {
-      setGlobalFilter(value);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedGlobalFilter(globalFilter);
+    }, 300);
 
-      if (searchTimeout) {
-        clearTimeout(searchTimeout);
-      }
-
-      const timeout = setTimeout(() => {
-        setDebouncedGlobalFilter(value);
-        setPagination((prev) => ({ ...prev, pageIndex: 0 })); // Reset to first page on search
-      }, 300);
-
-      setSearchTimeout(timeout);
-    },
-    [searchTimeout]
-  );
+    return () => clearTimeout(timer);
+  }, [globalFilter]);
 
   // Fetch crews data with server-side operations
   const {
@@ -206,8 +180,7 @@ export default function ResultIndex() {
     globalFilter: debouncedGlobalFilter,
     selectedCategory,
     gender,
-    firstAndSecondCrewsBoolean,
-    hideScratched
+    firstAndSecondCrewsBoolean
   });
 
   // Fetch categories data (unchanged)
@@ -403,12 +376,8 @@ export default function ResultIndex() {
     setCloseFirstAndSecondCrewsBoolean(e.target.checked);
   };
 
-  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    handleSearchChange(e.target.value);
-  };
-
   // Cleanup timeout on unmount
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       if (searchTimeout) {
         clearTimeout(searchTimeout);
@@ -421,9 +390,15 @@ export default function ResultIndex() {
       <>
         <Header />
         <Hero title={"Results"} />
-        <section className="section">
-          <div className="container">
-            <div className="has-text-centered">Loading...</div>
+        <section className="result-index__section">
+          <div className="result-index__container">
+            <div className="result-index__table-container">
+              <table className="crews-table__table">
+                <tr>
+                  <td>Loading..</td>
+                </tr>
+              </table>
+            </div>
           </div>
         </section>
       </>
@@ -435,8 +410,8 @@ export default function ResultIndex() {
       <>
         <Header />
         <Hero title={"Results"} />
-        <section className="section">
-          <div className="container">
+        <section className="result-index__section">
+          <div className="result-index__container">
             <div className="has-text-centered">Error loading results</div>
           </div>
         </section>
@@ -446,6 +421,7 @@ export default function ResultIndex() {
 
   const categoryOptions = categoriesData?.map((option) => ({ value: option.value, label: option.label }));
   const options = genderOptions.map((option) => ({ value: option.value, label: option.label }));
+  console.log(crewsResponse);
 
   return (
     <>
@@ -461,7 +437,12 @@ export default function ResultIndex() {
         <div className="result-index__container">
           <div className="result-index__controls">
             <div className="result-index__control">
-              {/* <SearchInput value={globalFilter} onChange={handleSearchInputChange} placeholder="Search crews..." /> */}
+              <SearchInput
+                value={globalFilter}
+                onChange={setGlobalFilter}
+                placeholder="Search crews, names, clubs..."
+                className="crews-table__search"
+              />
             </div>
             <div className="result-index__control">
               <FormSelect
@@ -506,8 +487,17 @@ export default function ResultIndex() {
             {(isLoading || isPlaceholderData) && " (Loading...)"}
           </div> */}
 
+          <TablePagination
+            table={table}
+            className="result-index__pagination"
+            showRowInfo={true}
+            showPageSizeSelector={true}
+            totalRowCount={crewsResponse?.count}
+            rowTypeName="crews"
+          />
+
           <div className="result-index__table-container">
-            <table className="crews-table__table">
+            <table className="result-index__table">
               <TableHeader headerGroups={table.getHeaderGroups()} />
               <TableBody rows={table.getRowModel().rows} />
             </table>
@@ -518,6 +508,8 @@ export default function ResultIndex() {
             className="result-index__pagination"
             showRowInfo={true}
             showPageSizeSelector={true}
+            totalRowCount={crewsResponse?.count}
+            rowTypeName="crews"
           />
 
           {table.getRowModel().rows.length === 0 && !isLoading && (

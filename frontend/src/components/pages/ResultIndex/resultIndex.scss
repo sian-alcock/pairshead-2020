@@ -41,6 +41,10 @@
     }
   }
 
+  &__pagination {
+    padding: 1.5rem 0;
+  }
+
   &__count {
     margin-bottom: 1rem;
     @include body-small;
