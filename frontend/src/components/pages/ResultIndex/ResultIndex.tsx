@@ -1,14 +1,12 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   useReactTable,
   getCoreRowModel,
-  getFilteredRowModel,
-  getSortedRowModel,
   flexRender,
   createColumnHelper,
   SortingState,
-  ColumnFiltersState
+  PaginationState
 } from "@tanstack/react-table";
 import axios from "axios";
 import Hero from "../../organisms/Hero/Hero";
@@ -27,9 +25,27 @@ import { FormSelect } from "../../atoms/FormSelect/FormSelect";
 import Checkbox from "../../atoms/Checkbox/Checkbox";
 import { TableHeader } from "../../molecules/TableHeader/TableHeader";
 import { TableBody } from "../../molecules/TableBody/TableBody";
+import TablePagination from "../../molecules/TablePagination/TablePagination";
 
 interface CategoryResponseDataProps {
   override_name: string;
+}
+
+interface CrewsApiResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: CrewProps[];
+  // Aggregates from your custom pagination
+  fastest_open_2x_time?: number;
+  fastest_female_2x_time?: number;
+  fastest_open_sweep_time?: number;
+  fastest_female_sweep_time?: number;
+  fastest_mixed_2x_time?: number;
+  num_accepted_crews?: number;
+  num_scratched_crews?: number;
+  requires_ranking_update?: number;
+  aggregates_skipped?: boolean;
 }
 
 type SelectOption = {
@@ -39,30 +55,162 @@ type SelectOption = {
 
 const columnHelper = createColumnHelper<CrewProps>();
 
+// Custom hook for server-side crews data
+const useServerCrews = ({
+  page,
+  pageSize,
+  sorting,
+  globalFilter,
+  selectedCategory,
+  gender,
+  firstAndSecondCrewsBoolean,
+  hideScratched
+}: {
+  page: number;
+  pageSize: number;
+  sorting: SortingState;
+  globalFilter: string;
+  selectedCategory: string;
+  gender: string;
+  firstAndSecondCrewsBoolean: boolean;
+  hideScratched: boolean;
+}) => {
+  return useQuery({
+    queryKey: [
+      "crews",
+      page,
+      pageSize,
+      sorting,
+      globalFilter,
+      selectedCategory,
+      gender,
+      firstAndSecondCrewsBoolean,
+      hideScratched
+    ],
+    queryFn: async (): Promise<CrewsApiResponse> => {
+      const params = new URLSearchParams();
+
+      // Pagination
+      params.append("page", (page + 1).toString()); // TanStack uses 0-based, DRF uses 1-based
+      params.append("page_size", pageSize.toString());
+
+      // Sorting
+      if (sorting.length > 0) {
+        const sort = sorting[0];
+        let orderField = sort.id;
+
+        // Map frontend sort IDs to backend field names
+        switch (sort.id) {
+          case "rank":
+            orderField = gender === "all" ? "overall_rank" : "gender_rank";
+            break;
+          case "club":
+            orderField = "club__name";
+            break;
+          case "crew_name":
+            orderField = "name";
+            break;
+          default:
+            // Handle other mappings as needed
+            break;
+        }
+
+        const ordering = sort.desc ? `-${orderField}` : orderField;
+        params.append("ordering", ordering);
+      }
+
+      // Search
+      if (globalFilter) {
+        params.append("search", globalFilter);
+      }
+
+      // Results page specific - only crews with published times
+      params.append("results_only", "true");
+
+      // Category filter
+      if (selectedCategory) {
+        params.append("event_band", selectedCategory);
+      }
+
+      // Gender filter - you may need to adjust this based on your backend field structure
+      if (gender && gender !== "all") {
+        // Assuming you have a gender field or need to filter by event_band pattern
+        // You might need to implement this differently based on your data structure
+      }
+
+      // Status filters
+      if (hideScratched) {
+        params.append("status__not", "Scratched");
+      }
+
+      // First and second crews only
+      // This might need custom backend logic if not already implemented
+      if (firstAndSecondCrewsBoolean) {
+        // You might need to add this filter to your backend or handle it differently
+        // For now, we'll handle this client-side until backend supports it
+      }
+
+      const response = await axios.get(`/api/crews/?${params.toString()}`);
+      return response.data;
+    }
+    // keepPreviousData: true // Keep previous data while fetching new data
+  });
+};
+
 export default function ResultIndex() {
+  // Server-side state
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 25
+  });
   const [sorting, setSorting] = useState<SortingState>([{ id: "rank", desc: false }]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [gender, setGender] = useState("all");
   const [firstAndSecondCrewsBoolean, setFirstAndSecondCrewsBoolean] = useState(false);
   const [closeFirstAndSecondCrewsBoolean, setCloseFirstAndSecondCrewsBoolean] = useState(false);
+  const [hideScratched, setHideScratched] = useState(true); // New state for hiding scratched crews
 
-  // Fetch results data
+  // Debounced search to avoid too many API calls
+  const [debouncedGlobalFilter, setDebouncedGlobalFilter] = useState("");
+  const [searchTimeout, setSearchTimeout] = useState<NodeJS.Timeout | null>(null);
+
+  const handleSearchChange = useCallback(
+    (value: string) => {
+      setGlobalFilter(value);
+
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+
+      const timeout = setTimeout(() => {
+        setDebouncedGlobalFilter(value);
+        setPagination((prev) => ({ ...prev, pageIndex: 0 })); // Reset to first page on search
+      }, 300);
+
+      setSearchTimeout(timeout);
+    },
+    [searchTimeout]
+  );
+
+  // Fetch crews data with server-side operations
   const {
-    data: resultsData,
-    isLoading: resultsLoading,
-    error: resultsError,
-    refetch: refetchResults
-  } = useQuery({
-    queryKey: ["results"],
-    queryFn: async (): Promise<CrewProps[]> => {
-      const response = await axios.get("/api/crews/");
-      return response.data;
-    }
+    data: crewsResponse,
+    isLoading,
+    error,
+    isPlaceholderData
+  } = useServerCrews({
+    page: pagination.pageIndex,
+    pageSize: pagination.pageSize,
+    sorting,
+    globalFilter: debouncedGlobalFilter,
+    selectedCategory,
+    gender,
+    firstAndSecondCrewsBoolean,
+    hideScratched
   });
 
-  // Fetch categories data
+  // Fetch categories data (unchanged)
   const { data: categoriesData } = useQuery({
     queryKey: ["categories"],
     queryFn: async (): Promise<SelectOption[]> => {
@@ -78,40 +226,21 @@ export default function ResultIndex() {
     }
   });
 
-  // Calculate fastest times for trophy display
+  // Calculate fastest times from server response
   const fastestTimes = useMemo(() => {
-    if (!resultsData) return {};
+    if (!crewsResponse) return {};
 
-    const results = resultsData;
     return {
-      fastestMen2x: Math.min(
-        ...results
-          .filter((c) => c.event_band?.includes("Men") && c.event_band?.includes("2x"))
-          .map((c) => c.published_time || Infinity)
-      ),
-      fastestFemale2x: Math.min(
-        ...results
-          .filter((c) => c.event_band?.includes("Women") && c.event_band?.includes("2x"))
-          .map((c) => c.published_time || Infinity)
-      ),
-      fastestMenSweep: Math.min(
-        ...results
-          .filter((c) => c.event_band?.includes("Men") && !c.event_band?.includes("2x"))
-          .map((c) => c.published_time || Infinity)
-      ),
-      fastestFemaleSweep: Math.min(
-        ...results
-          .filter((c) => c.event_band?.includes("Women") && !c.event_band?.includes("2x"))
-          .map((c) => c.published_time || Infinity)
-      ),
-      fastestMixed2x: Math.min(
-        ...results.filter((c) => c.event_band?.includes("Mixed")).map((c) => c.published_time || Infinity)
-      )
+      fastestMen2x: crewsResponse.fastest_open_2x_time || Infinity,
+      fastestFemale2x: crewsResponse.fastest_female_2x_time || Infinity,
+      fastestMenSweep: crewsResponse.fastest_open_sweep_time || Infinity,
+      fastestFemaleSweep: crewsResponse.fastest_female_sweep_time || Infinity,
+      fastestMixed2x: crewsResponse.fastest_mixed_2x_time || Infinity
     };
-  }, [resultsData]);
+  }, [crewsResponse]);
 
-  // Helper function to check if crews are close in time
-  const getTopCrews = (eventBand: string | undefined, crews: CrewProps[]) => {
+  // Helper function to check if crews are close in time (may need server-side implementation for efficiency)
+  const getTopCrews = useCallback((eventBand: string | undefined, crews: CrewProps[]) => {
     const timeDifference = 2000; // 2 seconds in milliseconds
     const crewsInCategory = crews.filter(
       (crew) => crew.event_band === eventBand && !crew.time_only && crew.category_rank <= 2
@@ -119,7 +248,6 @@ export default function ResultIndex() {
 
     if (crewsInCategory.length < 2) return false;
 
-    // Sort by category rank to get 1st and 2nd place
     const sortedCrews = crewsInCategory.sort((a, b) => a.category_rank - b.category_rank);
     const firstPlace = sortedCrews[0];
     const secondPlace = sortedCrews[1];
@@ -127,9 +255,9 @@ export default function ResultIndex() {
     if (!firstPlace?.published_time || !secondPlace?.published_time) return false;
 
     return Math.abs(firstPlace.published_time - secondPlace.published_time) <= timeDifference;
-  };
+  }, []);
 
-  // Define columns - we'll handle the spanning in the render
+  // Define columns
   const columns = useMemo(
     () => [
       columnHelper.accessor((row) => (!gender || gender === "all" ? row.overall_rank : row.gender_rank), {
@@ -139,24 +267,28 @@ export default function ResultIndex() {
       }),
       columnHelper.accessor("bib_number", {
         header: "Number",
-        cell: (info) => info.getValue()
+        cell: (info) => info.getValue(),
+        enableSorting: false
       }),
       columnHelper.accessor("published_time", {
         header: "Time",
-        cell: (info) => formatTimes(info.getValue())
+        cell: (info) => formatTimes(info.getValue()),
+        enableSorting: false
       }),
       columnHelper.accessor("masters_adjusted_time", {
         header: "Masters adjust",
-        cell: (info) => (info.getValue() ? formatTimes(info.getValue()) : "")
+        cell: (info) => (info.getValue() ? formatTimes(info.getValue()) : ""),
+        enableSorting: false
       }),
       columnHelper.display({
         id: "blade",
-        header: "Rowing club", // This will span 2 columns
-        cell: (info) => <BladeImage crew={info.row.original} />
+        header: "Rowing club",
+        cell: (info) => <BladeImage crew={info.row.original} />,
+        enableSorting: false
       }),
       columnHelper.accessor("club.name", {
         id: "club",
-        header: "", // Hidden header for spanning
+        header: "",
         cell: (info) => info.getValue()
       }),
       columnHelper.accessor((row) => (!row.competitor_names ? row.name : row.competitor_names), {
@@ -166,19 +298,21 @@ export default function ResultIndex() {
       }),
       columnHelper.accessor("composite_code", {
         header: "Code",
-        cell: (info) => info.getValue()
+        cell: (info) => info.getValue(),
+        enableSorting: false
       }),
       columnHelper.accessor("event_band", {
         header: "Event",
         cell: (info) => info.getValue()
       }),
       columnHelper.accessor("category_rank", {
-        header: "Position in category", // This will span 3 columns
-        cell: (info) => info.getValue() || ""
+        header: "Position in category",
+        cell: (info) => info.getValue() || "",
+        enableSorting: false
       }),
       columnHelper.display({
         id: "trophy",
-        header: "", // Hidden header for spanning
+        header: "",
         cell: (info) => {
           const crew = info.row.original;
           const isFastest =
@@ -187,107 +321,102 @@ export default function ResultIndex() {
             crew.published_time === fastestTimes.fastestFemaleSweep ||
             crew.published_time === fastestTimes.fastestMixed2x;
           return isFastest ? <TrophyImage /> : "";
-        }
+        },
+        enableSorting: false
       }),
       columnHelper.display({
         id: "pennant",
-        header: "", // Hidden header for spanning
-        cell: (info) => (info.row.original.category_rank === 1 ? <PennantImage /> : "")
+        header: "",
+        cell: (info) => (info.row.original.category_rank === 1 ? <PennantImage /> : ""),
+        enableSorting: false
       }),
       columnHelper.display({
         id: "close_crews",
         header: "",
         cell: (info) => {
           const crew = info.row.original;
-          // Show symbol if this crew is in 1st or 2nd place in a close race
-          const isCloseRace = getTopCrews(crew.event_band, resultsData || []);
+          const isCloseRace = getTopCrews(crew.event_band, crewsResponse?.results || []);
           const isTopTwo = crew.category_rank <= 2;
           return isCloseRace && isTopTwo && closeFirstAndSecondCrewsBoolean ? "❓" : "";
-        }
+        },
+        enableSorting: false
       }),
       columnHelper.accessor("penalty", {
         header: "Penalty",
-        cell: (info) => (info.getValue() ? "P" : "")
+        cell: (info) => (info.getValue() ? "P" : ""),
+        enableSorting: false
       }),
       columnHelper.accessor("time_only", {
         header: "TO",
-        cell: (info) => (info.getValue() ? "TO" : "")
+        cell: (info) => (info.getValue() ? "TO" : ""),
+        enableSorting: false
       })
     ],
-    [gender, fastestTimes, closeFirstAndSecondCrewsBoolean, resultsData]
+    [gender, fastestTimes, closeFirstAndSecondCrewsBoolean, crewsResponse?.results, getTopCrews]
   );
 
-  // Filter data based on filters
-  const filteredData = useMemo(() => {
-    if (!resultsData) return [];
+  // Apply client-side filtering for features not yet implemented server-side
+  const clientFilteredData = useMemo(() => {
+    if (!crewsResponse?.results) return [];
 
-    let filtered = resultsData;
-
-    // Status filter - only show accepted crews
-    filtered = filtered.filter((crew) => crew.status === "Accepted" && crew.published_time && crew.published_time > 0);
-
-    // Category filter
-    if (selectedCategory) {
-      filtered = filtered.filter((crew) => crew.event_band === selectedCategory);
-    }
-
-    // Gender filter (assuming you have gender field on crew)
-    if (gender && gender !== "all") {
-      // You may need to adjust this based on your data structure
-      filtered = filtered.filter((crew) => crew.event.gender === gender);
-    }
-
-    // First and second crews filter
-    if (firstAndSecondCrewsBoolean) {
-      filtered = filtered.filter((crew) => crew.category_rank <= 2);
-    }
-
-    return filtered;
-  }, [resultsData, selectedCategory, gender, firstAndSecondCrewsBoolean]);
+    // Since first/second crews filter is now handled server-side,
+    // we can just return the results directly
+    return crewsResponse.results;
+  }, [crewsResponse?.results]);
 
   const table = useReactTable({
-    data: filteredData,
+    data: clientFilteredData,
     columns,
+    pageCount: crewsResponse ? Math.ceil(crewsResponse.count / pagination.pageSize) : 0,
     state: {
       sorting,
-      columnFilters,
-      globalFilter
+      pagination
     },
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
+    onSortingChange: (updater) => {
+      setSorting(updater);
+      setPagination((prev) => ({ ...prev, pageIndex: 0 })); // Reset to first page on sort
+    },
+    onPaginationChange: setPagination,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    globalFilterFn: "includesString"
+    // Enable manual server-side operations
+    manualPagination: true,
+    manualSorting: true
   });
 
-  const refreshData = () => {
-    refetchResults();
-  };
-
+  // Event handlers
   const handleCategoryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCategory(e.target.value);
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
   };
 
   const handleGenderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setGender(e.target.value);
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
   };
 
   const handleFirstAndSecondCrews = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("clicked");
     setFirstAndSecondCrewsBoolean(e.target.checked);
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
   };
 
   const handleCloseCrews = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCloseFirstAndSecondCrewsBoolean(e.target.checked);
   };
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setGlobalFilter(e.target.value);
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleSearchChange(e.target.value);
   };
 
-  if (resultsLoading) {
+  // Cleanup timeout on unmount
+  React.useEffect(() => {
+    return () => {
+      if (searchTimeout) {
+        clearTimeout(searchTimeout);
+      }
+    };
+  }, [searchTimeout]);
+
+  if (isLoading && !isPlaceholderData) {
     return (
       <>
         <Header />
@@ -301,7 +430,7 @@ export default function ResultIndex() {
     );
   }
 
-  if (resultsError) {
+  if (error) {
     return (
       <>
         <Header />
@@ -315,7 +444,6 @@ export default function ResultIndex() {
     );
   }
 
-  console.log(resultsData);
   const categoryOptions = categoriesData?.map((option) => ({ value: option.value, label: option.label }));
   const options = genderOptions.map((option) => ({ value: option.value, label: option.label }));
 
@@ -323,22 +451,17 @@ export default function ResultIndex() {
     <>
       <Header />
       <Hero title={"Results"} />
-      {/* {resultsData?.requires_ranking_update && resultsData.requires_ranking_update > 0 ? (
+      {/* {crewsResponse?.requires_ranking_update && crewsResponse.requires_ranking_update > 0 ? (
         <div className="box">
-          <CrewTimeCalculatedFieldsUpdate
-            refreshData={refreshData}
-            updateRequired={resultsData.requires_ranking_update}
-          />
+          <CrewTimeCalculatedFieldsUpdate updateRequired={crewsResponse.requires_ranking_update} />
         </div>
-      ) : (
-        ""
-      )} */}
+      ) : null} */}
 
       <section className="result-index__section">
         <div className="result-index__container">
           <div className="result-index__controls">
             <div className="result-index__control">
-              <SearchInput value={globalFilter} onChange={(e) => handleSearchChange} />
+              {/* <SearchInput value={globalFilter} onChange={handleSearchInputChange} placeholder="Search crews..." /> */}
             </div>
             <div className="result-index__control">
               <FormSelect
@@ -378,9 +501,10 @@ export default function ResultIndex() {
             </div>
           </div>
 
-          <div className="result-index__count">
-            Showing {table.getRowModel().rows.length} of {filteredData.length} crews
-          </div>
+          {/* <div className="result-index__count">
+            Showing {table.getRowModel().rows.length} of {crewsResponse?.count || 0} crews
+            {(isLoading || isPlaceholderData) && " (Loading...)"}
+          </div> */}
 
           <div className="result-index__table-container">
             <table className="crews-table__table">
@@ -389,7 +513,14 @@ export default function ResultIndex() {
             </table>
           </div>
 
-          {table.getRowModel().rows.length === 0 && (
+          <TablePagination
+            table={table}
+            className="result-index__pagination"
+            showRowInfo={true}
+            showPageSizeSelector={true}
+          />
+
+          {table.getRowModel().rows.length === 0 && !isLoading && (
             <div className="has-text-centered mt-4">
               <p>No results found matching your filters.</p>
             </div>

@@ -26,32 +26,36 @@ from ..models import Crew, Race, RaceTime, OriginalEventCategory, EventMeetingKe
 
 
 class CrewListView(generics.ListCreateAPIView):
-    queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted', 'Submitted'))
     serializer_class = PopulatedCrewSerializer
     pagination_class = CrewPaginationWithAggregates
     filter_backends = [filters.SearchFilter, filters.OrderingFilter, DjangoFilterBackend]
     ordering_fields = '__all__'  # Allow ordering on all fields
     ordering = ['overall_rank']  # Default ordering
     search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number', 'competitor_names']
-    filterset_fields = ['status', 'event_band', 'start_time', 'finish_time']
+    filterset_fields = ['event_band', 'start_time', 'finish_time']  # Removed 'status' since it's fixed
 
     def get_queryset(self):
-        queryset = Crew.objects.filter(status__in=('Scratched', 'Accepted', 'Submitted')).select_related('club')
+        # Base queryset: only accepted crews
+        queryset = Crew.objects.filter(status='Accepted').select_related('club')
+        
+        # Conditionally filter by published_time > 0 for results pages
+        results_only = self.request.query_params.get('results_only')
+        if results_only == 'true':
+            queryset = queryset.filter(published_time__gt=0)
 
         # Handle masters filter
         masters = self.request.query_params.get('masters')
         if masters == 'true':
-            queryset = queryset.filter(status__exact='Accepted', masters_adjustment__gt=0)
+            queryset = queryset.filter(masters_adjustment__gt=0)
             # Let the OrderingFilter handle ordering, but set default for masters
             if not self.request.query_params.get('ordering'):
                 return queryset.order_by('event_band')
             return queryset
 
-        # Handle status exclusion (for hiding scratched crews)
-        status_not = self.request.query_params.get('status__not')
-        if status_not:
-            excluded_statuses = [status.strip() for status in status_not.split(',')]
-            queryset = queryset.exclude(status__in=excluded_statuses)
+        # Handle first and second crews filter
+        first_second_only = self.request.query_params.get('first_second_only')
+        if first_second_only == 'true':
+            queryset = queryset.filter(category_rank__lte=2)
 
         # Handle special ordering cases that need custom logic
         order = self.request.query_params.get('order')  # Keep for special cases
