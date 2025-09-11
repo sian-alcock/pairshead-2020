@@ -32,42 +32,44 @@ class CrewListView(generics.ListCreateAPIView):
     ordering_fields = '__all__'  # Allow ordering on all fields
     ordering = ['overall_rank']  # Default ordering
     search_fields = ['name', 'id', 'club__name', 'event_band', 'bib_number', 'competitor_names']
-    filterset_fields = ['event_band', 'start_time', 'finish_time']  # Removed 'status' since it's fixed
+    filterset_fields = ['event_band', 'start_time', 'finish_time', 'status']
 
     def get_queryset(self):
-        # Base queryset: only accepted crews
-        queryset = Crew.objects.filter(status='Accepted').select_related('club')
+        queryset = Crew.objects.all().select_related('club')
+        status_list = self.request.query_params.getlist('status[]')  # Note the []
+        if status_list:
+            print(f"Filtering by status: {status_list}")
+            queryset = queryset.filter(status__in=status_list)
+        else:
+            print("No status filter applied")
         
         # Conditionally filter by published_time > 0 for results pages
         results_only = self.request.query_params.get('results_only')
         if results_only == 'true':
             queryset = queryset.filter(published_time__gt=0)
 
-        # Handle masters filter
         masters = self.request.query_params.get('masters')
         if masters == 'true':
             queryset = queryset.filter(masters_adjustment__gt=0)
-            # Let the OrderingFilter handle ordering, but set default for masters
-            if not self.request.query_params.get('ordering'):
-                return queryset.order_by('event_band')
-            return queryset
 
-        # Handle first and second crews filter
         first_second_only = self.request.query_params.get('first_second_only')
         if first_second_only == 'true':
             queryset = queryset.filter(category_rank__lte=2)
 
         # Handle special ordering cases that need custom logic
-        order = self.request.query_params.get('order')  # Keep for special cases
-        if order == 'start-score':
-            return queryset.order_by('draw_start_score')
-        if order == 'club':
-            return queryset.order_by('club__name', 'name')
-        if order is not None:
-            return queryset.order_by(order)
+        order = self.request.query_params.get('order')
+        ordering = self.request.query_params.get('ordering')
+        
+        # Use whichever one is provided
+        order_field = order or ordering
+        
+        if order_field == 'start-score':
+            queryset = queryset.order_by('draw_start_score')
+        elif order_field == 'club':
+            queryset = queryset.order_by('club__name', 'name')
+        elif order_field is not None:
+            queryset = queryset.order_by(order_field)
 
-        # Don't apply default ordering here - let DRF's OrderingFilter handle it
-        # The ordering attribute at class level will be used as default
         return queryset
     
 class CrewListOptionsForSelect(APIView):

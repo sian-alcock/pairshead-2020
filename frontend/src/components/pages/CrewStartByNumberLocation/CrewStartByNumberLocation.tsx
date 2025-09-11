@@ -39,7 +39,7 @@ export default function CrewStartByNumberLocation() {
       {
         page_size: "500",
         page: 1,
-        order: "bib_number",
+        ordering: "bib_number",
         status: "Accepted"
       }
     ],
