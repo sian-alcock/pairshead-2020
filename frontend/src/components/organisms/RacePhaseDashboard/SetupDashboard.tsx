@@ -16,7 +16,7 @@ export default function SetupDashboard() {
           icon={"refresh"}
           description={"Fetch crew & race data directly from British Rowing."}
         >
-          <BROELoader />
+          <BROELoader importPersonalData={true} />
         </ActionCard>
 
         <ActionCard

@@ -8,16 +8,6 @@ import "./racePhaseDashboard.scss";
 export default function RaceDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const exportEventOrderTemplate = (e: { preventDefault: any }) => {
-    e.preventDefault;
-    window.open("api/event-order-template-export/");
-  };
-
-  const exportBibData = (e: { preventDefault: any }) => {
-    e.preventDefault;
-    window.open("api/bib-data-export/");
-  };
-
   return (
     <div className="race-setup">
       {/* Action cards */}

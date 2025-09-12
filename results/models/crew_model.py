@@ -263,7 +263,7 @@ class Crew(models.Model):
         if not self.competitors:
             return 0
 
-        competitor_list = list(map(lambda competitor: competitor.last_name[:1].upper(), self.competitors.all()))
+        competitor_list = list(map(lambda competitor: competitor.last_name.title(), self.competitors.all()))
         value = ' / '.join(competitor_list)
         return value
 
