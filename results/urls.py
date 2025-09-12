@@ -19,6 +19,7 @@ from .views import sequence_compare
 from .views import missing_times
 from .views import masters_crews
 from .views import crew_dashboard_stats
+from .views import crew_start_order_duplicates_check
 
 
 urlpatterns = [
@@ -31,6 +32,7 @@ path('bands/', bands.BandListView.as_view()),
 path('crews/', crews.CrewListView.as_view(), name='crews-list'),
 path('crews/<int:pk>', crews.CrewDetailView.as_view(), name='crews-detail'),
 path('crews/bulk-update-overrides/', crews.CrewBulkUpdateOverridesView.as_view(), name='crew-bulk-update-overrides'),
+path('crew-start-order-duplicates/', crew_start_order_duplicates_check.StartOrderDuplicateCheckView.as_view(), name='crew-start-order-duplicates'),
 path('results-export/', crews.ResultDataExport.as_view()),
 path('crew-update-rankings/', crews.CrewUpdateRankings.as_view()),
 path('crew-get-event-band/', crews.CrewGetEventBand.as_view()),

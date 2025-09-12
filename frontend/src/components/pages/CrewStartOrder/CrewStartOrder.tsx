@@ -19,12 +19,7 @@ export default function CrewStartOrder() {
       <section className="crew-start-order__section">
         <div className="crew-start-order__container">
           <div className="crew-start-order__content">
-            <CrewStartOrderTable
-              crews={crews || []}
-              isLoading={isLoading}
-              error={!!error}
-              onDataChanged={handleDataChanged}
-            />
+            <CrewStartOrderTable onDataChanged={handleDataChanged} />
           </div>
         </div>
       </section>

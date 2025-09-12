@@ -1,17 +1,13 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import {
   useReactTable,
   getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
   ColumnDef,
   PaginationState,
   createColumnHelper,
-  SortingState,
-  ColumnFiltersState
+  SortingState
 } from "@tanstack/react-table";
-import { formatTimes } from "../../../lib/helpers";
+import { useQuery } from "@tanstack/react-query";
 import { CrewProps } from "../../../types/components.types";
 import { TableHeader } from "../../molecules/TableHeader/TableHeader";
 import { TableBody } from "../../molecules/TableBody/TableBody";
@@ -22,81 +18,77 @@ import Checkbox from "../../atoms/Checkbox/Checkbox";
 import TextButton from "../../atoms/TextButton/TextButton";
 
 interface CrewStartOrderTableProps {
-  crews: CrewProps[];
-  isLoading: boolean;
-  error: boolean;
   onDataChanged?: () => void;
 }
 
-// Custom filter functions
-const timeFilterFn = (row: any, columnId: string, filterValue: string) => {
-  const cellValue = row.getValue(columnId);
-  if (cellValue === null || cellValue === undefined || cellValue === 0) return false;
+interface duplicate {
+  id: number;
+  name: string;
+  club: string;
+  event_band: string;
+  calculated_start_order: number;
+}
 
-  const formattedTime = formatTimes(cellValue);
-  return formattedTime.toLowerCase().includes(filterValue.toLowerCase());
-};
+interface DuplicateCheckResponse {
+  has_duplicates: boolean;
+  duplicates: duplicate[];
+  summary: {
+    total_accepted_crews: number;
+    unique_start_orders: number;
+    duplicate_start_orders: number;
+    crews_with_duplicates: number;
+  };
+}
 
-const globalFilterFn = (row: any, columnId: string, filterValue: string) => {
-  const cellValue = row.getValue(columnId);
+interface ApiResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: CrewProps[];
+}
 
-  if (cellValue === null || cellValue === undefined) return false;
+// API function to fetch crews
+const fetchCrews = async (params: {
+  page?: number;
+  page_size?: number;
+  search?: string;
+  ordering?: string;
+  status?: string[];
+}): Promise<ApiResponse> => {
+  const searchParams = new URLSearchParams();
 
-  // Handle different data types
-  if (typeof cellValue === "number") {
-    // For time values, convert to formatted time
-    if (columnId.includes("time") || columnId.includes("Time") || columnId.includes("sequence")) {
-      if (cellValue === 0) return false; // Skip zero times
-      const formattedTime = columnId.includes("sequence") ? cellValue.toString() : formatTimes(cellValue);
-      return formattedTime.toLowerCase().includes(filterValue.toLowerCase());
-    }
-    // For other numbers, convert to string
-    return cellValue.toString().toLowerCase().includes(filterValue.toLowerCase());
+  if (params.page) searchParams.set("page", params.page.toString());
+  if (params.page_size) searchParams.set("page_size", params.page_size.toString());
+  if (params.search) searchParams.set("search", params.search);
+  if (params.ordering) searchParams.set("ordering", params.ordering);
+
+  // Handle status filter - backend expects status[] format
+  if (params.status && params.status.length > 0) {
+    params.status.forEach((status) => {
+      searchParams.append("status[]", status);
+    });
   }
 
-  if (typeof cellValue === "string") {
-    return cellValue.toLowerCase().includes(filterValue.toLowerCase());
+  const response = await fetch(`/api/crews/?${searchParams.toString()}`);
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
 
-  if (typeof cellValue === "boolean") {
-    return cellValue.toString().toLowerCase().includes(filterValue.toLowerCase());
+  return response.json();
+};
+
+const fetchDuplicateCheck = async (): Promise<DuplicateCheckResponse> => {
+  const response = await fetch("/api/crew-start-order-duplicates/");
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
 
-  // Handle objects (like event, club)
-  if (typeof cellValue === "object" && cellValue !== null) {
-    return JSON.stringify(cellValue).toLowerCase().includes(filterValue.toLowerCase());
-  }
-
-  return false;
+  return response.json();
 };
 
-// Custom sorting function for time columns
-const timeSortingFn = (rowA: any, rowB: any, columnId: string) => {
-  const a = rowA.getValue(columnId) as number | null;
-  const b = rowB.getValue(columnId) as number | null;
-
-  // Handle null/zero values - put them at the end
-  if ((a === null || a === 0) && (b === null || b === 0)) return 0;
-  if (a === null || a === 0) return 1;
-  if (b === null || b === 0) return -1;
-
-  return a - b;
-};
-
-// Custom sorting function for sequence columns
-const sequenceSortingFn = (rowA: any, rowB: any, columnId: string) => {
-  const a = rowA.getValue(columnId) as number | null;
-  const b = rowB.getValue(columnId) as number | null;
-
-  // Handle null values - put them at the end
-  if (a === null && b === null) return 0;
-  if (a === null) return 1;
-  if (b === null) return -1;
-
-  return a - b;
-};
-
-export default function CrewStartOrderTable({ crews, isLoading, error, onDataChanged }: CrewStartOrderTableProps) {
+export default function CrewStartOrderTable({ onDataChanged }: CrewStartOrderTableProps) {
   const columnHelper = createColumnHelper<CrewProps>();
 
   // Component state
@@ -105,13 +97,70 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
     pageSize: 50
   });
   const [sorting, setSorting] = useState<SortingState>([{ id: "calculated_start_order", desc: false }]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
   const [isUpdatingStartOrders, setIsUpdatingStartOrders] = useState(false);
 
   const [hideScratched, setHideScratched] = useState(() => {
     const saved = localStorage.getItem("crew-start-order-hide-scratched");
     return saved ? JSON.parse(saved) : true; // Default to hiding scratched
+  });
+
+  // Convert TanStack Table sorting to Django REST Framework ordering format
+  const getOrderingParam = useCallback((sorting: SortingState): string => {
+    if (sorting.length === 0) return "calculated_start_order";
+
+    const sort = sorting[0];
+    const fieldMap: { [key: string]: string } = {
+      name: "competitor_names",
+      club: "club__name",
+      event_band: "event_band",
+      sculling_CRI: "sculling_CRI",
+      rowing_CRI: "rowing_CRI",
+      draw_start_score: "draw_start_score",
+      calculated_start_order: "calculated_start_order",
+      status: "status"
+    };
+
+    const field = fieldMap[sort.id] || sort.id;
+    return sort.desc ? `-${field}` : field;
+  }, []);
+
+  // Get status filter array
+  const getStatusFilter = useCallback((): string[] => {
+    if (hideScratched) {
+      return ["Accepted"];
+    }
+    return ["Accepted", "Scratched"];
+  }, [hideScratched]);
+
+  // Build query parameters
+  const queryParams = useMemo(
+    () => ({
+      page: pagination.pageIndex + 1, // Django uses 1-based pagination
+      page_size: pagination.pageSize,
+      search: globalFilter || undefined,
+      ordering: getOrderingParam(sorting),
+      status: getStatusFilter()
+    }),
+    [pagination.pageIndex, pagination.pageSize, globalFilter, sorting, getOrderingParam, getStatusFilter]
+  );
+
+  // React Query to fetch data
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ["crews", queryParams],
+    queryFn: () => fetchCrews(queryParams)
+    // keepPreviousData: true // Keep showing old data while fetching new data
+  });
+
+  const {
+    data: duplicateData,
+    isLoading: isDuplicateLoading,
+    error: duplicateError,
+    refetch: refetchDuplicates
+  } = useQuery({
+    queryKey: ["start-order-duplicates"],
+    queryFn: fetchDuplicateCheck, // <-- This calls the API
+    refetchOnWindowFocus: false
   });
 
   // Function to update start orders via API
@@ -122,8 +171,6 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
         method: "POST",
         headers: {
           "Content-Type": "application/json"
-          // Add your auth header here if needed, e.g.:
-          // 'Authorization': `Bearer ${getToken()}`,
         }
       });
 
@@ -131,6 +178,8 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
 
       if (response.ok && result.success) {
         console.log(`Updated start orders for ${result.updated_crews} crews`);
+        // Refetch the data to show updated start orders
+        await refetch();
         // Call the parent's data refresh function
         if (onDataChanged) {
           onDataChanged();
@@ -147,36 +196,6 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
     }
   };
 
-  // Function to check for duplicate start orders
-  const getDuplicateStartOrders = useMemo(() => {
-    const startOrderCounts: { [key: number]: CrewProps[] } = {};
-    const acceptedCrews = (crews || []).filter(
-      (crew) =>
-        crew.status === "Accepted" && crew.calculated_start_order != null && crew.calculated_start_order !== 9999999
-    );
-
-    // Group crews by their calculated_start_order
-    acceptedCrews.forEach((crew) => {
-      const startOrder = crew.calculated_start_order!;
-      if (!startOrderCounts[startOrder]) {
-        startOrderCounts[startOrder] = [];
-      }
-      startOrderCounts[startOrder].push(crew);
-    });
-
-    // Find duplicates
-    const duplicates: { [key: number]: CrewProps[] } = {};
-    Object.entries(startOrderCounts).forEach(([startOrder, crewsArray]) => {
-      if (crewsArray.length > 1) {
-        duplicates[parseInt(startOrder)] = crewsArray;
-      }
-    });
-
-    return duplicates;
-  }, [crews]);
-
-  const hasDuplicates = Object.keys(getDuplicateStartOrders).length > 0;
-
   // Table columns focused on start order information
   const columns = useMemo<ColumnDef<CrewProps, any>[]>(
     () => [
@@ -187,8 +206,7 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
             {info.getValue() || "--"}
           </span>
         ),
-        enableSorting: true,
-        filterFn: "includesString"
+        enableSorting: false
       }),
       columnHelper.accessor("event_band", {
         header: "Event",
@@ -197,8 +215,7 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
             {info.getValue() || "--"}
           </span>
         ),
-        enableSorting: true,
-        filterFn: "includesString"
+        enableSorting: true
       }),
       columnHelper.accessor((row) => row.competitor_names || row.name, {
         id: "name",
@@ -206,8 +223,7 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
         cell: (info) => (
           <span className="crew-start-order-table__cell crew-start-order-table__cell--name">{info.getValue()}</span>
         ),
-        enableSorting: true,
-        filterFn: "includesString"
+        enableSorting: true
       }),
       columnHelper.accessor((row) => row.club?.index_code || "--", {
         id: "club",
@@ -215,8 +231,7 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
         cell: (info) => (
           <span className="crew-start-order-table__cell crew-start-order-table__cell--club">{info.getValue()}</span>
         ),
-        enableSorting: true,
-        filterFn: "includesString"
+        enableSorting: true
       }),
       columnHelper.accessor("sculling_CRI", {
         header: "Sculling CRI",
@@ -247,51 +262,12 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
       }),
       columnHelper.accessor("calculated_start_order", {
         header: "Calculated start order",
-        cell: (info) => {
-          const startOrder = info.getValue();
-          const isDuplicate =
-            startOrder != null && startOrder !== 9999999 && getDuplicateStartOrders[startOrder]?.length > 1;
-
-          return (
-            <span
-              className={`crew-start-order-table__cell crew-start-order-table__cell--calculated-start-order ${
-                isDuplicate ? "crew-start-order-table__cell--duplicate" : ""
-              }`}
-            >
-              {startOrder || "--"}
-              {isDuplicate && <span className="crew-start-order-table__duplicate-indicator">⚠️</span>}
-            </span>
-          );
-        },
+        cell: (info) => (
+          <span className={"crew-start-order-table__cell crew-start-order-table__cell--draw-start-score"}>
+            {info.getValue() || "--"}
+          </span>
+        ),
         enableSorting: true
-      }),
-      // New duplicate check column
-      columnHelper.display({
-        id: "duplicate_check",
-        header: "Duplicate Check",
-        cell: (info) => {
-          const crew = info.row.original;
-          const startOrder = crew.calculated_start_order;
-          const isDuplicate =
-            startOrder != null && startOrder !== 9999999 && getDuplicateStartOrders[startOrder]?.length > 1;
-
-          if (!isDuplicate) {
-            return <span className="crew-start-order-table__cell crew-start-order-table__cell--no-duplicate">✅</span>;
-          }
-
-          const duplicateCrews = getDuplicateStartOrders[startOrder!];
-          const otherCrews = duplicateCrews.filter((c) => c.id !== crew.id);
-
-          return (
-            <span
-              className="crew-start-order-table__cell crew-start-order-table__cell--has-duplicate"
-              title={`Duplicate with: ${otherCrews.map((c) => c.competitor_names || c.name).join(", ")}`}
-            >
-              ❌ ({duplicateCrews.length})
-            </span>
-          );
-        },
-        enableSorting: false
       }),
       columnHelper.accessor("status", {
         header: "Status",
@@ -302,62 +278,44 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
             {info.getValue() || "--"}
           </span>
         ),
-        enableSorting: true,
-        filterFn: "includesString"
+        enableSorting: true
       })
     ],
-    [getDuplicateStartOrders]
+    []
   );
 
+  // Save hideScratched preference
   useEffect(() => {
     localStorage.setItem("crew-start-order-hide-scratched", JSON.stringify(hideScratched));
   }, [hideScratched]);
 
-  // Create filtered data with the scratched filter applied
-  const filteredData = React.useMemo(() => {
-    const baseData = crews || [];
-    return hideScratched
-      ? baseData.filter((crew) => {
-          const status = crew.status;
-          return status !== "Scratched" && status !== "scratched" && status !== "SCRATCHED";
-        })
-      : baseData;
-  }, [crews, hideScratched]);
+  // Calculate page count from server response
+  const pageCount = useMemo(() => {
+    if (!data?.count) return 0;
+    return Math.ceil(data.count / pagination.pageSize);
+  }, [data?.count, pagination.pageSize]);
 
-  // Table instance
+  // Table instance with server-side configuration
   const table = useReactTable({
-    data: filteredData,
+    data: data?.results || [],
     columns,
+    pageCount, // Server-provided page count
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
+    manualPagination: true, // Server handles pagination
+    manualSorting: true, // Server handles sorting
+    manualFiltering: true, // Server handles filtering
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: globalFilterFn,
     state: {
       pagination,
       sorting,
-      columnFilters,
       globalFilter
-    },
-    initialState: {
-      pagination: {
-        pageSize: 50
-      },
-      sorting: [
-        {
-          id: "calculated_start_order",
-          desc: false
-        }
-      ]
     }
   });
 
   // Loading state
-  if (isLoading) {
+  if (isLoading && !data) {
     return (
       <div className="crew-start-order-table__loading">
         <div className="crew-start-order-table__loading-content">
@@ -374,36 +332,54 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
       <div className="crew-start-order-table__error">
         <div className="crew-start-order-table__error-content">
           <h4>Error loading start order</h4>
-          <p>Failed to load crew start order data</p>
+          <p>Failed to load crew start order data: {error instanceof Error ? error.message : "Unknown error"}</p>
         </div>
       </div>
     );
   }
 
-  const totalRows = crews?.length || 0;
-  const filteredRows = table.getFilteredRowModel().rows.length;
-  const displayedRows = table.getRowModel().rows.length;
+  const totalRows = data?.count || 0;
+  const displayedRows = data?.results?.length || 0;
 
   return (
     <section className="crew-start-order-table">
       <div className="crew-start-order-table__header">
         <h3 className="crew-start-order-table__title">Calculated start order</h3>
 
-        {/* Duplicate Status Alert */}
-        {hasDuplicates && (
-          <div className="crew-start-order-table__alert crew-start-order-table__alert--warning">
-            <strong>⚠️ Duplicate Start Orders Detected:</strong>
-            {Object.entries(getDuplicateStartOrders).map(([startOrder, crews]) => (
-              <div key={startOrder} className="crew-start-order-table__duplicate-detail">
-                Start Order {startOrder}: {crews.map((c) => c.competitor_names || c.name).join(", ")}
-              </div>
-            ))}
+        {/* Global duplicate status from server */}
+        {isDuplicateLoading && (
+          <div className="crew-start-order-table__alert crew-start-order-table__alert--info">
+            🔄 Checking for duplicate start orders...
           </div>
         )}
 
-        {!hasDuplicates && crews && crews.length > 0 && (
+        {duplicateError && (
+          <div className="crew-start-order-table__alert crew-start-order-table__alert--error">
+            ❌ Error checking for duplicates:{" "}
+            {duplicateError instanceof Error ? duplicateError.message : "Unknown error"}
+          </div>
+        )}
+
+        {duplicateData?.has_duplicates && (
+          <div className="crew-start-order-table__alert crew-start-order-table__alert--warning">
+            <strong>⚠️ Duplicate Start Orders Detected Across All Data:</strong>
+            <div className="crew-start-order-table__duplicate-summary">
+              {duplicateData.summary.duplicate_start_orders} duplicate start orders affecting{" "}
+              {duplicateData.summary.crews_with_duplicates} crews out of {duplicateData.summary.total_accepted_crews}{" "}
+              total accepted crews.
+            </div>
+            {/* {Object.entries(duplicateData.duplicates).map(([startOrder, crews]) => (
+              <div key={startOrder} className="crew-start-order-table__duplicate-detail">
+                <strong>Start Order {startOrder}:</strong> {crews.map((c) => `${c.name} (${c.club})`).join(", ")}
+              </div>
+            ))} */}
+          </div>
+        )}
+
+        {duplicateData && !duplicateData.has_duplicates && (
           <div className="crew-start-order-table__alert crew-start-order-table__alert--success">
-            ✅ All start orders are unique
+            ✅ All start orders are unique across the entire dataset ({duplicateData.summary.total_accepted_crews}{" "}
+            accepted crews)
           </div>
         )}
       </div>
@@ -432,6 +408,17 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
       </div>
 
       <div className="crew-start-order-table__table-container">
+        {isLoading && (
+          <div className="crew-start-order-table__loading-overlay">
+            <div className="crew-start-order-table__spinner"></div>
+          </div>
+        )}
+        <TablePagination
+          table={table}
+          className="crew-start-order-table__pagination"
+          showRowInfo={false}
+          showPageSizeSelector={true}
+        />
         <table className="crew-start-order-table__table">
           <TableHeader headerGroups={table.getHeaderGroups()} />
           <TableBody rows={table.getRowModel().rows} />
@@ -442,8 +429,8 @@ export default function CrewStartOrderTable({ crews, isLoading, error, onDataCha
       <div className="crew-start-order-table__footer">
         <div className="crew-start-order-table__results-info">
           <p className="crew-start-order-table__results-text">
-            Showing {displayedRows} of {filteredRows} crews
-            {globalFilter && filteredRows !== totalRows && <span> (filtered from {totalRows} total)</span>}
+            Showing {displayedRows} of {totalRows} crews
+            {globalFilter && <span> (filtered by search)</span>}
           </p>
         </div>
 
