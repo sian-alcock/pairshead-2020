@@ -209,7 +209,11 @@ export default function CrewStartByNumberLocation() {
           <h2 className="crew-start-by-number-location__title">Pairs Head {new Date().getFullYear()} - Start order</h2>
 
           {isLoading ? <p>Loading...</p> : null}
-
+          {groupedCrews.length === 0 && (
+            <tr>
+              <td>No accepted crews found</td>
+            </tr>
+          )}
           {groupedCrews.map((group, i) => (
             <div className="crew-start-by-number-location__block" key={`${group.location}-${i}`}>
               <h3 className="crew-start-by-number-location__location-title">

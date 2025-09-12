@@ -42,6 +42,7 @@ export default function CrewLabels() {
       <div id="print-report">
         <div className="crew-labels__page">
           <div className="crew-labels__grid">
+            {crews.length === 0 && "No accepted crews"}
             {crews.map((crew, idx) => (
               <div key={crew.id} className="crew-labels__label">
                 <h1 className="crew-labels__start-order">{crew.bib_number}</h1>

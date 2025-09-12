@@ -103,6 +103,11 @@ class ContactDetailReport extends React.Component {
                   </tr>
                 </tfoot>
                 <tbody>
+                  {this.state.crews.length === 0 && (
+                    <tr>
+                      <td colSpan={4}>No accepted crews found</td>
+                    </tr>
+                  )}
                   {this.state.crews.map((crew) => (
                     <tr key={crew.id}>
                       <td>{crew.club.name}</td>

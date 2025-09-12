@@ -101,8 +101,8 @@ export default function CrewDrawReports() {
                   <p>When complete, please take photo and send to Sarah Powell</p>
                 </li>
               </ol>
-              <h3 className="crew-draw-reports__subtitle">Open lightweight - 75kg</h3>
-              <h3 className="crew-draw-reports__subtitle">Womens lightweight - 61.5kg</h3>
+              <p className="crew-draw-reports__subtitle">Open lightweight - 75kg</p>
+              <p className="crew-draw-reports__subtitle">Womens lightweight - 61.5kg</p>
             </div>
           )}
           <div className="crew-draw-reports__table-container">
@@ -123,6 +123,11 @@ export default function CrewDrawReports() {
                   </tr>
                 </tfoot>
                 <tbody>
+                  {crews.length === 0 && (
+                    <tr>
+                      <td>No accepted crews found</td>
+                    </tr>
+                  )}
                   {crews &&
                     crews
                       .filter((crew) => crew.bib_number)
@@ -155,6 +160,11 @@ export default function CrewDrawReports() {
                   </tr>
                 </tfoot>
                 <tbody>
+                  {crews.length === 0 && (
+                    <tr>
+                      <td>No accepted crews found</td>
+                    </tr>
+                  )}
                   {crews &&
                     crews
                       .filter((crew) => crew.bib_number)
@@ -193,6 +203,11 @@ export default function CrewDrawReports() {
                   </tr>
                 </tfoot>
                 <tbody>
+                  {crews.length === 0 && (
+                    <tr>
+                      <td>No accepted crews found</td>
+                    </tr>
+                  )}
                   {crews &&
                     crews
                       .filter((crew) => crew.event_band?.includes("Lwt"))

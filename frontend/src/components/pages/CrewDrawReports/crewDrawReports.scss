@@ -1,4 +1,4 @@
-@import '../../../style.scss';
+@import "../../../style.scss";
 
 .crew-draw-reports {
   &__section {
@@ -20,15 +20,19 @@
 
   &__subtitle {
     margin-bottom: 0.5rem;
-    @include h5;
+    @include h4;
+  }
+
+  &__report-intro {
+    p {
+      margin-bottom: 0.5rem;
+      @include body-small;
+    }
   }
 
   &__list {
     margin-bottom: 0.5rem;
     list-style-position: inside;
-    p {
-      margin-bottom: 0.5rem;
-    }
   }
 
   &__table-container {
@@ -57,13 +61,12 @@
 
     &:hover {
       background-color: $phLogoBlue;
-      color: $bblBlue; 
+      color: $bblBlue;
     }
-
 
     &.active {
       background-color: $phLogoBlue;
-      color: $bblBlue; 
+      color: $bblBlue;
     }
   }
 
