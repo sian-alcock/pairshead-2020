@@ -4,7 +4,7 @@ export const menuProps: MenuProps = {
   menuItems: [
     {
       key: 3,
-      parentItem: "Pre-race / setup",
+      parentItem: "Pre-race",
       link: "/logistics",
       authenticated: true,
       items: [

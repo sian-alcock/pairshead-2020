@@ -11,7 +11,7 @@ class DataOverviewStatsView(generics.GenericAPIView):
     """
     
     def get(self, request, *args, **kwargs):
-        phase = request.query_params.get('phase', 'setup')  # or whatever makes sense as default
+        phase = request.query_params.get('phase', 'pre-race')
 
 
         stats = self.get_stats_data(phase)
@@ -30,9 +30,7 @@ class DataOverviewStatsView(generics.GenericAPIView):
         stats.update(self.get_common_stats())
         
         # Phase-specific stats
-        if phase == 'setup':
-            stats.update(self.get_setup_stats())
-        elif phase == 'pre-race':
+        if phase == 'pre-race':
             stats.update(self.get_prerace_stats())
         elif phase == 'race':
             stats.update(self.get_race_stats())
@@ -49,16 +47,11 @@ class DataOverviewStatsView(generics.GenericAPIView):
             'submitted_crews_count': Crew.objects.filter(status__exact='Submitted').count(),
         }
     
-    def get_setup_stats(self):
-        """Stats specific to setup phase"""        
-        return {
-            'event_order_count': EventOrder.objects.count(),
-            'crews_with_start_order_count': Crew.objects.filter(calculated_start_order__gt=0).exclude(calculated_start_order=9999999,).count(),
-        }
-    
     def get_prerace_stats(self):
         """Stats specific to pre-race phase"""
         return {
+            'event_order_count': EventOrder.objects.count(),
+            'crews_with_start_order_count': Crew.objects.filter(calculated_start_order__gt=0).exclude(calculated_start_order=9999999,).count(),
             'marshalling_divisions_count': MarshallingDivision.objects.count(),
             'number_locations_count': NumberLocation.objects.count(),
         }

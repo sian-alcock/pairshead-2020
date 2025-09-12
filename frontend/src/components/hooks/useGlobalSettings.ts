@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 interface GlobalSettings {
   id: number;
   broe_data_last_update: string | null;
-  race_mode: "SETUP" | "PRE_RACE" | "RACE";
+  race_mode: "PRE_RACE" | "RACE";
 }
 
 interface EventKey {
@@ -101,7 +101,7 @@ export const useRaceMode = () => {
 
   const currentSettings = settings?.[0];
 
-  const updateRaceMode = (newMode: "SETUP" | "PRE_RACE" | "RACE") => {
+  const updateRaceMode = (newMode: "PRE_RACE" | "RACE") => {
     if (currentSettings) {
       updateMutation.mutate({
         id: currentSettings.id,
@@ -111,7 +111,7 @@ export const useRaceMode = () => {
   };
 
   return {
-    raceMode: currentSettings?.race_mode || "SETUP",
+    raceMode: currentSettings?.race_mode || "PRE_RACE",
     updateRaceMode,
     isLoading: isLoading || updateMutation.isPending,
     error: error || updateMutation.error,

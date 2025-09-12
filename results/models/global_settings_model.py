@@ -5,13 +5,12 @@ class GlobalSettings(models.Model):
     broe_data_last_update = models.DateTimeField(blank=True, null=True)
 
     MODE_CHOICES = [
-        ('SETUP', 'Setup'),
         ('PRE_RACE', 'Pre-race'),
         ('RACE', 'Race'),
     ]
 
     race_mode = models.CharField(
-        default='SETUP',
+        default='PRE_RACE',
         choices=MODE_CHOICES,
         max_length=10
     )
@@ -22,11 +21,11 @@ class GlobalSettings(models.Model):
 
     @classmethod
     def get_instance(cls):
-        """Get the singleton GlobalSettings instance, create if it doesn't exist"""
+        """Get the single GlobalSettings instance, create if it doesn't exist"""
         instance, created = cls.objects.get_or_create(
             id=1,
             defaults={
-                'race_mode': 'SETUP',
+                'race_mode': 'PRE_RACE',
                 'broe_data_last_update': None
             }
         )
@@ -35,12 +34,12 @@ class GlobalSettings(models.Model):
         return instance
 
     def save(self, *args, **kwargs):
-        # Force this to always be the singleton instance
+        # Force this to always be the single instance
         self.pk = 1
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
-        # Prevent deletion of the singleton
+        # Prevent deletion of the single
         pass
 
     def __str__(self):

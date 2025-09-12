@@ -3,7 +3,6 @@ import Header from "../../organisms/Header/Header";
 import Hero from "../../organisms/Hero/Hero";
 import StatBlock, { StatBlockProps } from "../../organisms/StatBlock/StatBlock";
 import { useCurrentRaceMode } from "../../hooks/useGlobalSettings";
-import SetupDashboard from "../../organisms/RacePhaseDashboard/SetupDashboard";
 import PreRaceDashboard from "../../organisms/RacePhaseDashboard/PreRaceDashboard";
 import RaceDashboard from "../../organisms/RacePhaseDashboard/RaceDashboard";
 import { useDataStats } from "../../../hooks/useDataStats";
@@ -15,14 +14,12 @@ export default function Home() {
   // Convert raceMode to phase format for API
   const phase = useMemo(() => {
     switch (raceMode) {
-      case "SETUP":
-        return "setup";
       case "PRE_RACE":
         return "pre-race";
       case "RACE":
         return "race";
       default:
-        return "setup";
+        return "pre-race";
     }
   }, [raceMode]);
 
@@ -35,7 +32,7 @@ export default function Home() {
     const blocks: StatBlockProps[] = [];
 
     // Phase-specific stat blocks
-    if (phase === "setup") {
+    if (phase === "pre-race") {
       blocks.push(
         {
           value: statsData.total_crews_count,
@@ -71,29 +68,6 @@ export default function Home() {
           value: statsData.crews_with_start_order_count,
           subtitle: "crews with calculated start order",
           status: statsData.crews_with_start_order_count > 0 ? "good" : "warning"
-        }
-      );
-    } else if (phase === "pre-race") {
-      blocks.push(
-        {
-          value: statsData.total_crews_count,
-          subtitle: "total crews registered",
-          status: statsData.total_crews_count > 0 ? "good" : "warning"
-        },
-        {
-          value: statsData.scratched_crews_count,
-          subtitle: "scratched crews",
-          status: "neutral"
-        },
-        {
-          value: statsData.withdrawn_crews_count,
-          subtitle: "withdrawn crews",
-          status: "neutral"
-        },
-        {
-          value: statsData.submitted_crews_count,
-          subtitle: "submitted crews",
-          status: statsData.submitted_crews_count > 0 ? "good" : "warning"
         },
         {
           value: statsData.marshalling_divisions_count,
@@ -142,14 +116,12 @@ export default function Home() {
   // Calculate number of skeleton blocks based on phase
   const skeletonBlockCount = useMemo(() => {
     switch (phase) {
-      case "setup":
-        return 3;
       case "pre-race":
-        return 4;
+        return 9;
       case "race":
-        return 3;
+        return 5;
       default:
-        return 3;
+        return 9;
     }
   }, [phase]);
 
@@ -175,7 +147,6 @@ export default function Home() {
       </section>
       <section className="home__section">
         <div className="home__container">
-          {raceMode === "SETUP" && <SetupDashboard />}
           {raceMode === "PRE_RACE" && <PreRaceDashboard />}
           {raceMode === "RACE" && <RaceDashboard />}
         </div>
