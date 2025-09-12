@@ -8,18 +8,22 @@ import Hero from "../../organisms/Hero/Hero";
 import { CrewProps } from "../../../types/components.types";
 import "./crewStartByNumberLocation.scss";
 import Checkbox from "../../atoms/Checkbox/Checkbox";
+import { PaginatedResponse } from "../../../types/components.types";
 
 interface ResponseParamsProps {
   status?: string | string[];
   masters?: boolean;
+  page_size?: string;
+  page?: number;
+  ordering?: string;
 }
 
 // API function
 const fetchCrews = async (params: ResponseParamsProps): Promise<CrewProps[]> => {
-  const response: AxiosResponse<CrewProps[]> = await axios.get("/api/crews", {
+  const response: AxiosResponse<PaginatedResponse<CrewProps>> = await axios.get("/api/crews", {
     params
   });
-  return response.data;
+  return response.data.results;
 };
 
 // Column helper for type safety
@@ -45,6 +49,9 @@ export default function CrewStartByNumberLocation() {
     ],
     queryFn: () =>
       fetchCrews({
+        page_size: "500",
+        page: 1,
+        ordering: "bib_number",
         status: "Accepted"
       }),
     staleTime: 5 * 60 * 1000, // 5 minutes
