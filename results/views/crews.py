@@ -7,7 +7,7 @@ import time
 # if this is where you store your django-rest-framework settings
 # from django.conf import settings
 from django.db import transaction
-from django.db.models import Min, Avg
+from django.db.models import Min, Avg, Q
 from rest_framework import status
 from django.http import Http404, HttpResponse
 from rest_framework.views import APIView
@@ -42,6 +42,18 @@ class CrewListView(generics.ListCreateAPIView):
             queryset = queryset.filter(status__in=status_list)
         else:
             print("No status filter applied")
+
+        # Handle missing times filter
+        missing_times = self.request.query_params.get('missing_times')
+        if missing_times == 'true':
+            print("Filtering for crews with missing start or finish times")
+            # Only show Accepted crews that are missing start_time OR finish_time (or both)
+            # Note: We assume null/None values represent missing times
+            queryset = queryset.filter(
+                status='Accepted'
+            ).filter(
+                Q(start_time__isnull=True) | Q(start_time=0) | Q(finish_time__isnull=True) | Q(finish_time=0)
+            )
         
         # Conditionally filter by published_time > 0 for results pages
         results_only = self.request.query_params.get('results_only')

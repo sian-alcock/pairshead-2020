@@ -1,32 +1,21 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import Hero from "../../organisms/Hero/Hero";
 import Header from "../../organisms/Header/Header";
 import "./crewManagementDashboard.scss";
-import CrewTimeCompareTable from "../../organisms/CrewTimeCompareTable/CrewTimeCompareTable";
 import ResultsComparison from "../../organisms/ResultsComparison/ResultsComparison";
 import RaceTimesTable from "../../organisms/RaceTimesTable/RaceTimesTable";
 import SequenceComparisonTable from "../../organisms/SequenceComparisonTable/SequenceComparisonTable";
-import MissingTimesTable from "../../organisms/MissingTimesTable/MissingTimesTable";
 import MastersCrewsTable from "../../organisms/MastersCrewsTable/MastersCrewsTable";
 import CrewsTable from "../../organisms/CrewsTable/CrewsTable";
 import { useCrews } from "../../../hooks/useCrews";
 import { useRaces } from "../../../hooks/useRaces";
 
-// Types
-
 interface TabConfig {
   key: string;
   label: string;
   count?: number;
-  component:
-    | "crew-table"
-    | "crew-race-view"
-    | "compare-winners"
-    | "race-times"
-    | "sequence-comparison"
-    | "missing-times"
-    | "masters-crews";
+  component: "crew-table" | "compare-winners" | "race-times" | "sequence-comparison" | "masters-crews";
   needsCrews?: boolean;
   needsRaces?: boolean;
   raceId?: number;
@@ -62,11 +51,6 @@ export default function CrewManagementDashboard() {
         tap: "Finish"
       },
       {
-        key: "missing-times",
-        label: "Missing times",
-        component: "missing-times"
-      },
-      {
         key: "masters-crews",
         label: "Masters",
         component: "masters-crews"
@@ -79,14 +63,6 @@ export default function CrewManagementDashboard() {
         count: crewsData?.length || 0,
         component: "crew-table",
         needsCrews: false, // Changed to false since CrewsTable fetches its own data
-        needsRaces: true
-      },
-      {
-        key: "crew-race-view",
-        label: "Crews / race view",
-        count: crewsData?.length || 0,
-        component: "crew-race-view",
-        needsCrews: true, // This still needs crews data passed down
         needsRaces: true
       },
       {
@@ -162,21 +138,6 @@ export default function CrewManagementDashboard() {
         // CrewsTable now handles its own data fetching - no props needed!
         return <CrewsTable onDataChanged={handleDataChanged} />;
 
-      case "crew-race-view":
-        // This component still needs crews data passed as props
-        const isLoading = crewsLoading || racesLoading;
-        const hasError = crewsError || racesError;
-
-        return (
-          <CrewTimeCompareTable
-            crews={crewsData || []}
-            races={racesData || []}
-            isLoading={isLoading}
-            error={!!hasError}
-            onDataChanged={handleDataChanged}
-          />
-        );
-
       case "compare-winners":
         return <ResultsComparison />;
 
@@ -186,9 +147,6 @@ export default function CrewManagementDashboard() {
         }
 
         return <SequenceComparisonTable tap={currentTab.tap} onDataChanged={handleDataChanged} />;
-
-      case "missing-times":
-        return <MissingTimesTable onDataChanged={handleDataChanged} />;
 
       case "masters-crews":
         return <MastersCrewsTable onDataChanged={handleDataChanged} />;

@@ -218,7 +218,9 @@ class Crew(models.Model):
     # Overall rank
     def calc_overall_rank(self):
         crews = Crew.objects.all().filter(status__exact='Accepted', published_time__gt=0, published_time__lt=self.published_time)
-        return len(crews) + 1
+        if self.published_time > 0:
+            return len(crews) + 1
+        return 0
 
     # Gender rank
     def calc_gender_rank(self):

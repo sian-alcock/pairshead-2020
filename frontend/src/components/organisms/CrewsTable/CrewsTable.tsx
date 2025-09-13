@@ -3,12 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import {
   useReactTable,
   getCoreRowModel,
-  flexRender,
   ColumnDef,
   PaginationState,
   createColumnHelper,
   SortingState,
-  ColumnFiltersState,
   VisibilityState
 } from "@tanstack/react-table";
 import { formatTimes } from "../../../lib/helpers";
@@ -18,9 +16,9 @@ import { TableBody } from "../../molecules/TableBody/TableBody";
 import TablePagination from "../../molecules/TablePagination/TablePagination";
 import SearchInput from "../../molecules/SearchInput/SearchInput";
 import { Link } from "react-router-dom";
-import "./crewsTable.scss";
 import Checkbox from "../../atoms/Checkbox/Checkbox";
 import TextButton from "../../atoms/TextButton/TextButton";
+import "./crewsTable.scss";
 
 // Backend response structure
 interface CrewsApiResponse {
@@ -41,6 +39,7 @@ const fetchCrews = async ({
   search = "",
   ordering = "overall_rank",
   hideScratched = true,
+  showMissingTimesOnly = false,
   ...filters
 }: {
   page?: number;
@@ -48,6 +47,7 @@ const fetchCrews = async ({
   search?: string;
   ordering?: string;
   hideScratched?: boolean;
+  showMissingTimesOnly?: boolean;
   [key: string]: any;
 }): Promise<CrewsApiResponse> => {
   const params = new URLSearchParams();
@@ -63,9 +63,15 @@ const fetchCrews = async ({
     params.append("ordering", ordering);
   }
 
-  // Add status filter for scratched crews
+  if (showMissingTimesOnly) {
+    params.append("missing_times", "true");
+  }
+
   if (hideScratched) {
-    params.append("status__not", "Scratched,scratched,SCRATCHED");
+    params.append("status[]", "Accepted");
+  } else {
+    params.append("status[]", "Accepted");
+    params.append("status[]", "Scratched");
   }
 
   // Add any additional filters
@@ -76,8 +82,9 @@ const fetchCrews = async ({
   });
 
   const url = `/api/crews/?${params.toString()}`;
-  console.log("Fetching crews with URL:", url);
-  console.log("Ordering parameter:", ordering);
+  // console.log("Fetching crews with URL:", url);
+  // console.log("Ordering parameter:", ordering);
+  // console.log("Hide scratched:", hideScratched);
 
   const response = await fetch(url);
 
@@ -94,11 +101,19 @@ const fetchCrews = async ({
 // Column visibility presets
 const COLUMN_PRESETS = {
   essential: {
+    id: true,
     name: true,
     bib_number: true,
     event_band: true,
     club: true,
+    status: true,
+    start_time: true,
+    finish_time: true,
+    start_sequence: true,
+    finish_sequence: true,
+    raw_time: true,
     race_time: true,
+    published_time: true,
     overall_rank: true
   },
   all: {}
@@ -107,7 +122,6 @@ const COLUMN_PRESETS = {
 export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
   const columnHelper = createColumnHelper<CrewProps>();
 
-  // Component state - these now control backend requests
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 25
@@ -138,13 +152,29 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
     return saved ? JSON.parse(saved) : true;
   });
 
+  const [showMissingTimesOnly, setShowMissingTimesOnly] = useState(() => {
+    const saved = localStorage.getItem("crews-missing-times");
+    return saved ? JSON.parse(saved) : false;
+  });
+
   // Convert sorting state to backend ordering format
   const getOrderingParam = (sorting: SortingState): string => {
     if (sorting.length === 0) return "overall_rank";
 
     const sort = sorting[0];
-    const direction = sort.desc ? "-" : "";
-    return `${direction}${sort.id}`;
+    let orderField = sort.id;
+
+    switch (orderField) {
+      case "name":
+        orderField = "competitor_names";
+        break;
+      default:
+        // Handle other mappings as needed
+        break;
+    }
+
+    const ordering = sort.desc ? `-${orderField}` : orderField;
+    return ordering;
   };
 
   // React Query for fetching data
@@ -160,7 +190,8 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
       pagination.pageSize,
       debouncedSearch,
       getOrderingParam(sorting),
-      hideScratched
+      hideScratched,
+      showMissingTimesOnly
     ],
     queryFn: () =>
       fetchCrews({
@@ -168,7 +199,8 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
         pageSize: pagination.pageSize,
         search: debouncedSearch,
         ordering: getOrderingParam(sorting),
-        hideScratched
+        hideScratched,
+        showMissingTimesOnly
       }),
     placeholderData: (previousData) => previousData, // This replaces keepPreviousData
     staleTime: 30000,
@@ -200,7 +232,7 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
       }),
       columnHelper.accessor((row) => row.competitor_names || row.name, {
         id: "name",
-        header: "Name",
+        header: "Crew",
         cell: (info) => <span className="crews-table__cell crews-table__cell--name">{info.getValue()}</span>,
         enableSorting: true
       }),
@@ -231,35 +263,44 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
         ),
         enableSorting: true
       }),
-      columnHelper.accessor("race_time", {
-        header: "Race Time",
-        cell: (info) => (
-          <span className="crews-table__cell crews-table__cell--time">
-            {info.getValue() ? formatTimes(info.getValue()) : "--"}
-          </span>
-        ),
-        enableSorting: true
-      }),
-      columnHelper.accessor("raw_time", {
-        header: "Raw Time",
-        cell: (info) => (
-          <span className="crews-table__cell crews-table__cell--time">
-            {info.getValue() ? formatTimes(info.getValue()) : "--"}
-          </span>
-        ),
-        enableSorting: true
-      }),
       columnHelper.accessor("start_time", {
-        header: "Start Time",
+        header: "Start time",
         cell: (info) => (
           <span className="crews-table__cell crews-table__cell--time">
-            {info.getValue() ? formatTimes(info.getValue()) : "--"}
+            {info.getValue() ? formatTimes(info.getValue()) : <span>⚠️</span>}
           </span>
         ),
         enableSorting: true
       }),
       columnHelper.accessor("finish_time", {
-        header: "Finish Time",
+        header: "Finish time",
+        cell: (info) => (
+          <span className="crews-table__cell crews-table__cell--time">
+            {info.getValue() ? formatTimes(info.getValue()) : <span>⚠️</span>}
+          </span>
+        ),
+        enableSorting: true
+      }),
+      columnHelper.accessor("start_sequence", {
+        header: "Start seq",
+        cell: (info) => (
+          <span className="crews-table__cell crews-table__cell--time">
+            {info.getValue() ? info.getValue() : <span>⚠️</span>}
+          </span>
+        ),
+        enableSorting: true
+      }),
+      columnHelper.accessor("finish_sequence", {
+        header: "Finish seq",
+        cell: (info) => (
+          <span className="crews-table__cell crews-table__cell--time">
+            {info.getValue() ? info.getValue() : <span>⚠️</span>}
+          </span>
+        ),
+        enableSorting: true
+      }),
+      columnHelper.accessor("raw_time", {
+        header: "Raw time",
         cell: (info) => (
           <span className="crews-table__cell crews-table__cell--time">
             {info.getValue() ? formatTimes(info.getValue()) : "--"}
@@ -267,32 +308,36 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
         ),
         enableSorting: true
       }),
-      columnHelper.accessor("start_sequence", {
-        header: "Start Seq",
+      columnHelper.accessor("race_time", {
+        header: "Race time",
         cell: (info) => (
-          <span className="crews-table__cell crews-table__cell--sequence">{info.getValue() || "--"}</span>
+          <span className="crews-table__cell crews-table__cell--time">
+            {info.getValue() ? formatTimes(info.getValue()) : "--"}
+          </span>
         ),
         enableSorting: true
       }),
-      columnHelper.accessor("finish_sequence", {
-        header: "Finish Seq",
+      columnHelper.accessor("published_time", {
+        header: "Published time",
         cell: (info) => (
-          <span className="crews-table__cell crews-table__cell--sequence">{info.getValue() || "--"}</span>
+          <span className="crews-table__cell crews-table__cell--time">
+            {info.getValue() ? formatTimes(info.getValue()) : "--"}
+          </span>
         ),
         enableSorting: true
       }),
       columnHelper.accessor("overall_rank", {
-        header: "Overall Rank",
+        header: "Overall rank",
         cell: (info) => <span className="crews-table__cell crews-table__cell--rank">{info.getValue() || "--"}</span>,
         enableSorting: true
       }),
       columnHelper.accessor("category_rank", {
-        header: "Category Rank",
+        header: "Category rank",
         cell: (info) => <span className="crews-table__cell crews-table__cell--rank">{info.getValue() || "--"}</span>,
         enableSorting: true
       }),
       columnHelper.accessor("gender_rank", {
-        header: "Gender Rank",
+        header: "Gender rank",
         cell: (info) => <span className="crews-table__cell crews-table__cell--rank">{info.getValue() || "--"}</span>,
         enableSorting: true
       }),
@@ -306,34 +351,7 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
         enableSorting: true
       }),
       columnHelper.accessor("manual_override_time", {
-        header: "Manual Override",
-        cell: (info) => (
-          <span className="crews-table__cell crews-table__cell--time">
-            {info.getValue() ? formatTimes(info.getValue()) : "--"}
-          </span>
-        ),
-        enableSorting: true
-      }),
-      columnHelper.accessor("masters_adjustment", {
-        header: "Masters Adj",
-        cell: (info) => (
-          <span className="crews-table__cell crews-table__cell--adjustment">
-            {info.getValue() ? `${info.getValue()}s` : "--"}
-          </span>
-        ),
-        enableSorting: true
-      }),
-      columnHelper.accessor("masters_adjusted_time", {
-        header: "Masters Time",
-        cell: (info) => (
-          <span className="crews-table__cell crews-table__cell--time">
-            {info.getValue() ? formatTimes(info.getValue()) : "--"}
-          </span>
-        ),
-        enableSorting: true
-      }),
-      columnHelper.accessor("published_time", {
-        header: "Published Time",
+        header: "Manual override",
         cell: (info) => (
           <span className="crews-table__cell crews-table__cell--time">
             {info.getValue() ? formatTimes(info.getValue()) : "--"}
@@ -342,12 +360,12 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
         enableSorting: true
       }),
       columnHelper.accessor("composite_code", {
-        header: "Composite Code",
+        header: "Composite code",
         cell: (info) => <span className="crews-table__cell crews-table__cell--code">{info.getValue() || "--"}</span>,
         enableSorting: true
       }),
       columnHelper.accessor("time_only", {
-        header: "Time Only",
+        header: "Time only",
         cell: (info) => (
           <span
             className={`crews-table__cell crews-table__cell--boolean ${info.getValue() ? "crews-table__cell--boolean-true" : "crews-table__cell--boolean-false"}`}
@@ -402,19 +420,23 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
     localStorage.setItem("crews-table-hide-scratched", JSON.stringify(hideScratched));
   }, [hideScratched]);
 
+  useEffect(() => {
+    localStorage.setItem("crews-missing-times", JSON.stringify(showMissingTimesOnly));
+  }, [showMissingTimesOnly]);
+
   // Reset to first page when search or filters change
   useEffect(() => {
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-  }, [debouncedSearch, hideScratched]);
+  }, [debouncedSearch, hideScratched, showMissingTimesOnly]);
 
   // Table instance - now with manual pagination/sorting
   const table = useReactTable({
     data: crewsResponse?.results || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
-    manualPagination: true, // Important: tells table not to paginate client-side
-    manualSorting: true, // Important: tells table not to sort client-side
-    manualFiltering: true, // Important: tells table not to filter client-side
+    manualPagination: true,
+    manualSorting: true,
+    manualFiltering: true,
     pageCount: crewsResponse ? Math.ceil(crewsResponse.count / pagination.pageSize) : -1,
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
@@ -450,9 +472,6 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
   }
 
   const totalRows = crewsResponse?.count || 0;
-  const currentPageRows = crewsResponse?.results?.length || 0;
-  const currentPage = pagination.pageIndex + 1;
-  const totalPages = Math.ceil(totalRows / pagination.pageSize);
 
   return (
     <div className="crews-table">
@@ -471,7 +490,13 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
           checked={hideScratched}
           onChange={(e) => setHideScratched(e.target.checked)}
         />
-
+        <Checkbox
+          name={"missing-times"}
+          label={"Show crews with missing times only"}
+          id={"missing-times"}
+          checked={showMissingTimesOnly}
+          onChange={(e) => setShowMissingTimesOnly(e.target.checked)}
+        />
         <div className="crews-table__column-controls">
           <div className="crews-table__column-toggles">
             <TextButton
@@ -492,6 +517,13 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
           </label>
         ))}
       </div>
+      <TablePagination
+        table={table}
+        className="crews-table__pagination"
+        showRowInfo={true}
+        showPageSizeSelector={true}
+        totalRowCount={totalRows}
+      />
 
       <div className="crews-table__table-container">
         <table className="crews-table__table">
@@ -501,19 +533,12 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
       </div>
 
       <div className="crews-table__footer">
-        <div className="crews-table__results-info">
-          <p className="crews-table__results-text">
-            Showing {currentPageRows} crews on page {currentPage} of {totalPages}
-            <span> ({totalRows} total crews)</span>
-            {globalFilter && <span> (search: "{globalFilter}")</span>}
-          </p>
-        </div>
-
         <TablePagination
           table={table}
           className="crews-table__pagination"
-          showRowInfo={false}
+          showRowInfo={true}
           showPageSizeSelector={true}
+          totalRowCount={totalRows}
         />
       </div>
     </div>

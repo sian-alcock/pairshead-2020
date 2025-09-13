@@ -1,8 +1,7 @@
-@import '../../../style.scss';
-@import '../../../lib.scss';
+@import "../../../style.scss";
+@import "../../../lib.scss";
 
 .crews-table {
-  
   &__title {
     margin-bottom: 1.5rem;
     @include h3;
@@ -18,6 +17,7 @@
   }
 
   &__controls {
+    margin-bottom: 1.5rem;
     @include tablet {
       @include grid(2);
     }
@@ -36,16 +36,18 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem 1.5rem;
-    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    transition:
+      max-height 0.3s ease-in-out,
+      opacity 0.3s ease-in-out;
     overflow: hidden;
-    
+
     &--collapsed {
       max-height: 0;
       opacity: 0;
       margin: 0;
       padding: 0;
     }
-    
+
     &--expanded {
       max-height: 300px; // Adjust based on your content
       opacity: 1;
@@ -55,7 +57,7 @@
       border-radius: 8px;
       border: 1px solid #dee2e6;
     }
-    
+
     &__column-checkbox {
       flex: 0 0 auto;
       min-width: 180px;
@@ -67,6 +69,10 @@
     &--id {
       @include animated-link;
     }
+  }
+
+  .table-pagination {
+    padding: 1.5rem 0;
   }
 
   // Responsive breakpoints
@@ -93,6 +99,4 @@
       }
     }
   }
-
 }
-

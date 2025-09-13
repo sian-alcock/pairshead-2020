@@ -17,10 +17,6 @@ import "./crewStartOrderTable.scss";
 import Checkbox from "../../atoms/Checkbox/Checkbox";
 import TextButton from "../../atoms/TextButton/TextButton";
 
-interface CrewStartOrderTableProps {
-  onDataChanged?: () => void;
-}
-
 interface duplicate {
   id: number;
   name: string;
@@ -88,7 +84,7 @@ const fetchDuplicateCheck = async (): Promise<DuplicateCheckResponse> => {
   return response.json();
 };
 
-export default function CrewStartOrderTable({ onDataChanged }: CrewStartOrderTableProps) {
+export default function CrewStartOrderTable() {
   const columnHelper = createColumnHelper<CrewProps>();
 
   // Component state
@@ -175,9 +171,6 @@ export default function CrewStartOrderTable({ onDataChanged }: CrewStartOrderTab
       if (response.ok && result.success) {
         console.log(`Updated start orders for ${result.updated_crews} crews`);
         await refetch();
-        if (onDataChanged) {
-          onDataChanged();
-        }
       } else {
         console.error("Failed to update start orders:", result.message);
         alert(`Error updating start orders: ${result.message}`);
