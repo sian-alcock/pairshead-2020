@@ -2,10 +2,25 @@ import axios, { AxiosResponse } from "axios";
 import { RaceProps, PaginatedResponse } from "../types/components.types";
 
 export const fetchRaces = async (): Promise<RaceProps[]> => {
-  const response: AxiosResponse<PaginatedResponse<RaceProps>> = await axios.get("/api/races/");
-  return response.data.results;
-};
+  try {
+    const response: AxiosResponse<PaginatedResponse<RaceProps>> = await axios.get("/api/races/");
 
+    if (!response.data) {
+      console.error("No response data");
+      throw new Error("No response data from races API");
+    }
+
+    if (!Array.isArray(response.data.results)) {
+      console.error("Invalid response structure - results is not an array:", response.data);
+      throw new Error("Invalid response structure from races API");
+    }
+
+    return response.data.results;
+  } catch (error) {
+    console.error("Error fetching races:", error);
+    throw error;
+  }
+};
 export const fetchRace = async (id: number): Promise<RaceProps> => {
   const response: AxiosResponse<RaceProps> = await axios.get(`/api/races/${id}/`);
   return response.data;

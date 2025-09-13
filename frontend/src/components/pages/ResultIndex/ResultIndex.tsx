@@ -398,9 +398,11 @@ export default function ResultIndex() {
           <div className="result-index__container">
             <div className="result-index__table-container">
               <table className="crews-table__table">
-                <tr>
-                  <td>Loading..</td>
-                </tr>
+                <tbody>
+                  <tr>
+                    <td>Loading..</td>
+                  </tr>
+                </tbody>
               </table>
             </div>
           </div>

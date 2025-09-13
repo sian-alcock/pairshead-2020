@@ -115,7 +115,7 @@ const CategoryImportWarning: React.FC<{
       <div className="masters-crews__warning-content">
         <div className="masters-crews__warning-header">
           <div className="masters-crews__warning-icon">⚠️</div>
-          <h4 className="masters-crews__warning-title">Original Event Categories Required</h4>
+          <h4 className="masters-crews__warning-title">Original event categories required</h4>
         </div>
 
         <p className="masters-crews__warning-message">{categoriesStatus.warning_message}</p>

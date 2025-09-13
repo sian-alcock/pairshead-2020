@@ -45,6 +45,10 @@
   &__masters-adjustments {
     margin-top: 1.5rem;
   }
+
+  .table-pagination {
+    padding: 1.5rem 0;
+  }
 }
 
 // Add these styles to your mastersCrewsTable.scss file
@@ -125,7 +129,6 @@
   font-size: 12px;
   font-weight: 500;
   color: #78350f; // amber-900
-  text-transform: uppercase;
   letter-spacing: 0.025em;
 }
 

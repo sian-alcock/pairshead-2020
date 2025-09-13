@@ -8,7 +8,6 @@ import RaceTimesTable from "../../organisms/RaceTimesTable/RaceTimesTable";
 import SequenceComparisonTable from "../../organisms/SequenceComparisonTable/SequenceComparisonTable";
 import MastersCrewsTable from "../../organisms/MastersCrewsTable/MastersCrewsTable";
 import CrewsTable from "../../organisms/CrewsTable/CrewsTable";
-import { useCrews } from "../../../hooks/useCrews";
 import { useRaces } from "../../../hooks/useRaces";
 
 interface TabConfig {
@@ -16,8 +15,6 @@ interface TabConfig {
   label: string;
   count?: number;
   component: "crew-table" | "compare-winners" | "race-times" | "sequence-comparison" | "masters-crews";
-  needsCrews?: boolean;
-  needsRaces?: boolean;
   raceId?: number;
   tap?: "Start" | "Finish";
 }
@@ -29,10 +26,6 @@ export default function CrewManagementDashboard() {
   });
 
   const queryClient = useQueryClient();
-
-  // Only fetch crews data for components that still need it passed as props
-  // CrewsTable now handles its own data fetching
-  const { data: crewsData, isLoading: crewsLoading, error: crewsError } = useCrews();
   const { data: racesData, isLoading: racesLoading, error: racesError } = useRaces();
 
   // Generate dynamic tabs based on available races
@@ -58,24 +51,17 @@ export default function CrewManagementDashboard() {
       {
         key: "all",
         label: "All crews",
-        // Note: We could remove the count here since CrewsTable handles its own data
-        // Or fetch a separate count if needed for UI purposes
-        count: crewsData?.length || 0,
-        component: "crew-table",
-        needsCrews: false, // Changed to false since CrewsTable fetches its own data
-        needsRaces: true
+        component: "crew-table"
       },
       {
         key: "compare-winners",
         label: "Compare winners",
-        component: "compare-winners",
-        needsCrews: false,
-        needsRaces: true
+        component: "compare-winners"
       }
     ];
 
     // Add dynamic race timing tabs
-    if (racesData) {
+    if (racesData && Array.isArray(racesData)) {
       racesData.forEach((race) => {
         baseTabs.push(
           {
@@ -97,7 +83,7 @@ export default function CrewManagementDashboard() {
     }
 
     return baseTabs;
-  }, [racesData, crewsData]);
+  }, [racesData]);
 
   // Handle tab validation when tabs are fully loaded
   useEffect(() => {
@@ -106,7 +92,6 @@ export default function CrewManagementDashboard() {
       const savedTab = sessionStorage.getItem("crew-dashboard-active-tab");
 
       if (savedTab && !tabs.find((tab) => tab.key === savedTab)) {
-        console.log(`Saved tab '${savedTab}' no longer exists, resetting to 'all'`);
         setActiveTab("all");
         sessionStorage.setItem("crew-dashboard-active-tab", "all");
       }
@@ -115,7 +100,6 @@ export default function CrewManagementDashboard() {
 
   // Event handlers
   const handleDataChanged = () => {
-    console.log("Race data changed - invalidating related queries");
     queryClient.invalidateQueries({ queryKey: ["races"] });
     queryClient.invalidateQueries({ queryKey: ["crews"] });
     queryClient.invalidateQueries({ queryKey: ["winners-comparison"] });
@@ -123,7 +107,6 @@ export default function CrewManagementDashboard() {
   };
 
   const handleTabChange = (tabKey: string) => {
-    console.log(`Switching to tab: ${tabKey}`);
     setActiveTab(tabKey);
     sessionStorage.setItem("crew-dashboard-active-tab", tabKey);
   };
@@ -171,8 +154,9 @@ export default function CrewManagementDashboard() {
     }
   };
 
-  console.log("Current tabs:", tabs);
-  console.log("Active tab:", activeTab);
+  // console.log("Current tabs:", tabs);
+  // console.log("Active tab:", activeTab);
+  // console.log(racesData);
 
   return (
     <>

@@ -13,7 +13,7 @@ class ResultsComparisonView(View):
         """
         try:
             data = json.loads(request.body)
-            
+
             # Extract race selections for both comparisons
             comparison1 = data.get('comparison1', {})
             comparison2 = data.get('comparison2', {})
@@ -28,15 +28,16 @@ class ResultsComparisonView(View):
             
             # Get results for both comparisons
             results1 = self._get_results_for_races(start_race_1_id, finish_race_1_id)
+
             results2 = self._get_results_for_races(start_race_2_id, finish_race_2_id)
-            
-            # Get race names for display
+
             races = Race.objects.filter(
                 id__in=[start_race_1_id, finish_race_1_id, start_race_2_id, finish_race_2_id]
             ).values('id', 'name')
-            race_names = {race['id']: race['name'] for race in races}
             
-            return JsonResponse({
+            race_names = {race['id']: race['name'] for race in races}
+
+            response_data = {
                 'comparison1': {
                     'start_race': race_names.get(start_race_1_id),
                     'finish_race': race_names.get(finish_race_1_id),
@@ -47,11 +48,19 @@ class ResultsComparisonView(View):
                     'finish_race': race_names.get(finish_race_2_id),
                     'results': results2
                 }
-            })
+            }
+            
+            # Try to JSON serialize manually to catch serialization issues
+            json_string = json.dumps(response_data)
+            
+            return JsonResponse(response_data)
             
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON data'}, status=400)
         except Exception as e:
+            print("Error in view:", str(e))
+            import traceback
+            traceback.print_exc()
             return JsonResponse({'error': str(e)}, status=500)
     
     def _get_results_for_races(self, start_race_id, finish_race_id):

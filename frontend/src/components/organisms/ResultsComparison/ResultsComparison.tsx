@@ -1,26 +1,19 @@
-import React, { useState, useMemo, ReactNode } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import {
-  useReactTable,
-  getCoreRowModel,
-  flexRender,
-  createColumnHelper,
-  ColumnDef,
-} from '@tanstack/react-table';
+import React, { useState, useMemo, ReactNode } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useReactTable, getCoreRowModel, flexRender, createColumnHelper, ColumnDef } from "@tanstack/react-table";
 
 // Extend the ColumnMeta type to include className
-declare module '@tanstack/react-table' {
+declare module "@tanstack/react-table" {
   interface ColumnMeta<TData, TValue> {
     className?: string;
   }
 }
-import { RaceProps, CrewProps } from '../../../types/components.types';
-import './resultsComparison.scss'
-import { FormSelect } from '../../atoms/FormSelect/FormSelect';
-import TextButton from '../../atoms/TextButton/TextButton';
-import Icon from '../../atoms/Icons/Icons';
-import TablePagination from '../../molecules/TablePagination/TablePagination';
-
+import { RaceProps, CrewProps } from "../../../types/components.types";
+import "./resultsComparison.scss";
+import { FormSelect } from "../../atoms/FormSelect/FormSelect";
+import TextButton from "../../atoms/TextButton/TextButton";
+import Icon from "../../atoms/Icons/Icons";
+import { useRaces } from "../../../hooks/useRaces";
 // Types
 
 interface CrewResult {
@@ -44,7 +37,7 @@ interface CategoryResult {
 interface ComparisonResult {
   start_race: number;
   finish_race: number;
-  results: Record<number, CategoryResult>;
+  results: Record<string, CategoryResult>;
 }
 
 interface ComparisonData {
@@ -57,92 +50,83 @@ interface RaceSelection {
   finish_race_id: number | null;
 }
 
-// API functions
-const fetchRaces = async (): Promise<RaceProps[]> => {
-  const response = await fetch('/api/races/');
-  if (!response.ok) {
-    throw new Error('Failed to fetch races');
-  }
-  return response.json();
-};
-
 const compareResults = async (data: {
   comparison1: RaceSelection;
   comparison2: RaceSelection;
 }): Promise<ComparisonData> => {
-  const response = await fetch('/api/results-comparison/', {
-    method: 'POST',
+  const response = await fetch("/api/results-comparison/", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.getAttribute('value') || '',
+      "Content-Type": "application/json",
+      "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]")?.getAttribute("value") || ""
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   });
-  
+
+  const responseText = await response.text();
+
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || 'Failed to compare results');
+    throw new Error(`HTTP ${response.status}: ${responseText}`);
   }
-  
-  return response.json();
+
+  try {
+    return JSON.parse(responseText);
+  } catch (parseError) {
+    throw new Error(`Failed to parse response as JSON: ${responseText.substring(0, 100)}...`);
+  }
 };
 
 // Main component
 const ResultsComparison: React.FC = () => {
   const [comparison1, setComparison1] = useState<RaceSelection>({
     start_race_id: null,
-    finish_race_id: null,
+    finish_race_id: null
   });
-  
+
   const [comparison2, setComparison2] = useState<RaceSelection>({
     start_race_id: null,
-    finish_race_id: null,
+    finish_race_id: null
   });
 
   const [hasSetDefaults, setHasSetDefaults] = useState(false);
 
   // Fetch available races
-  const { data: racesData, isLoading: racesLoading, error: racesError } = useQuery({
-    queryKey: ['races'],
-    queryFn: fetchRaces,
-  });
-
+  const { data: racesData, isLoading: racesLoading, error: racesError } = useRaces();
   // Compare results mutation
   const compareResultsMutation = useMutation({
     mutationFn: compareResults,
     onError: (error) => {
-      console.error('Comparison failed:', error);
-    },
+      console.error("Comparison failed:", error);
+    }
   });
 
   // Set default race selections when races are loaded
   React.useEffect(() => {
     if (racesData && !hasSetDefaults) {
       const races = racesData || [];
-      
+
       // Find default races
-      const defaultStartRace = races.find(race => race.default_start);
-      const defaultFinishRace = races.find(race => race.default_finish);
-      
+      const defaultStartRace = races.find((race) => race.default_start);
+      const defaultFinishRace = races.find((race) => race.default_finish);
+
       // Find the next race in the list for comparison 2 (first race that's not a default)
-      const nextRace = races.find(race => 
-        race.id !== defaultStartRace?.id && race.id !== defaultFinishRace?.id
-      ) || races[0]; // Fallback to first race if no other race found
-      
+      const nextRace =
+        races.find((race) => race.id !== defaultStartRace?.id && race.id !== defaultFinishRace?.id) || races[0]; // Fallback to first race if no other race found
+
       if (defaultStartRace && defaultFinishRace) {
         setComparison1({
           start_race_id: defaultStartRace.id,
-          finish_race_id: defaultFinishRace.id,
+          finish_race_id: defaultFinishRace.id
         });
-        
+
         // For comparison 2, use the next race for both start and finish
         if (nextRace) {
           setComparison2({
             start_race_id: nextRace.id,
-            finish_race_id: nextRace.id,
+            finish_race_id: nextRace.id
           });
         }
-        
+
         setHasSetDefaults(true);
       }
     }
@@ -150,23 +134,24 @@ const ResultsComparison: React.FC = () => {
 
   const handleCompare = () => {
     if (
-      comparison1.start_race_id && comparison1.finish_race_id &&
-      comparison2.start_race_id && comparison2.finish_race_id
+      comparison1.start_race_id &&
+      comparison1.finish_race_id &&
+      comparison2.start_race_id &&
+      comparison2.finish_race_id
     ) {
       compareResultsMutation.mutate({ comparison1, comparison2 });
     }
   };
 
   const canCompare = Boolean(
-    comparison1.start_race_id && comparison1.finish_race_id &&
-    comparison2.start_race_id && comparison2.finish_race_id
+    comparison1.start_race_id && comparison1.finish_race_id && comparison2.start_race_id && comparison2.finish_race_id
   );
 
   if (racesLoading) return <div className="results-comparison__loading">Loading races...</div>;
   if (racesError) return <div className="results-comparison__error">Error loading races</div>;
 
   const races = racesData || [];
-  const raceOptions = races.map((race) => ({label: `${race.name}(${race.race_id})`, value: race.id}))
+  const raceOptions = races.map((race) => ({ label: `${race.name}(${race.race_id})`, value: race.id }));
 
   return (
     <div className="results-comparison">
@@ -183,19 +168,23 @@ const ResultsComparison: React.FC = () => {
           <FormSelect
             label="Start race"
             selectOptions={raceOptions}
-            value={comparison1.start_race_id || ''}
-            onChange={(e) => setComparison1(prev => ({ ...prev, start_race_id: e.target.value ? Number(e.target.value) : null }))} 
-            fieldName={'start_race_1'}
-            title={'Start race 1'}
-            />
+            value={comparison1.start_race_id || ""}
+            onChange={(e) =>
+              setComparison1((prev) => ({ ...prev, start_race_id: e.target.value ? Number(e.target.value) : null }))
+            }
+            fieldName={"start_race_1"}
+            title={"Start race 1"}
+          />
           <FormSelect
             label="Finish race"
             selectOptions={raceOptions}
-            value={comparison1.finish_race_id || ''}
-            onChange={(e) => setComparison1(prev => ({ ...prev, finish_race_id: e.target.value ? Number(e.target.value) : null }))}
-            fieldName={'finish_race_1'}
-            title={'Finish race 1'}
-            />
+            value={comparison1.finish_race_id || ""}
+            onChange={(e) =>
+              setComparison1((prev) => ({ ...prev, finish_race_id: e.target.value ? Number(e.target.value) : null }))
+            }
+            fieldName={"finish_race_1"}
+            title={"Finish race 1"}
+          />
         </div>
 
         <div className="results-comparison__comparison-group">
@@ -203,19 +192,23 @@ const ResultsComparison: React.FC = () => {
           <FormSelect
             label="Start race"
             selectOptions={raceOptions}
-            value={comparison2.start_race_id || ''}
-            onChange={(e) => setComparison2(prev => ({ ...prev, start_race_id: e.target.value ? Number(e.target.value) : null }))}
-            fieldName={'start_race_2'}
-            title={'Start Race 2'}
-            />
+            value={comparison2.start_race_id || ""}
+            onChange={(e) =>
+              setComparison2((prev) => ({ ...prev, start_race_id: e.target.value ? Number(e.target.value) : null }))
+            }
+            fieldName={"start_race_2"}
+            title={"Start Race 2"}
+          />
           <FormSelect
             label="Finish race"
             selectOptions={raceOptions}
-            value={comparison2.finish_race_id || ''}
-            onChange={(e) => setComparison2(prev => ({ ...prev, finish_race_id: e.target.value ? Number(e.target.value) : null }))}
-            fieldName={'finish_race_2'}
-            title={'Finish race 2'}
-            />
+            value={comparison2.finish_race_id || ""}
+            onChange={(e) =>
+              setComparison2((prev) => ({ ...prev, finish_race_id: e.target.value ? Number(e.target.value) : null }))
+            }
+            fieldName={"finish_race_2"}
+            title={"Finish race 2"}
+          />
         </div>
       </div>
 
@@ -224,19 +217,15 @@ const ResultsComparison: React.FC = () => {
           onClick={handleCompare}
           disabled={!canCompare || compareResultsMutation.isPending}
           loading={compareResultsMutation.isPending}
-          label={compareResultsMutation.isPending ? 'Comparing...' : 'Compare results'}
+          label={compareResultsMutation.isPending ? "Comparing..." : "Compare results"}
         />
       </div>
 
       {compareResultsMutation.error && (
-        <div className="results-comparison__error">
-          Error: {compareResultsMutation.error.message}
-        </div>
+        <div className="results-comparison__error">Error: {compareResultsMutation.error.message}</div>
       )}
 
-      {compareResultsMutation.data && (
-        <ComparisonResults data={compareResultsMutation.data} />
-      )}
+      {compareResultsMutation.data && <ComparisonResults data={compareResultsMutation.data} />}
     </div>
   );
 };
@@ -261,33 +250,29 @@ interface TableRow {
 const ComparisonResults: React.FC<ComparisonResultsProps> = ({ data }) => {
   // Transform data for React Table
   const tableData = useMemo((): TableRow[] => {
-    const categories = new Set([
-      ...Object.keys(data.comparison1.results),
-      ...Object.keys(data.comparison2.results),
-    ]);
+    const categories = new Set([...Object.keys(data.comparison1.results), ...Object.keys(data.comparison2.results)]);
 
-    return Array.from(categories).map(category => {
-      const categoryId = Number(category);
-      const comp1Result = data.comparison1.results[categoryId];
-      const comp2Result = data.comparison2.results[categoryId];
+    return Array.from(categories).map((category) => {
+      const comp1Result = data.comparison1.results[category];
+      const comp2Result = data.comparison2.results[category];
 
-      let matchWinner = '';
-      let matchRunnerUp = '';
+      let matchWinner = "";
+      let matchRunnerUp = "";
 
       if (!comp1Result?.winner?.crew_id || !comp2Result?.winner?.crew_id) {
-        matchWinner = 'missing'
+        matchWinner = "missing";
       } else if (comp1Result?.winner?.crew_id === comp2Result?.winner?.crew_id) {
-        matchWinner = 'match'
+        matchWinner = "match";
       } else {
-        matchWinner = 'not match'
+        matchWinner = "not match";
       }
 
-      if (!comp1Result?.runner_up?.crew_id  || !comp2Result?.runner_up?.crew_id) {
-        matchRunnerUp = 'missing'
+      if (!comp1Result?.runner_up?.crew_id || !comp2Result?.runner_up?.crew_id) {
+        matchRunnerUp = "missing";
       } else if (comp1Result?.runner_up?.crew_id === comp2Result?.runner_up?.crew_id) {
-        matchRunnerUp = 'match'
+        matchRunnerUp = "match";
       } else {
-        matchRunnerUp = 'not match'
+        matchRunnerUp = "not match";
       }
 
       return {
@@ -299,110 +284,111 @@ const ComparisonResults: React.FC<ComparisonResultsProps> = ({ data }) => {
         comp2_runner_up: comp2Result?.runner_up || null,
         comp2_total: comp2Result?.total_crews || 0,
         matching_winner: matchWinner,
-        matching_runner_up: matchRunnerUp,
+        matching_runner_up: matchRunnerUp
       };
     });
   }, [data]);
 
   const columnHelper = createColumnHelper<TableRow>();
 
-  const columns = useMemo((): ColumnDef<TableRow, any>[] => [
-    columnHelper.accessor('category', {
-      header: 'Category',
-      cell: (info) => (
-        <div className="results-table__category">{info.getValue()}</div>
-      ),
-      meta: {
-        className: 'results-table__cell--neutral',
-      },
-    }),
-    columnHelper.accessor('matching_winner', {
-      header: 'Winner match',
-      cell: (info) => (<MatchCell match={info.getValue()}/>
-      ),
-      meta: {
-        className: 'results-table__cell--neutral',
-      },
-    }),
-    columnHelper.accessor('matching_runner_up', {
-      header: 'Runner up match',
-      cell: (info) => (<MatchCell match={info.getValue()}/>
-      ),
-      meta: {
-        className: 'results-table__cell--neutral',
-      },
-    }),
-    columnHelper.group({
-      header: `Start: ${data.comparison1.start_race} - Finish: ${data.comparison1.finish_race}`,
-      meta: {
-        className: 'results-table__header--comparison1',
-      },
-      columns: [
-        columnHelper.accessor('comp1_winner', {
-          header: 'Winner',
-          cell: (info) => <CrewResultCell crew={info.getValue()} />,
-          meta: {
-            className: 'results-table__cell--comparison1',
-          },
-        }),
-        columnHelper.accessor('comp1_runner_up', {
-          header: 'Runner-up',
-          cell: (info) => <CrewResultCell crew={info.getValue()} />,
-          meta: {
-            className: 'results-table__cell--comparison1',
-          },
-        }),
-        columnHelper.accessor('comp1_total', {
-          header: 'Total',
-          cell: (info) => (
-            <div className="results-table__total">{info.getValue()}</div>
-          ),
-          meta: {
-            className: 'results-table__cell--comparison1',
-          },
-        }),
-      ],
-    }),
-    columnHelper.group({
-      header: `Start: ${data.comparison2.start_race} - Finish: ${data.comparison2.finish_race}`,
-      meta: {
-        className: 'results-table__header--comparison2',
-      },
-      columns: [
-        columnHelper.accessor('comp2_winner', {
-          header: 'Winner',
-          cell: (info) => <CrewResultCell crew={info.getValue()} />,
-          meta: {
-            className: 'results-table__cell--comparison2',
-          },
-        }),
-        columnHelper.accessor('comp2_runner_up', {
-          header: 'Runner-up',
-          cell: (info) => <CrewResultCell crew={info.getValue()} />,
-          meta: {
-            className: 'results-table__cell--comparison2',
-          },
-        }),
-        columnHelper.accessor('comp2_total', {
-          header: 'Total',
-          cell: (info) => (
-            <div className="results-table__total">{info.getValue()}</div>
-          ),
-          meta: {
-            className: 'results-table__cell--comparison2',
-          },
-        }),
-      ],
-    }),
-  ], [data.comparison1.start_race, data.comparison1.finish_race, data.comparison2.start_race, data.comparison2.finish_race, columnHelper]);
+  const columns = useMemo(
+    (): ColumnDef<TableRow, any>[] => [
+      columnHelper.accessor("category", {
+        header: "Category",
+        cell: (info) => <div className="results-table__category">{info.getValue()}</div>,
+        meta: {
+          className: "results-table__cell--neutral"
+        }
+      }),
+      columnHelper.accessor("matching_winner", {
+        header: "Winner match",
+        cell: (info) => <MatchCell match={info.getValue()} />,
+        meta: {
+          className: "results-table__cell--neutral"
+        }
+      }),
+      columnHelper.accessor("matching_runner_up", {
+        header: "Runner up match",
+        cell: (info) => <MatchCell match={info.getValue()} />,
+        meta: {
+          className: "results-table__cell--neutral"
+        }
+      }),
+      columnHelper.group({
+        header: `Start: ${data.comparison1.start_race} - Finish: ${data.comparison1.finish_race}`,
+        meta: {
+          className: "results-table__header--comparison1"
+        },
+        columns: [
+          columnHelper.accessor("comp1_winner", {
+            header: "Winner",
+            cell: (info) => <CrewResultCell crew={info.getValue()} />,
+            meta: {
+              className: "results-table__cell--comparison1"
+            }
+          }),
+          columnHelper.accessor("comp1_runner_up", {
+            header: "Runner-up",
+            cell: (info) => <CrewResultCell crew={info.getValue()} />,
+            meta: {
+              className: "results-table__cell--comparison1"
+            }
+          }),
+          columnHelper.accessor("comp1_total", {
+            header: "Total",
+            cell: (info) => <div className="results-table__total">{info.getValue()}</div>,
+            meta: {
+              className: "results-table__cell--comparison1"
+            }
+          })
+        ]
+      }),
+      columnHelper.group({
+        header: `Start: ${data.comparison2.start_race} - Finish: ${data.comparison2.finish_race}`,
+        meta: {
+          className: "results-table__header--comparison2"
+        },
+        columns: [
+          columnHelper.accessor("comp2_winner", {
+            header: "Winner",
+            cell: (info) => <CrewResultCell crew={info.getValue()} />,
+            meta: {
+              className: "results-table__cell--comparison2"
+            }
+          }),
+          columnHelper.accessor("comp2_runner_up", {
+            header: "Runner-up",
+            cell: (info) => <CrewResultCell crew={info.getValue()} />,
+            meta: {
+              className: "results-table__cell--comparison2"
+            }
+          }),
+          columnHelper.accessor("comp2_total", {
+            header: "Total",
+            cell: (info) => <div className="results-table__total">{info.getValue()}</div>,
+            meta: {
+              className: "results-table__cell--comparison2"
+            }
+          })
+        ]
+      })
+    ],
+    [
+      data.comparison1.start_race,
+      data.comparison1.finish_race,
+      data.comparison2.start_race,
+      data.comparison2.finish_race,
+      columnHelper
+    ]
+  );
 
   const table = useReactTable({
     data: tableData,
     columns,
-    getCoreRowModel: getCoreRowModel(),
+    getCoreRowModel: getCoreRowModel()
   });
 
-  console.log(tableData)
+  console.log(tableData);
 
   return (
     <div className="results-comparison__results">
@@ -410,12 +396,12 @@ const ComparisonResults: React.FC<ComparisonResultsProps> = ({ data }) => {
       <div className="results-table">
         <table className="results-table__table">
           <thead className="results-table__head">
-            {table.getHeaderGroups().map(headerGroup => (
+            {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="results-table__header-row">
-                {headerGroup.headers.map(header => {
+                {headerGroup.headers.map((header) => {
                   // Determine header class based on column meta or parent group
                   let headerClass = "results-table__header";
-                  
+
                   // Check if this header has a meta className (for group headers)
                   if (header.column.columnDef.meta?.className) {
                     headerClass += ` ${header.column.columnDef.meta.className}`;
@@ -427,12 +413,7 @@ const ComparisonResults: React.FC<ComparisonResultsProps> = ({ data }) => {
 
                   return (
                     <th key={header.id} colSpan={header.colSpan} className={headerClass}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </th>
                   );
                 })}
@@ -440,13 +421,13 @@ const ComparisonResults: React.FC<ComparisonResultsProps> = ({ data }) => {
             ))}
           </thead>
           <tbody className="results-table__body">
-            {table.getRowModel().rows.map(row => (
+            {table.getRowModel().rows.map((row) => (
               <tr key={row.id} className="results-table__row">
-                {row.getVisibleCells().map(cell => {
+                {row.getVisibleCells().map((cell) => {
                   const baseClass = `${cell.id} results-table__cell`;
                   const cellClass = cell.column.columnDef.meta?.className;
                   const finalClass = cellClass ? `${baseClass} ${cellClass}` : baseClass;
-                  
+
                   return (
                     <td key={cell.id} className={finalClass}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -483,13 +464,25 @@ interface MatchCellProps {
   match: string | null;
 }
 
-const MatchCell: React.FC<MatchCellProps> =({match}) => {
-  if (match === 'match') {
-    return <i className="results-comparison__icon results-comparison__icon--success"><Icon icon={'success-tick'}/></i>
-  } else if (match === 'missing') {
-    return <i className="results-comparison__icon results-comparison__icon--fail"><Icon icon={'fail-cross'}/></i>
+const MatchCell: React.FC<MatchCellProps> = ({ match }) => {
+  if (match === "match") {
+    return (
+      <i className="results-comparison__icon results-comparison__icon--success">
+        <Icon icon={"success-tick"} />
+      </i>
+    );
+  } else if (match === "missing") {
+    return (
+      <i className="results-comparison__icon results-comparison__icon--fail">
+        <Icon icon={"fail-cross"} />
+      </i>
+    );
   }
-  return <i className="results-comparison__icon results-comparison__icon--fail"><Icon icon={'fail-cross'}/></i>
-}
+  return (
+    <i className="results-comparison__icon results-comparison__icon--fail">
+      <Icon icon={"fail-cross"} />
+    </i>
+  );
+};
 
 export default ResultsComparison;
