@@ -137,7 +137,11 @@ const useServerCrews = ({
 
       const response = await axios.get(`/api/crews/?${params.toString()}`);
       return response.data;
-    }
+    },
+    placeholderData: (previousData) => previousData, // This replaces keepPreviousData
+    staleTime: 30000,
+    // Add this to prevent refocus issues
+    refetchOnWindowFocus: false
     // keepPreviousData: true // Keep previous data while fetching new data
   });
 };

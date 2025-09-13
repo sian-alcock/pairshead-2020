@@ -105,7 +105,6 @@ export default function CrewStartOrderTable({ onDataChanged }: CrewStartOrderTab
     return saved ? JSON.parse(saved) : true; // Default to hiding scratched
   });
 
-  // Convert TanStack Table sorting to Django REST Framework ordering format
   const getOrderingParam = useCallback((sorting: SortingState): string => {
     if (sorting.length === 0) return "calculated_start_order";
 
@@ -145,11 +144,9 @@ export default function CrewStartOrderTable({ onDataChanged }: CrewStartOrderTab
     [pagination.pageIndex, pagination.pageSize, globalFilter, sorting, getOrderingParam, getStatusFilter]
   );
 
-  // React Query to fetch data
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["crews", queryParams],
     queryFn: () => fetchCrews(queryParams)
-    // keepPreviousData: true // Keep showing old data while fetching new data
   });
 
   const {
@@ -159,11 +156,10 @@ export default function CrewStartOrderTable({ onDataChanged }: CrewStartOrderTab
     refetch: refetchDuplicates
   } = useQuery({
     queryKey: ["start-order-duplicates"],
-    queryFn: fetchDuplicateCheck, // <-- This calls the API
+    queryFn: fetchDuplicateCheck,
     refetchOnWindowFocus: false
   });
 
-  // Function to update start orders via API
   const updateStartOrders = async () => {
     setIsUpdatingStartOrders(true);
     try {
@@ -178,9 +174,7 @@ export default function CrewStartOrderTable({ onDataChanged }: CrewStartOrderTab
 
       if (response.ok && result.success) {
         console.log(`Updated start orders for ${result.updated_crews} crews`);
-        // Refetch the data to show updated start orders
         await refetch();
-        // Call the parent's data refresh function
         if (onDataChanged) {
           onDataChanged();
         }
@@ -196,7 +190,6 @@ export default function CrewStartOrderTable({ onDataChanged }: CrewStartOrderTab
     }
   };
 
-  // Table columns focused on start order information
   const columns = useMemo<ColumnDef<CrewProps, any>[]>(
     () => [
       columnHelper.accessor("event_order", {
@@ -284,26 +277,23 @@ export default function CrewStartOrderTable({ onDataChanged }: CrewStartOrderTab
     []
   );
 
-  // Save hideScratched preference
   useEffect(() => {
     localStorage.setItem("crew-start-order-hide-scratched", JSON.stringify(hideScratched));
   }, [hideScratched]);
 
-  // Calculate page count from server response
   const pageCount = useMemo(() => {
     if (!data?.count) return 0;
     return Math.ceil(data.count / pagination.pageSize);
   }, [data?.count, pagination.pageSize]);
 
-  // Table instance with server-side configuration
   const table = useReactTable({
     data: data?.results || [],
     columns,
-    pageCount, // Server-provided page count
+    pageCount,
     getCoreRowModel: getCoreRowModel(),
-    manualPagination: true, // Server handles pagination
-    manualSorting: true, // Server handles sorting
-    manualFiltering: true, // Server handles filtering
+    manualPagination: true,
+    manualSorting: true,
+    manualFiltering: true,
     onPaginationChange: setPagination,
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
@@ -314,7 +304,6 @@ export default function CrewStartOrderTable({ onDataChanged }: CrewStartOrderTab
     }
   });
 
-  // Loading state
   if (isLoading && !data) {
     return (
       <div className="crew-start-order-table__loading">
@@ -326,7 +315,6 @@ export default function CrewStartOrderTable({ onDataChanged }: CrewStartOrderTab
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="crew-start-order-table__error">
@@ -349,7 +337,7 @@ export default function CrewStartOrderTable({ onDataChanged }: CrewStartOrderTab
         {/* Global duplicate status from server */}
         {isDuplicateLoading && (
           <div className="crew-start-order-table__alert crew-start-order-table__alert--info">
-            🔄 Checking for duplicate start orders...
+            Checking for duplicate start orders...
           </div>
         )}
 

@@ -31,6 +31,8 @@
   }
 
   &__controls {
+    @include grid(1);
+
     @include tablet {
       @include grid(2);
     }
@@ -38,6 +40,10 @@
     @include laptop {
       @include grid(4);
     }
+  }
+
+  &__masters-adjustments {
+    margin-top: 1.5rem;
   }
 }
 

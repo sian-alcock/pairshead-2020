@@ -156,7 +156,7 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
   } = useQuery({
     queryKey: [
       "crews",
-      pagination.pageIndex + 1, // Backend expects 1-based pages
+      pagination.pageIndex + 1,
       pagination.pageSize,
       debouncedSearch,
       getOrderingParam(sorting),
@@ -170,8 +170,10 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
         ordering: getOrderingParam(sorting),
         hideScratched
       }),
-    // keepPreviousData: true, // Keep previous data while loading new data
-    staleTime: 30000 // Cache for 30 seconds
+    placeholderData: (previousData) => previousData, // This replaces keepPreviousData
+    staleTime: 30000,
+    // Add this to prevent refocus issues
+    refetchOnWindowFocus: false
   });
 
   // Effect to trigger onDataChanged when data updates
