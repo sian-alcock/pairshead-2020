@@ -13,7 +13,6 @@ import Hero from "../../organisms/Hero/Hero";
 import { formatTimes } from "../../../lib/helpers";
 import { CrewProps } from "../../../types/components.types";
 import BladeImage from "../../atoms/BladeImage/BladeImage";
-import CrewTimeCalculatedFieldsUpdate from "../../molecules/UpdateCrews/UpdateCrewTimeCalculatedFields";
 import { genderOptions } from "./defaultProps";
 import TrophyImage from "../../atoms/Trophy/Trophy";
 import PennantImage from "../../atoms/Pennant/Pennant";
@@ -26,6 +25,8 @@ import Checkbox from "../../atoms/Checkbox/Checkbox";
 import { TableHeader } from "../../molecules/TableHeader/TableHeader";
 import { TableBody } from "../../molecules/TableBody/TableBody";
 import TablePagination from "../../molecules/TablePagination/TablePagination";
+import { TableFooter } from "../../molecules/TableFooter/TableFooter";
+import TextButton from "../../atoms/TextButton/TextButton";
 
 interface CategoryResponseDataProps {
   override_name: string;
@@ -62,8 +63,7 @@ const useServerCrews = ({
   sorting,
   globalFilter,
   selectedCategory,
-  gender,
-  firstAndSecondCrewsBoolean
+  gender
 }: {
   page: number;
   pageSize: number;
@@ -71,10 +71,9 @@ const useServerCrews = ({
   globalFilter: string;
   selectedCategory: string;
   gender: string;
-  firstAndSecondCrewsBoolean: boolean;
 }) => {
   return useQuery({
-    queryKey: ["crews", page, pageSize, sorting, globalFilter, selectedCategory, gender, firstAndSecondCrewsBoolean],
+    queryKey: ["crews", page, pageSize, sorting, globalFilter, selectedCategory, gender],
     queryFn: async (): Promise<CrewsApiResponse> => {
       const params = new URLSearchParams();
 
@@ -109,40 +108,27 @@ const useServerCrews = ({
         params.append("ordering", ordering);
       }
 
-      // Search
       if (globalFilter) {
         params.append("search", globalFilter);
       }
 
-      // Results page specific - only crews with published times
+      // Results page specific - only crews with published times > 0 and exclude DQS, DNS, DNF
       params.append("results_only", "true");
 
-      // Category filter
       if (selectedCategory) {
         params.append("event_band", selectedCategory);
       }
 
-      // Gender filter - you may need to adjust this based on your backend field structure
       if (gender && gender !== "all") {
-        // Assuming you have a gender field or need to filter by event_band pattern
-        // You might need to implement this differently based on your data structure
-      }
-
-      // First and second crews only
-      // This might need custom backend logic if not already implemented
-      if (firstAndSecondCrewsBoolean) {
-        // You might need to add this filter to your backend or handle it differently
-        // For now, we'll handle this client-side until backend supports it
+        params.append("event__gender", gender);
       }
 
       const response = await axios.get(`/api/crews/?${params.toString()}`);
       return response.data;
     },
-    placeholderData: (previousData) => previousData, // This replaces keepPreviousData
+    placeholderData: (previousData) => previousData,
     staleTime: 30000,
-    // Add this to prevent refocus issues
     refetchOnWindowFocus: false
-    // keepPreviousData: true // Keep previous data while fetching new data
   });
 };
 
@@ -156,8 +142,6 @@ export default function ResultIndex() {
   const [globalFilter, setGlobalFilter] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [gender, setGender] = useState("all");
-  const [firstAndSecondCrewsBoolean, setFirstAndSecondCrewsBoolean] = useState(false);
-  const [closeFirstAndSecondCrewsBoolean, setCloseFirstAndSecondCrewsBoolean] = useState(false);
 
   // Debounced search to avoid too many API calls
   const [debouncedGlobalFilter, setDebouncedGlobalFilter] = useState("");
@@ -183,11 +167,9 @@ export default function ResultIndex() {
     sorting,
     globalFilter: debouncedGlobalFilter,
     selectedCategory,
-    gender,
-    firstAndSecondCrewsBoolean
+    gender
   });
 
-  // Fetch categories data (unchanged)
   const { data: categoriesData } = useQuery({
     queryKey: ["categories"],
     queryFn: async (): Promise<SelectOption[]> => {
@@ -200,6 +182,14 @@ export default function ResultIndex() {
         value: option
       }));
       return [{ label: "All events", value: "" }, ...options];
+    }
+  });
+
+  const { data: genderOptionsData } = useQuery({
+    queryKey: ["genderOptions"],
+    queryFn: async (): Promise<SelectOption[]> => {
+      const response = await axios.get("/api/gender-options/");
+      return response.data;
     }
   });
 
@@ -216,30 +206,11 @@ export default function ResultIndex() {
     };
   }, [crewsResponse]);
 
-  // Helper function to check if crews are close in time (may need server-side implementation for efficiency)
-  const getTopCrews = useCallback((eventBand: string | undefined, crews: CrewProps[]) => {
-    const timeDifference = 2000; // 2 seconds in milliseconds
-    const crewsInCategory = crews.filter(
-      (crew) => crew.event_band === eventBand && !crew.time_only && crew.category_rank <= 2
-    );
-
-    if (crewsInCategory.length < 2) return false;
-
-    const sortedCrews = crewsInCategory.sort((a, b) => a.category_rank - b.category_rank);
-    const firstPlace = sortedCrews[0];
-    const secondPlace = sortedCrews[1];
-
-    if (!firstPlace?.published_time || !secondPlace?.published_time) return false;
-
-    return Math.abs(firstPlace.published_time - secondPlace.published_time) <= timeDifference;
-  }, []);
-
-  // Define columns
   const columns = useMemo(
     () => [
-      columnHelper.accessor((row) => (!gender || gender === "all" ? row.overall_rank : row.gender_rank), {
+      columnHelper.accessor((row) => (gender === "all" ? row.overall_rank : row.gender_rank), {
         id: "rank",
-        header: "Overall position",
+        header: gender === "all" ? "Overall position" : `Position (${gender})`,
         cell: (info) => info.getValue()
       }),
       columnHelper.accessor("bib_number", {
@@ -307,17 +278,6 @@ export default function ResultIndex() {
         cell: (info) => (info.row.original.category_rank === 1 ? <PennantImage /> : ""),
         enableSorting: false
       }),
-      columnHelper.display({
-        id: "close_crews",
-        header: "",
-        cell: (info) => {
-          const crew = info.row.original;
-          const isCloseRace = getTopCrews(crew.event_band, crewsResponse?.results || []);
-          const isTopTwo = crew.category_rank <= 2;
-          return isCloseRace && isTopTwo && closeFirstAndSecondCrewsBoolean ? "❓" : "";
-        },
-        enableSorting: false
-      }),
       columnHelper.accessor("penalty", {
         header: "Penalty",
         cell: (info) => (info.getValue() ? "P" : ""),
@@ -329,20 +289,11 @@ export default function ResultIndex() {
         enableSorting: false
       })
     ],
-    [gender, fastestTimes, closeFirstAndSecondCrewsBoolean, crewsResponse?.results, getTopCrews]
+    [gender, fastestTimes, crewsResponse?.results]
   );
 
-  // Apply client-side filtering for features not yet implemented server-side
-  const clientFilteredData = useMemo(() => {
-    if (!crewsResponse?.results) return [];
-
-    // Since first/second crews filter is now handled server-side,
-    // we can just return the results directly
-    return crewsResponse.results;
-  }, [crewsResponse?.results]);
-
   const table = useReactTable({
-    data: clientFilteredData,
+    data: crewsResponse?.results || [],
     columns,
     pageCount: crewsResponse ? Math.ceil(crewsResponse.count / pagination.pageSize) : 0,
     state: {
@@ -367,17 +318,17 @@ export default function ResultIndex() {
   };
 
   const handleGenderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setGender(e.target.value);
+    const newGender = e.target.value;
+    setGender(newGender);
     setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-  };
 
-  const handleFirstAndSecondCrews = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFirstAndSecondCrewsBoolean(e.target.checked);
-    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
-  };
-
-  const handleCloseCrews = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCloseFirstAndSecondCrewsBoolean(e.target.checked);
+    // Reset sorting to use appropriate rank field
+    setSorting([
+      {
+        id: "rank",
+        desc: false
+      }
+    ]);
   };
 
   // Cleanup timeout on unmount
@@ -426,18 +377,13 @@ export default function ResultIndex() {
   }
 
   const categoryOptions = categoriesData?.map((option) => ({ value: option.value, label: option.label }));
-  const options = genderOptions.map((option) => ({ value: option.value, label: option.label }));
+  const options = genderOptionsData?.map((option) => ({ value: option.value, label: option.label }));
   console.log(crewsResponse);
 
   return (
     <>
       <Header />
       <Hero title={"Results"} />
-      {/* {crewsResponse?.requires_ranking_update && crewsResponse.requires_ranking_update > 0 ? (
-        <div className="box">
-          <CrewTimeCalculatedFieldsUpdate updateRequired={crewsResponse.requires_ranking_update} />
-        </div>
-      ) : null} */}
 
       <section className="result-index__section">
         <div className="result-index__container">
@@ -468,30 +414,8 @@ export default function ResultIndex() {
                 selectOptions={options}
               />
             </div>
-
-            <div className="result-index__control result-index__control--flags">
-              <Checkbox
-                name={"winners-get"}
-                label={"Crews in 1st and 2nd place"}
-                id={"winners-get"}
-                checked={firstAndSecondCrewsBoolean}
-                onChange={handleFirstAndSecondCrews}
-                value={"foo"}
-              />
-              <Checkbox
-                name={"winners-near"}
-                label={"Highlight 1st/2nd crews within 2s ❓"}
-                id={"winners-near"}
-                checked={closeFirstAndSecondCrewsBoolean}
-                onChange={handleCloseCrews}
-              />
-            </div>
+            <TextButton label={"Crew dashboard"} pathName="/crew-management-dashboard" />
           </div>
-
-          {/* <div className="result-index__count">
-            Showing {table.getRowModel().rows.length} of {crewsResponse?.count || 0} crews
-            {(isLoading || isPlaceholderData) && " (Loading...)"}
-          </div> */}
 
           <TablePagination
             table={table}
@@ -506,6 +430,7 @@ export default function ResultIndex() {
             <table className="result-index__table">
               <TableHeader headerGroups={table.getHeaderGroups()} />
               <TableBody rows={table.getRowModel().rows} />
+              <TableFooter headerGroups={table.getHeaderGroups()} />
             </table>
           </div>
 

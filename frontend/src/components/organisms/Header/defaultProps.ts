@@ -9,7 +9,7 @@ export const menuProps: MenuProps = {
       authenticated: true,
       items: [
         {
-          link: "/logistics/crew-labels",
+          link: "/reports/crew-labels",
           title: "Crew labels",
           authenticated: true
         },
@@ -19,21 +19,27 @@ export const menuProps: MenuProps = {
           authenticated: true
         },
         {
-          link: "/logistics/start-order-by-number-location",
+          link: "/reports/start-order-by-number-location",
           title: "Start order by number location",
           authenticated: true
         },
         {
-          link: "/logistics/crew-draw-reports",
+          link: "/reports/crew-draw-reports",
           title: "Crew draw reports",
           authenticated: true
         },
         {
-          link: "/logistics/crew-on-the-day-contact",
+          link: "/reports/crew-on-the-day-contact",
           title: "On the day contact details",
           authenticated: true
         }
       ]
+    },
+    {
+      parentItem: "All reports and data exports",
+      link: "/reports",
+      authenticated: true,
+      key: 4
     },
     {
       parentItem: "Results",
@@ -55,11 +61,6 @@ export const menuProps: MenuProps = {
           link: "/results",
           title: "Final results",
           authenticated: false
-        },
-        {
-          link: "/export",
-          title: "Data exports",
-          authenticated: true
         }
       ]
     },

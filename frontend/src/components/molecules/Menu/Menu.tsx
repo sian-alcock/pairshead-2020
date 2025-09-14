@@ -1,5 +1,4 @@
 import React, { ReactElement, useState, useRef } from "react";
-import MenuButton from "../../atoms/MenuButton/MenuButton";
 import "./menu.scss";
 import { Link } from "react-router-dom";
 import Auth from "../../../lib/Auth";
@@ -19,7 +18,7 @@ interface MenuItem {
   link: string;
   authenticated: boolean;
   key: number | undefined;
-  items: ChildMenuItem[];
+  items?: ChildMenuItem[];
 }
 
 export type MenuProps = {
@@ -101,7 +100,7 @@ export default function Menu({ menuItems }: MenuProps): ReactElement {
                             </Link>
                           )}
                           <ul>
-                            {item.items.map((item, idx) => (
+                            {item.items?.map((item, idx) => (
                               <li key={idx}>
                                 {item.authenticated ? (
                                   Auth.isAuthenticated() && (

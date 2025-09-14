@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";
 import Checkbox from "../../atoms/Checkbox/Checkbox";
 import TextButton from "../../atoms/TextButton/TextButton";
 import "./crewsTable.scss";
+import { TableFooter } from "../../molecules/TableFooter/TableFooter";
 
 // Backend response structure
 interface CrewsApiResponse {
@@ -529,6 +530,7 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
         <table className="crews-table__table">
           <TableHeader headerGroups={table.getHeaderGroups()} />
           <TableBody rows={table.getRowModel().rows} />
+          <TableFooter headerGroups={table.getHeaderGroups()} />
         </table>
       </div>
 

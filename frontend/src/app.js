@@ -12,17 +12,14 @@ import Login from "./components/auth/Login/Login";
 import CrewManagementDashboard from "./components/pages/CrewManagementDashboard/CrewManagementDashboard";
 import CrewTimeEdit from "./components/organisms/CrewsTable/components/CrewTimeEdit";
 import ResultIndex from "./components/pages/ResultIndex/ResultIndex";
-import GenerateResults from "./components/pages/GenerateResults/GenerateResults";
-import ExportData from "./components/pages/ExportData/ExportData";
 import CrewDrawReports from "./components/pages/CrewDrawReports/CrewDrawReports";
 import CrewStartOrder from "./components/pages/CrewStartOrder/CrewStartOrder";
-import GenerateStartOrder from "./components/pages/GenerateStartOrder/GenerateStartOrder";
 import CrewStartByNumberLocation from "./components/pages/CrewStartByNumberLocation/CrewStartByNumberLocation";
 import ContactDetailReport from "./components/pages/ContactDetailReport/ContactDetailReport";
 import Footer from "./components/organisms/Footer/Footer";
 import EventKeys from "./components/pages/EventKeys/EventKeys";
 import CrewLabels from "./components/pages/CrewLabels/CrewLabels";
-import Logistics from "./components/pages/Logistics/Logistics";
+import ReportsAndDataExports from "./components/pages/ReportsAndDataExports/ReportsAndDataExports";
 import Settings from "./components/pages/PHSettings/Settings";
 import SetNumberLocations from "./components/pages/SetNumberLocations/SetNumberLocations";
 import NumberLocationNew from "./components/pages/SetNumberLocations/NumberLocationNew";
@@ -63,7 +60,6 @@ function App() {
             <SecureRoute path="/crew-management-dashboard/:id/edit" component={CrewTimeEdit} />
             <SecureRoute path="/crew-management-dashboard" component={CrewManagementDashboard} />
             <SecureRoute path="/race-times/:id/edit" component={RaceTimeEdit} />
-            <SecureRoute path="/export" component={ExportData} />
             <SecureRoute path="/results" component={ResultIndex} />
             <SecureRoute path="/manage-penalties" component={ManagePenalties} />
             <SecureRoute path="/manage-original-event-categories" component={ManagingOriginalEventCategories} />
@@ -76,11 +72,11 @@ function App() {
             <SecureRoute path="/manage-race-times/race-time-syncs/new" component={TimingOffsetManagerDetail} />
             <SecureRoute path="/manage-race-times" component={ManageRaceTimes} />
             <SecureRoute path="/settings" component={Settings} />
-            <SecureRoute path="/logistics/crew-draw-reports" component={CrewDrawReports} />
-            <SecureRoute path="/logistics/crew-labels" component={CrewLabels} />
-            <SecureRoute path="/logistics/crew-on-the-day-contact" component={ContactDetailReport} />
-            <SecureRoute path="/logistics/start-order-by-number-location" component={CrewStartByNumberLocation} />
-            <SecureRoute path="/logistics" component={Logistics} />
+            <SecureRoute path="/reports/crew-draw-reports" component={CrewDrawReports} />
+            <SecureRoute path="/reports/crew-labels" component={CrewLabels} />
+            <SecureRoute path="/reports/crew-on-the-day-contact" component={ContactDetailReport} />
+            <SecureRoute path="/reports/start-order-by-number-location" component={CrewStartByNumberLocation} />
+            <SecureRoute path="/reports" component={ReportsAndDataExports} />
             <SecureRoute path="/crew-start-order" component={CrewStartOrder} />
             <SecureRoute path="/set-number-locations/:id/edit" component={NumberLocationEdit} />
             <SecureRoute path="/set-number-locations/new" component={NumberLocationNew} />

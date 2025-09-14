@@ -74,11 +74,11 @@ export default function PreRaceDashboard() {
           <TextButton pathName={"/set-number-locations"} label={"Number locations"} />
         </ActionCard>
         <ActionCard
-          title="Logistics reports"
+          title="Reports and data exports"
           icon={"report"}
-          description="Create logistics reports eg crew labels, OTD contact details etc"
+          description="Logistics reports eg crew labels, OTD contact details and data exports"
         >
-          <TextButton pathName={"/logistics"} label={"Logistics"} />
+          <TextButton pathName={"/reports"} label={"Reports and data exports"} />
         </ActionCard>
       </div>
     </div>

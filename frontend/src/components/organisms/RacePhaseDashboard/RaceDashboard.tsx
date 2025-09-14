@@ -1,13 +1,10 @@
-import { useState } from "react";
 import BROELoader from "../../molecules/BROEDataLoader/BROELoader";
 import TextButton from "../../atoms/TextButton/TextButton";
-import { CSVUploadModal } from "../../molecules/CSVUploadModal/CSVUploadModal";
 import ActionCard from "../../molecules/ActionCard/ActionCard";
+import DataLoader from "../../common/DataLoader";
 import "./racePhaseDashboard.scss";
 
 export default function RaceDashboard() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   return (
     <div className="race-setup">
       {/* Action cards */}
@@ -26,7 +23,6 @@ export default function RaceDashboard() {
         >
           <TextButton pathName="/manage-race-times" label="Manage race times" />
         </ActionCard>
-
         <ActionCard
           title="Add penalties / disqualifications"
           icon={"warning"}
@@ -47,8 +43,19 @@ export default function RaceDashboard() {
         <ActionCard title="Final results" icon={"success"} description="Final results">
           <TextButton pathName="/results" label={"Results"} />
         </ActionCard>
-        <ActionCard title="Reports and data exports" icon={"report"} description="Final results">
-          <TextButton pathName="/export" label={"Reports and exports"} />
+        <ActionCard
+          title="Reports and data exports"
+          icon={"report"}
+          description="Logistics reports eg crew labels, OTD contact details and data exports"
+        >
+          <TextButton pathName={"/reports"} label={"Reports and data exports"} />
+        </ActionCard>
+        <ActionCard
+          title="Refresh results calculations"
+          icon={"refresh"}
+          description="Initiate recalculation (should not be necessary but just in case)"
+        >
+          <DataLoader url="api/crew-update-rankings/" buttonText="Refresh calcs" />
         </ActionCard>
       </div>
     </div>
