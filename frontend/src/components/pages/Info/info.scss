@@ -1,0 +1,11 @@
+@import "../../../style.scss";
+
+.info {
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+}
