@@ -22,6 +22,7 @@ export const useCreateEventMeetingKeys = () => {
     mutationFn: createEventMeetingKeys,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["eventMeetingKeys"] });
+      queryClient.invalidateQueries({ queryKey: ["eventKeys"] });
     },
     onError: (error) => {
       console.error("Create event meeting keys failed:", error);
@@ -36,6 +37,7 @@ export const useUpdateEventMeetingKeys = () => {
     mutationFn: updateEventMeetingKeys,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["eventMeetingKeys"] });
+      queryClient.invalidateQueries({ queryKey: ["eventKeys"] });
     },
     onError: (error) => {
       console.error("Update event meeting keys failed:", error);
@@ -50,6 +52,7 @@ export const useDeleteEventMeetingKey = () => {
     mutationFn: deleteEventMeetingKey,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["eventMeetingKeys"] });
+      queryClient.invalidateQueries({ queryKey: ["eventKeys"] });
     },
     onError: (error) => {
       console.error("Delete event meeting key failed:", error);

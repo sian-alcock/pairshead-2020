@@ -32,4 +32,38 @@
   &__table {
     @include table;
   }
+
+  &__radio-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    min-height: 44px; // Ensures minimum touch target size (44px is recommended for accessibility)
+    padding: 8px;
+    cursor: pointer;
+
+    // // Make the entire container clickable
+    // &:hover {
+    //   background-color: rgba(0, 0, 0, 0.05);
+    //   border-radius: 4px;
+    // }
+  }
+
+  &__radio {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    margin: 0; // Remove default margin
+
+    // Optional: Style the radio button itself
+    &:hover {
+      transform: scale(1.1);
+    }
+
+    &:focus-visible {
+      outline: 2px solid #007bff;
+      outline-offset: 2px;
+    }
+  }
 }

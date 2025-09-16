@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useRef } from "react";
 import { useReactTable, getCoreRowModel, flexRender, createColumnHelper } from "@tanstack/react-table";
 import "./eventMeetingKeyManager.scss";
 import { IconButton } from "../../atoms/IconButton/IconButton";
@@ -21,22 +21,26 @@ const EditableCell: React.FC<{
     table.options.meta?.updateData(row.index, column.id, value);
   };
 
-  // React.useEffect(() => {
-  //   setValue(initialValue);
-  // }, [initialValue]);
+  React.useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
 
   if (column.id === "current_event_meeting") {
     return (
-      <input
-        type="radio"
-        name="current_event_meeting"
-        checked={value || false}
-        onChange={(e) => {
-          setValue(e.target.checked);
-          table.options.meta?.updateData(row.index, column.id, e.target.checked);
-        }}
-        className="event-meeting-manager__radio"
-      />
+      <div className="event-meeting-manager__radio-container">
+        <input
+          id="current_event_meeting"
+          type="radio"
+          name="current_event_meeting"
+          checked={value || false}
+          onChange={(e) => {
+            setValue(e.target.checked);
+            table.options.meta?.updateData(row.index, column.id, e.target.checked);
+          }}
+          className="event-meeting-manager__radio"
+        />
+        <label htmlFor={"current_event_meeting"} className="sr-only"></label>
+      </div>
     );
   }
 
@@ -71,11 +75,21 @@ const EventMeetingKeyManager = () => {
   const [newItems, setNewItems] = useState<EventMeetingKey[]>([]);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
+  // Use ref to track if we're currently saving to avoid resetting state
+  const isSavingRef = useRef(false);
+
   React.useEffect(() => {
-    if (fetchedData) {
+    // Only update local state if we're not currently saving
+    if (fetchedData && !isSavingRef.current) {
       setData(fetchedData);
+      setHasChanges(false); // Reset changes flag when fresh data arrives
     }
   }, [fetchedData]);
+
+  // Track saving state
+  React.useEffect(() => {
+    isSavingRef.current = isSaving;
+  }, [isSaving]);
 
   // Combine existing data with new items for display
   const tableData = useMemo(() => {
@@ -105,9 +119,9 @@ const EventMeetingKeyManager = () => {
           }
 
           newData[rowIndex] = { ...newData[rowIndex], [columnId]: value };
-          setHasChanges(true);
           return newData;
         });
+        setHasChanges(true);
       } else {
         // Updating new item
         const newItemIndex = rowIndex - totalExistingItems;
@@ -175,6 +189,7 @@ const EventMeetingKeyManager = () => {
   // Save changes
   const saveChanges = async () => {
     try {
+      isSavingRef.current = true;
       const promises: Promise<any>[] = [];
 
       // Save existing changes
@@ -191,9 +206,10 @@ const EventMeetingKeyManager = () => {
 
       // Reset local state after successful save
       setNewItems([]);
-      setHasChanges(false);
+      // Don't reset hasChanges here - let the useEffect handle it when fresh data arrives
     } catch (error) {
       console.error("Save failed:", error);
+      isSavingRef.current = false;
     }
   };
 
