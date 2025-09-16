@@ -146,21 +146,19 @@ export default function CrewDrawReports() {
                 <tbody>
                   {crews.length === 0 && (
                     <tr>
-                      <td>No accepted crews found</td>
+                      <td>No accepted crews found or bib numbers not yet added</td>
                     </tr>
                   )}
                   {crews &&
-                    crews
-                      .filter((crew) => crew.bib_number)
-                      .map((crew) => (
-                        <tr className={`crew-draw-reports__row-${crew.status}`} key={crew.id}>
-                          <td>{!crew.bib_number ? "" : crew.bib_number}</td>
-                          <td>{crew.status}</td>
-                          <td>{crew.marshalling_division}</td>
-                          <td>{crew.event_band}</td>
-                          <td>{crew.club.name}</td>
-                        </tr>
-                      ))}
+                    crews.map((crew) => (
+                      <tr className={`crew-draw-reports__row-${crew.status}`} key={crew.id}>
+                        <td>{!crew.bib_number ? "⚠️" : crew.bib_number}</td>
+                        <td>{crew.status}</td>
+                        <td>{crew.marshalling_division ?? "⚠️"}</td>
+                        <td>{crew.event_band}</td>
+                        <td>{crew.club.name}</td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             )}
@@ -183,24 +181,22 @@ export default function CrewDrawReports() {
                 <tbody>
                   {crews.length === 0 && (
                     <tr>
-                      <td>No accepted crews found</td>
+                      <td>No accepted crews found or bib numbers not yet added</td>
                     </tr>
                   )}
                   {crews &&
-                    crews
-                      .filter((crew) => crew.bib_number)
-                      .map((crew) => (
-                        <tr className={`crew-draw-reports__row-${crew.status.toLowerCase()}`} key={crew.id}>
-                          <td>{!crew.bib_number ? "" : crew.bib_number}</td>
-                          <td>{!crew.competitor_names ? crew.name : crew.competitor_names}</td>
-                          <td>{crew.status}</td>
-                          <td>
-                            <BladeImage crew={crew} />
-                          </td>
-                          <td>{crew.club.index_code}</td>
-                          <td>{crew.event_band}</td>
-                        </tr>
-                      ))}
+                    crews.map((crew) => (
+                      <tr className={`crew-draw-reports__row-${crew.status.toLowerCase()}`} key={crew.id}>
+                        <td>{!crew.bib_number ? "⚠️" : crew.bib_number}</td>
+                        <td>{!crew.competitor_names ? crew.name : crew.competitor_names}</td>
+                        <td>{crew.status}</td>
+                        <td>
+                          <BladeImage crew={crew} />
+                        </td>
+                        <td>{crew.club.index_code}</td>
+                        <td>{crew.event_band}</td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             )}
@@ -231,7 +227,7 @@ export default function CrewDrawReports() {
                       .filter((crew) => crew.event_band?.includes("Lwt"))
                       .map((crew) => (
                         <tr className={`crew-draw-reports__row-${crew.status.toLowerCase()}`} key={crew.id}>
-                          <td>{crew.id}</td>
+                          <td>{!crew.bib_number ? "⚠️" : crew.bib_number}</td>
                           <td>{crew.status}</td>
                           <td>{crew.club.name}</td>
                           <td>{!crew.competitor_names ? crew.name : crew.competitor_names}</td>
