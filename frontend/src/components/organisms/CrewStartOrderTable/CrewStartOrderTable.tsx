@@ -360,7 +360,7 @@ export default function CrewStartOrderTable() {
         )}
       </div>
 
-      <div className="crew-start-order-table__controls">
+      <div className="crew-start-order-table__controls no-print">
         <SearchInput
           value={globalFilter}
           onChange={setGlobalFilter}

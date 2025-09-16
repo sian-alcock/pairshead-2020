@@ -57,7 +57,7 @@ export default function TablePagination<T>({
   };
 
   return (
-    <div className={`table-pagination ${className}`}>
+    <div className={`table-pagination no-print ${className}`}>
       <div className="table-pagination__wrapper">
         <TextButton label={"First page"} disabled={!table.getCanPreviousPage()} onClick={() => table.firstPage()} />
         <TextButton
