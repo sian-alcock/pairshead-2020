@@ -37,6 +37,7 @@ export default function PreRaceDashboard() {
             description="Upload a CSV file to import the order in which event categories will race"
             url="/api/event-order-import/"
             acceptedFileTypes={[".csv"]}
+            queryKeysToInvalidate={["crews", "start-order-duplicates"]}
             autoCloseDelay={3000}
             onSuccess={(data) => {
               console.log("Event order imported:", data);

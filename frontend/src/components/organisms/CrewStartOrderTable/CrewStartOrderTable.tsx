@@ -13,9 +13,9 @@ import { TableHeader } from "../../molecules/TableHeader/TableHeader";
 import { TableBody } from "../../molecules/TableBody/TableBody";
 import TablePagination from "../../molecules/TablePagination/TablePagination";
 import SearchInput from "../../molecules/SearchInput/SearchInput";
-import "./crewStartOrderTable.scss";
 import Checkbox from "../../atoms/Checkbox/Checkbox";
 import TextButton from "../../atoms/TextButton/TextButton";
+import "./crewStartOrderTable.scss";
 
 interface duplicate {
   id: number;
