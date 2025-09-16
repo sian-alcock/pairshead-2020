@@ -1,0 +1,275 @@
+@import "../../../style.scss";
+
+.close-times-report {
+  padding: 1rem;
+
+  &__header {
+    margin-bottom: 2rem;
+  }
+
+  &__title {
+    margin-bottom: 1.5rem;
+    @include h3;
+  }
+
+  &__summary {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem;
+    background: #f8f9fa;
+    border-radius: 4px;
+    min-width: 120px;
+
+    &--very-close {
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+    }
+
+    &--overall-close {
+      background: #e8f5e8;
+      border: 1px solid #4caf50;
+      color: #2e7d32;
+    }
+  }
+
+  &__section-title {
+    margin-bottom: 1.5rem;
+    @include h4;
+  }
+
+  &__overall-section {
+    margin-bottom: 2rem;
+  }
+
+  &__category-section {
+    // Additional spacing if needed
+  }
+
+  &__stat-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+    margin-bottom: 0.25rem;
+  }
+
+  &__stat-value {
+    font-size: 1.25rem;
+    font-weight: bold;
+  }
+
+  &__table-container {
+    overflow-x: auto;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+  }
+
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+  }
+
+  &__header-group {
+    background: #f8f9fa;
+  }
+
+  &__header-row {
+    border-bottom: 2px solid #dee2e6;
+  }
+
+  &__header-cell {
+    padding: 0.75rem;
+    text-align: left;
+    font-weight: 600;
+    color: #495057;
+    border-right: 1px solid #dee2e6;
+
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  &__body {
+    background: white;
+  }
+
+  &__row {
+    border-bottom: 1px solid #dee2e6;
+
+    &:hover {
+      background: #f8f9fa;
+    }
+
+    &--very-close {
+      background: #fff8e1;
+
+      &:hover {
+        background: #fff3cd;
+      }
+    }
+
+    &--close {
+      background: #e3f2fd;
+
+      &:hover {
+        background: #d1ecf1;
+      }
+    }
+  }
+
+  &__cell {
+    padding: 0.75rem;
+    vertical-align: top;
+    border-right: 1px solid #dee2e6;
+
+    &:last-child {
+      border-right: none;
+    }
+
+    &--event-band {
+      font-weight: 500;
+      min-width: 150px;
+    }
+
+    &--position {
+      font-weight: 600;
+      min-width: 80px;
+      text-align: center;
+    }
+
+    &--crew {
+      min-width: 200px;
+    }
+
+    &--time {
+      font-weight: 500;
+      text-align: right;
+      min-width: 100px;
+    }
+
+    &--difference {
+      font-weight: bold;
+      text-align: center;
+      min-width: 80px;
+    }
+
+    &--status {
+      text-align: center;
+      font-weight: 500;
+
+      &-very-close {
+        color: #856404;
+      }
+
+      &-close {
+        color: #0c5460;
+      }
+
+      &-normal {
+        color: #495057;
+      }
+    }
+  }
+
+  &__crew-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__crew-name {
+    font-weight: 500;
+    line-height: 1.2;
+  }
+
+  &__crew-details {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #6c757d;
+  }
+
+  &__bib {
+    font-weight: 500;
+  }
+
+  &__club {
+    // Optional: truncate long club names
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__loading,
+  &__error {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+  }
+
+  &__loading-content,
+  &__error-content {
+    text-align: center;
+  }
+
+  &__spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 1rem;
+  }
+
+  &__empty {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .close-times-report {
+    &__summary {
+      gap: 1rem;
+    }
+
+    &__stat {
+      min-width: 100px;
+    }
+
+    &__table {
+      font-size: 0.8rem;
+    }
+
+    &__cell {
+      padding: 0.5rem;
+
+      &--crew {
+        min-width: 150px;
+      }
+    }
+
+    &__club {
+      max-width: 80px;
+    }
+  }
+}

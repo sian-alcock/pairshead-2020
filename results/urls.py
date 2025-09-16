@@ -20,6 +20,7 @@ from .views import missing_times
 from .views import masters_crews
 from .views import crew_dashboard_stats
 from .views import crew_start_order_duplicates_check
+from .views import crew_close_times_report
 
 
 urlpatterns = [
@@ -42,6 +43,7 @@ urlpatterns = [
         crew_start_order_duplicates_check.StartOrderDuplicateCheckView.as_view(),
         name="crew-start-order-duplicates",
     ),
+    path("crew-close-times/", crew_close_times_report.CloseTimesReportView.as_view(), name="crew-close-times"),
     path("results-export/", crews.ResultDataExport.as_view()),
     path("crew-update-rankings/", crews.CrewUpdateRankings.as_view()),
     path("crew-get-event-band/", crews.CrewGetEventBand.as_view()),

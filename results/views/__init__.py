@@ -18,3 +18,4 @@ from .missing_times import *
 from .masters_crews import *
 from .crew_dashboard_stats import *
 from .crew_start_order_duplicates_check import *
+from .crew_close_times_report import *

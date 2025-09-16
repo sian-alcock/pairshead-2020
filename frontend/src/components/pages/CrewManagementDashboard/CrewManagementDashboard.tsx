@@ -8,13 +8,14 @@ import RaceTimesTable from "../../organisms/RaceTimesTable/RaceTimesTable";
 import SequenceComparisonTable from "../../organisms/SequenceComparisonTable/SequenceComparisonTable";
 import MastersCrewsTable from "../../organisms/MastersCrewsTable/MastersCrewsTable";
 import CrewsTable from "../../organisms/CrewsTable/CrewsTable";
+import CloseTimesReport from "../../organisms/CloseTimesReport/CloseTimesReport";
 import { useRaces } from "../../../hooks/useRaces";
 
 interface TabConfig {
   key: string;
   label: string;
   count?: number;
-  component: "crew-table" | "compare-winners" | "race-times" | "sequence-comparison" | "masters-crews";
+  component: "crew-table" | "compare-winners" | "race-times" | "sequence-comparison" | "masters-crews" | "close-times";
   raceId?: number;
   tap?: "Start" | "Finish";
 }
@@ -57,6 +58,11 @@ export default function CrewManagementDashboard() {
         key: "compare-winners",
         label: "Compare winners",
         component: "compare-winners"
+      },
+      {
+        key: "close-times",
+        label: "Close 1st/2nd",
+        component: "close-times"
       }
     ];
 
@@ -148,6 +154,8 @@ export default function CrewManagementDashboard() {
             onDataChanged={handleDataChanged}
           />
         );
+      case "close-times":
+        return <CloseTimesReport />;
 
       default:
         return <div className="crew-manager__error">Unknown component type</div>;
