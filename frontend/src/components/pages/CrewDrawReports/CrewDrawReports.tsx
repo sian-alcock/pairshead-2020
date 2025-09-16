@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom"; // Add this import
 import axios, { AxiosResponse } from "axios";
 import Hero from "../../organisms/Hero/Hero";
 import { lightweightHeadings, marshallHeadings, timingHeadings } from "./defaultProps";
@@ -6,8 +7,11 @@ import { CrewProps } from "../../../types/components.types";
 
 import "./crewDrawReports.scss";
 import Header from "../../organisms/Header/Header";
-import { Link } from "react-router-dom";
 import BladeImage from "../../atoms/BladeImage/BladeImage";
+
+interface LocationState {
+  view?: string;
+}
 
 interface ResponseParamsProps {
   page_size?: string;
@@ -26,9 +30,12 @@ interface ResponseDataProps {
 }
 
 export default function CrewDrawReports() {
+  const location = useLocation<LocationState>(); // Add this hook with type
   const [crews, setCrews] = useState<CrewProps[]>([]);
-  const [view, setView] = useState(sessionStorage.getItem("view") || "marshall");
-  // const [totalCrews, setTotalCrews] = useState(0);
+
+  // Check for view from route state first, then sessionStorage, then default to "marshall"
+  const initialView = location.state?.view || sessionStorage.getItem("view") || "marshall";
+  const [view, setView] = useState(initialView);
 
   const fetchData = async (url: string, params: ResponseParamsProps) => {
     try {
@@ -39,7 +46,6 @@ export default function CrewDrawReports() {
       const responseData: CrewProps[] = response.data.results;
 
       setCrews(responseData);
-      // setTotalCrews(responseData.count);
     } catch (error) {
       console.error(error);
     }
@@ -53,6 +59,15 @@ export default function CrewDrawReports() {
       status: ["Accepted", "Scratched"]
     });
   }, []);
+
+  // Update view when location state changes
+  useEffect(() => {
+    if (location.state?.view) {
+      setView(location.state.view);
+      // Optional: also update sessionStorage to persist the selection
+      sessionStorage.setItem("view", location.state.view);
+    }
+  }, [location.state]);
 
   const changeView = (view: string) => {
     sessionStorage.setItem("view", view);
@@ -69,16 +84,22 @@ export default function CrewDrawReports() {
         <div className="crew-draw-reports__container">
           <div className="crew-draw-reports__tabs-wrapper no-print">
             <ul className="crew-draw-reports__tabs">
-              <li onClick={() => changeView("marshall")}>
-                <a className={`crew-draw-reports__tab ${view !== "marshall" ? "" : "active"}`}>Marshal view</a>
+              <li className={`crew-draw-reports__tab ${view !== "timing" ? "" : "crew-draw-reports__tab--active"}`}>
+                <button className="crew-draw-reports__tab-button" onClick={() => changeView("timing")}>
+                  <span className="crew-draw-reports__tab-label">Timing view</span>
+                </button>
               </li>
-              <li onClick={() => changeView("timing")}>
-                <a className={`crew-draw-reports__tab ${view !== "timing" ? "" : "active"}`}>Timing teams view</a>
+              <li className={`crew-draw-reports__tab ${view !== "marshall" ? "" : "crew-draw-reports__tab--active"}`}>
+                <button className="crew-draw-reports__tab-button" onClick={() => changeView("marshall")}>
+                  <span className="crew-draw-reports__tab-label">Marshal view</span>
+                </button>
               </li>
-              <li onClick={() => changeView("lightweight")}>
-                <a className={`crew-draw-reports__tab ${view !== "lightweight" ? "" : "active"}`}>
-                  Lightweight weigh-in
-                </a>
+              <li
+                className={`crew-draw-reports__tab ${view !== "lightweight" ? "" : "crew-draw-reports__tab--active"}`}
+              >
+                <button className="crew-draw-reports__tab-button" onClick={() => changeView("lightweight")}>
+                  <span className="crew-draw-reports__tab-label">Lightweight view</span>
+                </button>
               </li>
             </ul>
           </div>

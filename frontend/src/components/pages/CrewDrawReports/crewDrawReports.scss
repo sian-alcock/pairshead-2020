@@ -48,25 +48,36 @@
 
   &__tabs {
     display: flex;
-    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    margin: 1.5rem 0;
     border-bottom: 2px solid $phLogoBlue;
   }
 
   &__tab {
     display: block;
-    padding: 1rem;
-    background-color: $bblBlue;
-    color: $white;
-    @include body-small($bold);
+    border: 1px solid $bblGrey;
+    border-bottom: unset;
+    border-radius: 4px 4px 0 0;
+    margin-right: 4px;
+    max-width: 120px;
+    button {
+      color: $bblBlue;
+      padding: 0.3rem;
+      @include body-small;
+    }
 
     &:hover {
       background-color: $phLogoBlue;
-      color: $bblBlue;
+      button {
+        color: $bblBlue;
+      }
     }
 
-    &.active {
+    &--active {
       background-color: $phLogoBlue;
-      color: $bblBlue;
+      button {
+        color: $bblBlue;
+      }
     }
   }
 

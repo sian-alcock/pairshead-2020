@@ -127,8 +127,8 @@ export default function CrewStartByNumberLocation() {
       }),
       columnHelper.display({
         id: "checkbox",
-        header: "☐",
-        cell: () => "☐"
+        header: "",
+        cell: () => <span className="crew-start-by-number-location__checkbox-cell">☐</span>
       })
     );
 
