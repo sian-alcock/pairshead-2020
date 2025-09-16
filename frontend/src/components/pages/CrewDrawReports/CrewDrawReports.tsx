@@ -170,15 +170,12 @@ export default function CrewDrawReports() {
                       .filter((crew) => crew.bib_number)
                       .map((crew) => (
                         <tr className={`crew-draw-reports__row-${crew.status.toLowerCase()}`} key={crew.id}>
-                          <td>
-                            <Link to={`/crews/${crew.id}`}>{crew.id}</Link>
-                          </td>
+                          <td>{!crew.bib_number ? "" : crew.bib_number}</td>
                           <td>{!crew.competitor_names ? crew.name : crew.competitor_names}</td>
                           <td>{crew.status}</td>
                           <td>
                             <BladeImage crew={crew} />
                           </td>
-                          <td>{!crew.bib_number ? "" : crew.bib_number}</td>
                           <td>{crew.club.index_code}</td>
                           <td>{crew.event_band}</td>
                         </tr>

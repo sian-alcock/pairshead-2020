@@ -13,13 +13,8 @@ class StartOrderDuplicateCheckView(APIView):
     
     def get(self, request):
         try:
-            # Get all accepted crews with valid start orders
-            crews = Crew.objects.filter(
-                status__exact='Accepted',
-                calculated_start_order__isnull=False
-            ).exclude(
-                calculated_start_order=9999999  # Exclude placeholder values
-            ).select_related('club')
+            # Get all accepted crews since these should all have a start order
+            crews = Crew.objects.filter(status__exact='Accepted').select_related('club')
             
             # Group crews by start order
             start_order_groups = defaultdict(list)

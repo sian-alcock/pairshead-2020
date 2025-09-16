@@ -343,17 +343,12 @@ export default function CrewStartOrderTable() {
 
         {duplicateData?.has_duplicates && (
           <div className="crew-start-order-table__alert crew-start-order-table__alert--warning">
-            <strong>⚠️ Duplicate Start Orders Detected Across All Data:</strong>
+            <strong>⚠️ Duplicate start orders found:</strong>
             <div className="crew-start-order-table__duplicate-summary">
               {duplicateData.summary.duplicate_start_orders} duplicate start orders affecting{" "}
               {duplicateData.summary.crews_with_duplicates} crews out of {duplicateData.summary.total_accepted_crews}{" "}
               total accepted crews.
             </div>
-            {/* {Object.entries(duplicateData.duplicates).map(([startOrder, crews]) => (
-              <div key={startOrder} className="crew-start-order-table__duplicate-detail">
-                <strong>Start Order {startOrder}:</strong> {crews.map((c) => `${c.name} (${c.club})`).join(", ")}
-              </div>
-            ))} */}
           </div>
         )}
 
