@@ -18,9 +18,9 @@ export default function ReportsAndDataExports() {
             </ActionCard>
 
             <ActionCard
-              title={"Export calculated start order"}
+              title={"Export final start order"}
               icon={"download"}
-              description={"Export csv of start data with calculated start order"}
+              description={"Export csv of start data for publishing"}
             >
               <DataExportComponent url={"api/start-order-data-export/"} buttonText={"Export csv"} />
             </ActionCard>
