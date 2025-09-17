@@ -64,6 +64,8 @@ const CrewTimeEdit: React.FC = () => {
     e.preventDefault();
     if (!formData) return;
 
+    console.log("Submitting form data:", formData);
+
     updateCrewMutation.mutate(
       {
         crew: formData,

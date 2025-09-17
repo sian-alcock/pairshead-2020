@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { formatTimes } from "../../../../lib/helpers";
 import { FormSelect } from "../../../atoms/FormSelect/FormSelect";
-import { useRaceTimes } from "../../../../hooks/useRaceTimes";
+import { useAllRaceTimes } from "../../../../hooks/useRaceTimes";
 
 type RaceTimeSelectorProps = {
   crewId: number;
@@ -24,7 +24,7 @@ export const RaceTimeSelector: React.FC<RaceTimeSelectorProps> = ({ crewId, race
     data: options,
     isLoading,
     error
-  } = useRaceTimes({
+  } = useAllRaceTimes({
     race: raceId ?? 0, // Provide a default value since enabled will control execution
     tap,
     enabled: !!raceId // Only run the query when raceId is truthy
@@ -37,7 +37,7 @@ export const RaceTimeSelector: React.FC<RaceTimeSelectorProps> = ({ crewId, race
   };
 
   const selectOptions = [
-    ...(options || []).map((option) => {
+    ...(options || []).map((option: { sequence: any; time_tap: any; id: any }) => {
       return { label: `${option.sequence} - ${formatTimes(option.time_tap)}`, value: option.id };
     }),
     { label: "Unassign", value: "unassign" }

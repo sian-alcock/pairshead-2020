@@ -212,11 +212,13 @@ class CrewDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Crew.objects.all()
     serializer_class = PopulatedCrewSerializer
 
-    # Update computed properties after the assignment
-    try:
-        Crew.update_all_computed_properties()
-    except Exception:
-        pass
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
+        
+        try:
+            Crew.update_all_computed_properties()
+        except Exception as e:
+            print(f"Error updating computed properties: {e}")
 
 
 class CrewDataImport(APIView):

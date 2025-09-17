@@ -4,10 +4,9 @@ import { formatTimes } from "../../../../lib/helpers";
 import { TimeProps, TimingOffsetProps } from "../../../../types/components.types";
 import { useRaceTimesData, RaceTimeRow } from "./useRaceTimesData";
 import { SequenceList } from "./SequenceList";
-import { UseSelector } from "./UseSelector";
+import { FormRadioButton } from "../../../atoms/FormRadioButton/FormRadioButton";
 import { RaceTimesSummary } from "./RaceTimesSummary";
 import { RaceTimeSelector } from "./RaceTimeSelector";
-import { useQueryClient } from "@tanstack/react-query";
 import "./crewTimeEditRaceTimesTable.scss";
 
 export const CrewTimeEditRaceTimesTable: React.FC<{
@@ -105,7 +104,7 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
         }
       }),
       columnHelper.accessor("start", {
-        header: "Start times",
+        header: "Start times (seq)",
         cell: ({ getValue }) => <SequenceList items={getValue()} label="Start" />
       }),
       columnHelper.accessor("raceId", {
@@ -113,7 +112,7 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
         header: "Use start",
         cell: ({ getValue, row }) =>
           row.original.start.length ? (
-            <UseSelector
+            <FormRadioButton
               name="start_race_selection"
               raceId={getValue()}
               checked={getSelectedStartRaceId() === getValue()}
@@ -122,7 +121,7 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
           ) : null
       }),
       columnHelper.accessor("finish", {
-        header: "Finish times",
+        header: "Finish time (seq)",
         cell: ({ getValue }) => <SequenceList items={getValue()} label="Finish" />
       }),
       columnHelper.accessor("raceId", {
@@ -133,7 +132,7 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
           const selected = getSelectedFinishRaceId();
 
           return row.original.finish.length ? (
-            <UseSelector
+            <FormRadioButton
               name="finish_race_selection"
               raceId={value}
               checked={selected === value}
@@ -146,25 +145,6 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
         header: "Raw time",
         cell: ({ getValue, row }) =>
           row.original.start.length && row.original.finish.length ? formatTimes(getValue()) : "-"
-      }),
-      columnHelper.display({
-        id: "offset",
-        header: "Offset applied?",
-        cell: ({ row }) => {
-          const startRaceId = row.original.start?.[0]?.race?.race_id;
-          const finishRaceId = row.original.finish?.[0]?.race?.race_id;
-
-          if (!startRaceId || !finishRaceId) return "-";
-
-          if (startRaceId === finishRaceId) {
-            return "No";
-          }
-
-          const startOffset = offsetData.find((o) => o.target_race === startRaceId)?.timing_offset_ms ?? 0;
-          const finishOffset = offsetData.find((o) => o.target_race === finishRaceId)?.timing_offset_ms ?? 0;
-
-          return `Yes (+${startOffset}ms / +${finishOffset}ms)`;
-        }
       }),
       columnHelper.display({
         id: "changeStart",

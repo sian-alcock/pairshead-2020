@@ -1,14 +1,17 @@
-@import '../../../../style.scss';
+@import "../../../../style.scss";
 
 .crew-time-edit-race-times-table {
   &__table {
+    width: 100%;
+
     @include table;
   }
 
   &__pill {
-    display: block;
+    display: inline-block;
+    margin: 0.25rem;
     background-color: $blue-tint;
-    padding: 0 0.5rem;
+    padding: 0.2rem 0.5rem;
     border-radius: 0.25rem;
     border: 1px solid $bblGrey;
     @include body-xs;

@@ -3,7 +3,7 @@ Crew-related serializers.
 """
 
 from rest_framework import serializers
-from ..models import Crew, Club
+from ..models import Crew, Club, Band
 from .club_serializers import ClubSerializer
 from .event_serializers import EventSerializer, BandSerializer, ImportOriginalEventSerializer
 from .competitor_serializers import CompetitorSerializer
@@ -47,6 +47,28 @@ class PopulatedCrewSerializer(serializers.ModelSerializer):
             'number_location', 'otd_contact', 'otd_home_phone', 'otd_work_phone', 'otd_mobile_phone', 
             'updated', 'race_id_start_override', 'race_id_finish_override',
         )
+
+    def update(self, instance, validated_data):
+        # Handle band field separately since it's a SerializerMethodField (read-only)
+        if 'band' in self.initial_data:
+            band_data = self.initial_data.get('band')
+            if band_data:
+                # Handle both ID (number) and object formats
+                if isinstance(band_data, dict):
+                    band_id = band_data.get('id')
+                else:
+                    band_id = band_data
+                
+                if band_id:
+                    try:
+                        instance.band = Band.objects.get(id=band_id)
+                    except Band.DoesNotExist:
+                        pass
+            else:
+                instance.band = None
+        
+        # Continue with normal update process
+        return super().update(instance, validated_data)
     
     def get_club(self, obj):
         from .club_serializers import ClubSerializer

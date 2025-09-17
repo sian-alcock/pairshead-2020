@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   useReactTable,
@@ -14,7 +14,6 @@ import {
   ColumnFiltersState
 } from "@tanstack/react-table";
 import { useHistory, Link } from "react-router-dom";
-import axios, { AxiosResponse } from "axios";
 import { formatTimes } from "../../../lib/helpers";
 import { CrewProps, RaceProps, TimeProps } from "../../../types/components.types";
 import { TableHeader } from "../../molecules/TableHeader/TableHeader";
@@ -22,66 +21,26 @@ import { TableBody } from "../../molecules/TableBody/TableBody";
 import TablePagination from "../../molecules/TablePagination/TablePagination";
 import SearchInput from "../../molecules/SearchInput/SearchInput";
 import "./raceTimesTable.scss";
-import { useRaceTimes } from "../../../hooks/useRaceTimes";
+import { useRaceTimes, useAllRaceTimes } from "../../../hooks/useRaceTimes";
 
 interface RaceTimesTableProps {
   raceId: number;
   tap: "Start" | "Finish";
   raceName: string;
   onDataChanged?: () => void;
+  // New props to control behavior
+  enableGlobalSearch?: boolean; // Enable/disable global search
+  initialPageSize?: number;
 }
 
-// Custom filter functions
-const timeFilterFn = (row: any, columnId: string, filterValue: string) => {
-  const cellValue = row.getValue(columnId);
-  if (cellValue === null || cellValue === undefined) return false;
-
-  const formattedTime = formatTimes(cellValue);
-  return formattedTime.toLowerCase().includes(filterValue.toLowerCase());
-};
-
-const globalFilterFn = (row: any, columnId: string, filterValue: string) => {
-  const cellValue = row.getValue(columnId);
-
-  if (cellValue === null || cellValue === undefined) return false;
-
-  // Handle different data types
-  if (typeof cellValue === "number") {
-    // For time values, convert to formatted time
-    if (columnId.includes("time")) {
-      const formattedTime = formatTimes(cellValue);
-      return formattedTime.toLowerCase().includes(filterValue.toLowerCase());
-    }
-    // For other numbers, convert to string
-    return cellValue.toString().toLowerCase().includes(filterValue.toLowerCase());
-  }
-
-  if (typeof cellValue === "string") {
-    return cellValue.toLowerCase().includes(filterValue.toLowerCase());
-  }
-
-  // Handle objects (like crew)
-  if (typeof cellValue === "object" && cellValue !== null) {
-    return JSON.stringify(cellValue).toLowerCase().includes(filterValue.toLowerCase());
-  }
-
-  return false;
-};
-
-// Custom sorting function for time columns
-const timeSortingFn = (rowA: any, rowB: any, columnId: string) => {
-  const a = rowA.getValue(columnId) as number | null;
-  const b = rowB.getValue(columnId) as number | null;
-
-  // Handle null values - put them at the end
-  if (a === null && b === null) return 0;
-  if (a === null) return 1;
-  if (b === null) return -1;
-
-  return a - b;
-};
-
-export default function RaceTimesTable({ raceId, tap, raceName, onDataChanged }: RaceTimesTableProps) {
+export default function RaceTimesTable({
+  raceId,
+  tap,
+  raceName,
+  onDataChanged,
+  enableGlobalSearch = true,
+  initialPageSize = 25
+}: RaceTimesTableProps) {
   const history = useHistory();
   const queryClient = useQueryClient();
   const columnHelper = createColumnHelper<TimeProps>();
@@ -89,23 +48,55 @@ export default function RaceTimesTable({ raceId, tap, raceName, onDataChanged }:
   // Component state
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 25
+    pageSize: initialPageSize
   });
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
 
-  // Data fetching
+  // Debounced search for server-side filtering
+  const [debouncedGlobalFilter, setDebouncedGlobalFilter] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedGlobalFilter(globalFilter);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [globalFilter]);
+
+  // For client-side pagination, get all data
   const {
-    data: raceTimesData,
-    isLoading,
-    error
-  } = useRaceTimes({
+    data: allRaceTimesData,
+    isLoading: isLoadingAll,
+    error: errorAll
+  } = useAllRaceTimes({
     race: raceId,
-    tap
+    tap,
+    enabled: !true
   });
 
-  // Table columns
+  // For server-side pagination, get paginated data
+  const {
+    data: paginatedRaceTimesData,
+    isLoading: isLoadingPaginated,
+    error: errorPaginated
+  } = useRaceTimes({
+    race: raceId,
+    tap,
+    page: pagination.pageIndex + 1, // Convert to 1-based
+    pageSize: pagination.pageSize,
+    search: debouncedGlobalFilter,
+    ordering: sorting.length > 0 ? `${sorting[0].desc ? "-" : ""}${sorting[0].id}` : "sequence",
+    enabled: true
+  });
+
+  // Determine which data to use
+  const isLoading = true ? isLoadingPaginated : isLoadingAll;
+  const error = true ? errorPaginated : errorAll;
+  const raceTimesData = true ? paginatedRaceTimesData?.results : allRaceTimesData;
+  const totalCount = true ? paginatedRaceTimesData?.count : allRaceTimesData?.length;
+
+  // Table columns (same as before)
   const columns = useMemo<ColumnDef<TimeProps, any>[]>(
     () => [
       columnHelper.accessor("sequence", {
@@ -146,32 +137,17 @@ export default function RaceTimesTable({ raceId, tap, raceName, onDataChanged }:
       columnHelper.accessor("tap", {
         header: "Tap",
         cell: (info) => <span className="race-times-table__cell race-times-table__cell--tap">{info.getValue()}</span>,
-        enableSorting: true,
-        sortingFn: timeSortingFn,
-        filterFn: timeFilterFn
+        enableSorting: true
       }),
       columnHelper.accessor("time_tap", {
         header: "Time tap",
         cell: (info) => (
           <span className="race-times-table__cell race-times-table__cell--time">{formatTimes(info.getValue())}</span>
         ),
-        enableSorting: true,
-        sortingFn: timeSortingFn,
-        filterFn: timeFilterFn
+        enableSorting: true
       })
     ],
     [history]
-  );
-
-  // Create column groups for grouped headers
-  const columnGroups = useMemo(
-    () => [
-      { header: "Sequence", columns: ["sequence"] },
-      { header: "Bib", columns: ["bib_number"] },
-      { header: "Crew Info", columns: ["crew_name", "competitor_names", "club"] },
-      { header: "Timing", columns: ["time_tap", "synchronized_time"] }
-    ],
-    []
   );
 
   // Table instance
@@ -186,18 +162,19 @@ export default function RaceTimesTable({ raceId, tap, raceName, onDataChanged }:
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: globalFilterFn,
-    manualPagination: false,
-    manualSorting: false,
+    manualPagination: true,
+    manualSorting: true,
+    manualFiltering: true,
+    pageCount: Math.ceil((totalCount || 0) / pagination.pageSize),
     state: {
       pagination,
       sorting,
       columnFilters,
-      globalFilter
+      globalFilter: true ? "" : globalFilter // Only use client-side global filter when not using server pagination
     },
     initialState: {
       pagination: {
-        pageSize: 25
+        pageSize: initialPageSize
       },
       sorting: [
         {
@@ -236,9 +213,8 @@ export default function RaceTimesTable({ raceId, tap, raceName, onDataChanged }:
     );
   }
 
-  const totalRows = raceTimesData?.length || 0;
-  const filteredRows = table.getFilteredRowModel().rows.length;
   const displayedRows = table.getRowModel().rows.length;
+  const filteredRows = true ? totalCount : table.getFilteredRowModel().rows.length;
 
   return (
     <div className="race-times-table">
@@ -249,38 +225,41 @@ export default function RaceTimesTable({ raceId, tap, raceName, onDataChanged }:
           </h3>
         </div>
 
-        <div className="race-times-table__controls">
-          <div className="race-times-table__search-wrapper">
-            <SearchInput
-              value={globalFilter}
-              onChange={setGlobalFilter}
-              placeholder="Search times, crews, bibs..."
-              className="race-times-table__search"
-            />
+        {enableGlobalSearch && (
+          <div className="race-times-table__controls">
+            <div className="race-times-table__search-wrapper">
+              <SearchInput
+                value={globalFilter}
+                onChange={setGlobalFilter}
+                placeholder="Search times, crews, bibs..."
+                className="race-times-table__search"
+              />
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
+      <TablePagination
+        table={table}
+        className="race-times-table__pagination"
+        showRowInfo={true}
+        showPageSizeSelector={true}
+        totalRowCount={filteredRows}
+      />
       <div className="race-times-table__table-container">
         <table className="race-times-table__table">
-          <TableHeader headerGroups={table.getHeaderGroups()} columnGroups={columnGroups} />
+          <TableHeader headerGroups={table.getHeaderGroups()} />
           <TableBody rows={table.getRowModel().rows} />
         </table>
       </div>
 
       <div className="race-times-table__footer">
-        <div className="race-times-table__results-info">
-          <p className="race-times-table__results-text">
-            Showing {displayedRows} of {filteredRows} records
-            {globalFilter && filteredRows !== totalRows && <span> (filtered from {totalRows} total)</span>}
-          </p>
-        </div>
-
         <TablePagination
           table={table}
           className="race-times-table__pagination"
-          showRowInfo={false}
+          showRowInfo={true}
           showPageSizeSelector={true}
+          totalRowCount={filteredRows}
         />
       </div>
     </div>

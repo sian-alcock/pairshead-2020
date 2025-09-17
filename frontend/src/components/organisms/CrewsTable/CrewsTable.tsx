@@ -204,7 +204,7 @@ export default function CrewsTable({ onDataChanged }: CrewsTableProps) {
         showMissingTimesOnly
       }),
     placeholderData: (previousData) => previousData, // This replaces keepPreviousData
-    staleTime: 30000,
+    staleTime: 0,
     // Add this to prevent refocus issues
     refetchOnWindowFocus: false
   });

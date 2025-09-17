@@ -25,11 +25,16 @@ from ..serializers import WriteRaceTimesSerializer, RaceTimesSerializer, Populat
 
 from ..models import RaceTime, Crew, Race
 
-# from ..pagination import RaceTimePaginationWithAggregates
+from ..pagination import RaceTimePaginationWithAggregates
 
 
 class RaceTimeListView(generics.ListCreateAPIView):
     serializer_class = PopulatedRaceTimesSerializer
+    pagination_class = RaceTimePaginationWithAggregates
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['crew__competitor_names', 'crew__name', 'crew__bib_number', 'sequence']
+    ordering_fields = ['sequence', 'time_tap', 'crew__bib_number']
+    ordering = ['sequence']  # default ordering
     
     def get_queryset(self):
         queryset = RaceTime.objects.all()
@@ -42,6 +47,14 @@ class RaceTimeListView(generics.ListCreateAPIView):
             queryset = queryset.filter(tap=tap)
             
         return queryset.select_related('race', 'crew')
+    
+    def get_paginator(self):
+        """
+        Allow disabling pagination with ?no_pagination=true
+        """
+        if self.request.query_params.get('no_pagination') == 'true':
+            return None
+        return super().get_paginator()
 
 
 class RaceTimeDetailView(APIView):

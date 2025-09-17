@@ -42,12 +42,6 @@
     min-height: 44px; // Ensures minimum touch target size (44px is recommended for accessibility)
     padding: 8px;
     cursor: pointer;
-
-    // // Make the entire container clickable
-    // &:hover {
-    //   background-color: rgba(0, 0, 0, 0.05);
-    //   border-radius: 4px;
-    // }
   }
 
   &__radio {

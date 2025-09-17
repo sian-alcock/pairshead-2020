@@ -240,22 +240,40 @@ class Crew(models.Model):
             return self.manual_override_time + self.penalty * 1000
         return self.race_time
 
-    # Start time
     def calc_start_time(self):
+        """Get the start time for this crew from the appropriate race."""
         try:
-            race_default_start = Race.objects.get(default_start=True)
-            start_time_record = self.times.get(tap="Start", race=race_default_start)
+            # Determine which race to use for start time
+            if self.race_id_start_override:
+                start_race = self.race_id_start_override
+            else:
+                start_race = Race.objects.get(default_start=True)
+            
+            # Get the start time record
+            start_time_record = self.times.get(tap="Start", race=start_race)
             return start_time_record.time_tap
-        except (Race.DoesNotExist, RaceTime.DoesNotExist):
+            
+        except Race.DoesNotExist:
+            return 0
+        except RaceTime.DoesNotExist:
             return 0
 
-    # Finish time
     def calc_finish_time(self):
+        """Get the finish time for this crew from the appropriate race."""
         try:
-            race_default_finish = Race.objects.get(default_finish=True)
-            finish_time_record = self.times.get(tap="Finish", race=race_default_finish)
+            # Determine which race to use for finish time
+            if self.race_id_finish_override:
+                finish_race = self.race_id_finish_override
+            else:
+                finish_race = Race.objects.get(default_finish=True)
+            
+            # Get the finish time record
+            finish_time_record = self.times.get(tap="Finish", race=finish_race)
             return finish_time_record.time_tap
-        except (Race.DoesNotExist, RaceTime.DoesNotExist):
+            
+        except Race.DoesNotExist:
+            return 0
+        except RaceTime.DoesNotExist:
             return 0
 
     # Overall rank
@@ -290,7 +308,6 @@ class Crew(models.Model):
     def calc_category_rank(self):
         crews = Crew.objects.all().filter(
             status__exact="Accepted",
-            time_only__exact=False,
             event_band__exact=self.event_band,
             published_time__gt=0,
             category_position_time__lt=self.category_position_time,
@@ -298,29 +315,45 @@ class Crew(models.Model):
         if self.time_only:
             return 0
 
-        return len(crews) + 1
+        if self.published_time > 0:
+            return len(crews) + 1
+        return 0
 
-    # Start sequence
     def calc_start_sequence(self):
-        race_default_start = Race.objects.filter(default_start=True).first()
-        if not race_default_start:
+        """Get the start sequence for this crew from the appropriate race."""
+        try:
+            # Determine which race to use for start sequence
+            if self.race_id_start_override:
+                start_race = self.race_id_start_override
+            else:
+                start_race = Race.objects.get(default_start=True)
+            
+            # Get the start time record and return its sequence
+            start_time_record = self.times.get(tap="Start", race=start_race)
+            return start_time_record.sequence
+            
+        except Race.DoesNotExist:
+            return 0
+        except RaceTime.DoesNotExist:
             return 0
 
-        sequence_record = self.times.filter(
-            tap="Start", race=race_default_start
-        ).first()
-        return sequence_record.sequence if sequence_record else 0
-
-    # Finish sequence
     def calc_finish_sequence(self):
-        race_default_finish = Race.objects.filter(default_finish=True).first()
-        if not race_default_finish:
+        """Get the finish sequence for this crew from the appropriate race."""
+        try:
+            # Determine which race to use for finish sequence
+            if self.race_id_finish_override:
+                finish_race = self.race_id_finish_override
+            else:
+                finish_race = Race.objects.get(default_finish=True)
+            
+            # Get the finish time record and return its sequence
+            finish_time_record = self.times.get(tap="Finish", race=finish_race)
+            return finish_time_record.sequence
+            
+        except Race.DoesNotExist:
             return 0
-
-        sequence_record = self.times.filter(
-            tap="Finish", race=race_default_finish
-        ).first()
-        return sequence_record.sequence if sequence_record else 0
+        except RaceTime.DoesNotExist:
+            return 0
 
     # Competitor names
     def get_competitor_names(self):

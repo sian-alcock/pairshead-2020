@@ -10,7 +10,7 @@ export const SequenceList: React.FC<{ items: TimeProps[]; label: string }> = ({ 
     <ul className="race-times-table__list">
       {items.map((t, idx) => (
         <li key={t.id}>
-          {formatTimes(t.time_tap)} <small>(#{idx + 1})</small>
+          {formatTimes(t.time_tap)} <small>(#{t.sequence})</small>
         </li>
       ))}
     </ul>
