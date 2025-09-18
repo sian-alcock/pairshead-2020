@@ -470,6 +470,7 @@ class StartOrderDataExport(APIView):
         writer = csv.writer(response, delimiter=",")
         writer.writerow(
             [
+                "Id",
                 "Status",
                 "Crew No",
                 "Crew",
@@ -506,6 +507,7 @@ class StartOrderDataExport(APIView):
 
             writer.writerow(
                 [
+                    crew.id,
                     crew.status,
                     crew.bib_number,
                     crew_name,
