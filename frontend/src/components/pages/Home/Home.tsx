@@ -65,11 +65,6 @@ export default function Home() {
           status: statsData.event_order_count > 0 ? "good" : "warning"
         },
         {
-          value: statsData.crews_with_start_order_count,
-          subtitle: "crews with calculated start order",
-          status: statsData.crews_with_start_order_count > 0 ? "good" : "warning"
-        },
-        {
           value: statsData.marshalling_divisions_count,
           subtitle: "marshalling divisions",
           status: statsData.marshalling_divisions_count > 0 ? "good" : "warning"

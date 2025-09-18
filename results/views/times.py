@@ -37,7 +37,7 @@ class RaceTimeListView(generics.ListCreateAPIView):
     ordering = ['sequence']  # default ordering
     
     def get_queryset(self):
-        queryset = RaceTime.objects.all()
+        queryset = RaceTime.objects.all().select_related('race', 'crew')
         race_id = self.request.query_params.get('race_id', None)
         tap = self.request.query_params.get('tap', None)
         
@@ -46,15 +46,7 @@ class RaceTimeListView(generics.ListCreateAPIView):
         if tap is not None:
             queryset = queryset.filter(tap=tap)
             
-        return queryset.select_related('race', 'crew')
-    
-    def get_paginator(self):
-        """
-        Allow disabling pagination with ?no_pagination=true
-        """
-        if self.request.query_params.get('no_pagination') == 'true':
-            return None
-        return super().get_paginator()
+        return queryset
 
 
 class RaceTimeDetailView(APIView):

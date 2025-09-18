@@ -313,11 +313,6 @@ const NumberLocationsManager = () => {
         </table>
       </div>
 
-      <div className="number-location-manager__import-wrapper">
-        <DataExportComponent url={"/api/number-location-template/"} buttonText={"Export template"} />
-        <CSVUploadModal url={"api/number-location-import/"} />
-      </div>
-
       {tableData.length === 0 && (
         <div className="number-location-manager__empty">
           No number locations found. Click "Add New Location" to get started.

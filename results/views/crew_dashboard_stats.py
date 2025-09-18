@@ -51,7 +51,6 @@ class DataOverviewStatsView(generics.GenericAPIView):
         """Stats specific to pre-race phase"""
         return {
             'event_order_count': EventOrder.objects.count(),
-            'crews_with_start_order_count': Crew.objects.filter(calculated_start_order__gt=0).exclude(calculated_start_order=9999999,).count(),
             'marshalling_divisions_count': MarshallingDivision.objects.count(),
             'number_locations_count': NumberLocation.objects.count(),
         }

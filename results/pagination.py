@@ -76,6 +76,10 @@ class CrewPaginationWithAggregates(PageNumberPagination):
 
 
 class RaceTimePaginationWithAggregates(PageNumberPagination):
+    page_size = 25  # Default page size
+    page_size_query_param = 'page_size'  # Allow client to override page size
+    max_page_size = 500  # Maximum allowed page size
+
     def paginate_queryset(self, queryset, request, view=None):
         self.start_times_no_crew = len(queryset.filter(tap__exact='Start', crew__isnull=True))
         self.finish_times_no_crew = len(queryset.filter(tap__exact='Finish', crew__isnull=True))

@@ -16,15 +16,11 @@ export const fetchRaceTimes = async (params: FetchRaceTimesParams) => {
   queryParams.append("race_id", params.race.toString());
   queryParams.append("tap", params.tap);
 
-  if (params.noPagination) {
-    queryParams.append("no_pagination", "true");
-  } else {
-    if (params.page) {
-      queryParams.append("page", params.page.toString());
-    }
-    if (params.pageSize) {
-      queryParams.append("page_size", params.pageSize.toString());
-    }
+  if (params.page) {
+    queryParams.append("page", params.page.toString());
+  }
+  if (params.pageSize) {
+    queryParams.append("page_size", params.pageSize.toString());
   }
 
   if (params.search) {
@@ -36,5 +32,6 @@ export const fetchRaceTimes = async (params: FetchRaceTimesParams) => {
   }
 
   const response = await axios.get(`/api/race-times/?${queryParams}`);
+
   return response.data;
 };

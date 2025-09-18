@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { AsyncPaginate } from "react-select-async-paginate";
+import { GroupBase, OptionsOrGroups } from "react-select";
 import { formatTimes } from "../../../../lib/helpers";
-import { FormSelect } from "../../../atoms/FormSelect/FormSelect";
-import { useAllRaceTimes } from "../../../../hooks/useRaceTimes";
+import { fetchRaceTimes } from "../../../../api/raceTimes";
+import axios from "axios"; // Add this import
 
 type RaceTimeSelectorProps = {
   crewId: number;
@@ -11,46 +13,177 @@ type RaceTimeSelectorProps = {
   onChange: (newRaceTimeId: number | null) => void;
 };
 
+interface RaceTimeOption {
+  value: number | "unassign";
+  label: string;
+  data?: any; // Original race time data
+}
+
+interface LoadOptions {
+  options: RaceTimeOption[];
+  hasMore: boolean;
+  additional: {
+    page: number;
+  };
+}
+
 export const RaceTimeSelector: React.FC<RaceTimeSelectorProps> = ({ crewId, raceTimeId, raceId, tap, onChange }) => {
-  // Local state to track the selected value before submission
-  const [selectedValue, setSelectedValue] = useState<number | null>(raceTimeId ?? null);
+  const [selectedValue, setSelectedValue] = useState<RaceTimeOption | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Update local state when the prop changes (e.g., when switching crews)
-  useEffect(() => {
-    setSelectedValue(raceTimeId ?? null);
-  }, [raceTimeId]);
+  // Function to load options with pagination
+  const loadOptions = async (
+    searchValue: string,
+    loadedOptions: OptionsOrGroups<RaceTimeOption, GroupBase<RaceTimeOption>>,
+    additional?: { page: number }
+  ): Promise<LoadOptions> => {
+    if (!raceId) {
+      return {
+        options: [],
+        hasMore: false,
+        additional: { page: 1 }
+      };
+    }
 
-  const {
-    data: options,
-    isLoading,
-    error
-  } = useAllRaceTimes({
-    race: raceId ?? 0, // Provide a default value since enabled will control execution
-    tap,
-    enabled: !!raceId // Only run the query when raceId is truthy
-  });
+    try {
+      setIsLoading(true);
+      const page = additional?.page || 1;
+      const pageSize = 25; // Reasonable page size for dropdown
 
-  const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value === "unassign" ? null : Number(e.target.value);
-    setSelectedValue(value);
-    onChange(value); // This now just updates the parent's local state
+      const response = await fetchRaceTimes({
+        race: raceId,
+        tap,
+        page,
+        pageSize,
+        search: searchValue || undefined // Only include search if there's a value
+      });
+
+      const options: RaceTimeOption[] = (response.results || []).map((raceTime: any) => ({
+        value: raceTime.id,
+        label: `${raceTime.sequence} - ${formatTimes(raceTime.time_tap)}`,
+        data: raceTime
+      }));
+
+      // Add "Unassign" option only on the first page and if no search
+      const allOptions =
+        page === 1 && !searchValue ? [{ value: "unassign" as const, label: "Unassign" }, ...options] : options;
+
+      return {
+        options: allOptions,
+        hasMore: !!response.next, // Django pagination provides 'next' field
+        additional: {
+          page: page + 1
+        }
+      };
+    } catch (error) {
+      console.error("Error loading race times:", error);
+      return {
+        options: [],
+        hasMore: false,
+        additional: { page: 1 }
+      };
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const selectOptions = [
-    ...(options || []).map((option: { sequence: any; time_tap: any; id: any }) => {
-      return { label: `${option.sequence} - ${formatTimes(option.time_tap)}`, value: option.id };
-    }),
-    { label: "Unassign", value: "unassign" }
-  ];
+  // Handle selection change
+  const handleSelect = (newValue: RaceTimeOption | null) => {
+    setSelectedValue(newValue);
+
+    if (!newValue || newValue.value === "unassign") {
+      onChange(null);
+    } else {
+      onChange(newValue.value as number);
+    }
+  };
+
+  // Helper function to fetch a single race time by ID
+  const fetchRaceTimeById = async (id: number) => {
+    console.log(`Fetching race time details for ID: ${id}`);
+    const response = await axios.get(`/api/race-times/${id}`);
+    console.log("Race time detail response:", response.data);
+    return response.data;
+  };
+
+  // Update selected value when raceTimeId prop changes
+  useEffect(() => {
+    console.log("useEffect triggered with raceTimeId:", raceTimeId);
+
+    if (!raceTimeId) {
+      setSelectedValue({ value: "unassign", label: "Unassign" });
+      return;
+    }
+
+    // Use the detail endpoint to get the race time
+    const loadCurrentSelection = async () => {
+      try {
+        console.log(`About to fetch race time with ID: ${raceTimeId}`);
+        const raceTimeData = await fetchRaceTimeById(raceTimeId);
+        console.log("Received race time data:", raceTimeData);
+        console.log("Sequence:", raceTimeData.sequence, "Time tap:", raceTimeData.time_tap);
+
+        setSelectedValue({
+          value: raceTimeData.id,
+          label: `${raceTimeData.sequence} - ${formatTimes(raceTimeData.time_tap)}`,
+          data: raceTimeData
+        });
+      } catch (error: unknown) {
+        console.error("Error loading current selection:", error);
+        if (axios.isAxiosError(error)) {
+          console.log("Axios error details:", {
+            status: error.response?.status,
+            data: error.response?.data,
+            url: error.config?.url
+          });
+        }
+
+        // Fallback with more helpful message
+        if (axios.isAxiosError(error) && error.response?.status === 404) {
+          setSelectedValue({
+            value: raceTimeId,
+            label: `Race time (ID: ${raceTimeId}) - Not found`
+          });
+        } else {
+          setSelectedValue({
+            value: raceTimeId,
+            label: `Race time (ID: ${raceTimeId}) - Error loading`
+          });
+        }
+      }
+    };
+
+    loadCurrentSelection();
+  }, [raceTimeId]);
 
   return (
-    <FormSelect
-      fieldName={"select-race-time"}
-      title={"Select race time"}
-      selectOptions={selectOptions}
-      value={selectedValue ?? "unassign"}
-      onChange={handleSelect}
-      disabled={isLoading}
-    />
+    <div className="race-time-selector">
+      <label htmlFor="select-race-time" className="block text-sm font-medium text-gray-700 mb-1">
+        Select race time
+      </label>
+      <AsyncPaginate
+        inputId="select-race-time"
+        value={selectedValue}
+        loadOptions={loadOptions}
+        onChange={handleSelect}
+        additional={{ page: 1 }}
+        placeholder="Search race times..."
+        isClearable
+        isSearchable
+        isLoading={isLoading}
+        isDisabled={!raceId}
+        className="react-select-container"
+        classNamePrefix="react-select"
+        // Optional: debounce search input
+        debounceTimeout={300}
+        // Optional: customize messages
+        noOptionsMessage={({ inputValue }) =>
+          inputValue ? `No race times found for "${inputValue}"` : "No race times available"
+        }
+        loadingMessage={() => "Loading race times..."}
+        // Optional: control when to load more options
+        menuShouldScrollIntoView={false}
+      />
+    </div>
   );
 };
