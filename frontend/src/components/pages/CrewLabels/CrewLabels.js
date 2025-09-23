@@ -56,7 +56,7 @@ export default function CrewLabels() {
                   <span className="crew-labels__event">{crew.event_band}</span>
                 </div>
                 <p className="crew-labels__host">
-                  <span>Number location: </span>
+                  <span>Num loc: </span>
                   {crew.number_location}
                 </p>
               </div>

@@ -1,16 +1,17 @@
-@import '../../../style.scss';
+@import "../../../style.scss";
 
 .crew-labels {
   color: $black;
   &__grid {
-    gap: 0.2rem;
-    @include grid(2);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 0.6rem;
   }
 
   &__label {
     // border: 1px solid $bblGrey;
     height: 206px;
-    padding: 1.5rem 1.5rem 1.5rem 2.5rem;
+    padding: 1.5rem;
   }
 
   &__start-order {
@@ -30,5 +31,7 @@
 }
 
 @media print {
-  .pagebreak { page-break-before: always; } /* page-break-after works, as well */
+  .pagebreak {
+    page-break-before: always;
+  } /* page-break-after works, as well */
 }
