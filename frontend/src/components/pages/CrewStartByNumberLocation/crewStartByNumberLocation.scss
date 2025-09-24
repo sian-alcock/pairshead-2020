@@ -16,6 +16,10 @@
   &__table {
     width: 100%;
     @include table;
+
+    .scratched {
+      text-decoration: line-through;
+    }
   }
 
   &__title {

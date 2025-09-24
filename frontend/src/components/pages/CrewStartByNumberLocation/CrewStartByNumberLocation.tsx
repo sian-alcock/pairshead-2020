@@ -44,7 +44,7 @@ export default function CrewStartByNumberLocation() {
         page_size: "500",
         page: 1,
         ordering: "bib_number",
-        status: "Accepted"
+        status: ["Accepted", "Scratched"]
       }
     ],
     queryFn: () =>
@@ -52,7 +52,7 @@ export default function CrewStartByNumberLocation() {
         page_size: "500",
         page: 1,
         ordering: "bib_number",
-        status: "Accepted"
+        status: ["Accepted", "Scratched"]
       }),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000 // 10 minutes
@@ -79,32 +79,58 @@ export default function CrewStartByNumberLocation() {
   // Define columns
   const columns = useMemo(() => {
     const baseColumns = [
-      columnHelper.accessor("bib_number", {
+      columnHelper.display({
+        id: "bib_number",
         header: "Bib number",
-        cell: (info) => info.getValue() || ""
+        cell: (info) => {
+          const crew = info.row.original;
+          return <span className={crew.status.toLowerCase()}>{crew.bib_number || ""}</span>;
+        }
       }),
-      columnHelper.accessor("id", {
+      columnHelper.display({
+        id: "status",
+        header: "Status",
+        cell: (info) => {
+          const crew = info.row.original;
+          return <span className={crew.status.toLowerCase()}>{crew.status}</span>;
+        }
+      }),
+      columnHelper.display({
+        id: "id",
         header: "ID",
-        cell: (info) => info.getValue()
+        cell: (info) => {
+          const crew = info.row.original;
+          return <span className={crew.status.toLowerCase()}>{crew.id || ""}</span>;
+        }
       }),
       columnHelper.display({
         id: "blade",
         header: "Blade",
         cell: ({ row }) => <BladeImage crew={row.original} />
       }),
-      columnHelper.accessor((row) => row.club?.index_code, {
+      columnHelper.display({
         id: "club",
         header: "Club",
-        cell: (info) => info.getValue() || ""
+        cell: (info) => {
+          const crew = info.row.original;
+          return <span className={crew.status.toLowerCase()}>{crew.club?.index_code ?? ""}</span>;
+        }
       }),
-      columnHelper.accessor((row) => row.competitor_names || row.name, {
+      columnHelper.display({
         id: "name",
         header: "Name",
-        cell: (info) => info.getValue()
+        cell: (info) => {
+          const crew = info.row.original;
+          return <span className={crew.status.toLowerCase()}>{crew.competitor_names || crew.name}</span>;
+        }
       }),
-      columnHelper.accessor("event_band", {
-        header: "Event band",
-        cell: (info) => info.getValue()
+      columnHelper.display({
+        id: "event_band",
+        header: "Event",
+        cell: (info) => {
+          const crew = info.row.original;
+          return <span className={crew.status.toLowerCase()}>{crew.event_band || ""}</span>;
+        }
       })
     ];
 
@@ -114,7 +140,9 @@ export default function CrewStartByNumberLocation() {
         columnHelper.display({
           id: "host_club",
           header: "Host Club",
-          cell: ({ row }) => row.original.host_club?.name || ""
+          cell: ({ row }) => (
+            <span className={row.original.status.toLowerCase()}>{row.original.host_club?.name || ""}</span>
+          )
         })
       );
     }
@@ -123,7 +151,9 @@ export default function CrewStartByNumberLocation() {
       columnHelper.display({
         id: "number_location",
         header: "Number Location",
-        cell: ({ row }) => row.original.number_location || ""
+        cell: ({ row }) => (
+          <span className={row.original.status.toLowerCase()}>{row.original.number_location || ""}</span>
+        )
       }),
       columnHelper.display({
         id: "checkbox",
