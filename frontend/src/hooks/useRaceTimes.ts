@@ -40,37 +40,3 @@ export const useRaceTimes = ({
     enabled
   });
 };
-
-// Separate hook for getting ALL race times (using large page size)
-export const useAllRaceTimes = ({
-  race,
-  tap,
-  enabled = true
-}: {
-  race: number;
-  tap: "Start" | "Finish";
-  enabled?: boolean;
-}) => {
-  console.log("useAllRaceTimes called with:", { race, tap, pageSize: 500, page: 1 });
-
-  return useQuery({
-    queryKey: ["allRaceTimes", race, tap],
-    queryFn: () => {
-      console.log("About to call fetchRaceTimes with pageSize 500");
-      return fetchRaceTimes({
-        race,
-        tap,
-        pageSize: 500,
-        page: 1
-      });
-    },
-    staleTime: 10 * 60 * 1000,
-    retry: 3,
-    enabled,
-    select: (data) => {
-      console.log("Raw API response:", data);
-      console.log("Results length:", data.results?.length || "no results array");
-      return data.results || data;
-    }
-  });
-};

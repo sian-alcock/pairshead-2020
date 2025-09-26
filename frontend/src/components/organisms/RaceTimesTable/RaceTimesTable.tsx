@@ -13,15 +13,15 @@ import {
   SortingState,
   ColumnFiltersState
 } from "@tanstack/react-table";
-import { useHistory, Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { formatTimes } from "../../../lib/helpers";
-import { CrewProps, RaceProps, TimeProps } from "../../../types/components.types";
+import { TimeProps } from "../../../types/components.types";
 import { TableHeader } from "../../molecules/TableHeader/TableHeader";
 import { TableBody } from "../../molecules/TableBody/TableBody";
 import TablePagination from "../../molecules/TablePagination/TablePagination";
 import SearchInput from "../../molecules/SearchInput/SearchInput";
 import "./raceTimesTable.scss";
-import { useRaceTimes, useAllRaceTimes } from "../../../hooks/useRaceTimes";
+import { useRaceTimes } from "../../../hooks/useRaceTimes";
 import Checkbox from "../../atoms/Checkbox/Checkbox";
 
 interface RaceTimesTableProps {

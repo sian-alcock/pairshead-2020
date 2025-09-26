@@ -1,5 +1,4 @@
 import React from "react";
-import { format, intervalToDuration } from "date-fns";
 import image from "../assets/unknown_blades.png";
 import Img from "react-image";
 
@@ -8,11 +7,15 @@ export const formatTimes = function formatTimes(timeInMs) {
   const hours = Math.floor(totalMs / (1000 * 60 * 60));
   const minutes = Math.floor((totalMs % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((totalMs % (1000 * 60)) / 1000);
-  const tenthsOfSeconds = Math.floor((totalMs % 1000) / 100);
-  if (totalMs > 1000 * 60 * 60) {
-    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}.${tenthsOfSeconds.toString().padStart(1, "0")}`;
+
+  // Calculate centiseconds first, then round to tenths
+  const centiseconds = Math.floor((totalMs % 1000) / 10);
+  const tenthsOfSeconds = Math.floor(centiseconds / 10);
+
+  if (totalMs >= 1000 * 60 * 60) {
+    return `${hours}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}.${tenthsOfSeconds.toString()}`;
   }
-  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}.${tenthsOfSeconds.toString().padStart(1, "0")}`;
+  return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}.${tenthsOfSeconds.toString()}`;
 };
 
 export const formatTimeDate = function formatTimeDate(timeInMs) {
