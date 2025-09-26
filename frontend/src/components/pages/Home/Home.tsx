@@ -71,7 +71,7 @@ export default function Home() {
         },
         {
           value: statsData.number_locations_count,
-          subtitle: "number locations",
+          subtitle: "host clubs",
           status: statsData.number_locations_count > 0 ? "good" : "warning"
         }
       );
