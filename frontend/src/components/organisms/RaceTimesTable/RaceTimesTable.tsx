@@ -22,6 +22,7 @@ import TablePagination from "../../molecules/TablePagination/TablePagination";
 import SearchInput from "../../molecules/SearchInput/SearchInput";
 import "./raceTimesTable.scss";
 import { useRaceTimes, useAllRaceTimes } from "../../../hooks/useRaceTimes";
+import Checkbox from "../../atoms/Checkbox/Checkbox";
 
 interface RaceTimesTableProps {
   raceId: number;
@@ -53,6 +54,7 @@ export default function RaceTimesTable({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
+  const [showUnassignedOnly, setShowUnassignedOnly] = useState<boolean>(false);
 
   // Debounced search for server-side filtering
   const [debouncedGlobalFilter, setDebouncedGlobalFilter] = useState("");
@@ -64,37 +66,54 @@ export default function RaceTimesTable({
     return () => clearTimeout(timer);
   }, [globalFilter]);
 
-  // For client-side pagination, get all data
-  const {
-    data: allRaceTimesData,
-    isLoading: isLoadingAll,
-    error: errorAll
-  } = useAllRaceTimes({
-    race: raceId,
-    tap,
-    enabled: !true
-  });
+  // Convert sorting state to backend ordering format
+  const getOrderingParam = (sorting: SortingState): string => {
+    if (sorting.length === 0) return "sequence";
 
-  // For server-side pagination, get paginated data
+    const sort = sorting[0];
+    let orderField = sort.id;
+
+    // Map frontend column IDs to backend field names
+    switch (orderField) {
+      case "bib_number":
+        orderField = "crew__bib_number";
+        break;
+      case "competitor_names":
+        orderField = "crew__competitor_names";
+        break;
+      case "sequence":
+        orderField = "sequence";
+        break;
+      case "time_tap":
+        orderField = "time_tap";
+        break;
+      default:
+        // Handle other mappings as needed
+        break;
+    }
+
+    const ordering = sort.desc ? `-${orderField}` : orderField;
+    return ordering;
+  };
+
   const {
     data: paginatedRaceTimesData,
-    isLoading: isLoadingPaginated,
-    error: errorPaginated
+    isLoading,
+    error
   } = useRaceTimes({
     race: raceId,
     tap,
     page: pagination.pageIndex + 1, // Convert to 1-based
     pageSize: pagination.pageSize,
     search: debouncedGlobalFilter,
-    ordering: sorting.length > 0 ? `${sorting[0].desc ? "-" : ""}${sorting[0].id}` : "sequence",
+    ordering: getOrderingParam(sorting),
+    unassignedOnly: showUnassignedOnly,
     enabled: true
   });
 
   // Determine which data to use
-  const isLoading = true ? isLoadingPaginated : isLoadingAll;
-  const error = true ? errorPaginated : errorAll;
-  const raceTimesData = true ? paginatedRaceTimesData?.results : allRaceTimesData;
-  const totalCount = true ? paginatedRaceTimesData?.count : allRaceTimesData?.length;
+  const raceTimesData = paginatedRaceTimesData?.results;
+  const totalCount = paginatedRaceTimesData?.count;
 
   // Table columns (same as before)
   const columns = useMemo<ColumnDef<TimeProps, any>[]>(
@@ -116,17 +135,17 @@ export default function RaceTimesTable({
         enableSorting: true,
         filterFn: "includesString"
       }),
-      columnHelper.accessor((row) => row.crew?.bib_number || "--", {
-        id: "bib_number",
+      columnHelper.accessor((row) => row.crew?.bib_number || "⚠️", {
+        id: "bib_number", // This ID will be mapped to crew__bib_number in getOrderingParam
         header: "Bib",
         cell: (info) => (
-          <span className="race-times-table__cell race-times-table__cell--bib">{info.getValue() || "--"}</span>
+          <span className="race-times-table__cell race-times-table__cell--bib">{info.getValue() || "⚠️"}</span>
         ),
         enableSorting: true,
         filterFn: "includesString"
       }),
       columnHelper.accessor((row) => row.crew?.competitor_names || row.crew?.name || "Unassigned", {
-        id: "competitor_names",
+        id: "competitor_names", // This ID will be mapped to crew__competitor_names in getOrderingParam
         header: "Crew",
         cell: (info) => (
           <span className="race-times-table__cell race-times-table__cell--competitors">{info.getValue()}</span>
@@ -136,8 +155,7 @@ export default function RaceTimesTable({
       }),
       columnHelper.accessor("tap", {
         header: "Tap",
-        cell: (info) => <span className="race-times-table__cell race-times-table__cell--tap">{info.getValue()}</span>,
-        enableSorting: true
+        cell: (info) => <span className="race-times-table__cell race-times-table__cell--tap">{info.getValue()}</span>
       }),
       columnHelper.accessor("time_tap", {
         header: "Time tap",
@@ -215,6 +233,7 @@ export default function RaceTimesTable({
 
   const displayedRows = table.getRowModel().rows.length;
   const filteredRows = true ? totalCount : table.getFilteredRowModel().rows.length;
+  console.log(paginatedRaceTimesData);
 
   return (
     <div className="race-times-table">
@@ -225,8 +244,8 @@ export default function RaceTimesTable({
           </h3>
         </div>
 
-        {enableGlobalSearch && (
-          <div className="race-times-table__controls">
+        <div className="race-times-table__controls">
+          {enableGlobalSearch && (
             <div className="race-times-table__search-wrapper">
               <SearchInput
                 value={globalFilter}
@@ -235,8 +254,22 @@ export default function RaceTimesTable({
                 className="race-times-table__search"
               />
             </div>
+          )}
+
+          <div className="race-times-table__filters">
+            <Checkbox
+              name={"unassigned"}
+              label={
+                tap === "Start"
+                  ? `⚠️ Show unassigned only (${paginatedRaceTimesData.start_times_no_crew})`
+                  : `⚠️ Show unassigned only (${paginatedRaceTimesData.finish_times_no_crew})`
+              }
+              id={"unassigned"}
+              checked={showUnassignedOnly}
+              onChange={(e) => setShowUnassignedOnly(e.target.checked)}
+            />
           </div>
-        )}
+        </div>
       </div>
 
       <TablePagination

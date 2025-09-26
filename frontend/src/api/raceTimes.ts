@@ -8,6 +8,7 @@ interface FetchRaceTimesParams {
   search?: string;
   ordering?: string;
   noPagination?: boolean;
+  unassignedOnly?: boolean;
 }
 
 export const fetchRaceTimes = async (params: FetchRaceTimesParams) => {
@@ -29,6 +30,10 @@ export const fetchRaceTimes = async (params: FetchRaceTimesParams) => {
 
   if (params.ordering) {
     queryParams.append("ordering", params.ordering);
+  }
+
+  if (params.unassignedOnly) {
+    queryParams.append("unassigned_only", "true");
   }
 
   const response = await axios.get(`/api/race-times/?${queryParams}`);

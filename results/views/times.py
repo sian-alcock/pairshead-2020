@@ -33,18 +33,21 @@ class RaceTimeListView(generics.ListCreateAPIView):
     pagination_class = RaceTimePaginationWithAggregates
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['crew__competitor_names', 'crew__name', 'crew__bib_number', 'sequence']
-    ordering_fields = ['sequence', 'time_tap', 'crew__bib_number']
+    ordering_fields = ['sequence', 'time_tap', 'crew__bib_number', 'crew__competitor_names', 'crew__name', ]
     ordering = ['sequence']  # default ordering
     
     def get_queryset(self):
         queryset = RaceTime.objects.all().select_related('race', 'crew')
         race_id = self.request.query_params.get('race_id', None)
         tap = self.request.query_params.get('tap', None)
+        unassigned_only = self.request.query_params.get('unassigned_only', None)
         
         if race_id is not None:
             queryset = queryset.filter(race_id=race_id)
         if tap is not None:
             queryset = queryset.filter(tap=tap)
+        if unassigned_only and unassigned_only.lower() == 'true':
+            queryset = queryset.filter(crew__isnull=True)
             
         return queryset
 

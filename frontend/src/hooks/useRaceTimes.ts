@@ -3,19 +3,27 @@ import { fetchRaceTimes } from "../api/raceTimes";
 
 export type UseRaceTimesParams = {
   race: number;
-  tap: "Start" | "Finish";
+  tap: string;
   enabled?: boolean;
-  // Parameters for backend pagination/filtering
   page?: number;
   pageSize?: number;
   search?: string;
   ordering?: string;
+  unassignedOnly?: boolean;
 };
 
-// Main hook for paginated results
-export const useRaceTimes = ({ race, tap, enabled = true, page, pageSize, search, ordering }: UseRaceTimesParams) => {
+export const useRaceTimes = ({
+  race,
+  tap,
+  enabled = true,
+  page,
+  pageSize,
+  search,
+  ordering,
+  unassignedOnly = false
+}: UseRaceTimesParams) => {
   return useQuery({
-    queryKey: ["raceTimes", race, tap, page, pageSize, search, ordering],
+    queryKey: ["raceTimes", race, tap, page, pageSize, search, ordering, unassignedOnly], // Add unassignedOnly to queryKey
     queryFn: () =>
       fetchRaceTimes({
         race,
@@ -24,6 +32,7 @@ export const useRaceTimes = ({ race, tap, enabled = true, page, pageSize, search
         pageSize,
         search,
         ordering,
+        unassignedOnly,
         noPagination: false
       }),
     staleTime: 10 * 60 * 1000,
