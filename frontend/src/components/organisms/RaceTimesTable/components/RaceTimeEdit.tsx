@@ -85,43 +85,11 @@ export default function RaceTimeEdit() {
 
   const updateRaceTimeMutation = useMutation({
     mutationFn: async (data: { crewId: number | null }) => {
-      const raceTimePayload = { ...raceTimeQuery.data, crew: data.crewId || null };
-
+      // Use PATCH instead of PUT to leverage the backend's conflict resolution
       const updatedRaceTime = await fetchJSON<TimeProps>(`/api/race-times/${routeParams.id}`, {
-        method: "PUT",
-        body: JSON.stringify(raceTimePayload)
+        method: "PATCH", // Changed from PUT to PATCH
+        body: JSON.stringify({ crew: data.crewId || null }) // Only send the crew field
       });
-
-      if (data.crewId) {
-        // Get crew record
-        const crewToBeUpdated = await fetchJSON<CrewProps>(`/api/crews/${data.crewId}`);
-        const crewData = { ...crewToBeUpdated, requires_recalculation: true };
-
-        await fetchJSON(`/api/crews/${data.crewId}`, {
-          method: "PUT",
-          body: JSON.stringify(crewData)
-        });
-
-        // Other race times for this crew
-        const currentTap = raceTimeQuery.data?.tap;
-        const otherTimesForSelectedCrew = await fetchJSON<TimeProps[]>(
-          `/api/race-times?tap=${currentTap}&crew__id=${data.crewId}`
-        );
-
-        if (otherTimesForSelectedCrew.length > 1) {
-          const raceTimesToRemove = otherTimesForSelectedCrew.filter((time) => time.id !== raceTimeQuery.data?.id);
-
-          for (const timeToRemove of raceTimesToRemove) {
-            const raceTimeToRemoveFormData = await fetchJSON<TimeProps>(`/api/race-times/${timeToRemove.id}`);
-
-            await fetchJSON(`/api/race-times/${timeToRemove.id}`, {
-              method: "PUT",
-              body: JSON.stringify({ ...raceTimeToRemoveFormData, crew: null })
-            });
-          }
-        }
-      }
-
       return updatedRaceTime;
     },
     onSuccess: (updatedRaceTime) => {
