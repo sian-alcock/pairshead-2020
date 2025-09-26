@@ -43,9 +43,7 @@ export default function CrewLabels() {
       <Hero title={"Crew labels"} />
       <div id="print-report">
         <div className="crew-labels__container no-print">
-          <p className="crew-labels__guidance">
-            Includes accepted and scratched crews that have a bib number (assigned by BROE)
-          </p>
+          <p className="crew-labels__guidance">Includes accepted and scratched crews that have a bib number in BROE.</p>
           <p className="crew-labels__guidance">
             Use Avery labels 7173. Consider creating a PDF and setting the paper size to A4 with top/bottom margins set
             to 6mm.
