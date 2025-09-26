@@ -1,4 +1,3 @@
-// SequenceList.tsx
 import React from "react";
 import { TimeProps } from "../../../../types/components.types";
 import { formatTimes } from "../../../../lib/helpers";

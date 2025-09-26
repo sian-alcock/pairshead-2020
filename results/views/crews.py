@@ -669,12 +669,12 @@ class CreatePenaltiesTemplate(APIView):
         writer = csv.writer(response, delimiter=",")
         writer.writerow(
             [
-                "Bib number",
-                "Penalty (seconds)",
-                "Time only (true/false/blank)",
-                "Did not start (true/false/blank)",
-                "Did not finish (true/false/blank)",
-                "Disqualified (true/false/blank)",
+                "bib_number",
+                "penalty",
+                "time_only",
+                "did_not_start",
+                "did_not_finish",
+                "disqualified",
             ]
         )
 

@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import { useReactTable, getCoreRowModel, flexRender, createColumnHelper, ColumnDef } from "@tanstack/react-table";
 import { formatTimes } from "../../../../lib/helpers";
-import { TimeProps, TimingOffsetProps } from "../../../../types/components.types";
+import { TimeProps, TimingOffsetProps, RaceProps } from "../../../../types/components.types";
 import { useRaceTimesData, RaceTimeRow } from "./useRaceTimesData";
 import { SequenceList } from "./SequenceList";
 import { FormRadioButton } from "../../../atoms/FormRadioButton/FormRadioButton";
@@ -12,6 +12,7 @@ import "./crewTimeEditRaceTimesTable.scss";
 export const CrewTimeEditRaceTimesTable: React.FC<{
   crewId: number;
   times: TimeProps[];
+  allRaces: RaceProps[]; // Add this prop
   startOverride?: number | null;
   finishOverride?: number | null;
   onStartOverrideChange: (raceId: number | null) => void;
@@ -22,6 +23,7 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
 }> = ({
   crewId,
   times,
+  allRaces, // Add this prop
   startOverride,
   finishOverride,
   onStartOverrideChange,
@@ -30,7 +32,8 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
   raceTimeChanges,
   onRaceTimeChange
 }) => {
-  const { data, defaultStartRaceId, defaultFinishRaceId } = useRaceTimesData(times);
+  // Pass allRaces to the hook
+  const { data, defaultStartRaceId, defaultFinishRaceId } = useRaceTimesData(times, allRaces);
 
   const getSelectedStartRaceId = () => {
     if (startOverride) {
@@ -51,7 +54,7 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
       onStartOverrideChange(null);
     } else {
       const race = data.find((row) => row.raceId === raceId)?.race;
-      if (race) onStartOverrideChange(race.id);
+      if (race && "id" in race && race.id) onStartOverrideChange(race.id);
     }
   };
 
@@ -60,7 +63,7 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
       onFinishOverrideChange(null);
     } else {
       const race = data.find((row) => row.raceId === raceId)?.race;
-      if (race) onFinishOverrideChange(race.id);
+      if (race && "id" in race && race.id) onFinishOverrideChange(race.id);
     }
   };
 
@@ -77,12 +80,6 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
     return currentTime?.id ?? null;
   };
 
-  // const handleRaceTimeChange = (raceId: number, tap: "Start" | "Finish", newRaceTimeId: number | null) => {
-  //   queryClient.invalidateQueries({ queryKey: ['crew', crewId.toString()] });
-
-  //   console.log(`Race time ${tap} changed for race ${raceId}: ${newRaceTimeId}`);
-  // };
-
   const columnHelper = createColumnHelper<RaceTimeRow>();
 
   const columns = useMemo<ColumnDef<RaceTimeRow, any>[]>(
@@ -95,8 +92,13 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
             <div>
               <strong>{race.name}</strong> <br />
               ID: {race.race_id}
-              {race.default_start && <span className="crew-time-edit-race-times-table__pill">Default start</span>}
-              {race.default_finish && <span className="crew-time-edit-race-times-table__pill">Default finish</span>}
+              {/* Handle the case where race might be from allRaces (no default_start/finish) or from times */}
+              {"default_start" in race && race.default_start && (
+                <span className="crew-time-edit-race-times-table__pill">Default start</span>
+              )}
+              {"default_finish" in race && race.default_finish && (
+                <span className="crew-time-edit-race-times-table__pill">Default finish</span>
+              )}
             </div>
           ) : (
             "No race"
@@ -105,7 +107,14 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
       }),
       columnHelper.accessor("start", {
         header: "Start times (seq)",
-        cell: ({ getValue }) => <SequenceList items={getValue()} label="Start" />
+        cell: ({ getValue }) => {
+          const startTimes = getValue();
+          return startTimes.length > 0 ? (
+            <SequenceList items={startTimes} label="Start" />
+          ) : (
+            <span className="text-gray-400">No start times</span>
+          );
+        }
       }),
       columnHelper.accessor("raceId", {
         id: "useStart",
@@ -118,11 +127,20 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
               checked={getSelectedStartRaceId() === getValue()}
               onChange={() => handleStartRadioChange(getValue())}
             />
-          ) : null
+          ) : (
+            <span className="text-gray-400">-</span>
+          )
       }),
       columnHelper.accessor("finish", {
         header: "Finish time (seq)",
-        cell: ({ getValue }) => <SequenceList items={getValue()} label="Finish" />
+        cell: ({ getValue }) => {
+          const finishTimes = getValue();
+          return finishTimes.length > 0 ? (
+            <SequenceList items={finishTimes} label="Finish" />
+          ) : (
+            <span className="text-gray-400">No finish times</span>
+          );
+        }
       }),
       columnHelper.accessor("raceId", {
         id: "useFinish",
@@ -138,7 +156,9 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
               checked={selected === value}
               onChange={() => handleFinishRadioChange(value)}
             />
-          ) : null;
+          ) : (
+            <span className="text-gray-400">-</span>
+          );
         }
       }),
       columnHelper.accessor("rawTime", {
@@ -150,23 +170,35 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
         id: "changeStart",
         header: "Change/remove start tap",
         cell: ({ row }) => {
-          const { race, start } = row.original;
-          const currentRaceTimeId = getCurrentRaceTimeId(race?.race_id!, "Start");
+          const { race } = row.original;
+          if (!race) return <div>No race</div>;
+
+          const currentRaceTimeId = getCurrentRaceTimeId(race.race_id, "Start");
+
+          // Determine the correct race ID to pass to RaceTimeSelector
+          // Both RaceProps and TimeProps["race"] should have an 'id' field
+          let raceId: number | undefined;
+
+          if ("id" in race && race.id) {
+            raceId = race.id;
+          } else {
+            // This shouldn't happen in practice, but provides a fallback
+            console.warn("Race object missing id field:", race);
+            raceId = undefined;
+          }
 
           return (
             <div>
-              {start.length > 0 && (
-                <RaceTimeSelector
-                  crewId={crewId}
-                  raceId={race?.id}
-                  tap="Start"
-                  raceTimeId={currentRaceTimeId} // Use helper function
-                  onChange={(newId) => {
-                    onRaceTimeChange(race?.race_id!, "Start", newId); // Use prop
-                    console.log("Queued start RaceTime change →", newId);
-                  }}
-                />
-              )}
+              <RaceTimeSelector
+                crewId={crewId}
+                raceId={raceId}
+                tap="Start"
+                raceTimeId={currentRaceTimeId}
+                onChange={(newId) => {
+                  onRaceTimeChange(race.race_id, "Start", newId);
+                  console.log("Queued start RaceTime change →", newId);
+                }}
+              />
             </div>
           );
         }
@@ -176,23 +208,35 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
         id: "changeFinish",
         header: "Change/remove finish tap",
         cell: ({ row }) => {
-          const { race, finish } = row.original;
-          const currentRaceTimeId = getCurrentRaceTimeId(race?.race_id!, "Finish");
+          const { race } = row.original;
+          if (!race) return <div>No race</div>;
+
+          const currentRaceTimeId = getCurrentRaceTimeId(race.race_id, "Finish");
+
+          // Determine the correct race ID to pass to RaceTimeSelector
+          // Both RaceProps and TimeProps["race"] should have an 'id' field
+          let raceId: number | undefined;
+
+          if ("id" in race && race.id) {
+            raceId = race.id;
+          } else {
+            // This shouldn't happen in practice, but provides a fallback
+            console.warn("Race object missing id field:", race);
+            raceId = undefined;
+          }
 
           return (
             <div>
-              {finish.length > 0 && (
-                <RaceTimeSelector
-                  crewId={crewId}
-                  raceId={race?.id}
-                  tap="Finish"
-                  raceTimeId={currentRaceTimeId} // Use helper function
-                  onChange={(newId) => {
-                    onRaceTimeChange(race?.race_id!, "Finish", newId); // Use prop
-                    console.log("Queued finish RaceTime change →", newId);
-                  }}
-                />
-              )}
+              <RaceTimeSelector
+                crewId={crewId}
+                raceId={raceId}
+                tap="Finish"
+                raceTimeId={currentRaceTimeId}
+                onChange={(newId) => {
+                  onRaceTimeChange(race.race_id, "Finish", newId);
+                  console.log("Queued finish RaceTime change →", newId);
+                }}
+              />
             </div>
           );
         }

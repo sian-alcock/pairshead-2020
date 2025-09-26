@@ -17,7 +17,7 @@ class MastersCrewsView(View):
         # Get all masters crews (those with 'mas' in event_band, case insensitive)
         masters_crews = Crew.objects.filter(
             Q(event_band__icontains='mas') | Q(event_band__icontains='Mas'),
-            status__in=('Accepted', 'Submitted')
+            status__exact='Accepted'
         ).exclude(
             Q(did_not_start=True) | Q(did_not_finish=True) | Q(disqualified=True)
         ).select_related('club', 'event').prefetch_related('event_original')
@@ -89,6 +89,7 @@ class MastersCrewsView(View):
                 'event_band': crew.event_band,
                 'original_event_category': original_event,
                 'raw_time': crew.raw_time,
+                'masters_adjusted_time': crew.masters_adjusted_time,
                 'masters_adjustment': masters_adjustment,
                 'published_time': crew.published_time,
                 'event_type': crew.event.type if crew.event else None,

@@ -41,6 +41,7 @@ interface MastersCrew {
   original_event_category: string | null;
   raw_time: number | null;
   masters_adjustment: number;
+  masters_adjusted_time: number;
   published_time: number | null;
   event_type: string | null;
   event_gender: string | null;
@@ -223,17 +224,6 @@ export default function MastersCrewsTable({ onDataChanged, onNavigateToImport }:
         enableSorting: true,
         size: 150
       }),
-      columnHelper.accessor("raw_time", {
-        header: "Raw time",
-        cell: (info) => {
-          const time = info.getValue();
-          return (
-            <span className="masters-crews__cell masters-crews__cell--time">{time ? formatTimes(time) : "--"}</span>
-          );
-        },
-        enableSorting: true,
-        size: 100
-      }),
       columnHelper.accessor("masters_adjustment", {
         header: "Adjustment",
         cell: (info) => {
@@ -254,12 +244,6 @@ export default function MastersCrewsTable({ onDataChanged, onNavigateToImport }:
                 {adjustment > 0 ? "+" : ""}
                 {formatTimes(Math.abs(adjustment))}
               </span>
-              {row.adjustment_details && (
-                <div className="masters-crews__adjustment-details">
-                  <span className="masters-crews__master-category">{row.adjustment_details.master_category}</span>
-                  {!row.adjustment_details.found_in_table && <span className="masters-crews__not-found">⚠️</span>}
-                </div>
-              )}
             </div>
           );
         },
@@ -274,6 +258,19 @@ export default function MastersCrewsTable({ onDataChanged, onNavigateToImport }:
           const time = info.getValue();
           return (
             <span className="masters-crews__cell masters-crews__cell--time masters-crews__cell--published">
+              {time ? formatTimes(time) : "--"}
+            </span>
+          );
+        },
+        enableSorting: true,
+        size: 120
+      }),
+      columnHelper.accessor("masters_adjusted_time", {
+        header: "Masters adjusted time",
+        cell: (info) => {
+          const time = info.getValue();
+          return (
+            <span className="masters-crews__cell masters-crews__cell--time masters-crews__cell--adjusted">
               {time ? formatTimes(time) : "--"}
             </span>
           );
@@ -428,23 +425,6 @@ export default function MastersCrewsTable({ onDataChanged, onNavigateToImport }:
           </div>
         </div>
       </div>
-
-      {/* Fastest Times Reference */}
-      {mastersData.fastest_times && Object.keys(mastersData.fastest_times).length > 0 && (
-        <div className="masters-crews__fastest-times">
-          <h4>Reference Fastest Times:</h4>
-          <div className="masters-crews__fastest-times-grid">
-            {Object.entries(mastersData.fastest_times).map(([category, time]) => (
-              <div key={category} className="masters-crews__fastest-time-item">
-                <span className="masters-crews__fastest-category-name">
-                  {category.replace("fastest_", "").replace("_", " ").toUpperCase()}:
-                </span>
-                <span className="masters-crews__fastest-time-value">{time ? formatTimes(time) : "N/A"}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       <TablePagination
         table={table}

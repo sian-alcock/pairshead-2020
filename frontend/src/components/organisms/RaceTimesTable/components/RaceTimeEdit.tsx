@@ -174,6 +174,7 @@ export default function RaceTimeEdit() {
       const params = new URLSearchParams({
         page: page.toString(),
         page_size: "25", // Adjust based on your backend's page size
+        status: "Accepted",
         ...(searchParam && { search: searchParam })
       });
 

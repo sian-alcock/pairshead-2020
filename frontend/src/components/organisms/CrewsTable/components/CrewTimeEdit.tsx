@@ -10,6 +10,7 @@ import { FormSelect, SelectOptionsProps } from "../../../atoms/FormSelect/FormSe
 import { useCrew } from "../../../../hooks/useCrew";
 import { useUpdateCrew } from "../../../../hooks/useUpdateCrew";
 import { useBands } from "../../../../hooks/useBands";
+import { useRaces } from "../../../../hooks/useRaces";
 import { useRaceTimeSync } from "../../../../hooks/useRaceTimeSync";
 import { BandProps, CrewProps } from "../../../../types/components.types";
 import "./crewTimeEdit.scss";
@@ -40,6 +41,7 @@ const CrewTimeEdit: React.FC = () => {
 
   const { data: crew, isLoading: isCrewLoading, error: crewError } = useCrew(id);
   const { data: bands = [], isLoading: isBandsLoading } = useBands();
+  const { data: races = [], isLoading: isRacesLoading } = useRaces(); // Add this line
   const { data: raceTimeSync = [], isLoading: isRaceTimeSyncLoading } = useRaceTimeSync();
 
   console.log(bands);
@@ -114,8 +116,8 @@ const CrewTimeEdit: React.FC = () => {
     setFormData((prev) => (prev ? { ...prev, race_id_finish_override: raceId } : prev));
   };
 
-  // Loading state
-  if (isCrewLoading || isBandsLoading || isRaceTimeSyncLoading) {
+  // Loading state - now includes races loading
+  if (isCrewLoading || isBandsLoading || isRacesLoading || isRaceTimeSyncLoading) {
     return (
       <>
         <Header />
@@ -303,15 +305,17 @@ const CrewTimeEdit: React.FC = () => {
               </div>
             </div>
 
-            {formData?.times && crew && (
+            {/* Updated condition - now shows if we have races data, not just crew times */}
+            {races.length > 0 && crew && (
               <>
                 <h3 className="crew-time-edit__group-title">Race times</h3>
                 <CrewTimeEditRaceTimesTable
                   crewId={crew.id!}
                   offsetData={raceTimeSync}
-                  times={formData.times}
-                  startOverride={formData.race_id_start_override}
-                  finishOverride={formData.race_id_finish_override}
+                  times={formData?.times || []}
+                  allRaces={races}
+                  startOverride={formData?.race_id_start_override}
+                  finishOverride={formData?.race_id_finish_override}
                   onStartOverrideChange={handleStartOverrideChange}
                   onFinishOverrideChange={handleFinishOverrideChange}
                   raceTimeChanges={raceTimeChanges}

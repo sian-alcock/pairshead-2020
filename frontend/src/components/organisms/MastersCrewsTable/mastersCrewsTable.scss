@@ -49,6 +49,10 @@
   .table-pagination {
     padding: 1.5rem 0;
   }
+
+  &__fastest-category-name {
+    @include body-small;
+  }
 }
 
 // Add these styles to your mastersCrewsTable.scss file
