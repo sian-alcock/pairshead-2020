@@ -151,7 +151,7 @@ export default function CrewDrawReports() {
                   )}
                   {crews &&
                     crews.map((crew) => (
-                      <tr className={`crew-draw-reports__row-${crew.status}`} key={crew.id}>
+                      <tr className={`crew-draw-reports__row-${crew.status.toLowerCase()}`} key={crew.id}>
                         <td>{!crew.bib_number ? "⚠️" : crew.bib_number}</td>
                         <td>{crew.status}</td>
                         <td>{crew.marshalling_division ?? "⚠️"}</td>

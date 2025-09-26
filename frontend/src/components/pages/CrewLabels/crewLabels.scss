@@ -2,6 +2,20 @@
 
 .crew-labels {
   color: $black;
+
+  &__section {
+    @include section;
+  }
+
+  &__container {
+    @include container;
+  }
+
+  &__guidance {
+    margin-bottom: 0.5rem;
+    @include body;
+  }
+
   &__grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -12,10 +26,21 @@
     // border: 1px solid $bblGrey;
     height: 206px;
     padding: 1.5rem;
+
+    &--scratched {
+      background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'><line x1='0' y1='0' x2='100' y2='100' stroke='%23ccc' stroke-width='1' /></svg>");
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 100% 100%;
+    }
   }
 
   &__start-order {
     @include h2($black);
+
+    span {
+      @include body;
+    }
   }
 
   &__crew-details,

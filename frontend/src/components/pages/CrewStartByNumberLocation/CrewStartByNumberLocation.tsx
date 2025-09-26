@@ -72,7 +72,7 @@ export default function CrewStartByNumberLocation() {
 
     return uniqueNumberLocations.map((location) => ({
       location,
-      crews: sortedCrews.filter((crew) => crew.number_location === location)
+      crews: sortedCrews.filter((crew) => crew.number_location === location && crew.bib_number)
     }));
   }, [crews]);
 
@@ -226,6 +226,9 @@ export default function CrewStartByNumberLocation() {
       <section className="crew-start-by-number-location__section">
         <div className="crew-start-by-number-location__container">
           <div className="no-print">
+            <p className="crew-labels__guidance">
+              Includes accepted and scratched crews that have a bib number in BROE.
+            </p>
             <div className="crew-start-by-number-location__field">
               <Checkbox
                 name={"host-club"}
