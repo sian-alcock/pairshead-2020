@@ -61,14 +61,24 @@ export default function RaceTimesManager(): ReactElement {
 
   const handleSubmit = async () => {
     try {
-      // Process each radio selection
-      for (const selection of radioSelections) {
-        const updateData = {
-          [selection.type.replace("-", "_")]: true // Convert 'default-start' to 'default_start'
-        };
+      // Group selections by raceId to make single API call per race
+      const raceUpdates = new Map<number, Partial<RaceProps>>();
 
+      // Build updates for selected races
+      radioSelections.forEach((selection) => {
+        const existing = raceUpdates.get(selection.raceId) || {};
+        raceUpdates.set(selection.raceId, {
+          ...existing,
+          [selection.type.replace("-", "_")]: true
+        });
+      });
+
+      // Make API calls sequentially to avoid race conditions
+      // (Django's save() method handles setting other races to false)
+      for (const [raceId, updateData] of raceUpdates.entries()) {
+        console.log(`Updating race ${raceId} with:`, updateData);
         await updateRaceMutation.mutateAsync({
-          id: selection.raceId,
+          id: raceId,
           raceData: updateData
         });
       }
@@ -76,8 +86,9 @@ export default function RaceTimesManager(): ReactElement {
       // Clear selections after successful submission
       setRadioSelections([]);
       console.log("All updates completed successfully");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating races:", error);
+      console.error("Error details:", error.response?.data);
     }
   };
 
@@ -113,7 +124,11 @@ export default function RaceTimesManager(): ReactElement {
     }),
     columnHelper.accessor("id", {
       header: "Id",
-      cell: (info) => <Link to={`/manage-race-times/${info.getValue()}/edit`}>{info.getValue()}</Link>
+      cell: (info) => (
+        <span className="race-times-manager__link">
+          <Link to={`/manage-race-times/${info.getValue()}/edit`}>{info.getValue()}</Link>
+        </span>
+      )
     }),
     columnHelper.accessor("race_id", {
       header: "Race id"

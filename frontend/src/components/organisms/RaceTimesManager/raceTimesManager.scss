@@ -1,4 +1,4 @@
-@import '../../../style.scss';
+@import "../../../style.scss";
 .race-times-manager {
   &__form {
     margin-bottom: 1.5rem;
@@ -6,6 +6,10 @@
   &__table {
     margin-bottom: 1.5rem;
     @include table;
+  }
+
+  &__link {
+    @include animated-link;
   }
 
   &__expand {
@@ -34,9 +38,9 @@
   .td-center {
     text-align: center;
 
-    input[type='radio'] {
+    input[type="radio"] {
       display: inline-block;
-      margin-top: .25rem;
+      margin-top: 0.25rem;
     }
   }
 
@@ -59,4 +63,3 @@
     }
   }
 }
-

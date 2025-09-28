@@ -221,7 +221,10 @@ class Crew(models.Model):
 
     def calc_race_time(self):
         """Raw time plus any penalties"""
+
         try:
+            if self.raw_time == 0:
+                return 0
             # The race time can include the penalty as by default it is 0
             return self.raw_time + self.penalty * 1000
         except RaceTime.DoesNotExist:

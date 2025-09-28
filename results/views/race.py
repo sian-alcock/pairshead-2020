@@ -21,15 +21,31 @@ from ..models import Race, Crew
 class RaceListView(generics.ListCreateAPIView):
     queryset = Race.objects.all()
     serializer_class = RaceSerializer
-    try:
-        Crew.update_all_computed_properties()
-    except Exception:
-        pass
+    
+    def perform_create(self, serializer):
+        """Called after a race is successfully created"""
+        serializer.save()
+        try:
+            Crew.update_all_computed_properties()
+        except Exception:
+            pass
 
 class RaceDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Race.objects.all()
     serializer_class = RaceSerializer
-    try:
-        Crew.update_all_computed_properties()
-    except Exception:
-        pass
+    
+    def perform_update(self, serializer):
+        """Called after a race is successfully updated"""
+        serializer.save()
+        try:
+            Crew.update_all_computed_properties()
+        except Exception:
+            pass
+    
+    def perform_destroy(self, instance):
+        """Called after a race is successfully deleted"""
+        instance.delete()
+        try:
+            Crew.update_all_computed_properties()
+        except Exception:
+            pass

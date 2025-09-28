@@ -32,7 +32,7 @@ export const createRace = async (raceData: Partial<RaceProps>): Promise<RaceProp
 };
 
 export const updateRace = async (id: number, raceData: Partial<RaceProps>): Promise<RaceProps> => {
-  const response: AxiosResponse<RaceProps> = await axios.put(`/api/races/${id}/`, raceData);
+  const response: AxiosResponse<RaceProps> = await axios.patch(`/api/races/${id}/`, raceData);
   return response.data;
 };
 
