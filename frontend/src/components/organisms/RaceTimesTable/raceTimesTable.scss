@@ -1,8 +1,7 @@
-@import '../../../style.scss';
-@import '../../../lib.scss';
+@import "../../../style.scss";
+@import "../../../lib.scss";
 
 .race-times-table {
-
   &__title {
     margin-bottom: 1.5rem;
     @include h3;
@@ -19,7 +18,7 @@
 
   &__table {
     width: 100%;
-    
+
     @include table;
   }
 
@@ -34,27 +33,7 @@
   }
 
   &__sequence-link {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
-    color: inherit;
-    font-family: inherit;
-    font-size: inherit;
-    text-decoration: none;
-    
-    &:hover {
-      .race-times-table__cell--sequence {
-        color: #007bff; /* or your primary color */
-        text-decoration: underline;
-      }
-    }
-    
-    &:focus {
-      outline: 2px solid #007bff;
-      outline-offset: 2px;
-      border-radius: 2px;
-    }
+    @include animated-link;
   }
 
   &__tag {
@@ -82,4 +61,3 @@
     }
   }
 }
-

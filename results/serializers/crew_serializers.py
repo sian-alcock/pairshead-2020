@@ -14,7 +14,7 @@ class CrewBasicSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Crew
-        fields = ('id', 'name', 'bib_number', 'competitor_names', 'club', 'event')
+        fields = ('id', 'name', 'status', 'bib_number', 'competitor_names', 'club', 'event')
 
 class CrewSerializer(serializers.ModelSerializer):
 

@@ -153,6 +153,15 @@ export default function RaceTimesTable({
         enableSorting: true,
         filterFn: "includesString"
       }),
+      columnHelper.accessor((row) => row.crew?.status, {
+        id: "status", // This ID will be mapped to crew__competitor_names in getOrderingParam
+        header: "Status",
+        cell: (info) => (
+          <span className="race-times-table__cell race-times-table__cell--status">{info.getValue()}</span>
+        ),
+        enableSorting: true,
+        filterFn: "includesString"
+      }),
       columnHelper.accessor("tap", {
         header: "Tap",
         cell: (info) => <span className="race-times-table__cell race-times-table__cell--tap">{info.getValue()}</span>

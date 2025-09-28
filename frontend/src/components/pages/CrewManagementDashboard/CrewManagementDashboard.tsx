@@ -45,14 +45,14 @@ export default function CrewManagementDashboard() {
         tap: "Finish"
       },
       {
-        key: "masters-crews",
-        label: "Masters",
-        component: "masters-crews"
-      },
-      {
         key: "all",
         label: "All crews",
         component: "crew-table"
+      },
+      {
+        key: "masters-crews",
+        label: "Masters",
+        component: "masters-crews"
       },
       {
         key: "compare-winners",
@@ -66,20 +66,20 @@ export default function CrewManagementDashboard() {
       }
     ];
 
-    // Add dynamic race timing tabs
+    // Add dynamic race timing tabs (insert at beginning)
     if (racesData && Array.isArray(racesData)) {
       racesData.forEach((race) => {
-        baseTabs.push(
+        baseTabs.unshift(
           {
             key: `race-${race.id}-start`,
-            label: `${race.name} - Start`,
+            label: ` Start taps - ${race.name}`,
             component: "race-times",
             raceId: race.id,
             tap: "Start"
           },
           {
             key: `race-${race.id}-finish`,
-            label: `${race.name} - Finish`,
+            label: `Finish taps - ${race.name}`,
             component: "race-times",
             raceId: race.id,
             tap: "Finish"
