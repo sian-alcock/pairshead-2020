@@ -95,6 +95,8 @@ export default function RaceTimeEdit() {
     onSuccess: (updatedRaceTime) => {
       queryClient.invalidateQueries({ queryKey: ["raceTime", routeParams.id] });
       queryClient.invalidateQueries({ queryKey: ["raceTimes"] });
+      queryClient.invalidateQueries({ queryKey: ["rawTimeComparison"] });
+      queryClient.invalidateQueries({ queryKey: ["crews"] });
 
       const raceId = updatedRaceTime.race?.id;
       const tap = updatedRaceTime.tap;
