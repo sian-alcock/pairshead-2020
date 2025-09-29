@@ -137,7 +137,7 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
       console.log(`Fetching raw time comparison...`);
       return fetchRawTimeComparison();
     },
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 5 * 60 * 1000, // 5 minutes - we invalidate on crew updates anyway
     retry: 3
   });
 
@@ -184,8 +184,8 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
             high: "High",
             medium: "Medium",
             low: "Low",
-            single: "Single Race",
-            none: "No Data"
+            single: "Single race",
+            none: "No data"
           };
 
           return (
@@ -281,7 +281,7 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
       ...baseColumns,
       columnHelper.group({
         id: "race_times",
-        header: "Raw Times by Race",
+        header: "Raw times by race",
         columns: raceColumns
       })
     ];
@@ -354,11 +354,13 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
 
   // Error state
   if (error) {
+    const errorMessage = (error as any)?.response?.data?.error || "Failed to load comparison data";
+
     return (
       <div className="raw-time-comparison__error">
         <div className="raw-time-comparison__error-content">
           <h4>Error loading raw time comparison</h4>
-          <p>Failed to load comparison data</p>
+          <p>{errorMessage}</p>
           <button className="raw-time-comparison__retry-button" onClick={handleRefreshData}>
             Try Again
           </button>
@@ -371,6 +373,23 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
     return <div className="raw-time-comparison__no-data">No comparison data available</div>;
   }
 
+  // Check if there's any actual data to display
+  if (!comparisonData.races || Object.keys(comparisonData.races).length === 0) {
+    return (
+      <div className="raw-time-comparison__no-data">
+        <p>No races with timing data found. Add races with Start and Finish times to see the comparison report.</p>
+      </div>
+    );
+  }
+
+  if (comparisonData.total_crews === 0) {
+    return (
+      <div className="raw-time-comparison__no-data">
+        <p>No crews with complete timing data found. Assign crews to race times to see the comparison report.</p>
+      </div>
+    );
+  }
+
   const totalRows = comparisonData.comparison_data.length;
   const filteredRows = table.getFilteredRowModel().rows.length;
   const displayedRows = table.getRowModel().rows.length;
@@ -379,7 +398,7 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
     <div className="raw-time-comparison">
       <div className="raw-time-comparison__header">
         <div className="raw-time-comparison__title-section">
-          <h3 className="raw-time-comparison__title">Raw time comparison (Finish - Start)</h3>
+          <h3 className="raw-time-comparison__title">Raw Time Comparison (Finish - Start)</h3>
           <div className="raw-time-comparison__stats">
             <Stat statKey={"Total crews"} statValue={comparisonData.total_crews} />
             <Stat
