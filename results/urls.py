@@ -15,7 +15,7 @@ from .views import global_settings
 from .views import race
 from .views import race_timing_sync
 from .views import time_compare
-from .views import sequence_compare
+from .views import raw_time_compare
 from .views import missing_times
 from .views import masters_crews
 from .views import crew_dashboard_stats
@@ -156,9 +156,9 @@ urlpatterns = [
         name="results-comparison",
     ),
     path(
-        "race-sequence-comparison/",
-        sequence_compare.SequenceComparisonView.as_view(),
-        name="sequence-comparison",
+        "raw-time-comparison/",
+        raw_time_compare.RawTimeComparisonView.as_view(),
+        name="raw-time-comparison",
     ),
     path(
         "crews/missing-times/",

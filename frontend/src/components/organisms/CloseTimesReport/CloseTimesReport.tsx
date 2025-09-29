@@ -1,9 +1,11 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { formatTimes } from "../../../lib/helpers"; // Assuming you have this helper
+import { formatTimes } from "../../../lib/helpers";
 import "./closeTimesReport.scss";
+import { report } from "process";
 
 interface CrewData {
+  penalty: number;
   competitor_names: string;
   bib_number: number;
   club_name: string;
@@ -83,17 +85,19 @@ export default function CloseTimesReport() {
   const getClosenessLabel = (closeness: string): string => {
     switch (closeness) {
       case "very_close":
-        return "Very close (≤1s)";
+        return "Very close (≤0.5s)";
       case "close":
-        return "Close (≤2s)";
+        return "Close (≤1s)";
       default:
-        return "Normal (>2s)";
+        return "Normal (>1s)";
     }
   };
 
   const formatTimeDifference = (seconds: number): string => {
     return `${seconds.toFixed(2)}s`;
   };
+
+  console.log(reportData);
 
   return (
     <div className="close-times-report">
@@ -105,11 +109,11 @@ export default function CloseTimesReport() {
             <span className="close-times-report__stat-value">{reportData?.total_categories || 0}</span>
           </div>
           <div className="close-times-report__stat close-times-report__stat--very-close">
-            <span className="close-times-report__stat-label">Very close (≤1s):</span>
+            <span className="close-times-report__stat-label">Very close (≤0.5s):</span>
             <span className="close-times-report__stat-value">{reportData?.very_close_count || 0}</span>
           </div>
           <div className="close-times-report__stat close-times-report__stat--close">
-            <span className="close-times-report__stat-label">Close (≤2s):</span>
+            <span className="close-times-report__stat-label">Close (≤1s):</span>
             <span className="close-times-report__stat-value">{reportData?.close_count || 0}</span>
           </div>
           {reportData?.overall_is_close && (
@@ -204,8 +208,10 @@ export default function CloseTimesReport() {
                 <th className="close-times-report__header-cell">Event band</th>
                 <th className="close-times-report__header-cell">1st place</th>
                 <th className="close-times-report__header-cell">Time</th>
+                <th className="close-times-report__header-cell">Penalty</th>
                 <th className="close-times-report__header-cell">2nd place</th>
                 <th className="close-times-report__header-cell">Time</th>
+                <th className="close-times-report__header-cell">Penalty</th>
                 <th className="close-times-report__header-cell">Difference</th>
                 <th className="close-times-report__header-cell">Status</th>
               </tr>
@@ -231,6 +237,9 @@ export default function CloseTimesReport() {
                   <td className="close-times-report__cell close-times-report__cell--time">
                     {formatTimes(row.first_place.published_time)}
                   </td>
+                  <td className="close-times-report__cell close-times-report__cell--penalty">
+                    {row.first_place.penalty}
+                  </td>
 
                   {/* Second Place */}
                   <td className="close-times-report__cell close-times-report__cell--crew">
@@ -244,6 +253,9 @@ export default function CloseTimesReport() {
                   </td>
                   <td className="close-times-report__cell close-times-report__cell--time">
                     {formatTimes(row.second_place.published_time)}
+                  </td>
+                  <td className="close-times-report__cell close-times-report__cell--penalty">
+                    {row.second_place.penalty}
                   </td>
 
                   <td className="close-times-report__cell close-times-report__cell--difference">

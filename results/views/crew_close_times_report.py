@@ -1,4 +1,3 @@
-# views.py
 from django.db.models import Q
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -23,7 +22,8 @@ class CloseTimesReportView(APIView):
                 'club__name',
                 'overall_rank',
                 'published_time',
-                'event_band'
+                'event_band',
+                'penalty',
             )
             
             overall_data = None
@@ -34,12 +34,12 @@ class CloseTimesReportView(APIView):
                 overall_second = next((crew for crew in overall_crews_list if crew['overall_rank'] == 2), None)
                 
                 if overall_first and overall_second:
-                    time_diff = (overall_second['published_time'] - overall_first['published_time']) / 1000
+                    time_diff = (abs(overall_second['published_time'] - overall_first['published_time'])) / 1000
                     
                     closeness = 'normal'
-                    if time_diff <= 1.0:
+                    if time_diff <= 0.5:
                         closeness = 'very_close'
-                    elif time_diff <= 2.0:
+                    elif time_diff <= 1.0:
                         closeness = 'close'
                     
                     overall_data = {
@@ -48,14 +48,16 @@ class CloseTimesReportView(APIView):
                             'bib_number': overall_first['bib_number'],
                             'club_name': overall_first['club__name'],
                             'published_time': overall_first['published_time'],
-                            'event_band': overall_first['event_band']
+                            'event_band': overall_first['event_band'],
+                            'penalty': overall_first['penalty']
                         },
                         'second_place': {
                             'competitor_names': overall_second['competitor_names'],
                             'bib_number': overall_second['bib_number'],
                             'club_name': overall_second['club__name'],
                             'published_time': overall_second['published_time'],
-                            'event_band': overall_second['event_band']
+                            'event_band': overall_second['event_band'],
+                            'penalty': overall_second['penalty']
                         },
                         'time_difference': time_diff,
                         'closeness': closeness
@@ -85,7 +87,8 @@ class CloseTimesReportView(APIView):
                     'bib_number', 
                     'club__name',
                     'category_rank',
-                    'published_time'
+                    'published_time',
+                    'penalty'
                 )
                 
                 # Convert to list to work with
@@ -97,13 +100,13 @@ class CloseTimesReportView(APIView):
                     
                     if first_place and second_place:
                         # Calculate time difference in seconds (published_time is in milliseconds)
-                        time_diff = (second_place['published_time'] - first_place['published_time']) / 1000
+                        time_diff = (abs(second_place['published_time'] - first_place['published_time'])) / 1000
                         
                         # Determine closeness category
                         closeness = 'normal'
-                        if time_diff <= 1.0:
+                        if time_diff <= 0.5:
                             closeness = 'very_close'  # Within 1 second
-                        elif time_diff <= 2.0:
+                        elif time_diff <= 1.0:
                             closeness = 'close'  # Within 2 seconds
                         
                         category_data.append({
@@ -112,13 +115,15 @@ class CloseTimesReportView(APIView):
                                 'competitor_names': first_place['competitor_names'],
                                 'bib_number': first_place['bib_number'],
                                 'club_name': first_place['club__name'],
-                                'published_time': first_place['published_time']
+                                'published_time': first_place['published_time'],
+                                'penalty': first_place['penalty']
                             },
                             'second_place': {
                                 'competitor_names': second_place['competitor_names'],
                                 'bib_number': second_place['bib_number'],
                                 'club_name': second_place['club__name'],
-                                'published_time': second_place['published_time']
+                                'published_time': second_place['published_time'],
+                                'penalty': second_place['penalty']
                             },
                             'time_difference': time_diff,
                             'closeness': closeness

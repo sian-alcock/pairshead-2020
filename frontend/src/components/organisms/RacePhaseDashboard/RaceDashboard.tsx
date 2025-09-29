@@ -1,7 +1,7 @@
 import BROELoader from "../../molecules/BROEDataLoader/BROELoader";
 import TextButton from "../../atoms/TextButton/TextButton";
 import ActionCard from "../../molecules/ActionCard/ActionCard";
-import DataLoader from "../../common/DataLoader";
+import DataLoader from "../../molecules/DataLoader/DataLoader";
 import "./racePhaseDashboard.scss";
 
 export default function RaceDashboard() {
@@ -55,7 +55,7 @@ export default function RaceDashboard() {
           icon={"refresh"}
           description="Initiate recalculation (should not be necessary but just in case)"
         >
-          <DataLoader url="api/crew-update-rankings/" buttonText="Refresh calcs" />
+          <DataLoader url="api/crew-update-rankings/" buttonText="Refresh calcs" queryKeyToInvalidate={["crews"]} />
         </ActionCard>
       </div>
     </div>

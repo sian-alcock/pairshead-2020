@@ -35,35 +35,84 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
   // Pass allRaces to the hook
   const { data, defaultStartRaceId, defaultFinishRaceId } = useRaceTimesData(times, allRaces);
 
-  const getSelectedStartRaceId = () => {
+  const getSelectedStartRaceId = (): number | undefined => {
+    let result: number | undefined;
+
     if (startOverride) {
-      return Number(times.find((t) => t.race?.id && Number(t.race.id) === startOverride)?.race?.race_id);
+      const overrideTime = times.find((t) => t.race?.id === startOverride);
+      result = overrideTime?.race?.race_id ? Number(overrideTime.race.race_id) : undefined;
+      console.log("Start override:", { startOverride, overrideTime, result });
+    } else {
+      result = defaultStartRaceId ? Number(defaultStartRaceId) : undefined;
+      console.log("Default start:", { defaultStartRaceId, result });
     }
-    return defaultStartRaceId ? Number(defaultStartRaceId) : undefined;
+
+    return result;
   };
 
-  const getSelectedFinishRaceId = () => {
+  const getSelectedFinishRaceId = (): number | undefined => {
     if (finishOverride) {
-      return Number(times.find((t) => t.race?.id && Number(t.race.id) === finishOverride)?.race?.race_id);
+      // Find the race time that matches the override
+      const overrideTime = times.find((t) => t.race?.id === finishOverride);
+      return overrideTime?.race?.race_id ? Number(overrideTime.race.race_id) : undefined;
     }
     return defaultFinishRaceId ? Number(defaultFinishRaceId) : undefined;
   };
 
   const handleStartRadioChange = (raceId: number) => {
-    if (raceId === defaultStartRaceId) {
+    console.log("handleStartRadioChange called:", {
+      raceId,
+      defaultStartRaceId,
+      willClear: raceId === Number(defaultStartRaceId),
+      dataLength: data.length,
+      dataRaceIds: data.map((row) => ({ raceId: row.raceId, type: typeof row.raceId }))
+    });
+
+    if (raceId === Number(defaultStartRaceId)) {
+      // console.log("Clearing start override");
       onStartOverrideChange(null);
     } else {
-      const race = data.find((row) => row.raceId === raceId)?.race;
-      if (race && "id" in race && race.id) onStartOverrideChange(race.id);
+      // More detailed debugging
+      const foundRow = data.find((row) => {
+        // console.log("Comparing:", { rowRaceId: row.raceId, targetRaceId: raceId, equal: row.raceId === raceId });
+        return Number(row.raceId) === raceId;
+      });
+
+      const race = foundRow?.race;
+
+      if (race && "id" in race && race.id) {
+        console.log("Setting start override to race.id:", race.id);
+        onStartOverrideChange(race.id);
+      } else {
+        console.log("Could not find valid race or race.id");
+      }
     }
   };
 
   const handleFinishRadioChange = (raceId: number) => {
-    if (raceId === defaultFinishRaceId) {
+    console.log("handleFinishRadioChange called:", {
+      raceId,
+      defaultFinishRaceId,
+      willClear: raceId === Number(defaultFinishRaceId),
+      dataLength: data.length,
+      dataRaceIds: data.map((row) => ({ raceId: row.raceId, type: typeof row.raceId }))
+    });
+
+    if (raceId === Number(defaultFinishRaceId)) {
+      // console.log("Clearing finish override");
       onFinishOverrideChange(null);
     } else {
-      const race = data.find((row) => row.raceId === raceId)?.race;
-      if (race && "id" in race && race.id) onFinishOverrideChange(race.id);
+      const foundRow = data.find((row) => Number(row.raceId) === raceId);
+      console.log("Found row:", foundRow);
+      const race = foundRow?.race;
+      console.log("Race from row:", race);
+
+      if (race && "id" in race && race.id) {
+        console.log("Setting finish override to race.id:", race.id);
+        onFinishOverrideChange(race.id);
+      } else {
+        console.log("Could not find valid race or race.id");
+      }
     }
   };
 
@@ -119,17 +168,30 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
       columnHelper.accessor("raceId", {
         id: "useStart",
         header: "Use start",
-        cell: ({ getValue, row }) =>
-          row.original.start.length ? (
+        cell: ({ getValue, row }) => {
+          const raceId = Number(getValue());
+          const selectedRaceId = getSelectedStartRaceId();
+          const isChecked = selectedRaceId === raceId;
+
+          console.log("Start radio:", {
+            raceId,
+            selectedRaceId,
+            isChecked,
+            startOverride,
+            defaultStartRaceId
+          });
+
+          return row.original.start.length ? (
             <FormRadioButton
               name="start_race_selection"
-              raceId={getValue()}
-              checked={getSelectedStartRaceId() === getValue()}
-              onChange={() => handleStartRadioChange(getValue())}
+              raceId={raceId}
+              checked={selectedRaceId === raceId}
+              onChange={() => handleStartRadioChange(raceId)}
             />
           ) : (
             <span className="text-gray-400">-</span>
-          )
+          );
+        }
       }),
       columnHelper.accessor("finish", {
         header: "Finish time (seq)",
@@ -146,15 +208,15 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
         id: "useFinish",
         header: "Use finish",
         cell: ({ getValue, row }) => {
-          const value = getValue();
-          const selected = getSelectedFinishRaceId();
+          const raceId = Number(getValue());
+          const selectedRaceId = getSelectedFinishRaceId();
 
           return row.original.finish.length ? (
             <FormRadioButton
               name="finish_race_selection"
-              raceId={value}
-              checked={selected === value}
-              onChange={() => handleFinishRadioChange(value)}
+              raceId={raceId}
+              checked={selectedRaceId === raceId}
+              onChange={() => handleFinishRadioChange(raceId)}
             />
           ) : (
             <span className="text-gray-400">-</span>
@@ -247,9 +309,12 @@ export const CrewTimeEditRaceTimesTable: React.FC<{
       getSelectedFinishRaceId,
       startOverride,
       finishOverride,
+      defaultStartRaceId,
+      defaultFinishRaceId,
       times,
       raceTimeChanges,
-      onRaceTimeChange
+      onRaceTimeChange,
+      data
     ]
   );
 

@@ -256,7 +256,7 @@ export default function ResultIndex() {
       columnHelper.accessor("category_rank", {
         header: "Position in category",
         cell: (info) => info.getValue() || "",
-        enableSorting: false
+        enableSorting: true
       }),
       columnHelper.display({
         id: "trophy",

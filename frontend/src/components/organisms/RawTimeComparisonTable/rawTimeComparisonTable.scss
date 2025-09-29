@@ -1,6 +1,6 @@
-@import '../../../style.scss';
+@import "../../../style.scss";
 
-.sequence-comparison {
+.raw-time-comparison {
   &__title {
     margin-bottom: 1.5rem;
     @include h3;
@@ -13,7 +13,7 @@
 
   &__table {
     width: 100%;
-    
+
     @include table;
   }
 

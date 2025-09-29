@@ -5,7 +5,7 @@ import Header from "../../organisms/Header/Header";
 import "./crewManagementDashboard.scss";
 import ResultsComparison from "../../organisms/ResultsComparison/ResultsComparison";
 import RaceTimesTable from "../../organisms/RaceTimesTable/RaceTimesTable";
-import SequenceComparisonTable from "../../organisms/SequenceComparisonTable/SequenceComparisonTable";
+import RawTimeComparisonTable from "../../organisms/RawTimeComparisonTable/RawTimeComparisonTable";
 import MastersCrewsTable from "../../organisms/MastersCrewsTable/MastersCrewsTable";
 import CrewsTable from "../../organisms/CrewsTable/CrewsTable";
 import CloseTimesReport from "../../organisms/CloseTimesReport/CloseTimesReport";
@@ -15,7 +15,7 @@ interface TabConfig {
   key: string;
   label: string;
   count?: number;
-  component: "crew-table" | "compare-winners" | "race-times" | "sequence-comparison" | "masters-crews" | "close-times";
+  component: "crew-table" | "compare-winners" | "race-times" | "raw-time-comparison" | "masters-crews" | "close-times";
   raceId?: number;
   tap?: "Start" | "Finish";
 }
@@ -33,16 +33,10 @@ export default function CrewManagementDashboard() {
   const tabs = useMemo<TabConfig[]>(() => {
     const baseTabs: TabConfig[] = [
       {
-        key: "sequence-comparison-start",
-        label: "Sequence compare - start",
-        component: "sequence-comparison",
+        key: "time-comparison",
+        label: "Time compare",
+        component: "raw-time-comparison",
         tap: "Start"
-      },
-      {
-        key: "sequence-comparison-finish",
-        label: "Sequence compare - finish",
-        component: "sequence-comparison",
-        tap: "Finish"
       },
       {
         key: "all",
@@ -130,12 +124,12 @@ export default function CrewManagementDashboard() {
       case "compare-winners":
         return <ResultsComparison />;
 
-      case "sequence-comparison":
+      case "raw-time-comparison":
         if (!currentTab.tap) {
-          return <div className="crew-manager__error">Invalid sequence comparison configuration</div>;
+          return <div className="crew-manager__error">Invalid raw time comparison</div>;
         }
 
-        return <SequenceComparisonTable tap={currentTab.tap} onDataChanged={handleDataChanged} />;
+        return <RawTimeComparisonTable onDataChanged={handleDataChanged} />;
 
       case "masters-crews":
         return <MastersCrewsTable onDataChanged={handleDataChanged} />;

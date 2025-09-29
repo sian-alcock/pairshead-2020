@@ -13,7 +13,7 @@ from .global_settings import *
 from .race import *
 from .race_timing_sync import *
 from .time_compare import *
-from .sequence_compare import *
+from .raw_time_compare import *
 from .missing_times import *
 from .masters_crews import *
 from .crew_dashboard_stats import *

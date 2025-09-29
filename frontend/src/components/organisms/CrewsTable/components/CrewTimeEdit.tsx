@@ -109,11 +109,35 @@ const CrewTimeEdit: React.FC = () => {
   };
 
   const handleStartOverrideChange = (raceId: number | null) => {
-    setFormData((prev) => (prev ? { ...prev, race_id_start_override: raceId } : prev));
+    console.log("Parent: handleStartOverrideChange called:", {
+      raceId,
+      currentStartOverride: formData?.race_id_start_override
+    });
+
+    setFormData((prev) => {
+      const newData = prev ? { ...prev, race_id_start_override: raceId } : prev;
+      console.log("Parent: new formData after start override change:", {
+        old: prev?.race_id_start_override,
+        new: newData?.race_id_start_override
+      });
+      return newData;
+    });
   };
 
   const handleFinishOverrideChange = (raceId: number | null) => {
-    setFormData((prev) => (prev ? { ...prev, race_id_finish_override: raceId } : prev));
+    console.log("Parent: handleFinishOverrideChange called:", {
+      raceId,
+      currentFinishOverride: formData?.race_id_finish_override
+    });
+
+    setFormData((prev) => {
+      const newData = prev ? { ...prev, race_id_finish_override: raceId } : prev;
+      console.log("Parent: new formData after finish override change:", {
+        old: prev?.race_id_finish_override,
+        new: newData?.race_id_finish_override
+      });
+      return newData;
+    });
   };
 
   // Loading state - now includes races loading
