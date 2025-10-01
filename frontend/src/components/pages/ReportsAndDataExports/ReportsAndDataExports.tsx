@@ -36,6 +36,17 @@ export default function ReportsAndDataExports() {
               <TextButton label="View report" pathName="/reports/crew-draw-reports" stateProps={{ view: "marshall" }} />
             </ActionCard>
             <ActionCard
+              title={"Crew draw report - marshal finish"}
+              icon={"report"}
+              description={"Crew list for finish marshals"}
+            >
+              <TextButton
+                label="View report"
+                pathName="/reports/crew-draw-reports"
+                stateProps={{ view: "marshall-finish" }}
+              />
+            </ActionCard>
+            <ActionCard
               title={"Lightweight weigh-in checklist"}
               icon={"report"}
               description={"List of lightweight crews for weigh in"}
