@@ -247,7 +247,7 @@ class CrewDataImport(APIView):
 
             for crew in r.json()["crews"]:
 
-                if crew["competitionNotes"] == "TO":
+                if crew["competitionNotes"] == "TO" or crew["notes"] == "TO":
                     time_only = True
                 else:
                     time_only = False
