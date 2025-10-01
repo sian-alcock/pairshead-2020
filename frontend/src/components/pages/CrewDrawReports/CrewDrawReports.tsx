@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom"; // Add this import
 import axios, { AxiosResponse } from "axios";
 import Hero from "../../organisms/Hero/Hero";
-import { lightweightHeadings, marshallHeadings, timingHeadings } from "./defaultProps";
+import { lightweightHeadings, marshallHeadings, marshalFinishHeadings, timingHeadings } from "./defaultProps";
 import { CrewProps } from "../../../types/components.types";
 
 import "./crewDrawReports.scss";
@@ -95,6 +95,13 @@ export default function CrewDrawReports() {
                 </button>
               </li>
               <li
+                className={`crew-draw-reports__tab ${view !== "marshall-finish" ? "" : "crew-draw-reports__tab--active"}`}
+              >
+                <button className="crew-draw-reports__tab-button" onClick={() => changeView("marshall-finish")}>
+                  <span className="crew-draw-reports__tab-label">Marshal finish view</span>
+                </button>
+              </li>
+              <li
                 className={`crew-draw-reports__tab ${view !== "lightweight" ? "" : "crew-draw-reports__tab--active"}`}
               >
                 <button className="crew-draw-reports__tab-button" onClick={() => changeView("lightweight")}>
@@ -157,6 +164,42 @@ export default function CrewDrawReports() {
                         <td>{crew.marshalling_division ?? "⚠️"}</td>
                         <td>{crew.event_band}</td>
                         <td>{crew.club.name}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            )}
+            {view === "marshall-finish" && (
+              <table className="crew-draw-reports__table crew-draw-reports__table--marshall-finish table">
+                <thead>
+                  <tr>
+                    {marshalFinishHeadings.map((heading) => (
+                      <td key={heading}>{heading}</td>
+                    ))}
+                  </tr>
+                </thead>
+                <tfoot>
+                  <tr>
+                    {marshalFinishHeadings.map((heading) => (
+                      <td key={heading}>{heading}</td>
+                    ))}
+                  </tr>
+                </tfoot>
+                <tbody>
+                  {crews.length === 0 && (
+                    <tr>
+                      <td>No accepted crews found or bib numbers not yet added</td>
+                    </tr>
+                  )}
+                  {crews &&
+                    crews.map((crew) => (
+                      <tr className={`crew-draw-reports__row-${crew.status.toLowerCase()}`} key={crew.id}>
+                        <td>{!crew.bib_number ? "⚠️" : crew.bib_number}</td>
+                        <td>{crew.status}</td>
+                        <td>{crew.marshalling_division ?? "⚠️"}</td>
+                        <td>{crew.event_band}</td>
+                        <td>{crew.club.index_code}</td>
+                        <td>{crew.host_club?.name}</td>
                       </tr>
                     ))}
                 </tbody>
