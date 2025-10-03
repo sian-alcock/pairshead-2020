@@ -104,7 +104,7 @@ export default function ReportsAndDataExports() {
             <ActionCard
               title={"Export for Webscorer"}
               icon={"download"}
-              description={"CSV of data for import into Webscorer)"}
+              description={"CSV of data for import into Webscorer"}
             >
               <DataExportComponent url={"api/crew-web-scorer-data/"} buttonText={"Export csv"} />
             </ActionCard>
