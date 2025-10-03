@@ -61,7 +61,7 @@ export default function ReportsAndDataExports() {
             <ActionCard
               title={"Start order by number location"}
               icon={"report"}
-              description={"List of lightweight crews for weigh in"}
+              description={"Crew list start order organized by number location / host club"}
             >
               <TextButton label="View report" pathName="/reports/start-order-by-number-location" />
             </ActionCard>

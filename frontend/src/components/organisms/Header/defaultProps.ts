@@ -45,7 +45,7 @@ export const menuProps: MenuProps = {
       parentItem: "Results",
       link: "/generate-results",
       authenticated: true,
-      key: 4,
+      key: 5,
       items: [
         {
           link: "/race-times",
@@ -68,7 +68,7 @@ export const menuProps: MenuProps = {
       parentItem: "Settings",
       link: "/settings/keys",
       authenticated: true,
-      key: 5,
+      key: 6,
       items: [
         {
           link: "/settings/keys",
