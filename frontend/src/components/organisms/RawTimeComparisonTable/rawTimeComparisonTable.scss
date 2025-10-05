@@ -6,6 +6,11 @@
     @include h3;
   }
 
+  &__description {
+    margin-bottom: 1.5rem;
+    @include body;
+  }
+
   &__table-container {
     overflow-x: auto;
     margin: 1.5rem 0;
@@ -15,6 +20,18 @@
     width: 100%;
 
     @include table;
+  }
+
+  td:has(> .raw-time-comparison__confidence--low) {
+    background-color: $red-tint;
+  }
+
+  td:has(> .raw-time-comparison__confidence--high) {
+    background-color: $green-tint;
+  }
+
+  td:has(> .raw-time-comparison__confidence--medium) {
+    background-color: $amber-tint;
   }
 
   &__cell--id {
@@ -39,6 +56,27 @@
     align-items: center;
     flex-wrap: wrap;
     margin-bottom: 1.5rem;
+  }
+
+  &__icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100%;
+    width: 2rem;
+    height: 2rem;
+
+    &--success {
+      background-color: $green-mid;
+    }
+
+    &--fail {
+      background-color: $red-mid;
+    }
+  }
+
+  &__flag {
+    @include body-small(bold);
   }
 
   &__controls,

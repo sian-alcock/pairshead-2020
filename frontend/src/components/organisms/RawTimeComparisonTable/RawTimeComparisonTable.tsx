@@ -4,15 +4,10 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   useReactTable,
   getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
   flexRender,
   ColumnDef,
-  PaginationState,
   createColumnHelper,
-  SortingState,
-  ColumnFiltersState
+  SortingState
 } from "@tanstack/react-table";
 import axios, { AxiosResponse } from "axios";
 import { TableHeader } from "../../molecules/TableHeader/TableHeader";
@@ -24,6 +19,7 @@ import { FormSelect } from "../../atoms/FormSelect/FormSelect";
 import Stat from "../../molecules/Stat/Stat";
 import { formatTimes } from "../../../lib/helpers";
 import { Link } from "react-router-dom";
+import Icon from "../../atoms/Icons/Icons";
 
 // Types
 interface CrewInfo {
@@ -32,6 +28,10 @@ interface CrewInfo {
   name: string;
   competitor_names?: string;
   club?: string;
+  event_band?: string;
+  status: string;
+  time_only: boolean;
+  penalty: number;
 }
 
 interface RaceTimeDetails {
@@ -41,6 +41,10 @@ interface RaceTimeDetails {
   finish_time?: number | null;
   raw_time?: number | null;
   incomplete?: boolean;
+  positions?: {
+    category?: number;
+    overall?: number;
+  } | null;
 }
 
 interface ConfidenceInfo {
@@ -60,11 +64,12 @@ interface RaceInfo {
 
 interface RawTimeComparisonRow {
   crew: CrewInfo;
-  raw_times: Record<number, number | null>; // race_id -> raw_time in centiseconds
+  raw_times: Record<number, number | null>;
   race_time_details: Record<number, RaceTimeDetails>;
   missing_races: number[];
   incomplete_races: number[];
   confidence: ConfidenceInfo;
+  positions_match: boolean | "None";
 }
 
 interface RawTimeComparisonData {
@@ -80,6 +85,7 @@ interface RawTimeComparisonData {
   >;
   comparison_data: RawTimeComparisonRow[];
   total_crews: number;
+  filtered_crews: number;
   confidence_summary: {
     high: number;
     medium: number;
@@ -92,38 +98,105 @@ interface RawTimeComparisonData {
     total_races: number;
     crews_with_data: number;
   };
+  pagination: {
+    page: number;
+    page_size: number;
+    total_pages: number;
+    has_next: boolean;
+    has_previous: boolean;
+  };
 }
 
 interface RawTimeComparisonTableProps {
   onDataChanged?: () => void;
 }
 
-// API function
-const fetchRawTimeComparison = async (): Promise<RawTimeComparisonData> => {
-  const response: AxiosResponse = await axios.get(`/api/raw-time-comparison/`);
-  return response.data;
-};
+interface CategoryResponseDataProps {
+  override_name: string;
+  [key: string]: any;
+}
 
-// Custom filter functions
-const confidenceFilterFn = (row: any, columnId: string, filterValue: string) => {
-  const cellValue = row.getValue(columnId);
-  if (filterValue === "all") return true;
-  return cellValue?.level === filterValue;
+interface SelectOption {
+  label: string;
+  value: string;
+}
+
+// API function
+const fetchRawTimeComparison = async (
+  page: number,
+  pageSize: number,
+  search: string,
+  ordering: string,
+  confidenceLevel: string,
+  eventBand: string
+): Promise<RawTimeComparisonData> => {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    page_size: pageSize.toString()
+  });
+
+  if (search) params.append("search", search);
+  if (ordering) params.append("ordering", ordering);
+  if (confidenceLevel && confidenceLevel !== "all") params.append("confidence_level", confidenceLevel);
+  if (eventBand && eventBand !== "all") params.append("event_band", eventBand);
+
+  const response: AxiosResponse = await axios.get(`/api/raw-time-comparison/?${params.toString()}`);
+  return response.data;
 };
 
 export default function RawTimeComparisonTable({ onDataChanged }: RawTimeComparisonTableProps) {
   const queryClient = useQueryClient();
   const columnHelper = createColumnHelper<RawTimeComparisonRow>();
 
-  // Component state
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 25
-  });
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [globalFilter, setGlobalFilter] = useState<string>("");
+  // Component state - now managing server-side pagination
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(25);
+  const [search, setSearch] = useState<string>("");
+  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
+  const [sorting, setSorting] = useState<SortingState>([{ id: "confidence_level", desc: false }]);
   const [confidenceFilter, setConfidenceFilter] = useState<string>("all");
+  const [eventBandFilter, setEventBandFilter] = useState<string>("");
+
+  // Fetch event bands (categories) for filter dropdown
+  const { data: categoriesData } = useQuery({
+    queryKey: ["categories"],
+    queryFn: async (): Promise<SelectOption[]> => {
+      const response = await axios.get("/api/events/");
+      const responseData: CategoryResponseDataProps[] = response.data;
+      let eventBands = responseData.map((event) => event.override_name);
+      eventBands = Array.from(new Set(eventBands)).sort();
+      const options = eventBands.map((option) => ({
+        label: option,
+        value: option
+      }));
+      return [{ label: "All events", value: "" }, ...options];
+    }
+  });
+
+  // Convert TanStack sorting state to Django ordering parameter
+  const ordering = React.useMemo(() => {
+    if (sorting.length === 0) return "confidence_score";
+
+    const sortConfig = sorting[0];
+    const fieldMap: Record<string, string> = {
+      crew_info: "name",
+      event_band: "event_band",
+      confidence_level: "confidence_score"
+    };
+
+    const field = fieldMap[sortConfig.id] || sortConfig.id;
+    return sortConfig.desc ? `-${field}` : field;
+  }, [sorting]);
+
+  // Debounce search input
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+      setPage(1); // Reset to first page on search
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   // Data fetching
   const {
@@ -132,14 +205,24 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
     error,
     refetch
   } = useQuery({
-    queryKey: ["rawTimeComparison"],
+    queryKey: ["rawTimeComparison", page, pageSize, debouncedSearch, ordering, confidenceFilter, eventBandFilter],
     queryFn: () => {
-      console.log(`Fetching raw time comparison...`);
-      return fetchRawTimeComparison();
+      console.log(`Fetching raw time comparison... page ${page}`);
+      return fetchRawTimeComparison(page, pageSize, debouncedSearch, ordering, confidenceFilter, eventBandFilter);
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes - we invalidate on crew updates anyway
-    retry: 3
+    staleTime: 5 * 60 * 1000,
+    retry: 3,
+    placeholderData: (previousData) => previousData // This replaces keepPreviousData
   });
+
+  // Get unique event bands for filter dropdown - use categoriesData if available
+  const eventBandOptions = useMemo(() => {
+    if (categoriesData) {
+      return categoriesData;
+    }
+    // Fallback to empty array if categories haven't loaded yet
+    return [{ label: "All events", value: "" }];
+  }, [categoriesData]);
 
   // Dynamic columns
   const columns = useMemo<ColumnDef<RawTimeComparisonRow, any>[]>(() => {
@@ -165,11 +248,27 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
               <div className="raw-time-comparison__crew-details">
                 Bib: {crew.bib_number} • {crew.club}
               </div>
+              {crew.time_only && <span className="raw-time-comparison__flag">Time Only</span>}
+              {crew.penalty > 0 && (
+                <>
+                  <span className="raw-time-comparison__flag">Penalty</span>
+                  <span>{` (${crew.penalty}s)`}</span>
+                </>
+              )}
             </div>
           );
         },
         enableSorting: true,
         size: 250
+      }),
+      // Event
+      columnHelper.accessor("crew.event_band", {
+        id: "event_band",
+        header: "Event",
+        cell: (info) => {
+          return <span>{info.getValue()}</span>;
+        },
+        enableSorting: true
       }),
 
       // Confidence column
@@ -200,10 +299,33 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
           );
         },
         enableSorting: true,
-        sortingFn: (rowA, rowB) => {
-          return rowA.original.confidence.score - rowB.original.confidence.score;
+        size: 150
+      }),
+
+      // Matching postion in category column
+      columnHelper.accessor("positions_match", {
+        id: "postions_match",
+        header: "Rank match",
+        cell: (info) => {
+          const match = info.getValue();
+          switch (match) {
+            case true:
+              return (
+                <i className="raw-time-comparison__icon raw-time-comparison__icon--success">
+                  <Icon icon={"success-tick"} />
+                </i>
+              );
+            case false:
+              return (
+                <i className="raw-time-comparison__icon raw-time-comparison__icon--fail">
+                  <Icon icon={"fail-cross"} />
+                </i>
+              );
+            case "None":
+              return "N/a";
+          }
         },
-        filterFn: confidenceFilterFn,
+        enableSorting: true,
         size: 150
       })
     ];
@@ -256,21 +378,24 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
             if (avgTime && row.confidence.level !== "single") {
               const diff = Math.abs(rawTime - avgTime);
               if (diff > 500) {
-                // 5.0s in centiseconds
                 deviationClass = "raw-time-comparison__time--high-deviation";
               } else if (diff > 100) {
-                // 1.0s in centiseconds
                 deviationClass = "raw-time-comparison__time--medium-deviation";
               }
             }
 
+            const position = details?.positions?.category;
+
             return (
               <div className={`raw-time-comparison__time-info ${deviationClass}`}>
-                <div className="raw-time-comparison__raw-time">{formatTimes(rawTime)}</div>
+                <div className="raw-time-comparison__raw-time">
+                  {formatTimes(rawTime)}
+                  {position && ` (#${position})`}
+                </div>
               </div>
             );
           },
-          enableSorting: true,
+          enableSorting: false,
           size: 150
         })
       );
@@ -293,33 +418,42 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
     data: comparisonData?.comparison_data || [],
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onPaginationChange: setPagination,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
-    manualPagination: false,
-    manualSorting: false,
+    manualPagination: true,
+    manualSorting: true,
+    manualFiltering: true,
+    pageCount: comparisonData?.pagination.total_pages || 0,
     state: {
-      pagination,
-      sorting,
-      columnFilters,
-      globalFilter
-    },
-    initialState: {
       pagination: {
-        pageSize: 25
+        pageIndex: page - 1,
+        pageSize: pageSize
       },
-      sorting: [
-        {
-          id: "confidence_level",
-          desc: false
-        }
-      ]
-    }
+      sorting
+    },
+    onPaginationChange: (updater) => {
+      const newPagination =
+        typeof updater === "function" ? updater({ pageIndex: page - 1, pageSize: pageSize }) : updater;
+
+      setPage(newPagination.pageIndex + 1);
+      setPageSize(newPagination.pageSize);
+    },
+    onSortingChange: setSorting
   });
+
+  // Reset to first page when sorting or filtering changes
+  React.useEffect(() => {
+    setPage(1);
+  }, [sorting, confidenceFilter, eventBandFilter]);
+
+  // Filter handlers
+  const handleConfidenceFilterChange = (value: string) => {
+    setConfidenceFilter(value);
+    setPage(1); // Reset to first page
+  };
+
+  const handleEventBandFilterChange = (value: string) => {
+    setEventBandFilter(value);
+    setPage(1); // Reset to first page
+  };
 
   // Refresh data handler
   const handleRefreshData = () => {
@@ -327,21 +461,8 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
     onDataChanged?.();
   };
 
-  // Handle confidence filter change
-  const handleConfidenceFilterChange = (value: string) => {
-    setConfidenceFilter(value);
-    if (value === "all") {
-      setColumnFilters((prev) => prev.filter((f) => f.id !== "confidence_level"));
-    } else {
-      setColumnFilters((prev) => [
-        ...prev.filter((f) => f.id !== "confidence_level"),
-        { id: "confidence_level", value }
-      ]);
-    }
-  };
-
   // Loading state
-  if (isLoading) {
+  if (isLoading && !comparisonData) {
     return (
       <div className="raw-time-comparison__loading">
         <div className="raw-time-comparison__loading-content">
@@ -390,23 +511,33 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
     );
   }
 
-  const totalRows = comparisonData.comparison_data.length;
-  const filteredRows = table.getFilteredRowModel().rows.length;
-  const displayedRows = table.getRowModel().rows.length;
+  console.log(comparisonData);
 
   return (
     <div className="raw-time-comparison">
       <div className="raw-time-comparison__header">
         <div className="raw-time-comparison__title-section">
-          <h3 className="raw-time-comparison__title">Raw Time Comparison (Finish - Start)</h3>
+          <div>
+            <h3 className="raw-time-comparison__title">Raw time comparison (Finish - Start)</h3>
+            <p className="raw-time-comparison__description no-print">
+              Compare the raw time (ie the time <u>before</u> penalties are applied) and position in category for each
+              crew from the different sets of race times to help validate the accuracy of the results and assess
+              confidence. The position in category (shown in brackets) <u>includes</u> penalties.
+            </p>
+          </div>
           <div className="raw-time-comparison__stats">
             <Stat statKey={"Total crews"} statValue={comparisonData.total_crews} />
             <Stat
               statKey={"High confidence <=1s"}
               statValue={`${comparisonData.confidence_summary.high} (${comparisonData.confidence_summary.high_percentage}%)`}
+              ragColor={"green"}
             />
-            <Stat statKey={"Medium confidence <=5s"} statValue={comparisonData.confidence_summary.medium} />
-            <Stat statKey={"Low confidence >5s"} statValue={comparisonData.confidence_summary.low} />
+            <Stat
+              statKey={"Medium confidence <=5s"}
+              statValue={comparisonData.confidence_summary.medium}
+              ragColor={"amber"}
+            />
+            <Stat statKey={"Low confidence >5s"} statValue={comparisonData.confidence_summary.low} ragColor={"red"} />
           </div>
         </div>
 
@@ -416,7 +547,7 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
               value={confidenceFilter}
               onChange={(e) => handleConfidenceFilterChange(e.target.value)}
               selectOptions={[
-                { label: "All", value: "all" },
+                { label: "All confidence levels", value: "all" },
                 { label: "High confidence", value: "high" },
                 { label: "Medium confidence", value: "medium" },
                 { label: "Low confidence", value: "low" },
@@ -427,10 +558,22 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
             />
           </div>
 
+          {eventBandOptions.length > 0 && (
+            <div className="raw-time-comparison__filter-group">
+              <FormSelect
+                value={eventBandFilter}
+                onChange={(e) => handleEventBandFilterChange(e.target.value)}
+                selectOptions={eventBandOptions}
+                fieldName={"filter_event_band"}
+                title={"Filter by event"}
+              />
+            </div>
+          )}
+
           <div className="raw-time-comparison__search-wrapper">
             <SearchInput
-              value={globalFilter}
-              onChange={setGlobalFilter}
+              value={search}
+              onChange={setSearch}
               placeholder="Search crews, bib numbers..."
               className="raw-time-comparison__search"
             />
@@ -441,29 +584,34 @@ export default function RawTimeComparisonTable({ onDataChanged }: RawTimeCompari
       <TablePagination
         table={table}
         className="raw-time-comparison__pagination"
-        showRowInfo={false}
+        showRowInfo={true}
         showPageSizeSelector={true}
+        pageSizeOptions={[10, 25, 50, 100]}
+        rowTypeName="crews"
+        totalRowCount={comparisonData.filtered_crews}
       />
+
       <div className="raw-time-comparison__table-container">
         <table className="raw-time-comparison__table">
           <TableHeader headerGroups={table.getHeaderGroups()} />
           <TableBody rows={table.getRowModel().rows} />
         </table>
+        {isLoading && (
+          <div className="raw-time-comparison__loading-overlay">
+            <div className="raw-time-comparison__spinner"></div>
+          </div>
+        )}
       </div>
 
       <div className="raw-time-comparison__footer">
-        <div className="raw-time-comparison__results-info">
-          <p className="raw-time-comparison__results-text">
-            Showing {displayedRows} of {filteredRows} entries
-            {globalFilter && filteredRows !== totalRows && <span> (filtered from {totalRows} total)</span>}
-          </p>
-        </div>
-
         <TablePagination
           table={table}
           className="raw-time-comparison__pagination"
-          showRowInfo={false}
+          showRowInfo={true}
           showPageSizeSelector={true}
+          pageSizeOptions={[10, 25, 50, 100]}
+          rowTypeName="crews"
+          totalRowCount={comparisonData.filtered_crews}
         />
       </div>
     </div>

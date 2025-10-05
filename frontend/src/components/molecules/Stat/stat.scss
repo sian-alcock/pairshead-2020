@@ -1,4 +1,4 @@
-@import '../../../style.scss';
+@import "../../../style.scss";
 
 .stat {
   padding: 1rem;
@@ -6,4 +6,16 @@
   box-shadow: $standard-box-shadow;
 
   @include body-small;
+
+  &--red {
+    background-color: $red-tint;
+  }
+
+  &--amber {
+    background-color: $amber-tint;
+  }
+
+  &--green {
+    background-color: $green-tint;
+  }
 }

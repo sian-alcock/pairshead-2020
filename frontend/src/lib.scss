@@ -104,7 +104,7 @@ $bold: 700;
   @include font-body($weight);
 
   font-size: rem(14px);
-  line-height: 1.1;
+  line-height: 1.3;
   @media screen and (min-width: $lg) {
     font-size: rem(16px);
   }
