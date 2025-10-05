@@ -163,6 +163,7 @@ export type RaceProps = {
 };
 
 export type DataStats = {
+  crews_with_penalties: string | number;
   races_count: number;
   total_crews_count: number;
   accepted_crews_count: number;

@@ -101,6 +101,11 @@ export default function Home() {
           value: statsData.masters_crews_count,
           subtitle: "masters crews",
           status: "neutral"
+        },
+        {
+          value: statsData.crews_with_penalties,
+          subtitle: "crews with penalties",
+          status: "neutral"
         }
       );
     }

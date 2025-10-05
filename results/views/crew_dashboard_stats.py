@@ -67,5 +67,6 @@ class DataOverviewStatsView(generics.GenericAPIView):
             'masters_crews_count': Crew.objects.filter(
                 Q(event_band__icontains='mas')
             ).count(),
+            'crews_with_penalties': Crew.objects.filter(Q(penalty__gt=0)).count()
         }
         
